@@ -1,0 +1,122 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "setuptools_scm[toml]>=6.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "axion"
+dynamic = ["version"]
+description = "A composable suite of AI tools to accelerate development and reinforce best practices."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+{ name = "Matt Evanoff", email = "mevanoff24@gmail.com" },
+]
+classifiers = [
+"Programming Language :: Python :: 3",
+"Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+"beautifulsoup4",
+"cachetools",
+"deepeval==3.1.0",
+"diskcache==5.6.3",
+"google-search-results==2.4.2",
+"ipython",
+"llama-index==0.13.0",
+"llama-index-embeddings-huggingface==0.6.0",
+"llama-index-readers-docling==0.4.0",
+"llama-index-readers-s3==0.5.0",
+"loguru==0.7.2",
+"nest-asyncio",
+"numpy",
+"openai==2.15.0",
+"pandas",
+"protobuf",
+"psutil",
+"pydantic",
+"pydantic-graph-1.41.0",
+"pydantic-settings==2.7.1",
+"python-dotenv==1.1.1",
+"PyYAML==6.0.1",
+"ragas==0.2.12",
+"RestrictedPython",
+"requests",
+"rich",
+"s3fs",
+"scikit-learn",
+"serpapi==0.1.5",
+"tenacity",
+"tqdm",
+]
+
+[project.optional-dependencies]
+dev = [
+"ruff==0.4.5",
+"pre-commit",
+"mkdocs",
+"mkdocs-material",
+"mkdocstrings[python]",
+"mkdocs-git-authors-plugin",
+"mkdocs-git-revision-date-localized-plugin",
+"pytest",
+"coverage",
+"mypy",
+"mike",
+"nbstripout",
+]
+
+[project.urls]
+Homepage = "https://github.com/ax-foundry/axion"
+Documentation = "https://ax-foundry.github.io/axion/"
+Repository = "https://github.com/ax-foundry/axion.git"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools_scm]
+fallback_version = "0.1.0"
+local_scheme = "no-local-version"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "Q"]
+ignore = ["E722", "E501"] # Allows "bare except:" blocks, Line Length
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = 'single'
+docstring-quotes = 'double'
+multiline-quotes = 'double'
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.mypy]
+mypy_path = "."
+explicit_package_bases = true
+no_implicit_optional = false
+exclude = ["tests/"]
+
+disable_error_code = [
+"override",
+"attr-defined",
+"arg-type",
+"assignment",
+"type-var",
+"union-attr",
+"import-untyped",
+"var-annotated",
+"misc",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "setup"
+ignore_missing_imports = true

@@ -1,0 +1,418 @@
+import asyncio
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
+from pathlib import PosixPath
+from typing import Any, Callable, ClassVar, Dict, List, Optional, Type, Union
+
+import pandas as pd
+from axion._core.config.config import Config
+from axion._core.asyncio import SemaphoreExecutor
+from axion._core.logging import configure_logging, get_logger
+from axion._core.metadata.schema import ToolMetadata
+from axion._core.schema import RichBaseModel
+from axion._core.tracing import init_tracer, trace
+from axion._core.tracing.handlers import BaseTraceHandler
+from axion.dataset import Dataset, DatasetItem
+from axion.runners.mixin import RunnerMixin
+from pydantic import Field
+from tenacity import (
+    Retrying,
+    stop_after_attempt,
+    wait_exponential,
+    wait_fixed,
+)
+
+# Set logging for error for bulk
+logger = get_logger(__name__)
+configure_logging(level='ERROR', use_rich=False)
+
+
+@dataclass
+class RetryConfig:
+    """Configuration for retry behavior."""
+
+    enabled: bool = True
+    max_attempts: int = 3
+    wait_strategy: str = 'fixed'  # "fixed" or "exponential"
+    wait_seconds: float = 1.0
+    exponential_multiplier: float = 2.0
+    exponential_min: float = 1.0
+    exponential_max: float = 10.0
+    reraise: bool = False
+    return_empty_on_failure: bool = True
+
+    def get_wait_strategy(self):
+        """Get the appropriate tenacity wait strategy."""
+        if self.wait_strategy == 'exponential':
+            return wait_exponential(
+                multiplier=self.exponential_multiplier,
+                min=self.exponential_min,
+                max=self.exponential_max,
+            )
+        else:  # default to fixed
+            return wait_fixed(self.wait_seconds)
+
+
+def api_retry(operation_name: str = None):
+    """Decorator factory that uses the instance's retry configuration."""
+
+    def decorator(func):
+        def wrapper(self, *args, **kwargs):
+            # Get retry config from the instance
+            retry_config = getattr(self, 'retry_config', RetryConfig())
+
+            if not retry_config.enabled:
+                return func(self, *args, **kwargs)
+
+            # Extract query from args/kwargs for potential empty response
+            query = args[0] if args else kwargs.get('query', 'unknown')
+
+            # Use Retrying context manager for better control
+            for attempt in Retrying(
+                stop=stop_after_attempt(retry_config.max_attempts),
+                wait=retry_config.get_wait_strategy(),
+                reraise=False,  # Always False to handle exceptions ourselves
+            ):
+                with attempt:
+                    try:
+                        return func(self, *args, **kwargs)
+                    except Exception as e:
+                        operation_desc = (
+                            operation_name or f'{self.__class__.__name__} operation'
+                        )
+                        logger.warning(
+                            f'{operation_desc} attempt {attempt.retry_state.attempt_number} failed: {e}'
+                        )
+
+                        # If this is the last attempt, log error but don't raise
+                        if (
+                            attempt.retry_state.attempt_number
+                            == retry_config.max_attempts
+                        ):
+                            logger.error(
+                                f'All {retry_config.max_attempts} retry attempts failed for {operation_desc}: {e}'
+                            )
+
+                            # Return empty response if configured to do so
+                            if retry_config.return_empty_on_failure:
+                                return APIResponseData(
+                                    query=query,
+                                    status='failed',
+                                    additional_output={
+                                        'error': str(e),
+                                        'error_type': type(e).__name__,
+                                    },
+                                )
+                        raise
+
+            logger.error(
+                f"Unexpected retry state for {operation_name or 'API operation'}"
+            )
+            if retry_config.return_empty_on_failure:
+                return APIResponseData(
+                    query=query,
+                    status='failed',
+                    additional_output={'error': 'Unexpected retry state'},
+                )
+            else:
+                raise RuntimeError('Retry logic failed unexpectedly')
+
+        return wrapper
+
+    return decorator
+
+
+class APIResponseData(RichBaseModel):
+    """
+    Standardized run-time response data from API clients.
+
+    This model captures both the models main output and metadata
+    """
+
+    query: str = Field(
+        description='The query or question presented to the API.',
+    )
+
+    actual_output: Optional[str] = Field(
+        default=None,
+        description='The primary response string generated by the API or model.',
+    )
+
+    retrieved_content: Optional[List[str]] = Field(
+        default=None, description='List of content chunks retrieved as context.'
+    )
+
+    latency: Optional[float] = Field(
+        default=None,
+        description='Total response time in seconds, useful for monitoring performance.',
+    )
+
+    trace: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description='Detailed trace or debug information from the underlying API or LLM execution.',
+    )
+
+    additional_output: Dict[str, Any] = Field(
+        default_factory=dict, description='Catch-all for any extra outputs.'
+    )
+
+    status: Optional[str] = Field(
+        default='success', description='Optional execution status flag.'
+    )
+
+    timestamp: Optional[str] = Field(
+        default=None,
+        description='ISO-formatted timestamp indicating when the response was generated.',
+    )
+
+    sources: Optional[List[Dict[str, Any]]] = Field(
+        default=None,
+        description='List of sources items, e.g., [{"id": "doc1", "score": 0.9}, {"id": "doc2", "score": 0.8}]',
+    )
+
+
+@dataclass
+class APIRunner(RunnerMixin):
+    """A component runner that registers and manages multiple API clients."""
+
+    config: Union[str, Dict[str, Any], PosixPath]
+    name: str = 'APIRunner'
+    description: str = 'Orchestrates API calls'
+    additional_config: Dict[str, Any] = field(default_factory=dict)
+    max_concurrent: int = 5
+    metadata_type = 'base'
+    show_progress: bool = field(default=True)
+    retry_config: Optional[Union[RetryConfig, Dict[str, Any]]] = field(default=None)
+    tracer: Optional[BaseTraceHandler] = field(default=None)
+
+    _registry: ClassVar[Dict[str, Callable]] = {}
+
+    def __post_init__(self):
+        """
+        Initializes the APIRunner. Instead of creating all executors upfront,
+        it now only stores their configurations. Executors are created lazily
+        on first use.
+        """
+        self.tracer = init_tracer(
+            metadata_type=self.metadata_type,
+            tool_metadata=self.get_tool_metadata(),
+        )
+
+        # Set up retry configuration
+        self.retry_config = (
+            RetryConfig(**self.retry_config)
+            if isinstance(self.retry_config, dict)
+            else (
+                self.retry_config
+                if isinstance(self.retry_config, RetryConfig)
+                else RetryConfig()
+            )
+        )
+
+        # Lazy Loading - These will store the instantiated runners
+        self.executors: Dict[str, Any] = {}
+        self.api_configs: Dict[str, Any] = {}
+
+        try:
+            config_loader = Config(self.config)
+            loaded_creds = config_loader.config
+        except Exception as e:
+            raise ValueError(
+                f'Failed to load API config. Expected a dict or a valid YAML file path, '
+                f'but got: {self.config!r}. Error: {e}'
+            ) from e
+
+        # Store configurations without instantiating the runners
+        for api_name, conf in loaded_creds.items():
+            if api_name in self._registry:
+                self.api_configs[api_name] = conf
+            else:
+                logger.warning(f"No factory registered for API '{api_name}'. Skipping.")
+
+    @classmethod
+    def register(cls, name: str):
+        """Decorator to register an executor factory function."""
+
+        def decorator(factory: Callable):
+            cls._registry[name] = factory
+            return factory
+
+        return decorator
+
+    @classmethod
+    def manual_register(cls, name: str, factory: Type['BaseAPIRunner']):
+        """Manually register an executor factory function."""
+        cls._registry[name] = factory
+
+    def execute(self, api_name: str, query: str, **kwargs) -> APIResponseData:
+        """Execute Singe API"""
+        executor = self.get_executor(api_name)
+        return executor.execute(query, **kwargs)
+
+    @trace(name='APIRunner_Batch')
+    async def execute_batch(
+        self, api_name: str, queries: List[str], **kwargs
+    ) -> List[APIResponseData]:
+        """Execute a batch of queries asynchronously using a specific executor."""
+        if not queries:
+            raise ValueError(
+                'No queries provided for execution. The queries list cannot be empty.'
+            )
+
+        executor = self.get_executor(api_name)
+        return await executor.execute_batch(queries, **kwargs)
+
+    def get_executor(self, api_name: str) -> Any:
+        """
+        Gets an executor by name. If the executor hasn't been created yet,
+        it instantiates it on-demand (lazy initialization) and caches it.
+        """
+        if api_name in self.executors:
+            return self.executors[api_name]
+
+        # Check if a configuration is available for the requested API
+        if api_name not in self.api_configs:
+            raise ValueError(
+                f"No configuration found for API '{api_name}'. "
+                f'Available configured APIs are: {list(self.api_configs.keys())}'
+                'Ensure you are passing the correct API name as the key. '
+                "Example: {'<api_name>': {...}}"
+            )
+
+        # Get the factory and config
+        factory = self._registry[api_name]
+        conf = self.api_configs[api_name]
+
+        logger.info(f"Lazily initializing executor for '{api_name}'...")
+        executor = factory(
+            conf,
+            max_concurrent=self.max_concurrent,
+            show_progress=self.show_progress,
+            retry_config=self.retry_config,
+            tracer=self.tracer,
+        )
+
+        # Cache the newly created executor
+        self.executors[api_name] = executor
+        return executor
+
+    def list_available_apis(self) -> List[str]:
+        """List available APIs based on the loaded configurations."""
+        return list(self.api_configs.keys())
+
+    def __getitem__(self, api_name: str) -> Any:
+        """Get executor by name"""
+        return self.get_executor(api_name)
+
+    @classmethod
+    def display(cls):
+        from axion.docs.display_registry import (
+            create_api_runner_display,
+            prepare_api_runner_registry,
+        )
+
+        prepared_registry = prepare_api_runner_registry(cls._registry)
+        api_executor_display = create_api_runner_display()
+        api_executor_display.display(prepared_registry)
+
+
+class BaseAPIRunner(RunnerMixin, ABC):
+    """Abstract base class for API runners with built-in async batching."""
+
+    metadata_type = 'base'
+    __name__ = 'api_runner'
+    name = 'base'
+
+    def __init__(
+        self,
+        config: Union[str, Dict[str, Any], PosixPath],
+        max_concurrent: int = 5,
+        show_progress: bool = True,
+        retry_config: Optional[Union[RetryConfig, Dict[str, Any]]] = None,
+        tracer: Optional[BaseTraceHandler] = None,
+    ):
+        config_loader = Config(config)
+        # Load config and allow both top-level and nested (by name) access
+        self.config = config_loader.config.get(self.name, config_loader.config)
+
+        # Set up retry configuration
+        self.retry_config = (
+            RetryConfig(**retry_config)
+            if isinstance(retry_config, dict)
+            else (
+                retry_config if isinstance(retry_config, RetryConfig) else RetryConfig()
+            )
+        )
+
+        # Override retry config with values from config if present
+        retry_settings = self.config.pop('retry', {})
+        if retry_settings:
+            for key, value in retry_settings.items():
+                if hasattr(self.retry_config, key):
+                    setattr(self.retry_config, key, value)
+
+        self.show_progress = show_progress
+        self.semaphore = SemaphoreExecutor(max_concurrent=max_concurrent)
+        logger.info(
+            f'Initialized {self.__class__.__name__} with max_concurrent={max_concurrent}, '
+            f'retry_enabled={self.retry_config.enabled}'
+        )
+        self.tracer = init_tracer(
+            metadata_type=self.metadata_type,
+            tool_metadata=self.get_tool_metadata(),
+            tracer=tracer,
+        )
+
+    def get_tool_metadata(self):
+        return ToolMetadata(
+            name=f'{self.__class__.__name__.lower()}',
+            description=f'{self.__class__.__name__} API client',
+            owner='Axion',
+            version='1.0.0',
+        )
+
+    @abstractmethod
+    def execute(self, query: str, **kwargs) -> APIResponseData:
+        """Executes a single synchronous query. Must be implemented by subclasses."""
+        pass
+
+    @trace(name='execute_batch', capture_args=True, capture_response=True)
+    async def execute_batch(
+        self,
+        evaluation_inputs: Union[Dataset, List[DatasetItem], pd.DataFrame, List[str]],
+        **kwargs,
+    ) -> List[APIResponseData]:
+        """Runs a batch of queries asynchronously with limited concurrency."""
+        queries = self.to_queries(evaluation_inputs)
+
+        if self.show_progress:
+            print(
+                f'Starting batch execution of {len(queries)} queries with {self.__class__.__name__}'
+            )
+
+        tasks = [
+            self.semaphore.run(lambda q=q: self.execute(q, **kwargs)) for q in queries
+        ]
+
+        # Add progress bar support
+        if self.show_progress:
+            try:
+                from tqdm.asyncio import tqdm
+
+                results = await tqdm.gather(
+                    *tasks,
+                    desc=f'Processing {self.__class__.__name__} queries',
+                    total=len(tasks),
+                )
+            except ImportError:
+                logger.warning(
+                    'tqdm not available, falling back to asyncio.gather without progress bar'
+                )
+                results = await asyncio.gather(*tasks)
+        else:
+            results = await asyncio.gather(*tasks)
+
+        if self.show_progress:
+            print(f'Completed batch execution: {len(results)} responses generated')
+
+        return results
