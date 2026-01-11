@@ -22,6 +22,7 @@ from axion._core.error import CustomValidationError
 from axion._core.uuid import uuid7
 from llama_index.core.base.llms.base import CompletionResponse
 from pydantic import BaseModel, Field, ValidationError, field_validator
+from pydantic.config import ConfigDict
 
 InputModel = TypeVar('InputModel', bound=BaseModel)
 OutputModel = TypeVar('OutputModel', bound=BaseModel)
@@ -34,6 +35,13 @@ E = TypeVar('E', bound='RichEnum')
 ###################################
 class RichBaseModel(BaseModel):
     """Base class for all prompt input and outputs"""
+
+    model_config = ConfigDict(
+        extra='forbid',
+        # Required for OpenAI structured outputs (strict mode) which requires
+        # ALL properties to be in the 'required' array, even those with defaults
+        json_schema_serialization_defaults_required=True,
+    )
 
     def __repr__(self) -> str:
         """Returns a detailed JSON representation for debugging."""

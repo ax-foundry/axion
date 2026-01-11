@@ -405,7 +405,7 @@ class EvalTree(TreeMixin):
             python_template,
             yaml_template,
         )
-        from axion.docs.render.documentation import create_multi_usage_modal_card
+        from axion.docs.render import create_multi_usage_modal_card
         from IPython.display import HTML, display
 
         evaluation_runner_card = create_multi_usage_modal_card(

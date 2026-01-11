@@ -42,7 +42,7 @@ class EvaluationMode(str, RichEnum):
 
 class RelevancyVerdictModel(RichBaseModel):
     verdict: Literal['yes', 'no', 'idk'] = Field(description='Relevancy verdict')
-    reason: Optional[str] = Field(default=None, description='Reason for no verdict')
+    reason: str = Field(default='', description='Reason for no verdict')
 
 
 class JudgedClaim(RichBaseModel):

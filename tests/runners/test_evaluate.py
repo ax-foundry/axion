@@ -254,8 +254,8 @@ class TestExperimentRunnerFunction:
             score: float
             explanation: str = 'Mock explanation'
 
-        class MockAIToolkitMetricTest:
-            """Mock AI Toolkit metric for testing."""
+        class MockAxionMetricTest:
+            """Mock AXION metric for testing."""
 
             __module__ = 'axion.metrics.something'
 
@@ -271,7 +271,7 @@ class TestExperimentRunnerFunction:
         # This should not require await and should return immediately
         result = evaluation_runner(
             evaluation_inputs=[DatasetItem(id='sync_test', actual_output='test')],
-            scoring_metrics=[MockAIToolkitMetricTest()],
+            scoring_metrics=[MockAxionMetricTest()],
             evaluation_name='sync_test',
         )
 

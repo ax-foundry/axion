@@ -1,6 +1,6 @@
 from typing import Any, Callable
 
-from axion.docs.render.documentation.base_modal import BaseModalButton
+from axion.docs.render.base_modal import BaseModalButton
 
 
 class UsageButton(BaseModalButton):

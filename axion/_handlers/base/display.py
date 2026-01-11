@@ -492,7 +492,7 @@ def display_pydantic(
             <div class="prompt-footer">
                 <div class="prompt-footer-left">
                     <span class="prompt-footer-icon">⚡</span>
-                    <span>Powered by AI Toolkit</span>
+                    <span>Powered by AXION</span>
                 </div>
             </div>
         </div>
@@ -1318,7 +1318,7 @@ def display_prompt(prompt: str, query: str | BaseModel):
             <div class="prompt-footer">
                 <div class="prompt-footer-left">
                     <span class="prompt-footer-icon">⚡</span>
-                    <span>Powered by AI Toolkit</span>
+                    <span>Powered by AXION</span>
                 </div>
                 <div class="prompt-footer-right">
                     <span>Select the code to copy</span>

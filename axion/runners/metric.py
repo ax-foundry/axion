@@ -449,7 +449,7 @@ class AxionRunner(BaseMetricRunner):
                     cost_estimate=getattr(self.metric, 'cost_estimate', 0),
                 )
             except Exception as e:
-                logger.error(f'AI Toolkit execution failed for {self.metric_name}: {e}')
+                logger.error(f'AXION execution failed for {self.metric_name}: {e}')
                 span.set_attribute('error', str(e))
                 return self._create_error_score(input_data.id, e)
 

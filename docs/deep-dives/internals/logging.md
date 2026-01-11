@@ -1,4 +1,4 @@
-# AI Toolkit Logging
+# AXION Logging
 
 The `axion` logging module is a flexible system designed to provide a rich, informative logging experience. It intelligently adapts its behavior based on its environment, working seamlessly as a standalone application or as a plugin within a host system like MLPTK.
 
@@ -21,7 +21,7 @@ When `AXION_MODE` is set to `standalone`, the logger provides a rich, developer-
 When `AXION_MODE` is set to `plugin` (or is unset), the logger's behavior changes to integrate with the host application.
 
 - **Transparent Redirection:** Instead of printing to the console itself, it transparently **forwards** all log messages to the host application's logger.
-- **Unified Logs:** This ensures your toolkit's logs are perfectly integrated with the host's logs, using the host's formatting, colors, and output destinations (e.g., files, external services).
+- **Unified Logs:** This ensures the logs are perfectly integrated with the host's logs, using the host's formatting, colors, and output destinations (e.g., files, external services).
 - **Automatic Activation:** This is the default mode. The host application is responsible for the final logging configuration.
 
 ---

@@ -588,7 +588,7 @@ class MetricRegistry:
             single_turn_metric_template,
             yaml_metric_template,
         )
-        from axion.docs.render.documentation import create_multi_usage_modal_card
+        from axion.docs.render import create_multi_usage_modal_card
 
         cards = create_multi_usage_modal_card(
             key='custom_metrics',

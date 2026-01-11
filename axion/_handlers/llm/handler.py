@@ -2,7 +2,7 @@ import asyncio
 import json
 from typing import Any, Dict, Generic, List, Optional, Tuple, Union
 
-import openai
+import litellm
 from axion._core.environment import settings
 from axion._core.error import GenerationError
 from axion._core.logging import get_logger
@@ -84,7 +84,6 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
     generation_fake_sample: bool = False
     as_structured_llm: bool = True
     fallback_to_parser: bool = True
-    use_raw_openai: bool = True
     _cost_estimate: float = None
 
     # LLM configuration
@@ -92,8 +91,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
     parser: Any = None
     llm: LLMRunnable = None
 
-    # OpenAI client configuration
-    openai_client: Optional[openai.AsyncOpenAI] = None
+    # API configuration
     api_base_url: Optional[str] = None
 
     # Rate limit configuration
@@ -108,15 +106,16 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         self._initialize_client()
 
     def _initialize_client(self):
-        """Initialize the client for raw API calls."""
-        if self.use_raw_openai:
-            self.openai_client = openai.AsyncOpenAI(
-                base_url=self.api_base_url or settings.api_base_url,
-                api_key=settings.gateway_api_key,
-            )
-        # Cannot use OpenAI directly through llm gateway express model.
-        if self.llm and 'llm_gateway_express' in str(self.llm.__class__).lower():
-            self.use_raw_openai = False
+        """Configure LiteLLM settings for API calls."""
+        # LiteLLM reads API keys from env vars automatically:
+        # OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, etc.
+        # Configure custom base URL if needed (for proxies/gateways)
+        if self.api_base_url or settings.api_base_url:
+            litellm.api_base = self.api_base_url or settings.api_base_url
+        
+        # Set API key if available from settings (fallback when env vars not set)
+        if settings.openai_api_key:
+            litellm.api_key = settings.openai_api_key
 
     def _validate_llm_requirements(self):
         """Validate LLM-specific requirements."""
@@ -245,19 +244,23 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
         return messages
 
-    async def _execute_openai_structured_call(
+    async def _execute_structured_call(
         self, messages: List[Dict[str, str]]
     ) -> OutputModel:
-        """Execute structured output call using raw OpenAI API."""
+        """Execute structured output call using LiteLLM (supports OpenAI, Claude, Gemini, etc.)."""
         model_name = getattr(self.llm, 'model', 'gpt-4o')
 
-        # Define provider before try block so it's available in exception handler
-        provider = getattr(getattr(self.llm, 'metadata', {}), 'provider', 'openai')
+        # Determine provider from model name prefix (e.g., "anthropic/claude-3" -> "anthropic")
+        if '/' in model_name:
+            provider = model_name.split('/')[0]
+        else:
+            provider = getattr(getattr(self.llm, 'metadata', {}), 'provider', 'openai')
 
         async with self.async_span(
-            'openai_structured_execution',
+            'litellm_structured_execution',
             model=model_name,
-            mode='raw_openai_structured',
+            mode='litellm_structured',
+            provider=provider,
         ) as span:
             try:
                 schema = self.output_model.model_json_schema()
@@ -271,8 +274,8 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 }
 
                 with Timer() as timer:
-                    # Make the OpenAI API call with structured output
-                    response = await self.openai_client.chat.completions.create(
+                    # Make the LiteLLM API call - routes to correct provider based on model name
+                    response = await litellm.acompletion(
                         model=model_name,
                         messages=messages,
                         response_format=response_format,
@@ -290,12 +293,18 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 prompt_tokens = usage.prompt_tokens if usage else 0
                 completion_tokens = usage.completion_tokens if usage else 0
 
-                # Estimate cost using LLMCostEstimator
-                self.cost_estimate = LLMCostEstimator.estimate(
-                    model_name=model_name,
-                    prompt_tokens=prompt_tokens,
-                    completion_tokens=completion_tokens,
-                )
+                # Estimate cost using LiteLLM's built-in pricing (supports 100+ models)
+                try:
+                    self.cost_estimate = litellm.completion_cost(
+                        completion_response=response
+                    )
+                except Exception:
+                    # Fallback to manual estimation for unsupported/custom models
+                    self.cost_estimate = LLMCostEstimator.estimate(
+                        model_name=model_name,
+                        prompt_tokens=prompt_tokens,
+                        completion_tokens=completion_tokens,
+                    )
 
                 span.set_attribute('prompt_tokens', prompt_tokens)
                 span.set_attribute('completion_tokens', completion_tokens)
@@ -320,10 +329,23 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
                 return parsed_output
 
+            except litellm.exceptions.RateLimitError as e:
+                # Map LiteLLM rate limit errors to our error handling
+                span.set_attribute('error', str(e))
+                span.set_attribute('error_type', 'RateLimitError')
+                raise GenerationError(f'Rate limit exceeded: {str(e)}') from e
+            except litellm.exceptions.APIConnectionError as e:
+                span.set_attribute('error', str(e))
+                span.set_attribute('error_type', 'APIConnectionError')
+                raise GenerationError(f'API connection failed: {str(e)}') from e
+            except litellm.exceptions.AuthenticationError as e:
+                span.set_attribute('error', str(e))
+                span.set_attribute('error_type', 'AuthenticationError')
+                raise GenerationError(f'Authentication failed: {str(e)}') from e
             except Exception as e:
                 span.set_attribute('error', str(e))
                 span.set_attribute('error_type', type(e).__name__)
-                error_msg = f'OpenAI structured call failed: {str(e)}'
+                error_msg = f'LiteLLM structured call failed: {str(e)}'
                 raise GenerationError(error_msg) from e
 
     def _build_chat_messages(
@@ -598,6 +620,11 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         - Extracts reset time from error messages
         - Waits for the appropriate duration before retrying
         - Falls back to exponential backoff for non-rate-limit errors
+
+        Execution paths:
+        - Structured mode (default): Uses LiteLLM for native structured output
+          (supports OpenAI, Anthropic, Google, and 100+ providers)
+        - Parser mode: Fallback for models without structured output support
         """
         async with self.async_span(
             'execute_with_retry',
@@ -607,19 +634,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             processed_data = self.process_input(input_data)
             last_exception = None
 
-            # Determine execution mode
-            use_structured_llm = self.as_structured_llm and (
-                self.use_raw_openai or hasattr(self.llm, 'as_structured_llm')
-            )
+            # Determine execution mode: structured (LiteLLM) or parser fallback
+            execution_mode = 'litellm_structured' if self.as_structured_llm else 'parser_mode'
 
-            span.set_attribute(
-                'execution_mode',
-                'raw_openai'
-                if (use_structured_llm and self.use_raw_openai)
-                else 'structured'
-                if use_structured_llm
-                else 'parser_mode',
-            )
+            span.set_attribute('execution_mode', execution_mode)
             span.set_attribute('fallback_enabled', self.fallback_to_parser)
             span.set_attribute('rate_limit_aware', True)
 
@@ -631,52 +649,36 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     auto_trace=False,
                 ) as attempt_span:
                     try:
-                        if use_structured_llm:
-                            mode = 'raw_openai' if self.use_raw_openai else 'structured'
-                            attempt_span.set_attribute('mode', mode)
-
-                            if self.use_raw_openai:
-                                # Use raw OpenAI API
-                                openai_messages = self._build_openai_messages(
-                                    processed_data
-                                )
-                                result = await self._execute_openai_structured_call(
-                                    openai_messages
-                                )
-                            else:
-                                # Use LlamaIndex's as_structured_llm
-                                messages = self._build_chat_messages(processed_data)
-                                try:
-                                    result = await self._execute_structured_llm_call(
-                                        messages
+                        if self.as_structured_llm:
+                            # Unified path via LiteLLM (handles all providers)
+                            attempt_span.set_attribute('mode', 'litellm_structured')
+                            messages = self._build_openai_messages(processed_data)
+                            try:
+                                result = await self._execute_structured_call(messages)
+                            except Exception as structured_error:
+                                if self.fallback_to_parser:
+                                    logger.warning_highlight(
+                                        f'Structured call failed: {str(structured_error)}. '
+                                        f'Falling back to parser mode.'
                                     )
-                                except Exception as structured_error:
-                                    if self.fallback_to_parser:
-                                        logger.warning_highlight(
-                                            f'Structured LLM call failed: {str(structured_error)}. '
-                                            f'Falling back to parser mode.'
-                                        )
-                                        attempt_span.set_attribute(
-                                            'fallback_to_parser', True
-                                        )
-                                        attempt_span.set_attribute(
-                                            'structured_error', str(structured_error)
-                                        )
+                                    attempt_span.set_attribute('fallback_to_parser', True)
+                                    attempt_span.set_attribute(
+                                        'structured_error', str(structured_error)
+                                    )
 
-                                        # Fallback to parser mode
-                                        prompt = self._build_parser_prompt(
-                                            processed_data
-                                        )
-                                        prompt_value = PromptValue(text=prompt)
-                                        output_string = (
-                                            await self._execute_parser_llm_call(prompt)
-                                        )
-                                        result = await self._parse_and_validate_parser(
-                                            output_string, prompt_value
-                                        )
-                                    else:
-                                        raise structured_error
+                                    # Fallback to parser mode
+                                    prompt = self._build_parser_prompt(processed_data)
+                                    prompt_value = PromptValue(text=prompt)
+                                    output_string = await self._execute_parser_llm_call(
+                                        prompt
+                                    )
+                                    result = await self._parse_and_validate_parser(
+                                        output_string, prompt_value
+                                    )
+                                else:
+                                    raise structured_error
                         else:
+                            # Parser fallback for models without structured output
                             attempt_span.set_attribute('mode', 'parser_mode')
                             prompt = self._build_parser_prompt(processed_data)
                             prompt_value = PromptValue(text=prompt)
@@ -792,20 +794,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     span.set_attribute('handler_type', 'llm')
                     span.set_attribute(
                         'execution_mode',
-                        'raw_openai'
-                        if self.use_raw_openai
-                        else (
-                            'structured_with_fallback'
-                            if (
-                                hasattr(self.llm, 'as_structured_llm')
-                                and self.fallback_to_parser
-                            )
-                            else (
-                                'structured'
-                                if hasattr(self.llm, 'as_structured_llm')
-                                else 'parser_mode'
-                            )
-                        ),
+                        'litellm_structured'
+                        if self.as_structured_llm
+                        else 'parser_mode',
                     )
 
             result = await self._execute_with_retry(formatted_input)
@@ -899,17 +890,14 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         if query_input:
             query_input = self.format_input_data(query_input)
 
-        if self.use_raw_openai:
+        if self.as_structured_llm:
+            # LiteLLM structured mode - uses OpenAI message format
             messages = self._build_openai_messages(query_input)
             prompt_text = '\n---\n'.join(
                 [f"## {m['role'].upper()}\n\n{m['content']}" for m in messages]
             )
-        elif self.as_structured_llm and hasattr(self.llm, 'as_structured_llm'):
-            messages = self._build_chat_messages(query_input)
-            prompt_text = '\n---\n'.join(
-                [f'## {m.role.upper()}\n\n{m.content}' for m in messages]
-            )
         else:
+            # Parser fallback mode
             if query_input is None:
                 query_input = self.input_model.model_construct()
             prompt_text = self._build_parser_prompt(query_input)
@@ -927,35 +915,24 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         """
         Get comprehensive execution metadata, including handler-specific details.
         """
+        model_name = getattr(self.llm, 'model', 'unknown')
+        # Determine provider from model name prefix (e.g., "anthropic/claude-3" -> "anthropic")
+        if '/' in str(model_name):
+            provider = model_name.split('/')[0]
+        else:
+            provider = getattr(getattr(self.llm, 'metadata', {}), 'provider', 'openai')
+
         base_metadata = super().get_execution_metadata()
         return {
             **base_metadata,
             'handler_type': 'llm',
-            'model_name': getattr(self.llm, 'model', 'unknown'),
-            'provider': getattr(
-                getattr(self.llm, 'metadata', {}), 'provider', 'unknown'
-            ),
+            'model_name': model_name,
+            'provider': provider,
             'examples_count': len(self.examples),
             'has_parser': self.parser is not None,
-            'execution_mode': (
-                'raw_openai'
-                if self.use_raw_openai
-                else (
-                    'structured_with_fallback'
-                    if (
-                        hasattr(self.llm, 'as_structured_llm')
-                        and self.fallback_to_parser
-                    )
-                    else (
-                        'structured'
-                        if hasattr(self.llm, 'as_structured_llm')
-                        else 'parser_mode'
-                    )
-                )
-            ),
+            'execution_mode': 'litellm_structured' if self.as_structured_llm else 'parser_mode',
             'generation_fake_sample': self.generation_fake_sample,
             'fallback_to_parser': self.fallback_to_parser,
-            'use_raw_openai': self.use_raw_openai,
             'rate_limit_aware': True,
             'rate_limit_buffer': self.rate_limit_buffer,
         }

@@ -31,7 +31,8 @@ dependencies = [
 "loguru==0.7.2",
 "nest-asyncio",
 "numpy",
-"openai==2.15.0",
+"litellm>=1.52.0",
+"openai>=1.0.0",  # Required by litellm, version flexible
 "pandas",
 "protobuf",
 "psutil",

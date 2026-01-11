@@ -6,7 +6,7 @@ import pandas as pd
 
 class LatencyAnalyzer:
     """
-    Latency analysis toolkit for visualizing and summarizing latency metrics.
+    Latency analysis for AXION for visualizing and summarizing latency metrics.
     """
 
     def __init__(

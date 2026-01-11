@@ -226,7 +226,7 @@ class DeepEvalLLM(DeepEvalBaseLLM):
         tool_metadata = ToolMetadata(
             name=f'{self.__class__.__name__.lower()}',
             description=f'DeepEval LLMGateway Evaluation ({self.__class__.__name__}) Model',
-            owner='AI Toolkit',
+            owner='AXION',
             version='1.0.0',
         )
 

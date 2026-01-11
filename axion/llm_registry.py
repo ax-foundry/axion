@@ -9,9 +9,11 @@ logger = get_logger(__name__)
 
 class LLMCostEstimator:
     """
-    This class provides model-specific pricing for popular LLMs such as GPT-4o, GPT-3.5-Turbo, and others.
-    It calculates the estimated cost of a given request based on the number of prompt and completion tokens,
-    using pricing tiers published by OpenAI (or defined manually for internal models).
+    This class provides model-specific pricing for popular LLMs including OpenAI, Anthropic, and Google models.
+    It calculates the estimated cost of a given request based on the number of prompt and completion tokens.
+
+    Note: When using LiteLLM in the handler, `litellm.completion_cost()` is preferred for accurate
+    real-time pricing. This class serves as a fallback for custom/internal models.
 
     Example:
     ```
@@ -21,6 +23,7 @@ class LLMCostEstimator:
     """
 
     MODEL_PRICING: Dict[str, Dict[str, float]] = {
+        # OpenAI Models
         'gpt-4o-mini': {'input': 0.150 / 1e6, 'output': 0.600 / 1e6},
         'gpt-4o': {'input': 2.50 / 1e6, 'output': 10.00 / 1e6},
         'gpt-4-turbo': {'input': 10.00 / 1e6, 'output': 30.00 / 1e6},
@@ -51,6 +54,20 @@ class LLMCostEstimator:
         'gpt-5-nano': {'input': 0.05 / 1e6, 'output': 0.40 / 1e6},
         'gpt-5-nano-2025-08-07': {'input': 0.05 / 1e6, 'output': 0.40 / 1e6},
         'gpt-5-chat-latest': {'input': 1.25 / 1e6, 'output': 10.00 / 1e6},
+        # Anthropic Claude Models (use with "anthropic/" prefix in LiteLLM)
+        'claude-3-5-sonnet-20241022': {'input': 3.00 / 1e6, 'output': 15.00 / 1e6},
+        'claude-3-5-sonnet-latest': {'input': 3.00 / 1e6, 'output': 15.00 / 1e6},
+        'claude-3-5-haiku-20241022': {'input': 0.80 / 1e6, 'output': 4.00 / 1e6},
+        'claude-3-opus-20240229': {'input': 15.00 / 1e6, 'output': 75.00 / 1e6},
+        'claude-3-sonnet-20240229': {'input': 3.00 / 1e6, 'output': 15.00 / 1e6},
+        'claude-3-haiku-20240307': {'input': 0.25 / 1e6, 'output': 1.25 / 1e6},
+        # Google Gemini Models (use with "gemini/" prefix in LiteLLM)
+        'gemini-1.5-pro': {'input': 1.25 / 1e6, 'output': 5.00 / 1e6},
+        'gemini-1.5-pro-latest': {'input': 1.25 / 1e6, 'output': 5.00 / 1e6},
+        'gemini-1.5-flash': {'input': 0.075 / 1e6, 'output': 0.30 / 1e6},
+        'gemini-1.5-flash-latest': {'input': 0.075 / 1e6, 'output': 0.30 / 1e6},
+        'gemini-2.0-flash-exp': {'input': 0.10 / 1e6, 'output': 0.40 / 1e6},
+        'gemini-pro': {'input': 0.50 / 1e6, 'output': 1.50 / 1e6},
     }
 
     DEFAULT_PRICING: Dict[str, float] = {
@@ -70,7 +87,8 @@ class LLMCostEstimator:
         Estimate the cost of an LLM call for a given model based on token usage.
 
         Args:
-            model_name (str): The name of the LLM model (e.g., 'gpt-4o', 'gpt-3.5-turbo').
+            model_name (str): The name of the LLM model. Supports both plain names
+                (e.g., 'gpt-4o') and LiteLLM prefixed names (e.g., 'anthropic/claude-3-5-sonnet').
             prompt_tokens (int): The number of tokens sent in the prompt.
             completion_tokens (int): The number of tokens generated in the response.
             round_level (int): Round level for precision (default 8)
@@ -81,8 +99,15 @@ class LLMCostEstimator:
         Notes:
             - Prices are per token (already calculated per million in MODEL_PRICING).
             - If the model name is unrecognized, default pricing (gpt-4o) is applied.
+            - LiteLLM prefixed model names (e.g., 'anthropic/claude-3-5-sonnet') are
+              automatically stripped to match pricing keys.
         """
         model_key = model_name.lower()
+
+        # Strip LiteLLM provider prefix if present (e.g., "anthropic/claude-3" -> "claude-3")
+        if '/' in model_key:
+            model_key = model_key.split('/', 1)[1]
+
         pricing = cls.MODEL_PRICING.get(model_key, cls.DEFAULT_PRICING)
 
         prompt_cost = prompt_tokens * pricing['input']
@@ -113,12 +138,15 @@ class LLMCostEstimator:
         Get the pricing information for a specific model.
 
         Args:
-            model_name (str): The name of the LLM model
+            model_name (str): The name of the LLM model (supports LiteLLM prefixed names)
 
         Returns:
             Dict[str, float]: Dictionary with 'input' and 'output' pricing per token
         """
         model_key = model_name.lower()
+        # Strip LiteLLM provider prefix if present
+        if '/' in model_key:
+            model_key = model_key.split('/', 1)[1]
         return cls.MODEL_PRICING.get(model_key, cls.DEFAULT_PRICING).copy()
 
     @classmethod
@@ -161,19 +189,249 @@ class MockLLM:
         pass
 
 
+class LiteLLMWrapper:
+    """
+    Lightweight LLM wrapper for LiteLLM-based execution.
+
+    This class stores model configuration and is used by LLMHandler to route
+    API calls through LiteLLM. It provides a consistent interface across
+    different providers (OpenAI, Anthropic, Gemini, etc.).
+
+    The wrapper stores:
+    - model: The LiteLLM-compatible model name (e.g., 'gpt-4o', 'anthropic/claude-3-5-sonnet')
+    - temperature: Generation temperature (default 0.0 for deterministic outputs)
+    - provider: The provider name for metadata/logging purposes
+    - Additional kwargs for provider-specific configurations
+
+    Example:
+        >>> from axion.llm_registry import LLMRegistry
+        >>> registry = LLMRegistry(provider='openai')
+        >>> llm = registry.get_llm('gpt-4o')
+        >>> response = llm.complete('What is 2+2?')
+        >>> print(response.text)
+    """
+
+    def __init__(
+        self,
+        model: str,
+        provider: str = 'openai',
+        temperature: float = 0.0,
+        api_key: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        Initialize the LiteLLM wrapper.
+
+        Args:
+            model: The LiteLLM-compatible model name
+            provider: Provider identifier for metadata
+            temperature: Generation temperature (0.0-1.0)
+            api_key: Optional API key for the provider
+            **kwargs: Additional model configuration
+        """
+        self.model = model
+        self.temperature = temperature
+        self._provider = provider
+        self._api_key = api_key
+        self._kwargs = kwargs
+
+        # Create a metadata-like object for compatibility with handler code
+        class Metadata:
+            def __init__(self, provider: str):
+                self.provider = provider
+
+        self.metadata = Metadata(provider)
+
+    def __repr__(self) -> str:
+        return f"LiteLLMWrapper(model='{self.model}', provider='{self._provider}')"
+
+    def complete(self, prompt: str, **kwargs) -> 'CompletionResponse':
+        """
+        Generate a completion for the given prompt (synchronous).
+
+        Args:
+            prompt: The input prompt to complete
+            **kwargs: Additional parameters (temperature, max_tokens, etc.)
+
+        Returns:
+            CompletionResponse with the generated text
+
+        Example:
+            >>> llm = LLMRegistry(provider='openai', api_key='sk-...').get_llm('gpt-4o')
+            >>> response = llm.complete('What is the capital of France?')
+            >>> print(response.text)
+        """
+        import litellm
+
+        messages = [{'role': 'user', 'content': prompt}]
+        temperature = kwargs.pop('temperature', self.temperature)
+
+        # Build call kwargs, including api_key if provided
+        call_kwargs = {**self._kwargs, **kwargs}
+        if self._api_key:
+            call_kwargs['api_key'] = self._api_key
+
+        response = litellm.completion(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,
+            **call_kwargs
+        )
+
+        return CompletionResponse(
+            text=response.choices[0].message.content,
+            raw=response
+        )
+
+    async def acomplete(self, prompt: str, **kwargs) -> 'CompletionResponse':
+        """
+        Generate a completion for the given prompt (asynchronous).
+
+        Args:
+            prompt: The input prompt to complete
+            **kwargs: Additional parameters (temperature, max_tokens, etc.)
+
+        Returns:
+            CompletionResponse with the generated text
+
+        Example:
+            >>> import asyncio
+            >>> llm = LLMRegistry(provider='openai', api_key='sk-...').get_llm('gpt-4o')
+            >>> response = asyncio.run(llm.acomplete('What is 2+2?'))
+            >>> print(response.text)
+        """
+        import litellm
+
+        messages = [{'role': 'user', 'content': prompt}]
+        temperature = kwargs.pop('temperature', self.temperature)
+
+        # Build call kwargs, including api_key if provided
+        call_kwargs = {**self._kwargs, **kwargs}
+        if self._api_key:
+            call_kwargs['api_key'] = self._api_key
+
+        response = await litellm.acompletion(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,
+            **call_kwargs
+        )
+
+        return CompletionResponse(
+            text=response.choices[0].message.content,
+            raw=response
+        )
+
+    def chat(self, messages: List[Dict[str, str]], **kwargs) -> 'CompletionResponse':
+        """
+        Generate a chat completion from a list of messages (synchronous).
+
+        Args:
+            messages: List of message dicts with 'role' and 'content' keys
+            **kwargs: Additional parameters (temperature, max_tokens, etc.)
+
+        Returns:
+            CompletionResponse with the generated text
+
+        Example:
+            >>> llm = LLMRegistry(provider='openai', api_key='sk-...').get_llm('gpt-4o')
+            >>> messages = [
+            ...     {'role': 'system', 'content': 'You are a helpful assistant.'},
+            ...     {'role': 'user', 'content': 'Hello!'}
+            ... ]
+            >>> response = llm.chat(messages)
+            >>> print(response.text)
+        """
+        import litellm
+
+        temperature = kwargs.pop('temperature', self.temperature)
+
+        # Build call kwargs, including api_key if provided
+        call_kwargs = {**self._kwargs, **kwargs}
+        if self._api_key:
+            call_kwargs['api_key'] = self._api_key
+
+        response = litellm.completion(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,
+            **call_kwargs
+        )
+
+        return CompletionResponse(
+            text=response.choices[0].message.content,
+            raw=response
+        )
+
+    async def achat(self, messages: List[Dict[str, str]], **kwargs) -> 'CompletionResponse':
+        """
+        Generate a chat completion from a list of messages (asynchronous).
+
+        Args:
+            messages: List of message dicts with 'role' and 'content' keys
+            **kwargs: Additional parameters (temperature, max_tokens, etc.)
+
+        Returns:
+            CompletionResponse with the generated text
+        """
+        import litellm
+
+        temperature = kwargs.pop('temperature', self.temperature)
+
+        # Build call kwargs, including api_key if provided
+        call_kwargs = {**self._kwargs, **kwargs}
+        if self._api_key:
+            call_kwargs['api_key'] = self._api_key
+
+        response = await litellm.acompletion(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,
+            **call_kwargs
+        )
+
+        return CompletionResponse(
+            text=response.choices[0].message.content,
+            raw=response
+        )
+
+
+class CompletionResponse:
+    """
+    Response object from LLM completion calls.
+
+    Attributes:
+        text: The generated text content
+        raw: The raw response object from LiteLLM
+    """
+
+    def __init__(self, text: str, raw: Any = None):
+        self.text = text
+        self.raw = raw
+
+    def __str__(self) -> str:
+        return self.text
+
+    def __repr__(self) -> str:
+        return f"CompletionResponse(text='{self.text[:50]}...')" if len(self.text) > 50 else f"CompletionResponse(text='{self.text}')"
+
+
 class BaseProvider(ABC):
     """
     Abstract base class for all providers. It defines the contract that
     every provider must follow.
+
+    Note: When using LiteLLM in the handler, API keys are read from environment
+    variables automatically (OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY).
     """
 
     def __init__(self, api_key: Optional[str] = None, **credentials):
-        """Initializes the provider, primarily by storing the API key."""
-        self.api_key = api_key or settings.gateway_api_key
+        """Initializes the provider, storing the API key if provided."""
+        self.api_key = api_key or settings.openai_api_key
+        # API key is optional - LiteLLM reads from env vars automatically
         if not self.api_key:
-            raise ValueError(
-                'API key must be provided either via settings.gateway_api_key, '
-                'as an argument, or the `GATEWAY_API_KEY` environment variable.'
+            logger.debug(
+                'No API key provided to provider. LiteLLM will use environment variables.'
             )
 
     @abstractmethod
@@ -390,58 +648,56 @@ class LLMRegistry:
         return settings.embedding_model_name
 
 
-@LLMRegistry.register('llm_gateway')
-class LLMGatewayProvider(BaseProvider):
-    """Provider for connecting to a local proxy/gateway server via LlamaIndex."""
+@LLMRegistry.register('openai')
+class OpenAIProvider(BaseProvider):
+    """
+    Provider for OpenAI models via LiteLLM.
 
-    def __init__(
-        self,
-        api_key: Optional[str] = None,
-        base_url: Optional[str] = None,
-        **credentials
-    ):
-        super().__init__(api_key=api_key, **credentials)
-        # LlamaIndex uses 'api_base' for the proxy URL.
-        self.api_base = base_url or settings.api_base_url
+    Supports all OpenAI models including GPT-4, GPT-4o, GPT-3.5, o1, o3, etc.
+    Model names are passed directly to LiteLLM without prefixing.
 
-    def create_llm(self, model_name: str, **kwargs) -> Any:
-        from llama_index.llms.openai import OpenAI as LlamaIndexOpenAI
+    Example:
+        >>> registry = LLMRegistry(provider='openai')
+        >>> llm = registry.get_llm('gpt-4o')
+        >>> llm = registry.get_llm('gpt-4o-mini')
+        >>> llm = registry.get_llm('o1-preview')
+    """
 
-        # Pass api_base to the LlamaIndex client to route through the proxy.
-        return LlamaIndexOpenAI(
-            api_key=self.api_key,
+    def __init__(self, api_key: Optional[str] = None, **credentials):
+        """Initialize OpenAI provider with optional API key."""
+        # Use OpenAI-specific API key from settings
+        self.api_key = api_key or settings.openai_api_key
+        if not self.api_key:
+            logger.debug(
+                'No OpenAI API key provided. LiteLLM will use OPENAI_API_KEY env var.'
+            )
+
+    def create_llm(self, model_name: str, **kwargs) -> LiteLLMWrapper:
+        """
+        Create an LLM wrapper for OpenAI models.
+
+        Args:
+            model_name: OpenAI model name (e.g., 'gpt-4o', 'gpt-4o-mini', 'o1')
+            **kwargs: Additional configuration (temperature, etc.)
+
+        Returns:
+            LiteLLMWrapper configured for the specified OpenAI model
+        """
+        temperature = kwargs.pop('temperature', 0.0)
+        return LiteLLMWrapper(
             model=model_name,
-            api_base=self.api_base,
-            max_retries=0,  # We are custom handling retries
-            timeout=120.0,
-            **kwargs,
+            provider='openai',
+            temperature=temperature,
+            api_key=self.api_key,
+            **kwargs
         )
 
     def create_embedding_model(self, model_name: str, **kwargs) -> Any:
-        from llama_index.embeddings.openai import (
-            OpenAIEmbedding as LlamaIndexOpenAIEmbedding,
-        )
+        """
+        Create an embedding model for OpenAI.
 
-        # Pass api_base to the LlamaIndex client to route through the proxy.
-        return LlamaIndexOpenAIEmbedding(
-            api_key=self.api_key,
-            model=model_name,
-            api_base=self.api_base,
-            max_retries=0,  # We are custom handling retries
-            **kwargs,
-        )
-
-
-@LLMRegistry.register('llama_index')
-class LlamaIndexProvider(BaseProvider):
-    """Provider for creating LlamaIndex-specific OpenAI clients."""
-
-    def create_llm(self, model_name: str, **kwargs) -> Any:
-        from llama_index.llms.openai import OpenAI as LlamaIndexOpenAI
-
-        return LlamaIndexOpenAI(api_key=self.api_key, model=model_name, **kwargs)
-
-    def create_embedding_model(self, model_name: str, **kwargs) -> Any:
+        Uses LlamaIndex's OpenAI embedding for compatibility with existing code.
+        """
         from llama_index.embeddings.openai import (
             OpenAIEmbedding as LlamaIndexOpenAIEmbedding,
         )
@@ -451,11 +707,167 @@ class LlamaIndexProvider(BaseProvider):
         )
 
 
+@LLMRegistry.register('anthropic')
+class AnthropicProvider(BaseProvider):
+    """
+    Provider for Anthropic Claude models via LiteLLM.
+
+    Supports all Claude models. Model names are automatically prefixed with
+    'anthropic/' for LiteLLM routing.
+
+    Example:
+        >>> registry = LLMRegistry(provider='anthropic')
+        >>> llm = registry.get_llm('claude-3-5-sonnet-20241022')
+        >>> llm = registry.get_llm('claude-3-opus-20240229')
+    """
+
+    def __init__(self, api_key: Optional[str] = None, **credentials):
+        """Initialize Anthropic provider with optional API key."""
+        # Use Anthropic-specific API key from settings
+        self.api_key = api_key or settings.anthropic_api_key
+        if not self.api_key:
+            logger.debug(
+                'No Anthropic API key provided. LiteLLM will use ANTHROPIC_API_KEY env var.'
+            )
+
+    def create_llm(self, model_name: str, **kwargs) -> LiteLLMWrapper:
+        """
+        Create an LLM wrapper for Anthropic Claude models.
+
+        Args:
+            model_name: Claude model name (e.g., 'claude-3-5-sonnet-20241022')
+                        Will be prefixed with 'anthropic/' for LiteLLM
+            **kwargs: Additional configuration (temperature, etc.)
+
+        Returns:
+            LiteLLMWrapper configured for the specified Claude model
+        """
+        # Add anthropic/ prefix if not already present
+        if not model_name.startswith('anthropic/'):
+            model_name = f'anthropic/{model_name}'
+
+        temperature = kwargs.pop('temperature', 0.0)
+        return LiteLLMWrapper(
+            model=model_name,
+            provider='anthropic',
+            temperature=temperature,
+            api_key=self.api_key,
+            **kwargs
+        )
+
+    def create_embedding_model(self, model_name: str, **kwargs) -> Any:
+        """
+        Create an embedding model for Anthropic.
+
+        Note: Anthropic does not provide embedding models directly.
+        Falls back to OpenAI embeddings or raises an error.
+        """
+        logger.warning(
+            'Anthropic does not provide embedding models. '
+            'Consider using OpenAI or HuggingFace embeddings instead.'
+        )
+        # Fall back to OpenAI embeddings as a reasonable default
+        from llama_index.embeddings.openai import (
+            OpenAIEmbedding as LlamaIndexOpenAIEmbedding,
+        )
+
+        return LlamaIndexOpenAIEmbedding(model=model_name, **kwargs)
+
+
+@LLMRegistry.register('gemini')
+class GeminiProvider(BaseProvider):
+    """
+    Provider for Google Gemini models via LiteLLM.
+
+    Supports all Gemini models. Model names are automatically prefixed with
+    'gemini/' for LiteLLM routing.
+
+    Example:
+        >>> registry = LLMRegistry(provider='gemini')
+        >>> llm = registry.get_llm('gemini-1.5-pro')
+        >>> llm = registry.get_llm('gemini-1.5-flash')
+    """
+
+    def __init__(self, api_key: Optional[str] = None, **credentials):
+        """Initialize Gemini provider with optional API key."""
+        # Use Google-specific API key from settings
+        self.api_key = api_key or settings.google_api_key
+        if not self.api_key:
+            logger.debug(
+                'No Google API key provided. LiteLLM will use GOOGLE_API_KEY env var.'
+            )
+
+    def create_llm(self, model_name: str, **kwargs) -> LiteLLMWrapper:
+        """
+        Create an LLM wrapper for Google Gemini models.
+
+        Args:
+            model_name: Gemini model name (e.g., 'gemini-1.5-pro', 'gemini-1.5-flash')
+                        Will be prefixed with 'gemini/' for LiteLLM
+            **kwargs: Additional configuration (temperature, etc.)
+
+        Returns:
+            LiteLLMWrapper configured for the specified Gemini model
+        """
+        # Add gemini/ prefix if not already present
+        if not model_name.startswith('gemini/'):
+            model_name = f'gemini/{model_name}'
+
+        temperature = kwargs.pop('temperature', 0.0)
+        return LiteLLMWrapper(
+            model=model_name,
+            provider='gemini',
+            temperature=temperature,
+            api_key=self.api_key,
+            **kwargs
+        )
+
+    def create_embedding_model(self, model_name: str, **kwargs) -> Any:
+        """
+        Create an embedding model for Google.
+
+        Uses LlamaIndex's Gemini embedding for compatibility.
+        """
+        from llama_index.embeddings.gemini import GeminiEmbedding
+
+        return GeminiEmbedding(
+            api_key=self.api_key, model_name=model_name, **kwargs
+        )
+
+
 @LLMRegistry.register('huggingface')
 class HuggingFaceProvider(BaseProvider):
-    """Provider for HuggingFace Hub models."""
+    """
+    Provider for HuggingFace Hub models.
+
+    Supports local HuggingFace models via LlamaIndex integration.
+    Requires torch and transformers to be installed.
+
+    Example:
+        >>> registry = LLMRegistry(provider='huggingface')
+        >>> llm = registry.get_llm('meta-llama/Llama-2-7b-chat-hf')
+    """
+
+    def __init__(self, api_key: Optional[str] = None, **credentials):
+        """Initialize HuggingFace provider."""
+        # HuggingFace may use HF_TOKEN for gated models
+        self.api_key = api_key
+        if not self.api_key:
+            logger.debug(
+                'No HuggingFace token provided. Set HF_TOKEN env var for gated models.'
+            )
 
     def create_llm(self, model_name: str, **kwargs) -> Any:
+        """
+        Create an LLM client for HuggingFace models.
+
+        Args:
+            model_name: HuggingFace model identifier (e.g., 'meta-llama/Llama-2-7b-chat-hf')
+            **kwargs: Additional configuration (device_map, torch_dtype, etc.)
+
+        Returns:
+            LlamaIndex HuggingFaceLLM instance
+        """
         from llama_index.llms.huggingface import HuggingFaceLLM
 
         # Note: May require torch, transformers, etc. to be installed.
@@ -463,6 +875,16 @@ class HuggingFaceProvider(BaseProvider):
         return HuggingFaceLLM(model_name=model_name, **kwargs)
 
     def create_embedding_model(self, model_name: str, **kwargs) -> Any:
+        """
+        Create an embedding model for HuggingFace.
+
+        Args:
+            model_name: HuggingFace embedding model identifier
+            **kwargs: Additional configuration
+
+        Returns:
+            LlamaIndex HuggingFaceEmbedding instance
+        """
         from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
         return HuggingFaceEmbedding(model_name=model_name, **kwargs)

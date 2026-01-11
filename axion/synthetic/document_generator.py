@@ -57,7 +57,7 @@ class DocumentQAGenerator:
         return ToolMetadata(
             name=self.__class__.__name__,
             description='Orchestrates QA pair generation from multiple documents concurrently.',
-            owner='AI Toolkit',
+            owner='AXION',
             version='1.0.0',
         )
 
