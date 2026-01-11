@@ -294,18 +294,11 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 prompt_tokens = usage.prompt_tokens if usage else 0
                 completion_tokens = usage.completion_tokens if usage else 0
 
-                # #region agent log
-                import json as _dbg_json; open('/Users/mattevanoff/Desktop/Github/axion/.cursor/debug.log', 'a').write(_dbg_json.dumps({'location': 'handler.py:298', 'message': 'Before completion_cost call', 'data': {'response_type': type(response).__name__}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'hypothesisId': 'B'}) + '\n')
-                # #endregion
-
                 # Estimate cost using LiteLLM's built-in pricing (supports 100+ models)
                 try:
                     self.cost_estimate = litellm.completion_cost(
                         completion_response=response
                     )
-                    # #region agent log
-                    import json as _dbg_json; open('/Users/mattevanoff/Desktop/Github/axion/.cursor/debug.log', 'a').write(_dbg_json.dumps({'location': 'handler.py:305', 'message': 'After completion_cost call - no warning here', 'data': {'cost': self.cost_estimate}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'hypothesisId': 'B'}) + '\n')
-                    # #endregion
                 except Exception:
                     # Fallback to manual estimation for unsupported/custom models
                     self.cost_estimate = LLMCostEstimator.estimate(
@@ -321,9 +314,6 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 span.set_attribute('cost_estimate', self.cost_estimate)
 
                 try:
-                    # #region agent log
-                    import json as _dbg_json; open('/Users/mattevanoff/Desktop/Github/axion/.cursor/debug.log', 'a').write(_dbg_json.dumps({'location': 'handler.py:318', 'message': 'Before log_llm_call', 'data': {'response_text_len': len(response_text)}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'hypothesisId': 'D'}) + '\n')
-                    # #endregion
                     # Log the call to tracer
                     self.tracer.log_llm_call(
                         model=model_name,
@@ -335,19 +325,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                         cost_estimate=self.cost_estimate,
                         provider=provider,
                     )
-                    # #region agent log
-                    import json as _dbg_json; open('/Users/mattevanoff/Desktop/Github/axion/.cursor/debug.log', 'a').write(_dbg_json.dumps({'location': 'handler.py:332', 'message': 'After log_llm_call - no warning here', 'data': {}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'hypothesisId': 'D'}) + '\n')
-                    # #endregion
                 except:
                     pass
 
-                # #region agent log
-                import json as _dbg_json; open('/Users/mattevanoff/Desktop/Github/axion/.cursor/debug.log', 'a').write(_dbg_json.dumps({'location': 'handler.py:331', 'message': 'Before span.set_output with parsed_output', 'data': {'parsed_output_type': type(parsed_output).__name__}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'hypothesisId': 'A'}) + '\n')
-                # #endregion
                 span.set_output(parsed_output)  # Capture LLM output
-                # #region agent log
-                import json as _dbg_json; open('/Users/mattevanoff/Desktop/Github/axion/.cursor/debug.log', 'a').write(_dbg_json.dumps({'location': 'handler.py:335', 'message': 'After span.set_output - no warning here', 'data': {}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'hypothesisId': 'A'}) + '\n')
-                # #endregion
                 return parsed_output
 
             except litellm.exceptions.RateLimitError as e:

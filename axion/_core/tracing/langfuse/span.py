@@ -181,14 +181,7 @@ class LangfuseSpan:
         if data is None:
             return None
         elif hasattr(data, 'model_dump'):
-            # #region agent log
-            import json as _dbg_json; open('/Users/mattevanoff/Desktop/Github/axion/.cursor/debug.log', 'a').write(_dbg_json.dumps({'location': 'langfuse/span.py:184', 'message': 'Before model_dump in langfuse span', 'data': {'data_type': type(data).__name__, 'data_module': type(data).__module__}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'hypothesisId': 'A-langfuse'}) + '\n')
-            # #endregion
-            result = data.model_dump()
-            # #region agent log
-            import json as _dbg_json; open('/Users/mattevanoff/Desktop/Github/axion/.cursor/debug.log', 'a').write(_dbg_json.dumps({'location': 'langfuse/span.py:188', 'message': 'After model_dump in langfuse span', 'data': {}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'hypothesisId': 'A-langfuse'}) + '\n')
-            # #endregion
-            return result
+            return data.model_dump()
         elif hasattr(data, 'dict'):
             return data.dict()
         elif isinstance(data, (dict, list, str, int, float, bool)):
