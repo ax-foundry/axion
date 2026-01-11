@@ -1,10 +1,17 @@
-# Axion
+# AXION
 
-**A modular evaluation framework for AI agents.**
+<strong>A</strong>gent <strong>X</strong>-Ray <strong>I</strong>nspection & <strong>O</strong>ptimization <strong>N</strong>etwork
 
-Axion provides plug-and-play building blocks for evaluating generative AI agents—going beyond surface-level metrics to focus on what truly matters: continuously improving agents to perform in the real world.
+![header](resources/toolkit_readme.png)
 
----
+
+**A modular white box evaluation framework for AI agents.**
+
+<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
+
+Axion provides plug-and-play building blocks for evaluating generative AI agents—going beyond surface-level metrics to focus on what truly matters: continuously improving agents to perform in the real world.</p>
+</div>
+
 
 ## Why Axion?
 
