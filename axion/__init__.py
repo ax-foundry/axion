@@ -1,3 +1,20 @@
+# Suppress Pydantic v2 warnings about validate_default in Field()
+# This warning occurs when Field() is used with validate_default in certain contexts
+import warnings
+
+warnings.filterwarnings(
+    'ignore',
+    message=".*validate_default.*",
+    module='pydantic.*',
+)
+
+# Also suppress by specific warning category if available
+try:
+    from pydantic import PydanticDeprecatedSince20
+    warnings.filterwarnings('ignore', category=PydanticDeprecatedSince20)
+except ImportError:
+    pass
+
 # Core data structures
 from axion.dataset import Dataset, DatasetItem
 from axion.schema import MetricScore, EvaluationResult, TestResult, ErrorConfig

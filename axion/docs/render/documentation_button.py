@@ -1,7 +1,7 @@
 import re
 from typing import Any, Callable, Union
 
-from axion.docs.render.documentation.base_modal import BaseModalButton
+from axion.docs.render.base_modal import BaseModalButton
 
 
 class DocumentationButton(BaseModalButton):

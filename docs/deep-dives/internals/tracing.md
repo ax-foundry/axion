@@ -41,14 +41,14 @@ Configuration is managed by a single, unified environment variable that is read 
 
 ### Environment Variable
 
-Set `AI_TOOLKIT_TRACING_MODE` (in standalone mode) to one of the following values:
+Set `TRACING_MODE` (in standalone mode) to one of the following values:
 
 | tracing_mode | Description                                                                                                          | Additional Env Vars Needed |
 |---|----------------------------------------------------------------------------------------------------------------------|---|
 | `noop` | Disables all tracing. Methods are available but do nothing. Ideal for tests or performance-critical tasks. | None |
 | `logfire_local` | For local development. Sends traces to a local UI started with the `logfire dev` command.                            | None |
-| `logfire_hosted` | For local development. Sends traces to the Logfire cloud service.                                                    | `AI_TOOLKIT_LOGFIRE_TOKEN` |
-| `logfire_otel` | For our production via custom environments. Sends traces to a specified OpenTelemetry (OTEL) endpoint.               | `AI_TOOLKIT_OTEL_ENDPOINT` |
+| `logfire_hosted` | For local development. Sends traces to the Logfire cloud service.                                                    | `LOGFIRE_TOKEN` |
+| `logfire_otel` | For our production via custom environments. Sends traces to a specified OpenTelemetry (OTEL) endpoint.               | `OTEL_ENDPOINT` |
 
 ### Programmatic Configuration
 

@@ -22,7 +22,7 @@ class BaseRetriever:
         return ToolMetadata(
             name=self.__class__.__name__,
             description=f'Search {self.__class__.__name__} API client',
-            owner='AI Toolkit',
+            owner='AXION',
             version='1.0.0',
         )
 

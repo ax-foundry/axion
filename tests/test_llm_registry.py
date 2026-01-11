@@ -71,12 +71,12 @@ def reset_settings_and_env(monkeypatch):
     # Store original values
     original_llm_provider = settings.llm_provider
     original_model_name = settings.llm_model_name
-    original_api_key = settings.gateway_api_key
+    original_api_key = settings.openai_api_key
     original_base_url = settings.api_base_url
 
     # Set to a known default state for testing
     monkeypatch.setattr(settings, 'llm_model_name', 'gpt-4o')
-    monkeypatch.setattr(settings, 'gateway_api_key', 'test-key')
+    monkeypatch.setattr(settings, 'openai_api_key', 'test-key')
     monkeypatch.setattr(settings, 'api_base_url', None)
 
     # Clean up any test-specific environment variables
@@ -89,7 +89,7 @@ def reset_settings_and_env(monkeypatch):
     # Teardown: Restore original values
     settings.llm_provider = original_llm_provider
     settings.llm_model_name = original_model_name
-    settings.gateway_api_key = original_api_key
+    settings.openai_api_key = original_api_key
     settings.api_base_url = original_base_url
 
 
@@ -133,7 +133,7 @@ def test_registry_cost_settings_precedence(monkeypatch):
     """
     monkeypatch.setattr(settings, 'llm_provider', 'llm_gateway')
     monkeypatch.setattr(settings, 'llm_model_name', 'gpt-4')
-    monkeypatch.setattr(settings, 'gateway_api_key', 'mock-key')
+    monkeypatch.setattr(settings, 'openai_api_key', 'mock-key')
 
     registry = LLMRegistry(api_key='mock-key')
     cost = registry.estimate_cost(prompt_tokens=100, completion_tokens=200)
@@ -148,12 +148,12 @@ def test_registry_cost_environment_variable_precedence(monkeypatch):
     """
     monkeypatch.setenv('LLM_PROVIDER', 'llama_index')
     monkeypatch.setenv('LLM_MODEL_NAME', 'o1')
-    monkeypatch.setenv('GATEWAY_API_KEY', 'mock-key')  # Set the env var
+    monkeypatch.setenv('OPENAI_API_KEY', 'mock-key')  # Set the env var
 
     # Re-evaluate Settings to pick up env vars
     monkeypatch.setattr(settings, 'llm_provider', os.environ.get('LLM_PROVIDER'))
     monkeypatch.setattr(settings, 'llm_model_name', os.environ.get('LLM_MODEL_NAME'))
-    monkeypatch.setattr(settings, 'gateway_api_key', os.environ.get('GATEWAY_API_KEY'))
+    monkeypatch.setattr(settings, 'openai_api_key', os.environ.get('OPENAI_API_KEY'))
 
     registry = LLMRegistry()  # No explicit api_key, should use Settings
     cost = registry.estimate_cost(prompt_tokens=5000, completion_tokens=1000)

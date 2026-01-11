@@ -23,8 +23,8 @@ configure_tracing('noop', force=True)
 
 
 # Mock metric implementations for testing
-class MockAIToolkitMetric:
-    """Mock AI Toolkit metric for testing."""
+class MockAXIONMetric:
+    """Mock AXION metric for testing."""
 
     def __init__(
         self,
@@ -36,7 +36,7 @@ class MockAIToolkitMetric:
         self.should_fail = should_fail
         self.threshold = 0.5
         self.cost_estimate = cost_estimate
-        self.name = 'MockAIToolkitMetric'
+        self.name = 'MockAXIONMetric'
 
     async def execute(self, input_data: DatasetItem, **kwargs):
         if self.should_fail:
@@ -45,15 +45,15 @@ class MockAIToolkitMetric:
         return MockMetricResult(score=self.score_value, explanation='Mock explanation')
 
 
-class MockAIToolkitMetricTest:
-    """Mock AI Toolkit metric for testing."""
+class MockAXIONMetricTest:
+    """Mock AXION metric for testing."""
 
     __module__ = 'axion.metrics.something'
 
     def __init__(self, score_value: float = 0.8):
         self.score_value = score_value
         self.threshold = 0.5
-        self.name = 'MockAIToolkitMetric'
+        self.name = 'MockAXIONMetric'
 
     async def execute(self, input_data: DatasetItem, **kwargs):
         return MockMetricResult(score=self.score_value, explanation='Mock explanation')
@@ -276,7 +276,7 @@ class TestMetricRunner:
 
     def test_init_with_single_metric(self):
         """Test MetricRunner initialization with single metric."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MetricRunner(metrics=[mock_metric])
 
         assert runner.name == 'MetricRunner'
@@ -287,8 +287,8 @@ class TestMetricRunner:
 
     def test_init_with_multiple_metrics(self):
         """Test MetricRunner initialization with multiple metrics."""
-        metrics = [MockAIToolkitMetric(), MockRagasMetric(), MockDeepEvalMetric()]
-        thresholds = {'MockAIToolkitMetric': 0.6, 'MockRagasMetric': 0.7}
+        metrics = [MockAXIONMetric(), MockRagasMetric(), MockDeepEvalMetric()]
+        thresholds = {'MockAXIONMetric': 0.6, 'MockRagasMetric': 0.7}
 
         runner = MetricRunner(metrics=metrics, thresholds=thresholds, max_concurrent=10)
 
@@ -298,7 +298,7 @@ class TestMetricRunner:
 
     def test_init_with_cache_manager(self):
         """Test MetricRunner initialization with cache manager."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         cache_manager = MockCacheManager()
 
         runner = MetricRunner(metrics=[mock_metric], cache_manager=cache_manager)
@@ -307,7 +307,7 @@ class TestMetricRunner:
 
     def test_init_with_custom_summary_generator(self):
         """Test MetricRunner initialization with custom summary generator."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         summary_gen = MockSummaryGenerator()
 
         runner = MetricRunner(metrics=[mock_metric], summary_generator=summary_gen)
@@ -335,11 +335,11 @@ class TestMetricRunner:
     def test_get_metric_type(self):
         """Test metric type detection."""
 
-        class UnknownToolkitMetric:
+        class UnknownAxionMetric:
             __module__ = 'unknown.evaluation.metrics.something'
 
         _ = MetricRunner(metrics=[])
-        metric = UnknownToolkitMetric()
+        metric = UnknownAxionMetric()
         assert MetricRunnerFactory._get_metric_type(metric) == 'axion'
 
     def test_available_types_property(self):
@@ -355,7 +355,7 @@ class TestMetricRunner:
     @pytest.mark.asyncio
     async def test_execute_batch_with_single_metric(self):
         """Test batch execution with single metric."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MetricRunner(metrics=[mock_metric])
 
         dataset_items = [
@@ -375,7 +375,7 @@ class TestMetricRunner:
     @pytest.mark.asyncio
     async def test_execute_batch_with_multiple_metrics(self):
         """Test batch execution with multiple metrics."""
-        metrics = [MockAIToolkitMetric(), MockRagasMetric()]
+        metrics = [MockAXIONMetric(), MockRagasMetric()]
         runner = MetricRunner(metrics=metrics)
 
         dataset_items = [
@@ -390,7 +390,7 @@ class TestMetricRunner:
     @pytest.mark.asyncio
     async def test_execute_batch_with_dataframe_use_default_name(self):
         """Test batch execution with DataFrame input."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MetricRunner(metrics=[mock_metric])
 
         df = pd.DataFrame(
@@ -406,7 +406,7 @@ class TestMetricRunner:
     @pytest.mark.asyncio
     async def test_execute_batch_with_dataframe(self):
         """Test batch execution with DataFrame input."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MetricRunner(metrics=[mock_metric], dataset_name='test')
 
         df = pd.DataFrame(
@@ -426,7 +426,7 @@ class TestMetricRunner:
     @pytest.mark.asyncio
     async def test_execute_batch_with_empty_input(self):
         """Test batch execution with empty input."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MetricRunner(metrics=[mock_metric])
 
         results = await runner.execute_batch([], show_progress=False)
@@ -446,7 +446,7 @@ class TestMetricRunner:
 
     def test_display_method(self):
         """Test display method."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         _ = MetricRunner(metrics=[mock_metric])
 
         # Should not raise any exceptions
@@ -460,7 +460,7 @@ class TestMetricRunner:
     @pytest.mark.asyncio
     async def test_caching_functionality(self):
         """Test caching functionality."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         cache_manager = MockCacheManager()
         runner = MetricRunner(metrics=[mock_metric], cache_manager=cache_manager)
 
@@ -495,7 +495,7 @@ class TestMetricRunner:
                     source='param_dependent',
                 )
 
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         error_config = ErrorConfig(skip_on_missing_params=True)
         runner = MetricRunner(metrics=[mock_metric], error_config=error_config)
 
@@ -519,7 +519,7 @@ class TestBaseMetricRunner:
 
     def test_init(self):
         """Test BaseMetricRunner initialization."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MockTestMetricRunner(mock_metric, threshold=0.7)
 
         assert runner.metric is mock_metric
@@ -527,7 +527,7 @@ class TestBaseMetricRunner:
 
     def test_init_with_metric_threshold(self):
         """Test initialization using metric's default threshold."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         mock_metric.threshold = 0.6
         runner = MockTestMetricRunner(mock_metric)
 
@@ -535,7 +535,7 @@ class TestBaseMetricRunner:
 
     def test_abstract_execute_method(self):
         """Test that BaseMetricRunner is abstract."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
 
         # Should not be able to instantiate BaseMetricRunner directly
         with pytest.raises(TypeError):
@@ -563,7 +563,7 @@ class TestBaseMetricRunner:
 
     def test_has_passed_with_valid_score(self):
         """Test _has_passed with valid score above threshold."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MockTestMetricRunner(mock_metric, threshold=0.5)
 
         assert runner._has_passed(0.7) is True
@@ -572,7 +572,7 @@ class TestBaseMetricRunner:
 
     def test_has_passed_with_invalid_inputs(self):
         """Test _has_passed with invalid inputs."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MockTestMetricRunner(mock_metric, threshold=0.5)
 
         assert runner._has_passed(None) is None
@@ -584,7 +584,7 @@ class TestBaseMetricRunner:
 
     def test_create_error_score(self):
         """Test _create_error_score method."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MockTestMetricRunner(mock_metric)
         error = RuntimeError('Test error')
 
@@ -599,14 +599,14 @@ class TestBaseMetricRunner:
 
     def test_metric_name_property(self):
         """Test metric_name property."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MockTestMetricRunner(mock_metric)
 
-        assert runner.metric_name == 'MockAIToolkitMetric'
+        assert runner.metric_name == 'MockAXIONMetric'
 
     def test_source_property(self):
         """Test source property."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MockTestMetricRunner(mock_metric)
 
         assert runner.source == 'test_metric'
@@ -622,8 +622,8 @@ class TestAxionRunner:
 
     @pytest.mark.asyncio
     async def test_successful_execution(self):
-        """Test successful AI Toolkit metric execution."""
-        mock_metric = MockAIToolkitMetric(score_value=0.85)
+        """Test successful AXION metric execution."""
+        mock_metric = MockAXIONMetric(score_value=0.85)
         runner = AxionRunner(mock_metric, threshold=0.7)
 
         input_data = DatasetItem(
@@ -633,7 +633,7 @@ class TestAxionRunner:
 
         assert isinstance(result, MetricScore)
         assert result.id == 'test_id'
-        assert result.name == 'MockAIToolkitMetric'
+        assert result.name == 'MockAXIONMetric'
         assert result.score == 0.85
         assert result.threshold == 0.7
         assert result.passed is True
@@ -642,8 +642,8 @@ class TestAxionRunner:
 
     @pytest.mark.asyncio
     async def test_failed_execution(self):
-        """Test failed AI Toolkit metric execution."""
-        mock_metric = MockAIToolkitMetric(should_fail=True)
+        """Test failed AXION metric execution."""
+        mock_metric = MockAXIONMetric(should_fail=True)
         runner = AxionRunner(mock_metric)
 
         input_data = DatasetItem(
@@ -659,7 +659,7 @@ class TestAxionRunner:
     @pytest.mark.asyncio
     async def test_execution_with_dict_input(self):
         """Test execution with dictionary input."""
-        mock_metric = MockAIToolkitMetric(score_value=0.75)
+        mock_metric = MockAXIONMetric(score_value=0.75)
         runner = AxionRunner(mock_metric)
 
         input_dict = {
@@ -805,7 +805,7 @@ class TestMetricRunnerIntegration:
             patch('deepeval.test_case.LLMTestCase'),
         ):
             metrics = [
-                MockAIToolkitMetricTest(score_value=0.8),
+                MockAXIONMetricTest(score_value=0.8),
                 MockRagasMetricTest(score_value=0.7),
                 MockDeepEvalMetricTest(score_value=0.9),
             ]
@@ -843,7 +843,7 @@ class TestMetricRunnerErrorHandling:
     @pytest.mark.asyncio
     async def test_invalid_dataset_input(self):
         """Test handling of invalid dataset input."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MetricRunner(metrics=[mock_metric])
 
         # Test with invalid input type
@@ -853,7 +853,7 @@ class TestMetricRunnerErrorHandling:
     @pytest.mark.asyncio
     async def test_cache_key_generation(self):
         """Test cache key generation."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MetricRunner(metrics=[mock_metric])
 
         # Create a mock executor to test cache key generation
@@ -887,7 +887,7 @@ class TestMetricRunnerPerformance:
     @pytest.mark.asyncio
     async def test_large_batch_execution(self):
         """Test execution with large batch of dataset items."""
-        mock_metric = MockAIToolkitMetric()
+        mock_metric = MockAXIONMetric()
         runner = MetricRunner(metrics=[mock_metric], max_concurrent=10)
 
         dataset_items = [
@@ -937,7 +937,7 @@ def sample_dataset_items():
 def sample_metrics():
     """Fixture providing sample metrics."""
     return [
-        MockAIToolkitMetric(score_value=0.8),
+        MockAXIONMetric(score_value=0.8),
         MockRagasMetric(score_value=0.75),
         MockDeepEvalMetric(score_value=0.9),
     ]
@@ -952,7 +952,7 @@ def configured_metric_runner(sample_metrics):
     MetricRunnerFactory.register('deepeval')(DeepEvalRunner)
 
     thresholds = {
-        'MockAIToolkitMetric': 0.7,
+        'MockAXIONMetric': 0.7,
         'MockRagasMetric': 0.6,
         'MockDeepEvalMetric': 0.8,
     }
@@ -997,7 +997,7 @@ class TestWithFixtures:
     def test_threshold_application(self, sample_metrics):
         """Test that thresholds are correctly applied."""
         thresholds = {
-            'MockAIToolkitMetric': 0.9,  # High threshold
+            'MockAXIONMetric': 0.9,  # High threshold
             'MockRagasMetric': 0.5,  # Low threshold
             'MockDeepEvalMetric': 0.95,  # Very high threshold
         }

@@ -113,13 +113,13 @@ results = await runner.execute_batch(
 ### Direct Executor Usage
 
 ```python
-from axion.runners import AIToolkitRunner
+from axion.runners import AxionRunner
 from axion.metrics import AnswerRelevancy
 from axion.dataset import DatasetItem
 
 # Initialize specific executor directly
 metric = AnswerRelevancy()
-executor = AIToolkitRunner(metric=metric, threshold=0.7)
+executor = AxionRunner(metric=metric, threshold=0.7)
 
 # Execute single evaluation
 data_item = DatasetItem(

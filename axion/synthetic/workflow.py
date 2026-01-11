@@ -628,7 +628,7 @@ class QAWorkflowGraph:
         return ToolMetadata(
             name=self.__class__.__name__,
             description='QA Workflow Actions',
-            owner='AI Toolkit',
+            owner='AXION',
             version='1.0.0',
         )
 

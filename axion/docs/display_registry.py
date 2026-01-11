@@ -1537,7 +1537,7 @@ class MetricRunnerRegistryExtractor(BaseRegistryExtractor):
 
         # Add capability tags based on class analysis
         class_name = item.__name__.lower()
-        if 'axion' in framework_name or 'toolkit' in class_name:
+        if 'axion' in framework_name or 'axion' in class_name:
             tags.extend([])
         elif 'ragas' in framework_name:
             tags.extend([])
@@ -1709,7 +1709,7 @@ print(f"Score: {{result.score}}, Explanation: {{result.explanation}}")"""
 
         # Framework-specific notes
         framework_notes = {
-            'axion': 'Native AI Toolkit metrics with async support and rich response objects.',
+            'axion': 'Native AXION metrics with async support and rich response objects.',
             'ragas': 'RAG-focused metrics using SingleTurnSample format for retrieval evaluation.',
             'deepeval': 'LLM evaluation metrics using LLMTestCase format with comprehensive testing.',
         }

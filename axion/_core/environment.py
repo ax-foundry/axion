@@ -97,7 +97,7 @@ class AxionConfig(BaseModel):
         default='openai', description='Default provider for embedding models.'
     )
     llm_model_name: str = Field(
-        default='gpt-4', description='Default language model name.'
+        default='gpt-4o', description='Default language model name.'
     )
     embedding_model_name: str = Field(
         default='text-embedding-ada-002', description='Default embedding model name.'
@@ -105,8 +105,20 @@ class AxionConfig(BaseModel):
     api_base_url: Optional[str] = Field(
         default=None, description='Optional base URL for compatible APIs.'
     )
-    gateway_api_key: Optional[str] = Field(
-        default=None, description='API key for the gateway or platform.'
+
+    litellm_verbose: bool = Field(
+        default=False,
+        description='Enable verbose logging for LiteLLM. Set to True for debugging LLM calls.',
+    )
+
+    openai_api_key: Optional[str] = Field(
+        default=None, description='API key for OpenAI models (used by LiteLLM).'
+    )
+    anthropic_api_key: Optional[str] = Field(
+        default=None, description='API key for Anthropic Claude models.'
+    )
+    google_api_key: Optional[str] = Field(
+        default=None, description='API key for Google Gemini models.'
     )
 
     # Web Search
@@ -176,6 +188,31 @@ class AppSettings(BaseSettings, AxionConfig):
 
 # Global Settings
 settings = AppSettings()
+
+
+def _configure_litellm() -> None:
+    """Configure LiteLLM logging based on settings."""
+    import logging
+
+    try:
+        import litellm
+
+        litellm.set_verbose = settings.litellm_verbose
+        litellm.suppress_debug_info = not settings.litellm_verbose
+
+        # Set LiteLLM logger level based on verbose setting
+        litellm_logger = logging.getLogger('LiteLLM')
+        if settings.litellm_verbose:
+            litellm_logger.setLevel(logging.DEBUG)
+        else:
+            litellm_logger.setLevel(logging.WARNING)
+
+    except ImportError:
+        pass  # LiteLLM not installed, skip configuration
+
+
+# Apply LiteLLM configuration on module load
+_configure_litellm()
 
 
 def resolve_api_key(

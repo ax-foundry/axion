@@ -1,8 +1,8 @@
 import re
 from typing import Any, Callable, Optional, Union
 
-from axion.docs.render.documentation.code_usage_button import UsageButton
-from axion.docs.render.documentation.documentation_button import DocumentationButton
+from axion.docs.render.code_usage_button import UsageButton
+from axion.docs.render.documentation_button import DocumentationButton
 
 
 class ModalButtonCard:

@@ -14,9 +14,9 @@ logger = get_logger(__name__)
 
 class BaseHandler(ABC, Generic[InputModel, OutputModel]):
     """
-    Abstract base class for AI toolkit handlers with unified tracing and metadata tracking.
+    Abstract base class for AXION handlers with unified tracing and metadata tracking.
 
-    This class provides the foundation for all handler implementations in AI toolkit,
+    This class provides the foundation for all handler implementations in AXION,
     establishing a consistent interface and lifecycle for processing requests. It handles
     input validation, unified metadata tracking, execution, and output formatting.
 

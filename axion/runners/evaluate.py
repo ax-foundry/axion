@@ -288,7 +288,7 @@ class EvaluationRunner(RunnerMixin):
         raise InvalidConfig(
             f"Failed to find or create metric '{name}'. "
             f"Could not find '{class_key}' in registry or as a valid class path. \n"
-            f'For internal toolkit metrics see metric_registry.display() to pass the metric name. \n'
+            f'For internal AXION metrics see metric_registry.display() to pass the metric name. \n'
             f'For external metrics must pass full path (i.e. deepeval.metrics.AnswerRelevancyMetric) \n'
         )
 
@@ -544,7 +544,7 @@ class EvaluationRunner(RunnerMixin):
             hierarchical_usage_template,
             task_usage_template,
         )
-        from axion.docs.render.documentation import create_multi_usage_modal_card
+        from axion.docs.render import create_multi_usage_modal_card
         from IPython.display import HTML, display
 
         evaluation_runner_card = create_multi_usage_modal_card(

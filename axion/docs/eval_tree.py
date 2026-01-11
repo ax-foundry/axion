@@ -109,7 +109,7 @@ EvalTree orchestrates complex, multi-faceted evaluations by building a hierarchi
 ## Key Features
 - ✅ **Hierarchical Scoring**: Define complex scoring logic with nested components.
 - ✅ **Flexible Configuration**: Configure evaluations from YAML files or directly in Python.
-- ✅ **Metric Integration**: Supports Ragas, DeepEval, BEAM, and custom AI Toolkit metrics.
+- ✅ **Metric Integration**: Supports Ragas, DeepEval, BEAM, and custom AXION metrics.
 - ✅ **Concurrent Execution**: Parallel processing for efficient, large-scale evaluations.
 - ✅ **Visualization**: Interactive tree diagrams to inspect scores and weights at every level.
 - ✅ **Optimized Batching**: Intelligently groups API calls to maximize throughput.
