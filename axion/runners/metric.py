@@ -8,15 +8,17 @@ from typing import Any, Callable, ClassVar, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
+
 from axion._core.asyncio import SemaphoreExecutor, gather_with_progress
+from axion._core.cache.manager import CacheManager
 from axion._core.logging import configure_logging, get_logger
 from axion._core.tracing import init_tracer, trace
 from axion._core.tracing.handlers import BaseTraceHandler
 from axion._core.utils import Timer
-from axion._core.cache.manager import CacheManager
 from axion.dataset import Dataset, DatasetItem, format_input
 from axion.metrics.cache import AnalysisCache
 from axion.metrics.signal_extractor import SignalExtractor
+from axion.runners.cost import extract_cost
 from axion.runners.mixin import RunnerMixin
 from axion.runners.summary import BaseSummary, MetricSummary
 from axion.runners.utils import input_to_dataset
@@ -309,6 +311,13 @@ class MetricRunner(RunnerMixin):
         self._check_valid_input(evaluation_inputs)
         dataset = input_to_dataset(evaluation_inputs, self.dataset_name)
 
+        # Capture input - batch processing info
+        if hasattr(self.tracer, 'current_span') and self.tracer.current_span:
+            self.tracer.current_span.set_input({
+                'input_count': len(dataset) if dataset else 0,
+                'metrics': [e.metric_name for e in self.executors],
+            })
+
         if not self.executors or not dataset:
             logger.warning(
                 'No metric executors or data provided. Returning empty results.'
@@ -373,6 +382,22 @@ class MetricRunner(RunnerMixin):
                 final_results, self.elapsed_time
             )
 
+        # Capture output - batch results summary
+        if hasattr(self.tracer, 'current_span') and self.tracer.current_span:
+            # Count passed metrics across all test results
+            total_scores = sum(len(r.score_results) for r in final_results)
+            passed_count = sum(
+                1 for r in final_results
+                for score in r.score_results
+                if score.passed
+            )
+            self.tracer.current_span.set_output({
+                'results_count': len(final_results),
+                'total_scores': total_scores,
+                'passed_count': passed_count,
+                'success_rate': passed_count / total_scores if total_scores else 0,
+            })
+
         return final_results
 
     @classmethod
@@ -425,6 +450,15 @@ class AxionRunner(BaseMetricRunner):
 
             input_data = format_input(input_data)
 
+            span.set_input({
+                'query': getattr(input_data, 'query', None),
+                'actual_output': getattr(input_data, 'actual_output', None),
+                'expected_output': getattr(input_data, 'expected_output', None),
+                'retrieved_content': getattr(input_data, 'retrieved_content', None),
+                'additional_input': getattr(input_data, 'additional_input', None),
+                'latency': getattr(input_data, 'latency', None),
+            })
+
             try:
                 result = await self.metric.execute(input_data, cache=cache)
                 score = getattr(result, 'score', np.nan)
@@ -435,6 +469,13 @@ class AxionRunner(BaseMetricRunner):
 
                 span.set_attribute('score', float(score))
                 span.set_attribute('passed', self._has_passed(score))
+
+                span.set_output({
+                    'score': float(score) if not np.isnan(score) else None,
+                    'passed': self._has_passed(score),
+                    'explanation': getattr(result, 'explanation', None),
+                    'signals': signals,
+                })
 
                 return MetricScore(
                     id=input_data.id,
@@ -476,6 +517,13 @@ class RagasRunner(BaseMetricRunner):
             input_data = format_input(input_data)
             EvaluationValidation.ensure_required_fields_present(input_data, self._name)
 
+            span.set_input({
+                'query': getattr(input_data, 'query', None),
+                'actual_output': getattr(input_data, 'actual_output', None),
+                'expected_output': getattr(input_data, 'expected_output', None),
+                'retrieved_content': getattr(input_data, 'retrieved_content', None),
+            })
+
             try:
                 async with self.tracer.async_span('create_sample') as sample_span:
                     sample_span.add_trace(
@@ -483,6 +531,16 @@ class RagasRunner(BaseMetricRunner):
                     )
 
                     additional = input_data.additional_input
+
+                    sample_span.set_input({
+                        'user_input': input_data.query,
+                        'response': input_data.actual_output,
+                        'reference': input_data.expected_output,
+                        'retrieved_contexts': self._prepare_retrieved_content(
+                            input_data.retrieved_content
+                        ),
+                        'reference_contexts': additional.get('reference_contexts'),
+                    })
 
                     sample = SingleTurnSample(
                         user_input=input_data.query,
@@ -495,8 +553,25 @@ class RagasRunner(BaseMetricRunner):
                         multi_responses=additional.get('multi_responses'),
                         rubrics=additional.get('rubrics'),
                     )
+
+                    sample_span.set_output({
+                        'sample_type': 'SingleTurnSample',
+                        'has_reference': input_data.expected_output is not None,
+                        'has_retrieved_contexts': input_data.retrieved_content is not None,
+                    })
                 score = await self.metric.single_turn_ascore(sample)
                 span.set_attribute('score', float(score))
+
+                # Extract cost using scalable cost extraction utility
+                # Follows Ragas cost tracking pattern:
+                # https://docs.ragas.io/en/stable/howtos/applications/_cost/
+                cost = extract_cost(self.metric)
+
+                # Capture output - the metric result
+                span.set_output({
+                    'score': float(score) if score is not None else None,
+                    'passed': self._has_passed(score),
+                })
 
                 return MetricScore(
                     id=input_data.id,
@@ -505,11 +580,7 @@ class RagasRunner(BaseMetricRunner):
                     threshold=self.threshold,
                     passed=self._has_passed(score),
                     source=self.source,
-                    cost_estimate=(
-                        self.metric.llm.cost_estimate
-                        if getattr(self.metric, 'llm', 0)
-                        else 0
-                    ),
+                    cost_estimate=cost,
                 )
             except Exception as e:
                 logger.error(f'Ragas execution failed for {self.metric_name}: {e}')
@@ -539,6 +610,13 @@ class DeepEvalRunner(BaseMetricRunner):
             input_data = format_input(input_data)
             EvaluationValidation.ensure_required_fields_present(input_data, self._name)
 
+            span.set_input({
+                'query': getattr(input_data, 'query', None),
+                'actual_output': getattr(input_data, 'actual_output', None),
+                'expected_output': getattr(input_data, 'expected_output', None),
+                'retrieved_content': getattr(input_data, 'retrieved_content', None),
+            })
+
             try:
                 async with self.tracer.async_span('create_test_case') as test_case_span:
                     test_case_span.add_trace(
@@ -546,6 +624,17 @@ class DeepEvalRunner(BaseMetricRunner):
                     )
 
                     additional = input_data.additional_input
+
+                    test_case_span.set_input({
+                        'input': input_data.query,
+                        'actual_output': input_data.actual_output,
+                        'expected_output': input_data.expected_output,
+                        'retrieval_context': self._prepare_retrieved_content(
+                            input_data.retrieved_content
+                        ),
+                        'completion_time': input_data.latency,
+                        'context': additional.get('context'),
+                    })
 
                     test_case = LLMTestCase(
                         input=input_data.query,
@@ -563,9 +652,25 @@ class DeepEvalRunner(BaseMetricRunner):
                         additional_metadata=input_data.metadata,
                     )
 
+                    test_case_span.set_output({
+                        'test_case_type': 'LLMTestCase',
+                        'has_expected_output': input_data.expected_output is not None,
+                        'has_retrieval_context': input_data.retrieved_content is not None,
+                        'has_completion_time': input_data.latency is not None,
+                    })
+
                 await self.metric.a_measure(test_case, _show_indicator=False)
                 score = self.metric.score
                 span.set_attribute('score', float(score))
+
+                # Extract cost using scalable cost extraction utility
+                cost = extract_cost(self.metric)
+
+                span.set_output({
+                    'score': float(score) if score is not None else None,
+                    'passed': self._has_passed(score),
+                    'explanation': getattr(self.metric, 'reason', None),
+                })
 
                 return MetricScore(
                     id=input_data.id,
@@ -575,11 +680,7 @@ class DeepEvalRunner(BaseMetricRunner):
                     threshold=self.threshold,
                     passed=self._has_passed(score),
                     source=self.source,
-                    cost_estimate=(
-                        self.metric.model.cost_estimate
-                        if getattr(self.metric, 'model', None)
-                        else 0
-                    ),
+                    cost_estimate=cost,
                 )
 
             except Exception as e:

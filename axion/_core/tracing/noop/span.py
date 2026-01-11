@@ -38,7 +38,11 @@ class Span:
         """No-op attributes setting."""
         pass
 
-    def set_output(self, key: str, value: Any):
+    def set_input(self, data: Any) -> None:
+        """No-op input setting."""
+        pass
+
+    def set_output(self, data: Any) -> None:
         """No-op output setting."""
         pass
 

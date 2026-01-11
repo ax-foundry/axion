@@ -30,6 +30,7 @@ class TracingMode(str, RichEnum):
     LOGFIRE_LOCAL = 'logfire_local'
     LOGFIRE_HOSTED = 'logfire_hosted'
     LOGFIRE_OTEL = 'logfire_otel'
+    LANGFUSE = 'langfuse'
 
 
 class Port(int):
@@ -168,6 +169,23 @@ class AxionConfig(BaseModel):
     logfire_project_name: Optional[str] = Field(default=None, alias='LOGFIRE_PROJECT')
     logfire_distributed_tracing: bool = Field(default=True, alias='DISTRIBUTED_TRACING')
     logfire_console_logging: bool = Field(default=False, alias='CONSOLE_LOGGING')
+
+    # Langfuse Settings
+    langfuse_public_key: Optional[str] = Field(
+        default=None,
+        alias='LANGFUSE_PUBLIC_KEY',
+        description='Langfuse public key for authentication.',
+    )
+    langfuse_secret_key: Optional[str] = Field(
+        default=None,
+        alias='LANGFUSE_SECRET_KEY',
+        description='Langfuse secret key for authentication.',
+    )
+    langfuse_base_url: str = Field(
+        default='https://cloud.langfuse.com',
+        alias='LANGFUSE_BASE_URL',
+        description='Langfuse API endpoint (cloud.langfuse.com for EU, us.cloud.langfuse.com for US).',
+    )
 
 
 ###################################

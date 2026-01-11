@@ -208,8 +208,13 @@ class BaseHandler(ABC, Generic[InputModel, OutputModel]):
         callbacks = callbacks or []
 
         # Main generation span covers the entire handler execution
+        # Use metadata.name if available, otherwise fall back to class name
+        span_name = (
+            getattr(self.metadata, 'name', None)
+            or self.__class__.__name__
+        )
         async with self.async_span(
-            f'{self.handler_type}_handler',
+            span_name,
             handler_name=self.name,
             handler_type=self.__class__.__name__,
             callbacks_count=len(callbacks),

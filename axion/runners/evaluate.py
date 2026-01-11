@@ -3,12 +3,15 @@ from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import pandas as pd
-from axion._core.config import Config
+
 from axion._core.asyncio import (
     SemaphoreExecutor,
     gather_with_progress,
     run_async_function,
 )
+from axion._core.cache.manager import CacheManager
+from axion._core.cache.schema import CacheConfig
+from axion._core.config import Config
 from axion._core.error import InvalidConfig
 from axion._core.logging import configure_logging, get_logger
 from axion._core.metadata.schema import ToolMetadata
@@ -16,8 +19,6 @@ from axion._core.tracing import init_tracer, trace
 from axion._core.tracing.handlers import BaseTraceHandler
 from axion._core.utils import Timer
 from axion._core.uuid import uuid7
-from axion._core.cache.manager import CacheManager
-from axion._core.cache.schema import CacheConfig
 from axion.dataset import Dataset, DatasetItem
 from axion.metrics import metric_registry
 from axion.runners.api import BaseAPIRunner
@@ -537,6 +538,8 @@ class EvaluationRunner(RunnerMixin):
     @classmethod
     def display(cls):
         """Display Usage Documentation"""
+        from IPython.display import HTML, display
+
         from axion.docs.evaluate import (
             advanced_usage_template,
             basic_usage_template,
@@ -545,7 +548,6 @@ class EvaluationRunner(RunnerMixin):
             task_usage_template,
         )
         from axion.docs.render import create_multi_usage_modal_card
-        from IPython.display import HTML, display
 
         evaluation_runner_card = create_multi_usage_modal_card(
             key='evaluation_runner',
@@ -573,7 +575,22 @@ async def _run_evaluation_async(
     dataset characteristics, scoring configuration, runtime, and outcome status
     for observability and performance analysis.
     """
-    async with tracer.async_span('evaluation_runner') as span:
+    span_name = config.evaluation_name or 'evaluation_runner'
+    async with tracer.async_span(span_name) as span:
+        # Capture input - the evaluation configuration
+        input_count = (
+            len(config.evaluation_inputs)
+            if hasattr(config.evaluation_inputs, '__len__')
+            else 0
+        )
+        span.set_input({
+            'evaluation_name': config.evaluation_name,
+            'input_count': input_count,
+            'metrics': [type(m).__name__ for m in config.scoring_metrics]
+            if config.scoring_metrics
+            else [],
+        })
+
         span.set_attribute('evaluation_name', config.evaluation_name)
         span.set_attribute('dataset_name', getattr(config, 'dataset_name', 'unknown'))
         span.set_attribute('input_type', type(config.evaluation_inputs).__name__)
@@ -617,6 +634,17 @@ async def _run_evaluation_async(
             for attr in ('success_rate', 'total_evaluations'):
                 if hasattr(result, attr):
                     span.set_attribute(attr, getattr(result, attr))
+
+            # Capture output - evaluation results summary
+            span.set_output({
+                'total_items': len(result.results) if result and result.results else 0,
+                'metrics_evaluated': (
+                    [s.name for s in result.results[0].score_results]
+                    if result and result.results and result.results[0].score_results
+                    else []
+                ),
+                'status': 'completed',
+            })
 
             return result
 

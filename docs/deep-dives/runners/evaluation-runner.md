@@ -347,6 +347,69 @@ print(f"Environment: {results.metadata['environment']}")
 ```
 
 
+## Tracing Integration
+
+The Evaluation Runner automatically integrates with Axion's tracing system for observability. When tracing is enabled (e.g., with Langfuse), you get detailed visibility into evaluation execution.
+
+### Trace Names
+
+The `evaluation_name` parameter is used as the trace name in your observability platform:
+
+```python
+results = evaluation_runner(
+    evaluation_inputs=dataset,
+    scoring_metrics=[AnswerRelevancy(), Faithfulness()],
+    evaluation_name="RAG Quality Check v2"  # Appears as trace name in Langfuse
+)
+```
+
+This makes it easy to identify and filter evaluations in Langfuse by their purpose.
+
+### Captured Data
+
+The evaluation runner captures input/output at multiple levels:
+
+| Span | Input Captured | Output Captured |
+|------|----------------|-----------------|
+| Evaluation (root) | Config summary, input count, metrics list | Total items, metrics evaluated, status |
+| MetricRunner_Batch | Input count, metric names | Results count, pass rate |
+| Metric execution | Query, actual/expected output, context | Score, passed status, explanation |
+
+### Example Langfuse Output
+
+```
+RAG Quality Check v2                          # evaluation_name
+├─ MetricRunner_Batch                         # Batch processing span
+│  ├─ (Axion) Answer Relevancy               # Individual metric spans
+│  │  └─ litellm_structured_execution        # LLM call
+│  └─ (Axion) Faithfulness
+│     └─ litellm_structured_execution
+```
+
+### Enabling Tracing
+
+```python
+import os
+os.environ['TRACING_MODE'] = 'langfuse'
+os.environ['LANGFUSE_PUBLIC_KEY'] = 'pk-lf-...'
+os.environ['LANGFUSE_SECRET_KEY'] = 'sk-lf-...'
+os.environ['LANGFUSE_BASE_URL'] = 'https://us.cloud.langfuse.com'  # or EU
+
+from axion._core.tracing import configure_tracing
+configure_tracing()
+
+# Now run your evaluation - traces are automatically captured
+results = evaluation_runner(
+    evaluation_inputs=dataset,
+    scoring_metrics=metrics,
+    evaluation_name="My Evaluation"
+)
+```
+
+See the [Tracing Documentation](../internals/tracing.md) for more details on configuration options.
+
+---
+
 ## API Reference
 
 ::: axion.runners.evaluate

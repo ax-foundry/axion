@@ -93,17 +93,30 @@ The following settings are available. They are loaded from environment variables
 | `log_format_string` | `_LOG_FORMAT_STRING` | A custom format string for the console logger. |
 | `log_file_path` | `_LOG_FILE_PATH` | If set, logs will also be written to this file. |
 
-### Tracing & Logfire Settings
+### Tracing Settings
 
 | Setting | Environment Variable Suffix | Description |
 |---|---|---|
-| `tracing_mode` | `_TRACING_MODE` | Controls tracing: 'noop', 'logfire_local', 'logfire_hosted', or 'logfire_otel'. |
+| `tracing_mode` | `_TRACING_MODE` | Controls tracing provider: 'noop', 'logfire_local', 'logfire_hosted', 'logfire_otel', or 'langfuse'. |
+
+### Logfire Settings
+
+| Setting | Environment Variable Suffix | Description |
+|---|---|---|
 | `otel_endpoint` | `_OTEL_ENDPOINT` | Custom OpenTelemetry endpoint for logfire_otel mode. |
 | `logfire_token` | `_LOGFIRE_TOKEN` | API token required for logfire_hosted mode. |
 | `logfire_service_name` | `_LOGFIRE_SERVICE_NAME` | The service name that appears in Logfire. |
 | `logfire_project_name` | `_LOGFIRE_PROJECT_NAME` | Optional project name for logfire_hosted mode. |
 | `logfire_distributed_tracing` | `_LOGFIRE_DISTRIBUTED_TRACING` | Toggles distributed tracing. |
 | `logfire_console_logging` | `_LOGFIRE_CONSOLE_LOGGING` | Toggles Logfire's console logging. |
+
+### Langfuse Settings
+
+| Setting | Environment Variable Suffix | Description |
+|---|---|---|
+| `langfuse_public_key` | `_LANGFUSE_PUBLIC_KEY` | Langfuse public key for authentication. |
+| `langfuse_secret_key` | `_LANGFUSE_SECRET_KEY` | Langfuse secret key for authentication. |
+| `langfuse_base_url` | `_LANGFUSE_BASE_URL` | Langfuse API endpoint (default: https://cloud.langfuse.com). |
 
 ## Usage in Code
 

@@ -2,8 +2,9 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Set, Union
 from uuid import UUID, uuid4
 
-from axion._core.schema import RichBaseModel, RichEnum
 from pydantic import BaseModel, Field
+
+from axion._core.schema import RichBaseModel, RichEnum
 
 
 class Status(str, RichEnum):
@@ -159,6 +160,17 @@ class BaseExecutionMetadata(RichBaseModel):
                 trace_id=trace_id,
             )
         )
+
+    def get_statistics(self) -> Dict[str, Any]:
+        """Get basic execution statistics."""
+        return {
+            'execution_id': str(self.id),
+            'status': self.status.value if self.status else 'unknown',
+            'start_time': self.start_time,
+            'end_time': self.end_time,
+            'latency': self.latency,
+            'traces_count': len(self.traces) if self.traces else 0,
+        }
 
 
 class EvaluationStatus(str, RichEnum):
@@ -359,6 +371,47 @@ class EvaluationExecutionMetadata(BaseExecutionMetadata):
                 self.total_evaluation_time / self.total_datapoints_evaluated
             )
 
+    def get_statistics(self) -> Dict[str, Any]:
+        """Get evaluation execution statistics."""
+        if self.number_of_evaluations == 0:
+            return super().get_statistics()
+
+        successful_evaluations = self.number_of_evaluations - self.failed_evaluations
+
+        # Calculate aggregated metrics across all evaluations
+        all_metrics: Dict[str, List[float]] = {}
+        for eval_call in self.evaluation_calls:
+            for metric in eval_call.overall_metrics:
+                if isinstance(metric.value, (int, float)):
+                    if metric.name not in all_metrics:
+                        all_metrics[metric.name] = []
+                    all_metrics[metric.name].append(float(metric.value))
+
+        # Calculate averages, min, max for each metric
+        average_metrics: Dict[str, float] = {}
+        for metric_name, values in all_metrics.items():
+            if values:
+                average_metrics[f'avg_{metric_name}'] = sum(values) / len(values)
+                average_metrics[f'min_{metric_name}'] = min(values)
+                average_metrics[f'max_{metric_name}'] = max(values)
+
+        return {
+            **super().get_statistics(),
+            'total_evaluations': self.number_of_evaluations,
+            'successful_evaluations': successful_evaluations,
+            'failed_evaluations': self.failed_evaluations,
+            'success_rate': successful_evaluations / self.number_of_evaluations,
+            'total_datapoints': self.total_datapoints_evaluated,
+            'total_evaluation_time': self.total_evaluation_time,
+            'average_evaluation_latency': self.average_evaluation_latency,
+            'average_datapoint_latency': self.average_datapoint_latency,
+            'total_cost_estimate': self.total_cost_estimate,
+            'total_tokens_used': self.total_tokens_used,
+            'unique_evaluators': list(self.unique_evaluators),
+            'unique_datasets': list(self.unique_datasets),
+            **average_metrics,
+        }
+
 
 class LLMExecutionMetadata(EvaluationExecutionMetadata):
     """Metadata for tracking LLM execution with detailed metrics and statistics."""
@@ -423,6 +476,30 @@ class LLMExecutionMetadata(EvaluationExecutionMetadata):
         if error:
             self.failed_calls += 1
 
+    def get_statistics(self) -> Dict[str, Any]:
+        """Get LLM execution statistics."""
+        if self.number_of_calls == 0:
+            return super().get_statistics()
+
+        successful_calls = self.number_of_calls - self.failed_calls
+        return {
+            **super().get_statistics(),
+            'total_calls': self.number_of_calls,
+            'successful_calls': successful_calls,
+            'failed_calls': self.failed_calls,
+            'success_rate': successful_calls / self.number_of_calls,
+            'total_tokens': self.total_tokens,
+            'total_prompt_tokens': self.total_prompt_tokens,
+            'total_completion_tokens': self.total_completion_tokens,
+            'average_tokens_per_call': self.total_tokens / self.number_of_calls,
+            'total_latency': self.total_llm_latency,
+            'average_latency': self.average_latency,
+            'total_cost_estimate': self.total_cost_estimate,
+            'unique_models': list(self.unique_models),
+            'unique_providers': list(self.unique_providers),
+            'retry_count': self.retry_count,
+        }
+
 
 class RetrieverCallMetadata(BaseModel):
     """Metadata for a single retrieval call."""
@@ -474,10 +551,31 @@ class KnowledgeExecutionMetadata(BaseExecutionMetadata):
         self.number_of_calls += 1
         self.total_tokens += call.total_tokens
 
+    def get_statistics(self) -> Dict[str, Any]:
+        """Get Knowledge/RAG execution statistics."""
+        stats = {
+            **super().get_statistics(),
+            'total_retrievals': len(self.retrieved_calls),
+            'total_llm_calls': self.number_of_calls,
+            'total_tokens': self.total_tokens,
+        }
 
-class DBExecutionMetadata(BaseExecutionMetadata):
-    """Database execution metadata."""
+        if self.retrieved_calls:
+            retrieval_latencies = [call.latency for call in self.retrieved_calls]
+            stats.update({
+                'average_retrieval_latency': sum(retrieval_latencies) / len(retrieval_latencies),
+                'total_documents_retrieved': len(self.retrieved_calls),
+                'unique_files': len(set(call.file_name for call in self.retrieved_calls)),
+            })
 
-    rows_affected: int = 0
-    query_time: float = 0.0
-    query_params: Dict[str, Any] = Field(default_factory=dict)
+            scores = [call.score for call in self.retrieved_calls if call.score is not None]
+            if scores:
+                stats.update({
+                    'average_relevance_score': sum(scores) / len(scores),
+                    'max_relevance_score': max(scores),
+                    'min_relevance_score': min(scores),
+                })
+
+        return stats
+
+

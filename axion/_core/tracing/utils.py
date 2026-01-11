@@ -1,14 +1,15 @@
 import threading
-from typing import Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional
 
-from axion._core.tracing.handlers import BaseTraceHandler
+if TYPE_CHECKING:
+    from axion._core.tracing.registry import BaseTracer
 
 # Global registry for notebook/cross-context compatibility
-_global_tracer_registry: Dict[str, 'BaseTraceHandler'] = {}
+_global_tracer_registry: Dict[str, 'BaseTracer'] = {}
 _registry_lock = threading.Lock()
 
 
-def set_default_global_tracer(tracer: 'BaseTraceHandler') -> None:
+def set_default_global_tracer(tracer: 'BaseTracer') -> None:
     """
     Set the default global tracer for notebook compatibility.
 
@@ -32,7 +33,7 @@ def set_default_global_tracer(tracer: 'BaseTraceHandler') -> None:
         _global_tracer_registry['default'] = tracer
 
 
-def get_default_global_tracer() -> Optional['BaseTraceHandler']:
+def get_default_global_tracer() -> Optional['BaseTracer']:
     """
     Get the default global tracer.
 

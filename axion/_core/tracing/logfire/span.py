@@ -172,3 +172,33 @@ class Span:
             message,
             {'span_id': self.span_id, 'trace_id': self.trace_id, **(metadata or {})},
         )
+
+    def set_input(self, data: Any) -> None:
+        """Set the input data for this span."""
+        serialized = self._serialize_data(data)
+        self.set_attribute('input', serialized)
+
+    def set_output(self, data: Any) -> None:
+        """Set the output data for this span."""
+        serialized = self._serialize_data(data)
+        self.set_attribute('output', serialized)
+
+    def _serialize_data(self, data: Any) -> Any:
+        """Serialize data for tracing (handles Pydantic models, dicts, etc.)."""
+        if data is None:
+            return None
+        elif hasattr(data, 'model_dump'):
+            # #region agent log
+            import json as _dbg_json; open('/Users/mattevanoff/Desktop/Github/axion/.cursor/debug.log', 'a').write(_dbg_json.dumps({'location': 'logfire/span.py:191', 'message': 'Before model_dump in logfire span', 'data': {'data_type': type(data).__name__, 'data_module': type(data).__module__}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'hypothesisId': 'A-logfire'}) + '\n')
+            # #endregion
+            result = data.model_dump()
+            # #region agent log
+            import json as _dbg_json; open('/Users/mattevanoff/Desktop/Github/axion/.cursor/debug.log', 'a').write(_dbg_json.dumps({'location': 'logfire/span.py:195', 'message': 'After model_dump in logfire span', 'data': {}, 'timestamp': __import__('time').time() * 1000, 'sessionId': 'debug-session', 'hypothesisId': 'A-logfire'}) + '\n')
+            # #endregion
+            return result
+        elif hasattr(data, 'dict'):
+            return data.dict()
+        elif isinstance(data, (dict, list, str, int, float, bool)):
+            return data
+        else:
+            return str(data)

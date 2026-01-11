@@ -26,6 +26,9 @@ dist
 MANIFEST
 CLAUDE.md
 *.ipynb
+.cpython-312
+.deepeval
+examples/
 
 .#*
 *\#*\#

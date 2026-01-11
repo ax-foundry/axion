@@ -22,12 +22,15 @@ Public API:
 
     Types:
         - TracingMode: Enumeration of available tracer modes
+        - TracerRegistry: Registry for tracer implementations
+        - BaseTracer: Abstract base class for tracer implementations
 """
 
+from axion._core.environment import TracingMode
 from axion._core.tracing.config import (
-    TracingMode,
     configure_tracing,
     get_tracer,
+    get_tracer_mode_param,
     reset_tracing,
 )
 from axion._core.tracing.context import (
@@ -37,25 +40,35 @@ from axion._core.tracing.context import (
 )
 from axion._core.tracing.decorators import trace, trace_function, trace_method
 from axion._core.tracing.factory import Tracer, infer_tool_metadata, init_tracer
+from axion._core.tracing.registry import BaseTracer, TracerRegistry
 from axion._core.tracing.utils import (
     get_default_global_tracer,
     set_default_global_tracer,
 )
 
 __all__ = [
+    # Core configuration
     'configure_tracing',
     'get_tracer',
+    'get_tracer_mode_param',
     'reset_tracing',
     'TracingMode',
+    # Registry and base classes
+    'TracerRegistry',
+    'BaseTracer',
+    # Context management
     'get_current_tracer',
     'set_current_tracer',
     'reset_tracer_context',
+    # Factory
     'init_tracer',
     'Tracer',
     'infer_tool_metadata',
+    # Decorators
     'trace',
     'trace_function',
     'trace_method',
+    # Utilities
     'set_default_global_tracer',
     'get_default_global_tracer',
 ]

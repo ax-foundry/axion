@@ -1,10 +1,12 @@
 import inspect
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from axion._core.metadata.schema import ToolMetadata
 from axion._core.tracing.config import get_tracer
 from axion._core.tracing.context import get_current_tracer
-from axion._core.tracing.handlers import BaseTraceHandler
+
+if TYPE_CHECKING:
+    from axion._core.tracing.registry import BaseTracer
 
 
 def infer_tool_metadata(
@@ -65,8 +67,8 @@ def infer_tool_metadata(
 def init_tracer(
     metadata_type: str,
     tool_metadata: Optional[ToolMetadata] = None,
-    tracer: Optional['BaseTraceHandler'] = None,
-) -> 'BaseTraceHandler':
+    tracer: Optional['BaseTracer'] = None,
+) -> 'BaseTracer':
     """
     Initializes and returns a tracer instance, respecting global configuration.
 

@@ -6,33 +6,30 @@ import pprint
 from contextlib import asynccontextmanager, contextmanager
 from typing import Any, Callable, Dict, List, Optional, Union
 
+from pydantic import BaseModel
+
 from axion._core.environment import TracingMode, settings
 from axion._core.logging import RichLogger, get_logger
 from axion._core.metadata.schema import (
     BaseExecutionMetadata,
-    DBExecutionMetadata,
+    EvaluationDatapoint,
+    EvaluationMetric,
     KnowledgeExecutionMetadata,
     LLMExecutionMetadata,
     Status,
     ToolMetadata,
 )
 from axion._core.tracing import reset_tracer_context, set_current_tracer
-from axion._core.tracing.handlers import (
+from axion._core.tracing.logfire.span import Span
+from axion._core.tracing.registry import BaseTracer, TracerRegistry
+from axion._core.tracing.statistics import (
     MAX_ARG_LENGTH,
     MAX_ERROR_LENGTH,
     MAX_RESULT_LENGTH,
-    BaseTraceHandler,
-    DefaultTraceHandler,
+    display_statistics,
 )
-from axion._core.tracing.handlers.knowledge_handler import KnowledgeTraceHandler
-from axion._core.tracing.handlers.llm_handler import (
-    EvaluationTraceHandler,
-    LLMTraceHandler,
-)
-from axion._core.tracing.logfire.span import Span
 from axion._core.utils import Timer
 from axion._core.uuid import uuid7
-from pydantic import BaseModel
 
 try:
     import logfire
@@ -44,7 +41,8 @@ except ImportError:
 logger = get_logger(__name__)
 
 
-class LogfireTracer:
+@TracerRegistry.register('logfire')
+class LogfireTracer(BaseTracer):
     """
     Tracer that combines tracing, logging, and metadata collection.
     Uses composition with a logger instance instead of inheritance.
@@ -72,9 +70,8 @@ class LogfireTracer:
         self._span_stack: List[Span] = []
         self._trace_id = trace_id or str(uuid7())
 
-        # Metadata and handler
+        # Metadata
         self._metadata = self._create_metadata()
-        self._handler = self._create_metadata_handler()
 
         self.enable_logfire = LOGFIRE_AVAILABLE and settings.tracing_mode in {
             TracingMode.LOGFIRE_LOCAL,
@@ -165,22 +162,18 @@ class LogfireTracer:
             'base': BaseExecutionMetadata,
             'llm': LLMExecutionMetadata,
             'knowledge': KnowledgeExecutionMetadata,
-            'database': DBExecutionMetadata,
+            'evaluation': LLMExecutionMetadata,  # Evaluation uses LLM metadata
         }
         metadata_class = metadata_classes.get(self.metadata_type, BaseExecutionMetadata)
         return metadata_class(
             name=self.tool_metadata.name, tool_metadata=self.tool_metadata.to_dict()
         )
 
-    def _create_metadata_handler(self) -> BaseTraceHandler:
-        """Create the appropriate handler based on metadata type."""
-        handlers = {
-            'llm': LLMTraceHandler,
-            'knowledge': KnowledgeTraceHandler,
-            'evaluation': EvaluationTraceHandler,
-        }
-        handler_class = handlers.get(self.metadata_type, DefaultTraceHandler)
-        return handler_class(self)
+    def _get_span_context(self) -> tuple[Optional[str], Optional[str]]:
+        """Get current span and trace context."""
+        if self._current_span:
+            return self._current_span.span_id, self._current_span.trace_id
+        return None, self._trace_id
 
     @contextmanager
     def span(self, operation_name: str, **attributes):
@@ -337,78 +330,239 @@ class LogfireTracer:
             {'error': error, 'latency': self._metadata.latency, **attributes},
         )
 
-    def log_llm_call(self, *args, **kwargs):
-        """Log an LLM call - delegates to handler."""
-        if hasattr(self._handler, 'log_llm_call'):
-            return self._handler.log_llm_call(*args, **kwargs)
-        raise AttributeError(
-            f'Trace handler {type(self._handler).__name__} does not support LLM calls'
+    def log_llm_call(
+        self,
+        model: str,
+        prompt: str,
+        response: str,
+        prompt_tokens: int = None,
+        completion_tokens: int = None,
+        latency: float = None,
+        cost_estimate: float = None,
+        error: str = None,
+        **attributes,
+    ) -> None:
+        """Log an LLM call with automatic tracing."""
+        # Estimate tokens if not provided
+        try:
+            prompt_tokens = prompt_tokens or len(prompt.split())
+            completion_tokens = completion_tokens or (
+                len(response.split()) if response else 0
+            )
+        except AttributeError:
+            prompt_tokens = 0
+            completion_tokens = 0
+
+        total_tokens = prompt_tokens + completion_tokens
+        span_id, trace_id = self._get_span_context()
+
+        llm_data = {
+            'model': model,
+            'prompt_length': len(prompt),
+            'response_length': len(response or ''),
+            'prompt_tokens': prompt_tokens,
+            'completion_tokens': completion_tokens,
+            'total_tokens': total_tokens,
+            'latency': latency,
+            'cost_estimate': cost_estimate,
+            'error': error,
+            'span_id': span_id,
+            'trace_id': trace_id,
+            **attributes,
+        }
+
+        # Update metadata if it supports LLM calls
+        if hasattr(self._metadata, 'add_llm_call'):
+            self._metadata.add_llm_call(
+                model=model,
+                provider=attributes.get('provider', 'unknown'),
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+                latency=latency or 0.0,
+                prompt_length=len(prompt),
+                response_length=len(response or ''),
+                cost_estimate=cost_estimate,
+                error=error,
+                span_id=span_id,
+                trace_id=trace_id,
+            )
+
+        self.log_performance('llm_call', latency or 0, **llm_data)
+        self.add_trace(
+            'llm_call',
+            f"LLM call {'failed' if error else 'completed'}: {model}",
+            llm_data,
         )
 
-    def log_retrieval_call(self, *args, **kwargs):
-        """Log a retrieval call - delegates to handler."""
-        if hasattr(self._handler, 'log_retrieval_call'):
-            return self._handler.log_retrieval_call(*args, **kwargs)
-        raise AttributeError(
-            f'Trace handler {type(self._handler).__name__} does not support retrieval calls'
+    def log_retrieval_call(
+        self,
+        context: List[Dict[str, Any]],
+        latency: float,
+        query: str = None,
+        **attributes,
+    ) -> None:
+        """Log a retrieval call with automatic tracing."""
+        span_id, trace_id = self._get_span_context()
+
+        retrieval_data = {
+            'query': query,
+            'num_documents': len(context),
+            'latency': latency,
+            'span_id': span_id,
+            'trace_id': trace_id,
+            **attributes,
+        }
+
+        # Update metadata if it supports retrieval calls
+        if hasattr(self._metadata, 'add_retrieval_call'):
+            self._metadata.add_retrieval_call(context, latency)
+
+        self.log_performance('retrieval_call', latency, **retrieval_data)
+        self.add_trace(
+            'retrieval_call', f'Retrieved {len(context)} documents', retrieval_data
         )
 
-    def log_database_query(self, *args, **kwargs):
-        """Log a database query - delegates to handler."""
-        if hasattr(self._handler, 'log_database_query'):
-            return self._handler.log_database_query(*args, **kwargs)
-        raise AttributeError(
-            f'Trace handler {type(self._handler).__name__} does not support database queries'
-        )
+    def log_database_query(
+        self,
+        query: str,
+        latency: float,
+        rows_affected: int = 0,
+        **attributes,
+    ) -> None:
+        """Log a database query with automatic tracing."""
+        span_id, trace_id = self._get_span_context()
 
-    def log_evaluation(self, *args, **kwargs):
-        """Log an evaluation - delegates to evaluation handler."""
-        if hasattr(self._handler, 'log_evaluation'):
-            return self._handler.log_evaluation(*args, **kwargs)
-        raise AttributeError(
-            f'Trace handler {type(self._handler).__name__} does not support evaluation calls'
+        db_data = {
+            'query': query[:200] if query else '',
+            'latency': latency,
+            'rows_affected': rows_affected,
+            'span_id': span_id,
+            'trace_id': trace_id,
+            **attributes,
+        }
+
+        self.log_performance('database_query', latency, **db_data)
+        self.add_trace('database_query', f'Query completed: {rows_affected} rows', db_data)
+
+    def log_evaluation(
+        self,
+        evaluation_id: str,
+        evaluator_name: str,
+        evaluator_type: str,
+        dataset_size: int,
+        latency: float,
+        overall_metrics: List[EvaluationMetric] = None,
+        datapoint_results: List[EvaluationDatapoint] = None,
+        dataset_name: str = None,
+        cost_estimate: float = None,
+        tokens_used: int = None,
+        error: str = None,
+        evaluator_config: Dict[str, Any] = None,
+        **attributes,
+    ) -> None:
+        """Log an evaluation run with automatic tracing."""
+        span_id, trace_id = self._get_span_context()
+
+        # Calculate summary statistics
+        successful_datapoints = len(
+            [dp for dp in (datapoint_results or []) if dp.error is None]
+        )
+        failed_datapoints = dataset_size - successful_datapoints
+        success_rate = successful_datapoints / dataset_size if dataset_size > 0 else 0
+        avg_latency_per_datapoint = latency / dataset_size if dataset_size > 0 else 0
+
+        # Aggregate metric values for logging
+        metric_summary = {}
+        if overall_metrics:
+            for metric in overall_metrics:
+                if isinstance(metric.value, (int, float)):
+                    metric_summary[f'metric_{metric.name}'] = metric.value
+                    if metric.passed is not None:
+                        metric_summary[f'metric_{metric.name}_passed'] = metric.passed
+
+        evaluation_data = {
+            'evaluation_id': evaluation_id,
+            'evaluator_name': evaluator_name,
+            'evaluator_type': evaluator_type,
+            'dataset_name': dataset_name,
+            'dataset_size': dataset_size,
+            'successful_datapoints': successful_datapoints,
+            'failed_datapoints': failed_datapoints,
+            'success_rate': success_rate,
+            'latency': latency,
+            'average_latency_per_datapoint': avg_latency_per_datapoint,
+            'cost_estimate': cost_estimate,
+            'tokens_used': tokens_used,
+            'error': error,
+            'span_id': span_id,
+            'trace_id': trace_id,
+            **metric_summary,
+            **attributes,
+        }
+
+        # Update metadata if it supports evaluation calls
+        if hasattr(self._metadata, 'add_evaluation_call'):
+            self._metadata.add_evaluation_call(
+                evaluation_id=evaluation_id,
+                evaluator_name=evaluator_name,
+                evaluator_type=evaluator_type,
+                dataset_size=dataset_size,
+                latency=latency,
+                overall_metrics=overall_metrics,
+                datapoint_results=datapoint_results,
+                dataset_name=dataset_name,
+                cost_estimate=cost_estimate,
+                tokens_used=tokens_used,
+                error=error,
+                span_id=span_id,
+                trace_id=trace_id,
+                evaluator_config=evaluator_config,
+            )
+
+        self.log_performance('evaluation', latency, **evaluation_data)
+        self.add_trace(
+            'evaluation',
+            f"Evaluation {'failed' if error else 'completed'}: {evaluator_name} on {dataset_size} datapoints",
+            evaluation_data,
         )
 
     def get_statistics(self) -> Dict[str, Any]:
-        """Get statistics from the current handler."""
-        return self._handler.get_statistics()
+        """Get statistics from metadata."""
+        return self._metadata.get_statistics()
 
     def display_statistics(self):
-        """Display statistics using the current handler."""
-        return self._handler.display_statistics()
+        """Display statistics using the display utility."""
+        stats = self.get_statistics()
+        display_statistics(
+            self.metadata_type,
+            stats,
+            log_table=self.log_table,
+            info=self.info,
+        )
 
     def get_llm_statistics(self) -> Dict[str, Any]:
         """Get LLM statistics - for backward compatibility."""
-        if hasattr(self._handler, 'get_statistics'):
-            return self._handler.get_statistics()
-        return {}
+        return self.get_statistics()
 
     def display_llm_statistics(self):
         """Display LLM statistics - for backward compatibility."""
-        if hasattr(self._handler, 'display_statistics'):
-            return self._handler.display_statistics()
+        self.display_statistics()
 
     def get_knowledge_statistics(self) -> Dict[str, Any]:
         """Get Knowledge statistics - for backward compatibility."""
-        if hasattr(self._handler, 'get_statistics'):
-            return self._handler.get_statistics()
-        return {}
+        return self.get_statistics()
 
     def display_knowledge_statistics(self):
         """Display Knowledge statistics - for backward compatibility."""
-        if hasattr(self._handler, 'display_statistics'):
-            return self._handler.display_statistics()
+        self.display_statistics()
 
     def get_database_statistics(self) -> Dict[str, Any]:
         """Get Database statistics - for backward compatibility."""
-        if hasattr(self._handler, 'get_statistics'):
-            return self._handler.get_statistics()
-        return {}
+        return self.get_statistics()
 
     def display_database_statistics(self):
         """Display Database statistics - for backward compatibility."""
-        if hasattr(self._handler, 'display_statistics'):
-            return self._handler.display_statistics()
+        self.display_statistics()
 
     def get_metadata(self) -> Dict[str, Any]:
         """Get metadata with current span context."""
@@ -452,8 +606,9 @@ class LogfireTracer:
         return self._trace_id
 
     @property
-    def handler(self) -> BaseTraceHandler:
-        return self._handler
+    def handler(self):
+        """Return None - handlers are no longer used."""
+        return None
 
     @classmethod
     def create(

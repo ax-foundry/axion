@@ -41,7 +41,7 @@ dependencies = [
 "pydantic-settings==2.7.1",
 "python-dotenv==1.1.1",
 "PyYAML==6.0.1",
-"ragas==0.2.12",
+"ragas==0.4.2",
 "RestrictedPython",
 "requests",
 "rich",
@@ -67,6 +67,10 @@ dev = [
 "mike",
 "nbstripout",
 ]
+# Tracing providers (optional)
+logfire = ["logfire>=2.0.0"]
+langfuse = ["langfuse>=3.0.0"]
+tracing = ["logfire>=2.0.0", "langfuse>=3.0.0"]
 
 [project.urls]
 Homepage = "https://github.com/ax-foundry/axion"
