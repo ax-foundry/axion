@@ -201,7 +201,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         """Build messages in OpenAI format for raw API calls."""
         messages = [{'role': 'system', 'content': self.instruction}]
         # Add examples as conversation pairs
-        for idx, (input_example, output_example) in enumerate(self.examples):
+        for idx, (input_example, output_example) in enumerate[Tuple[InputModel, OutputModel]](self.examples):
             messages.append(
                 {
                     'role': 'user',
@@ -262,8 +262,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             mode='litellm_structured',
             provider=provider,
         ) as span:
+            span.set_input({'messages': messages, 'model': model_name})
             try:
-                schema = self.output_model.model_json_schema()
+                schema = self.output_model.model_json_schema(mode='serialization')
                 response_format = {
                     'type': 'json_schema',
                     'json_schema': {
@@ -327,6 +328,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 except:
                     pass
 
+                span.set_output(parsed_output)  # Capture LLM output
                 return parsed_output
 
             except litellm.exceptions.RateLimitError as e:
@@ -416,6 +418,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         async with self.async_span(
             'structured_llm_execution', model=model_name, mode='as_structured_llm'
         ) as span:
+            span.set_input({'messages': messages, 'model': model_name})
             try:
                 with Timer() as timer:
                     structured_llm = self.llm.as_structured_llm(self.output_model)
@@ -456,6 +459,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     provider=provider,
                 )
 
+                span.set_output(parsed_output)  # Capture LLM output
                 return parsed_output
 
             except Exception as e:
@@ -525,6 +529,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         async with self.async_span(
             'parser_llm_execution', model=model_name, mode='parser_based'
         ) as span:
+            span.set_input({'prompt': prompt, 'model': model_name})
             try:
                 with Timer() as timer:
                     response = await self.llm.acomplete(prompt)
@@ -556,6 +561,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     provider=provider,
                 )
 
+                span.set_output(response.text)  # Capture LLM output
                 return response.text
 
             except Exception as e:
@@ -631,6 +637,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             max_retries=self.max_retries,
             retry_delay=self.retry_delay,
         ) as span:
+            span.set_input(input_data)  # Capture retry-level input
             processed_data = self.process_input(input_data)
             last_exception = None
 
@@ -701,6 +708,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
                         span.set_attribute('successful_attempt', attempt + 1)
                         span.set_attribute('total_attempts', attempt + 1)
+                        span.set_output(final_result)  # Capture retry-level output
 
                         return final_result
 
@@ -789,6 +797,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 self.tracer.metadata.input_data = input_dump
                 if hasattr(self.tracer, 'current_span') and self.tracer.current_span:
                     span = self.tracer.current_span
+                    span.set_input(formatted_input)  # Capture full input data
                     span.set_attribute('input_type', type(formatted_input).__name__)
                     span.set_attribute('input_size', len(str(input_dump)))
                     span.set_attribute('handler_type', 'llm')
@@ -811,6 +820,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                         and self.tracer.current_span
                     ):
                         span = self.tracer.current_span
+                        span.set_output(result)  # Capture full output data
                         span.set_attribute('output_type', type(result).__name__)
                         span.set_attribute('output_size', len(str(result_dump)))
                 except AttributeError:

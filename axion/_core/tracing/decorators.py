@@ -2,12 +2,13 @@ import asyncio
 import functools
 from typing import Any, Callable, Dict, Optional
 
-from axion._core.tracing.handlers import (
+from pydantic import BaseModel
+
+from axion._core.tracing.statistics import (
     MAX_ARG_LENGTH,
     MAX_ERROR_LENGTH,
     MAX_RESULT_LENGTH,
 )
-from pydantic import BaseModel
 
 
 def trace(
@@ -95,6 +96,43 @@ def trace(
             }
             return {'function.args': safe_args, 'function.kwargs': safe_kwargs}
 
+        def _build_input_data(args, kwargs) -> Dict[str, Any]:
+            """Build input data for span.set_input()."""
+            # Exclude 'self' from the captured positional arguments
+            args_to_capture = (
+                args[1:] if args and hasattr(args[0], '__class__') else args
+            )
+
+            safe_args = []
+            for arg in args_to_capture:
+                if isinstance(arg, BaseModel):
+                    safe_args.append(arg.model_dump())
+                elif isinstance(arg, (str, int, float, bool, dict, list)):
+                    safe_args.append(arg)
+                else:
+                    safe_args.append(f'<{type(arg).__name__}>')
+
+            safe_kwargs = {}
+            for k, v in kwargs.items():
+                if isinstance(v, BaseModel):
+                    safe_kwargs[k] = v.model_dump()
+                elif isinstance(v, (str, int, float, bool, dict, list)):
+                    safe_kwargs[k] = v
+                else:
+                    safe_kwargs[k] = f'<{type(v).__name__}>'
+
+            return {'args': safe_args, 'kwargs': safe_kwargs}
+
+        def _serialize_output(result: Any) -> Any:
+            """Serialize result for span.set_output()."""
+            if result is None:
+                return None
+            if isinstance(result, BaseModel):
+                return result.model_dump()
+            if isinstance(result, (str, int, float, bool, dict, list)):
+                return result
+            return f'<{type(result).__name__}>'
+
         def _capture_result_attributes(span, result: Any):
             """Capture function result as span attributes."""
             if not capture_result or result is None:
@@ -125,8 +163,18 @@ def trace(
             attributes = _build_attributes((self,) + args, kwargs)
             with self.tracer.span(span_name, **attributes) as span:
                 try:
+                    # Capture input for Langfuse/tracing visibility
+                    if capture_args and hasattr(span, 'set_input'):
+                        input_data = _build_input_data((self,) + args, kwargs)
+                        span.set_input(input_data)
+
                     result = func(self, *args, **kwargs)
                     _capture_result_attributes(span, result)
+
+                    # Capture output for Langfuse/tracing visibility
+                    if capture_result and hasattr(span, 'set_output'):
+                        span.set_output(_serialize_output(result))
+
                     return result
                 except Exception as e:
                     _capture_error_attributes(span, e)
@@ -142,8 +190,18 @@ def trace(
             attributes = _build_attributes((self,) + args, kwargs)
             async with self.tracer.async_span(span_name, **attributes) as span:
                 try:
+                    # Capture input for Langfuse/tracing visibility
+                    if capture_args and hasattr(span, 'set_input'):
+                        input_data = _build_input_data((self,) + args, kwargs)
+                        span.set_input(input_data)
+
                     result = await func(self, *args, **kwargs)
                     _capture_result_attributes(span, result)
+
+                    # Capture output for Langfuse/tracing visibility
+                    if capture_result and hasattr(span, 'set_output'):
+                        span.set_output(_serialize_output(result))
+
                     return result
                 except Exception as e:
                     _capture_error_attributes(span, e)

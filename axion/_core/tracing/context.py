@@ -1,16 +1,17 @@
 from contextvars import ContextVar
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
-from axion._core.tracing.handlers import BaseTraceHandler
+if TYPE_CHECKING:
+    from axion._core.tracing.registry import BaseTracer
 
 # Unified context variable for any tracer type
 # This is main context for context aware tracing
-_tracer_context: ContextVar[Optional['BaseTraceHandler']] = ContextVar(
+_tracer_context: ContextVar[Optional['BaseTracer']] = ContextVar(
     'tracer', default=None
 )
 
 
-def get_current_tracer() -> 'BaseTraceHandler':
+def get_current_tracer() -> 'BaseTracer':
     """
     Retrieves the current tracer instance from the context.
 
@@ -24,7 +25,7 @@ def get_current_tracer() -> 'BaseTraceHandler':
     return tracer
 
 
-def set_current_tracer(tracer: 'BaseTraceHandler') -> Any:
+def set_current_tracer(tracer: 'BaseTracer') -> Any:
     """
     Sets the current tracer in the context.
     """
@@ -45,7 +46,7 @@ def has_current_tracer() -> bool:
     return _tracer_context.get() is not None
 
 
-def get_current_tracer_safe() -> Optional['BaseTraceHandler']:
+def get_current_tracer_safe() -> Optional['BaseTracer']:
     """
     Safely retrieve the current tracer without raising exceptions.
     """

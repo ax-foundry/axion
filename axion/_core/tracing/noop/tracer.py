@@ -8,13 +8,15 @@ from axion._core.logging import get_logger
 from axion._core.metadata.schema import BaseExecutionMetadata, ToolMetadata
 from axion._core.tracing import reset_tracer_context, set_current_tracer
 from axion._core.tracing.noop.span import Span
+from axion._core.tracing.registry import BaseTracer, TracerRegistry
 from axion._core.utils import Timer
 from axion._core.uuid import uuid7
 
 logger = get_logger(__name__)
 
 
-class NoOpTracer:
+@TracerRegistry.register('noop')
+class NoOpTracer(BaseTracer):
     """
     A no-operation tracer that mirrors the LogfireTracer interface.
 

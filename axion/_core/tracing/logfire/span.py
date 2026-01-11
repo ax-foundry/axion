@@ -172,3 +172,26 @@ class Span:
             message,
             {'span_id': self.span_id, 'trace_id': self.trace_id, **(metadata or {})},
         )
+
+    def set_input(self, data: Any) -> None:
+        """Set the input data for this span."""
+        serialized = self._serialize_data(data)
+        self.set_attribute('input', serialized)
+
+    def set_output(self, data: Any) -> None:
+        """Set the output data for this span."""
+        serialized = self._serialize_data(data)
+        self.set_attribute('output', serialized)
+
+    def _serialize_data(self, data: Any) -> Any:
+        """Serialize data for tracing (handles Pydantic models, dicts, etc.)."""
+        if data is None:
+            return None
+        elif hasattr(data, 'model_dump'):
+            return data.model_dump()
+        elif hasattr(data, 'dict'):
+            return data.dict()
+        elif isinstance(data, (dict, list, str, int, float, bool)):
+            return data
+        else:
+            return str(data)

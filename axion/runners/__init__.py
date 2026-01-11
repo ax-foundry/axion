@@ -6,6 +6,14 @@ from axion.runners.api import (
     APIResponseData,
     RetryConfig,
 )
+from axion.runners.cost import (
+    CostAggregator,
+    CostExtractor,
+    CostResult,
+    TokenUsage,
+    extract_cost,
+    extract_cost_result,
+)
 from axion.runners.evaluate import (
     EvaluationConfig,
     EvaluationRunner,
@@ -37,4 +45,11 @@ __all__ = [
     'CacheManager',
     'CacheConfig',
     'ErrorConfig',
+    # Cost extraction utilities
+    'CostExtractor',
+    'CostAggregator',
+    'CostResult',
+    'TokenUsage',
+    'extract_cost',
+    'extract_cost_result',
 ]

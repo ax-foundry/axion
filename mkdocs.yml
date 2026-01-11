@@ -41,6 +41,7 @@ nav:
     - Synthetic: reference/synthetic.md
     - Search: reference/search.md
     - LLM Registry: reference/llm-registry.md
+    - Tracer Registry: reference/tracer-registry.md
 
 theme:
   name: material
