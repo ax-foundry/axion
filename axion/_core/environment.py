@@ -122,6 +122,23 @@ class AxionConfig(BaseModel):
         default=None, description='API key for Google Gemini models.'
     )
 
+    # Google Vertex AI
+    vertex_project: Optional[str] = Field(
+        default=None,
+        validation_alias='VERTEXAI_PROJECT',
+        description='GCP project ID for Vertex AI.',
+    )
+    vertex_location: Optional[str] = Field(
+        default=None,
+        validation_alias='VERTEXAI_LOCATION',
+        description='GCP region for Vertex AI (e.g., us-central1).',
+    )
+    vertex_credentials: Optional[str] = Field(
+        default=None,
+        validation_alias='GOOGLE_APPLICATION_CREDENTIALS',
+        description='Path to GCP service account JSON for Vertex AI.',
+    )
+
     # Web Search
     serpapi_key: Optional[str] = Field(default=None, description='API key for SerpAPI.')
     ydc_api_key: Optional[str] = Field(

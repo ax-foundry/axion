@@ -7,7 +7,9 @@
 
 **A modular white box evaluation framework for AI agents.**
 
-<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
+
+<div style="background: linear-gradient(135deg, #111827 0%, #1f2937 55%, #0b3b8c 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
+
 
 Axion provides plug-and-play building blocks for evaluating generative AI agents—going beyond surface-level metrics to focus on what truly matters: continuously improving agents to perform in the real world.</p>
 </div>

@@ -278,8 +278,11 @@ class LiteLLMWrapper:
             **call_kwargs
         )
 
+        # Handle case where content is None (e.g., tool calls, function calls)
+        content = response.choices[0].message.content or ''
+
         return CompletionResponse(
-            text=response.choices[0].message.content,
+            text=content,
             raw=response
         )
 
@@ -317,8 +320,11 @@ class LiteLLMWrapper:
             **call_kwargs
         )
 
+        # Handle case where content is None (e.g., tool calls, function calls)
+        content = response.choices[0].message.content or ''
+
         return CompletionResponse(
-            text=response.choices[0].message.content,
+            text=content,
             raw=response
         )
 
@@ -358,8 +364,11 @@ class LiteLLMWrapper:
             **call_kwargs
         )
 
+        # Handle case where content is None (e.g., tool calls, function calls)
+        content = response.choices[0].message.content or ''
+
         return CompletionResponse(
-            text=response.choices[0].message.content,
+            text=content,
             raw=response
         )
 
@@ -390,8 +399,11 @@ class LiteLLMWrapper:
             **call_kwargs
         )
 
+        # Handle case where content is None (e.g., tool calls, function calls)
+        content = response.choices[0].message.content or ''
+
         return CompletionResponse(
-            text=response.choices[0].message.content,
+            text=content,
             raw=response
         )
 
@@ -421,27 +433,67 @@ class BaseProvider(ABC):
     Abstract base class for all providers. It defines the contract that
     every provider must follow.
 
+    Subclasses should:
+    - Set LITELLM_PREFIX for LiteLLM routing (e.g., 'anthropic/', 'gemini/')
+    - Implement create_embedding_model() for provider-specific embeddings
+    - Optionally override create_llm() for non-LiteLLM backends (e.g., HuggingFace)
+
     Note: When using LiteLLM in the handler, API keys are read from environment
     variables automatically (OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY).
     """
 
+    # Provider-specific prefix for LiteLLM routing (override in subclass)
+    LITELLM_PREFIX: str = ''
+
+    # Whether this provider supports embedding models (override in subclass if False)
+    SUPPORTS_EMBEDDINGS: bool = True
+
     def __init__(self, api_key: Optional[str] = None, **credentials):
         """Initializes the provider, storing the API key if provided."""
-        self.api_key = api_key or settings.openai_api_key
+        self.api_key = api_key
+        self._credentials = credentials
         # API key is optional - LiteLLM reads from env vars automatically
         if not self.api_key:
             logger.debug(
                 'No API key provided to provider. LiteLLM will use environment variables.'
             )
 
-    @abstractmethod
-    def create_llm(self, model: str, **kwargs) -> Any:
-        """Abstract method to create a language model client."""
-        pass
+    def _create_litellm_wrapper(self, model_name: str, **kwargs) -> LiteLLMWrapper:
+        """
+        Centralized LiteLLM wrapper creation.
+
+        Handles model name prefixing and common configuration.
+        Subclasses can override create_llm() for non-LiteLLM backends.
+        """
+        # Add provider prefix if not already present
+        if self.LITELLM_PREFIX and not model_name.startswith(self.LITELLM_PREFIX):
+            model_name = f'{self.LITELLM_PREFIX}{model_name}'
+
+        temperature = kwargs.pop('temperature', 0.0)
+        return LiteLLMWrapper(
+            model=model_name,
+            provider=self.LITELLM_PREFIX.rstrip('/') or 'openai',
+            temperature=temperature,
+            api_key=self.api_key,
+            **kwargs
+        )
+
+    def create_llm(self, model_name: str, **kwargs) -> Any:
+        """
+        Create a language model client.
+
+        Default implementation delegates to _create_litellm_wrapper().
+        Override for non-LiteLLM backends (e.g., HuggingFace local inference).
+        """
+        return self._create_litellm_wrapper(model_name, **kwargs)
 
     @abstractmethod
-    def create_embedding_model(self, model: str, **kwargs) -> Any:
-        """Abstract method to create an embedding model client."""
+    def create_embedding_model(self, model_name: str, **kwargs) -> Any:
+        """
+        Create an embedding model client.
+
+        Must be implemented by subclasses - embeddings are provider-specific.
+        """
         pass
 
     @staticmethod
@@ -663,34 +715,11 @@ class OpenAIProvider(BaseProvider):
         >>> llm = registry.get_llm('o1-preview')
     """
 
+    LITELLM_PREFIX = ''  # OpenAI is LiteLLM's default, no prefix needed
+
     def __init__(self, api_key: Optional[str] = None, **credentials):
         """Initialize OpenAI provider with optional API key."""
-        # Use OpenAI-specific API key from settings
-        self.api_key = api_key or settings.openai_api_key
-        if not self.api_key:
-            logger.debug(
-                'No OpenAI API key provided. LiteLLM will use OPENAI_API_KEY env var.'
-            )
-
-    def create_llm(self, model_name: str, **kwargs) -> LiteLLMWrapper:
-        """
-        Create an LLM wrapper for OpenAI models.
-
-        Args:
-            model_name: OpenAI model name (e.g., 'gpt-4o', 'gpt-4o-mini', 'o1')
-            **kwargs: Additional configuration (temperature, etc.)
-
-        Returns:
-            LiteLLMWrapper configured for the specified OpenAI model
-        """
-        temperature = kwargs.pop('temperature', 0.0)
-        return LiteLLMWrapper(
-            model=model_name,
-            provider='openai',
-            temperature=temperature,
-            api_key=self.api_key,
-            **kwargs
-        )
+        super().__init__(api_key=api_key or settings.openai_api_key, **credentials)
 
     def create_embedding_model(self, model_name: str, **kwargs) -> Any:
         """
@@ -715,63 +744,33 @@ class AnthropicProvider(BaseProvider):
     Supports all Claude models. Model names are automatically prefixed with
     'anthropic/' for LiteLLM routing.
 
+    Note: Anthropic does not provide embedding models. Use OpenAI or HuggingFace
+    for embeddings when using Anthropic for LLM.
+
     Example:
         >>> registry = LLMRegistry(provider='anthropic')
         >>> llm = registry.get_llm('claude-3-5-sonnet-20241022')
         >>> llm = registry.get_llm('claude-3-opus-20240229')
     """
 
+    LITELLM_PREFIX = 'anthropic/'
+    SUPPORTS_EMBEDDINGS = False  # Anthropic does not provide embedding models
+
     def __init__(self, api_key: Optional[str] = None, **credentials):
         """Initialize Anthropic provider with optional API key."""
-        # Use Anthropic-specific API key from settings
-        self.api_key = api_key or settings.anthropic_api_key
-        if not self.api_key:
-            logger.debug(
-                'No Anthropic API key provided. LiteLLM will use ANTHROPIC_API_KEY env var.'
-            )
-
-    def create_llm(self, model_name: str, **kwargs) -> LiteLLMWrapper:
-        """
-        Create an LLM wrapper for Anthropic Claude models.
-
-        Args:
-            model_name: Claude model name (e.g., 'claude-3-5-sonnet-20241022')
-                        Will be prefixed with 'anthropic/' for LiteLLM
-            **kwargs: Additional configuration (temperature, etc.)
-
-        Returns:
-            LiteLLMWrapper configured for the specified Claude model
-        """
-        # Add anthropic/ prefix if not already present
-        if not model_name.startswith('anthropic/'):
-            model_name = f'anthropic/{model_name}'
-
-        temperature = kwargs.pop('temperature', 0.0)
-        return LiteLLMWrapper(
-            model=model_name,
-            provider='anthropic',
-            temperature=temperature,
-            api_key=self.api_key,
-            **kwargs
-        )
+        super().__init__(api_key=api_key or settings.anthropic_api_key, **credentials)
 
     def create_embedding_model(self, model_name: str, **kwargs) -> Any:
         """
-        Create an embedding model for Anthropic.
+        Anthropic does not provide embedding models.
 
-        Note: Anthropic does not provide embedding models directly.
-        Falls back to OpenAI embeddings or raises an error.
+        Raises:
+            NotImplementedError: Always raised - use OpenAI or HuggingFace for embeddings.
         """
-        logger.warning(
+        raise NotImplementedError(
             'Anthropic does not provide embedding models. '
-            'Consider using OpenAI or HuggingFace embeddings instead.'
+            'Use OpenAI or HuggingFace provider for embeddings.'
         )
-        # Fall back to OpenAI embeddings as a reasonable default
-        from llama_index.embeddings.openai import (
-            OpenAIEmbedding as LlamaIndexOpenAIEmbedding,
-        )
-
-        return LlamaIndexOpenAIEmbedding(model=model_name, **kwargs)
 
 
 @LLMRegistry.register('gemini')
@@ -788,39 +787,11 @@ class GeminiProvider(BaseProvider):
         >>> llm = registry.get_llm('gemini-1.5-flash')
     """
 
+    LITELLM_PREFIX = 'gemini/'
+
     def __init__(self, api_key: Optional[str] = None, **credentials):
         """Initialize Gemini provider with optional API key."""
-        # Use Google-specific API key from settings
-        self.api_key = api_key or settings.google_api_key
-        if not self.api_key:
-            logger.debug(
-                'No Google API key provided. LiteLLM will use GOOGLE_API_KEY env var.'
-            )
-
-    def create_llm(self, model_name: str, **kwargs) -> LiteLLMWrapper:
-        """
-        Create an LLM wrapper for Google Gemini models.
-
-        Args:
-            model_name: Gemini model name (e.g., 'gemini-1.5-pro', 'gemini-1.5-flash')
-                        Will be prefixed with 'gemini/' for LiteLLM
-            **kwargs: Additional configuration (temperature, etc.)
-
-        Returns:
-            LiteLLMWrapper configured for the specified Gemini model
-        """
-        # Add gemini/ prefix if not already present
-        if not model_name.startswith('gemini/'):
-            model_name = f'gemini/{model_name}'
-
-        temperature = kwargs.pop('temperature', 0.0)
-        return LiteLLMWrapper(
-            model=model_name,
-            provider='gemini',
-            temperature=temperature,
-            api_key=self.api_key,
-            **kwargs
-        )
+        super().__init__(api_key=api_key or settings.google_api_key, **credentials)
 
     def create_embedding_model(self, model_name: str, **kwargs) -> Any:
         """
@@ -835,12 +806,93 @@ class GeminiProvider(BaseProvider):
         )
 
 
+@LLMRegistry.register('vertex_ai')
+class VertexAIProvider(BaseProvider):
+    """
+    Provider for Google Vertex AI models via LiteLLM.
+
+    Supports Gemini models, Claude on Vertex, and legacy models (chat-bison, etc.).
+    Requires GCP service account authentication.
+
+    Authentication options:
+    1. Environment variables: GOOGLE_APPLICATION_CREDENTIALS, VERTEXAI_PROJECT, VERTEXAI_LOCATION
+    2. Direct parameters: vertex_credentials, vertex_project, vertex_location
+
+    Example:
+        >>> registry = LLMRegistry(
+        ...     provider='vertex_ai',
+        ...     vertex_project='my-gcp-project',
+        ...     vertex_location='us-central1',
+        ...     vertex_credentials='/path/to/service-account.json'
+        ... )
+        >>> llm = registry.get_llm('gemini-1.5-pro')
+    """
+
+    LITELLM_PREFIX = 'vertex_ai/'
+    SUPPORTS_EMBEDDINGS = True
+
+    def __init__(
+        self,
+        vertex_project: Optional[str] = None,
+        vertex_location: Optional[str] = None,
+        vertex_credentials: Optional[str] = None,
+        **credentials
+    ):
+        """Initialize Vertex AI provider with GCP configuration."""
+        # Vertex AI uses service account auth, not API keys - remove if passed
+        credentials.pop('api_key', None)
+        super().__init__(api_key=None, **credentials)
+        self.vertex_project = vertex_project or settings.vertex_project
+        self.vertex_location = vertex_location or settings.vertex_location
+        self.vertex_credentials = vertex_credentials or settings.vertex_credentials
+
+    def _create_litellm_wrapper(self, model_name: str, **kwargs) -> LiteLLMWrapper:
+        """Override to add Vertex AI specific parameters."""
+        if self.LITELLM_PREFIX and not model_name.startswith(self.LITELLM_PREFIX):
+            model_name = f'{self.LITELLM_PREFIX}{model_name}'
+
+        temperature = kwargs.pop('temperature', 0.0)
+
+        # Add Vertex AI specific kwargs
+        vertex_kwargs = {}
+        if self.vertex_project:
+            vertex_kwargs['vertex_project'] = self.vertex_project
+        if self.vertex_location:
+            vertex_kwargs['vertex_location'] = self.vertex_location
+        if self.vertex_credentials:
+            vertex_kwargs['vertex_credentials'] = self.vertex_credentials
+
+        return LiteLLMWrapper(
+            model=model_name,
+            provider='vertex_ai',
+            temperature=temperature,
+            api_key=None,  # Vertex AI doesn't use API keys
+            **{**vertex_kwargs, **kwargs}
+        )
+
+    def create_embedding_model(self, model_name: str, **kwargs) -> Any:
+        """
+        Create an embedding model for Vertex AI.
+
+        Supported models: text-embedding-004, textembedding-gecko, etc.
+        """
+        from llama_index.embeddings.vertex import VertexTextEmbedding
+
+        return VertexTextEmbedding(
+            model_name=model_name,
+            project=self.vertex_project,
+            location=self.vertex_location,
+            credentials_path=self.vertex_credentials,
+            **kwargs
+        )
+
+
 @LLMRegistry.register('huggingface')
 class HuggingFaceProvider(BaseProvider):
     """
     Provider for HuggingFace Hub models.
 
-    Supports local HuggingFace models via LlamaIndex integration.
+    Uses LlamaIndex for local inference (not LiteLLM).
     Requires torch and transformers to be installed.
 
     Example:
@@ -851,15 +903,14 @@ class HuggingFaceProvider(BaseProvider):
     def __init__(self, api_key: Optional[str] = None, **credentials):
         """Initialize HuggingFace provider."""
         # HuggingFace may use HF_TOKEN for gated models
-        self.api_key = api_key
-        if not self.api_key:
-            logger.debug(
-                'No HuggingFace token provided. Set HF_TOKEN env var for gated models.'
-            )
+        super().__init__(api_key=api_key, **credentials)
 
     def create_llm(self, model_name: str, **kwargs) -> Any:
         """
         Create an LLM client for HuggingFace models.
+
+        Overrides base implementation to use LlamaIndex for local inference
+        instead of LiteLLM.
 
         Args:
             model_name: HuggingFace model identifier (e.g., 'meta-llama/Llama-2-7b-chat-hf')
@@ -870,8 +921,6 @@ class HuggingFaceProvider(BaseProvider):
         """
         from llama_index.llms.huggingface import HuggingFaceLLM
 
-        # Note: May require torch, transformers, etc. to be installed.
-        # Additional kwargs like device_map="auto" can be passed.
         return HuggingFaceLLM(model_name=model_name, **kwargs)
 
     def create_embedding_model(self, model_name: str, **kwargs) -> Any:
