@@ -1,6 +1,6 @@
 # Metrics & Evaluation
 
-Axion provides 98+ metrics for evaluating AI agents across multiple dimensions.
+Axion provides 30+ metrics for evaluating AI agents across multiple dimensions.
 
 ## Quick Start
 
@@ -9,7 +9,7 @@ from axion import Dataset, metric_registry
 from axion.metrics import Faithfulness, AnswerRelevancy
 
 # Load your dataset
-dataset = Dataset.from_json("eval_data.json")
+dataset = Dataset.from_csv("eval_data.csv")
 
 # Select metrics
 metrics = [Faithfulness(), AnswerRelevancy()]

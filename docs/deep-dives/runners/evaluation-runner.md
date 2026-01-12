@@ -76,9 +76,9 @@ from axion.dataset import DatasetItem
 # Prepare dataset with existing outputs
 dataset = [
     DatasetItem(
-        query="What is Data Cloud?",
-        actual_output="Data Cloud is a hyperscale data platform...",
-        expected_output="Data Cloud is a hyperscale data platform built directly into Salesforce."
+        query="How do I reset my password?",
+        actual_output="To reset your password, click 'Forgot Password' on the login page...",
+        expected_output="Navigate to login, click 'Forgot Password', and follow the reset link."
     ),
     # More items...
 ]
@@ -106,14 +106,14 @@ from axion.dataset import DatasetItem
 
 
 data_item = DatasetItem(
-    query = "What is Data Cloud?",
-    expected_output = "Data Cloud is a platform to build AI agents and unlock your data",
+    query = "How do I reset my password?",
+    expected_output = "Navigate to login, click 'Forgot Password', and follow the reset link.",
 )
 
 # Task Option 1 - Task returns python dictionary (can be async or sync)
 def dictionary_task_output(item):
     return {
-        'response': "Data Cloud is a platform to build AI agents and unlock your data",
+        'response': "To reset your password, click 'Forgot Password' on the login page.",
         'latency': 1.3
     }
 
@@ -126,7 +126,7 @@ class Output(BaseModel):
 
 def pydantic_task_output(item):
     return Output(
-        response="Data Cloud is a platform to build AI agents and unlock your data",
+        response="To reset your password, click 'Forgot Password' on the login page.",
         latency=1.3
 )
 
@@ -176,13 +176,13 @@ from deepeval.metrics import AnswerRelevancyMetric
 dataframe = pd.DataFrame([
     {
         'id': '01',
-        'query': "What is Data Cloud?",
-        'expected_output': "Data Cloud is a hyperscale data platform built directly into Salesforce.",
+        'query': "How do I reset my password?",
+        'expected_output': "Navigate to login, click 'Forgot Password', and follow the reset link.",
     },
     {
         'id': '02',
-        'query': "What is Agentforce?",
-        'expected_output': "Agentforce is a Salesforce platform that enables the creation and deployment of autonomous AI agents",
+        'query': "How do I update my billing information?",
+        'expected_output': "Go to Account Settings, select Billing, and update your payment method.",
     }
 ])
 

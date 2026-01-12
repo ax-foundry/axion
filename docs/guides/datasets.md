@@ -34,8 +34,8 @@ dataset = Dataset(items=[item])
 ## Loading Datasets
 
 ```python
-# From JSON file
-dataset = Dataset.from_json("eval_data.json")
+# From CSV file
+dataset = Dataset.from_csv("eval_data.csv")
 
 # From pandas DataFrame
 dataset = Dataset.from_dataframe(df)

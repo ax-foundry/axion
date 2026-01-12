@@ -2,45 +2,107 @@
 
 The API Runner is a centralized orchestration system for managing multiple API clients within Axion. It provides a unified interface for executing single queries and batch operations across different API endpoints with built-in retry, concurrency control, error handling, and standardized response formatting.
 
+## Key Features
 
-### APIRunner Class
+- **Registry-based API management** — Register any API client with a simple decorator
+- **Concurrent execution** — Semaphore-controlled parallelism for batch operations
+- **Configuration-driven** — YAML or dictionary-based initialization
+- **Standardized responses** — Consistent `APIResponseData` format across all APIs
+- **Built-in retry logic** — Configurable retry behavior with exponential backoff
 
-The main orchestrator that manages multiple API clients and provides a unified execution interface.
+---
 
-**Key Features:**
+## Creating Custom API Runners
 
-- Registry-based API management
-- Concurrent execution with semaphore control
-- Configuration-driven initialization
-- Standardized response handling
-- Retry Logic
+The API Runner system is designed to be extensible. Register your own API implementations to integrate any service into Axion's evaluation pipelines.
 
+### Method 1: Decorator Registration (Recommended)
 
-## Available API Runners
-
-To explore all available API runners and their configuration options, use the built-in discovery method:
-
-```python title="View Available Runners"
-from axion.runners import APIRunner
-
-# Display all registered API runners with their options
-APIRunner.display()
-```
-
-## Configuration
-
-API Runner accepts configuration in multiple formats:
+Use the `@APIRunner.register()` decorator to automatically register your custom runner:
 
 ```python
-# Dictionary format
-config = {
-    'miaw': {...},
-    'agent_api': {...}
-}
+from axion.runners.api import api_retry, BaseAPIRunner, APIResponseData, APIRunner
 
-# YAML file path
-config = "/path/to/config.yaml"
+@APIRunner.register('my_chatbot')
+class MyChatbotRunner(BaseAPIRunner):
+    """Runner for your custom chatbot API."""
+    name = 'my_chatbot'
+
+    def __init__(self, config: dict, **kwargs):
+        super().__init__(config, **kwargs)
+        self.api_url = config.get('api_url')
+        self.api_key = config.get('api_key')
+
+    @api_retry('Chatbot API call')
+    def execute(self, query: str, **kwargs) -> APIResponseData:
+        import requests
+        import time
+
+        start_time = time.time()
+
+        response = requests.post(
+            self.api_url,
+            headers={'Authorization': f'Bearer {self.api_key}'},
+            json={'message': query}
+        )
+        result = response.json()
+
+        return APIResponseData(
+            query=query,
+            actual_output=result.get('response', ''),
+            latency=time.time() - start_time,
+            status='success'
+        )
 ```
+
+### Example: OpenAI Chat Runner
+
+A real-world example integrating OpenAI's Chat API:
+
+```python
+from axion.runners.api import api_retry, BaseAPIRunner, APIResponseData, APIRunner
+
+@APIRunner.register('openai_chat')
+class OpenAIChatRunner(BaseAPIRunner):
+    """Custom runner for OpenAI Chat API."""
+    name = 'openai_chat'
+
+    def __init__(self, config: dict, **kwargs):
+        super().__init__(config, **kwargs)
+        self.model = config.get('model', 'gpt-4')
+
+    @api_retry('OpenAI Chat API call')
+    def execute(self, query: str, **kwargs) -> APIResponseData:
+        from openai import OpenAI
+        import time
+
+        client = OpenAI()
+        start_time = time.time()
+
+        response = client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "user", "content": query}]
+        )
+
+        return APIResponseData(
+            query=query,
+            actual_output=response.choices[0].message.content,
+            latency=time.time() - start_time,
+            additional_output={'model': self.model, 'usage': dict(response.usage)},
+            status='success'
+        )
+```
+
+### Implementation Requirements
+
+When creating custom runners, ensure your implementation:
+
+1. **Inherits from `BaseAPIRunner`** — Provides the standard interface and batch processing capabilities
+2. **Implements the `execute()` method** — Core method that handles single query execution
+3. **Returns `APIResponseData` objects** — Use the standardized response format for consistency
+4. **Handles errors gracefully** — Use try/except and return appropriate status
+
+---
 
 ## Usage Patterns
 
@@ -49,11 +111,19 @@ config = "/path/to/config.yaml"
 ```python
 from axion.runners import APIRunner
 
+# Configuration for your registered APIs
+config = {
+    'my_chatbot': {
+        'api_url': 'https://api.example.com/chat',
+        'api_key': 'your-api-key'
+    }
+}
+
 # Initialize with configuration
 runner = APIRunner(config=config, max_concurrent=5)
 
 # Execute single query
-response = runner.execute('miaw', "What is Data Cloud?")
+response = runner.execute('my_chatbot', "How do I reset my password?")
 print(response.actual_output)
 
 # List available APIs
@@ -66,13 +136,13 @@ print(f"Available APIs: {available_apis}")
 ```python
 # Prepare multiple queries
 queries = [
-    "What is Data Cloud?",
-    "How does Einstein Analytics work?",
-    "Explain Salesforce Flow"
+    "How do I reset my password?",
+    "What are the payment options?",
+    "How do I contact support?"
 ]
 
 # Execute batch asynchronously
-responses = await runner.execute_batch('miaw', queries)
+responses = await runner.execute_batch('my_chatbot', queries)
 
 # Process responses
 for response in responses:
@@ -85,89 +155,57 @@ for response in responses:
 ### Direct API Usage
 
 ```python
-from axion.runners import MIAWRunner
-
-# Initialize specific runner directly
-api_runner = MIAWRunner(
-    config={...},
+# Initialize a specific runner directly
+chatbot_runner = MyChatbotRunner(
+    config={'api_url': '...', 'api_key': '...'},
     max_concurrent=3
 )
 
 # Execute query
-response = api_runner.execute("Your query here")
+response = chatbot_runner.execute("Your query here")
 ```
 
-## Available API Runners
+---
 
-### MIAW Runner
+## Configuration
 
-**Registry Key:** `miaw`
-**Class:** `MIAWRunner`
-**Purpose:** Interface for MIAW (Messaging and In App Wep) API
+API Runner accepts configuration in multiple formats:
 
-
-**Usage Example:**
 ```python
+# Dictionary format
 config = {
-    'miaw': {
-        'domain': 'your-domain.salesforce.com',
-        'org_id': 'your-org-id',
-        'deployment_name': 'production',
-        'ignore_responses': ['error', 'timeout']
+    'my_chatbot': {
+        'api_url': 'https://api.example.com/chat',
+        'api_key': 'your-api-key'
+    },
+    'openai_chat': {
+        'model': 'gpt-4'
     }
 }
 
-runner = APIRunner(config=config)
-response = runner.execute('miaw', "Explain Salesforce Data Cloud")
-```
-
-### Agent API Runner
-
-**Registry Key:** `agent_api`
-**Class:** `AgentAPIRunner`
-**Purpose:** Interface for Agent API services
-
-**Usage Example:**
-```python
-config = {
-    'agent_api': {
-        'domain': 'your-domain.salesforce.com',
-        'consumer_key': '...',
-        'consumer_secret': '...',
-        'agent_id': '...',
-    }
-}
+# Or load from YAML file
+config = "/path/to/config.yaml"
 
 runner = APIRunner(config=config)
-response = runner.execute('agent_api', "Process this request")
 ```
 
-### Prompt Template API Runner
+### YAML Configuration Example
 
-**Registry Key:** `prompt_template`
-**Class:** `PromptTemplateAPIRunner`
-**Purpose:** Knowledge Prompt Template processing with retrieval capabilities
+```yaml
+# config.yaml
+my_chatbot:
+  api_url: https://api.example.com/chat
+  api_key: ${CHATBOT_API_KEY}  # Environment variable substitution
 
-
-**Usage Example:**
-```python
-config = {
-    'prompt_template': {
-        'domain': 'your-domain.salesforce.com',
-        'retriever_name': '...',
-        '..': '...'
-    }
-}
-
-runner = APIRunner(config=config)
-response = runner.execute('prompt_template', "Your query")
-print(f"Retrieved: {response.retrieved_content}")
-print(f"Response: {response.actual_output}")
+openai_chat:
+  model: gpt-4
 ```
+
+---
 
 ## Response Format
 
-All API runners return standardized `APIResponseData` objects containing:
+All API runners return standardized `APIResponseData` objects:
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -180,8 +218,9 @@ All API runners return standardized `APIResponseData` objects containing:
 | `status` | `str` | Execution status (default: 'success') |
 | `timestamp` | `str` | ISO-formatted response timestamp |
 
-## Advanced Configuratio
+---
 
+## Advanced Configuration
 
 ### Concurrency Control
 
@@ -190,90 +229,85 @@ All API runners return standardized `APIResponseData` objects containing:
 runner = APIRunner(config=config, max_concurrent=10)
 
 # Or configure per API when using direct instantiation
-api_runner = MIAWRunner(config=api_config, max_concurrent=3)
+api_runner = MyChatbotRunner(config=api_config, max_concurrent=3)
 ```
 
 ### Retry Control
 
 ```python
 from axion.runners.api import RetryConfig
+
 # Set global retry control
-runner = APIRunner(config=config, retry_config=RetryConfig(max_attempts=5))
+runner = APIRunner(
+    config=config,
+    retry_config=RetryConfig(max_attempts=5, backoff_factor=2.0)
+)
 
-# Or configure per API when using direct instantiation
-api_runner = MIAWRunner(config=api_config, retry_config=RetryConfig(enabled=False))
+# Or disable retries for specific runner
+api_runner = MyChatbotRunner(
+    config=api_config,
+    retry_config=RetryConfig(enabled=False)
+)
 ```
-
 
 ### Registry Management
 
 ```python
-# View available APIs
+# View all registered APIs and their options
 APIRunner.display()
 
-# Check registered APIs
+# Check registered APIs at runtime
 available = runner.list_available_apis()
 
 # Access specific executor
-miaw_executor = runner['miaw']
+chatbot_executor = runner['my_chatbot']
 ```
 
-## Creating Custom API Runners
+---
 
-You can extend the API Runner system by creating your own custom API implementations. There are two methods for registering custom runners: using the decorator or manual registration.
+## Integration with Evaluation Runner
 
-### Method 1: Decorator Registration
-
-Use the `@APIRunner.register()` decorator to automatically register your custom runner. Adding `@api_retry` will allow for retries and can be configured.
+Use API runners as tasks in the evaluation pipeline:
 
 ```python
-from axion.runners.api import api_retry, BaseAPIRunner, APIResponseData, APIRunner
+from axion.runners import evaluation_runner, APIRunner
+from axion.metrics import AnswerRelevancy, Faithfulness
+from axion.dataset import DatasetItem
 
-@APIRunner.register('custom_api')
-class CustomAPIRunner(BaseAPIRunner):
-    """Runner for CustomAPI."""
-    name = 'custom_api'
+# Configure your API
+config = {'my_chatbot': {'api_url': '...', 'api_key': '...'}}
+api_runner = APIRunner(config=config)
 
-    @api_retry('Custom API call')
-    def execute(self, query: str, **kwargs) -> APIResponseData:
-        # Your implementation here
-        return APIResponseData(
-            query=query,
-            actual_output=f"Processed: {query}",
-            status='success'
-        )
+# Create evaluation dataset (without actual_output - the task will generate it)
+dataset = [
+    DatasetItem(
+        query="How do I reset my password?",
+        expected_output="Navigate to login, click 'Forgot Password', follow the email link."
+    ),
+    DatasetItem(
+        query="What are your business hours?",
+        expected_output="We are open Monday-Friday, 9 AM to 5 PM EST."
+    )
+]
+
+# Define task that calls your API
+def chatbot_task(item: DatasetItem) -> dict:
+    response = api_runner.execute('my_chatbot', item.query)
+    return {
+        'response': response.actual_output,
+        'latency': response.latency
+    }
+
+# Run evaluation with task
+results = evaluation_runner(
+    evaluation_inputs=dataset,
+    task=chatbot_task,
+    scoring_metrics=[AnswerRelevancy(), Faithfulness()],
+    evaluation_name="Chatbot Evaluation"
+)
 ```
 
-### Method 2: Manual Registration
-
-For dynamic registration or when you prefer explicit control:
-
-```python
-from axion.runners.api import APIRunner, BaseAPIRunner
-
-class AnotherCustomRunner(BaseAPIRunner):
-    """Another custom runner implementation."""
-
-    def execute(self, query: str, **kwargs) -> APIResponseData:
-        # Your implementation here
-        return APIResponseData(
-            query=query,
-            actual_output=f"Processed: {query}",
-            status='success'
-        )
-
-# Manual registration
-APIRunner.manual_register('another_custom', AnotherCustomRunner)
-```
-
-### Implementation Requirements
-
-When creating custom runners, ensure your implementation:
-
-1. **Inherits from `BaseAPIRunner`**: This provides the standard interface and batch processing capabilities
-2. **Implements the `execute()` method**: This is the core method that handles single query execution
-3. **Returns APIResponseData objects**: Use the standardized response format for consistency
-
+---
 
 ## API Reference
 

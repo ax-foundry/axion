@@ -211,10 +211,10 @@ class Faithfulness(BaseMetric):
 metric = Faithfulness()
 
 data_item = DatasetItem(
-    query = "What is Data Cloud?",
-    actual_output = "Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-    expected_output = "Data Cloud is a hyperscale data platform built directly into Salesforce.",
-    retrieved_content = ["built on the Salesforce Platform", "Unlocks Enterprise Value"],
+    query = "How do I reset my password?",
+    actual_output = "To reset your password, click 'Forgot Password' on the login page and follow the email instructions.",
+    expected_output = "Navigate to login, click 'Forgot Password', and follow the reset link sent to your email.",
+    retrieved_content = ["Password reset available via login page", "Reset link sent by email"],
     latency = 2.13
 )
 result = await metric.execute(data_item)

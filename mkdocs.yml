@@ -8,6 +8,7 @@ nav:
   - Getting Started:
     - Installation: getting-started/installation.md
   - User Guide:
+    - Hierarchical Scoring: guides/hierarchical-scoring.md
     - Working with Datasets: guides/datasets.md
     - Metrics & Evaluation: guides/metrics.md
     - Running Evaluations: guides/evaluation.md
@@ -48,22 +49,34 @@ theme:
   name: material
   logo: assets/dark_icon.png
   custom_dir: docs/overrides
+  font:
+    text: Inter
+    code: Fira Code
   features:
     - navigation.sections
     - navigation.expand
     - navigation.indexes
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
     - content.code.copy
     - content.tabs.link
+    - search.suggest
+    - search.highlight
   language: en
   palette:
     - scheme: slate
       primary: custom
+      accent: custom
       toggle:
-        icon: material/brightness-4
+        icon: material/weather-night
+        name: Switch to light mode
     - scheme: default
       primary: custom
+      accent: custom
       toggle:
-        icon: material/brightness-7
+        icon: material/weather-sunny
+        name: Switch to dark mode
 
 extra_css:
   - stylesheets/extra.css
