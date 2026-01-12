@@ -283,10 +283,10 @@ Give me a score between 1 and 10 and a reason.
 **Atomic Statements:** Break compound sentences into individual facts.
 
 ```python
-# Instead of scoring "Sales Cloud tracks leads and manages opportunities"
+# Instead of scoring "The product has feature A and feature B"
 statements = [
-    "Sales Cloud tracks leads.",      # Judge: 1 (True)
-    "Sales Cloud manages opportunities."  # Judge: 0 (False)
+    "The product has feature A.",      # Judge: 1 (True)
+    "The product has feature B."       # Judge: 0 (False)
 ]
 # Result: 50% accuracy (mathematical, not vibes)
 ```
@@ -303,58 +303,9 @@ You cannot evaluate a GPT-4o agent using a GPT-3.5-Turbo judge. The judge must h
 
 **Key principle:** "Cheap on generation, expensive on evaluation."
 
----
 
-## Common Judge Biases
 
-### Length Bias
-The judge rates longer answers higher, even if short answers are more accurate.
-
-### Sycophancy ("Yes Man" Syndrome)
-Scores cluster between 7-10. Models trained via RLHF are biased toward being helpful.
-
-### Positional Bias
-In pairwise comparison, the model prefers whichever answer appeared first.
-
-### Self-Preference Bias
-GPT-4 judges rate GPT-4 agents higher than Claude agents (and vice versa).
-
-**Fix:** Use rubric grounding. Strip evaluation down to "Did it contain Fact X?" (Boolean) to remove style from the equation.
-
----
-
-## Synthetic Data Generation
-
-To achieve comprehensive dataset coverage at scale, supplement manual curation with synthetic generation.
-
-### Method 1: Simulation Testing (Persona-Based)
-
-Generate realistic multi-turn conversations to test conversational flow and task completion.
-
-1. **Configure Personas:** Define goal, knowledge level, personality, scenario
-2. **Generate Dialogues:** Create thousands of interactions at scale
-3. **Review & Evaluate:** Score against predefined metrics
-
-### Method 2: Knowledge-Based Q&A Generation
-
-Test accuracy and completeness of RAG systems by generating Q&A pairs from your documents.
-
-**Key Considerations:**
-
-- Quality varies—success depends on prompt engineering
-- Align generation prompt with your production agent's prompt
-- If the generation style doesn't match production, the dataset won't represent your real environment
-
----
 
 ## Summary
-
-1. **Look at your data** before reaching for frameworks
-2. **Define success** for your specific agent use case
-3. **Classify errors** by root cause, not just symptom
-4. **Use binary judgments** with detailed critiques
-5. **Select metrics** based on what you're measuring and what data you have
-6. **Calibrate LLM judges** against human expert feedback
-7. **Iterate continuously** through the Analyze-Measure-Improve cycle
 
 The goal is not to automate evaluation away—it's to build resilient, domain-aware evaluation systems that measure what truly matters and drive meaningful, measurable improvement.

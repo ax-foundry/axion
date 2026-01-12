@@ -212,4 +212,4 @@ workflow.visualize_graph()  # Displays mermaid diagram
 ## Next Steps
 
 - [Agent Evaluation Playbook](../agent_playbook.md) - Dataset best practices
-- [Metrics Guide](../Metrics/index.md) - Evaluate your synthetic data quality
+- [Metrics Guide](metrics.md) - Evaluate your synthetic data quality

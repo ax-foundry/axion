@@ -46,10 +46,10 @@ runner = MetricRunner(metrics=[metric], max_concurrent=5)
 # Prepare evaluation data
 data_items = [
     DatasetItem(
-        query="What is Data Cloud?",
-        actual_output="Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-        expected_output="Data Cloud is a hyperscale data platform built directly into Salesforce.",
-        retrieved_content=["Data Cloud is a hyperscale data platform built directly into Salesforce."]
+        query="How do I reset my password?",
+        actual_output="To reset your password, click 'Forgot Password' on the login page and follow the email instructions.",
+        expected_output="Navigate to login, click 'Forgot Password', and follow the reset link sent to your email.",
+        retrieved_content=["Password reset is available via the login page. Users receive a reset link by email."]
     ),
     # Add more data items...
 ]
@@ -75,10 +75,10 @@ import pandas as pd
 
 dataframe = pd.DataFrame({
     'id': '0000001',
-    'query': "What is Data Cloud?",
-    'actual_output': "Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-    'expected_output': "Data Cloud is a hyperscale data platform built directly into Salesforce.",
-    'retrieved_content': [["Data Cloud is a hyperscale data platform built directly into Salesforce."]]
+    'query': "How do I reset my password?",
+    'actual_output': "To reset your password, click 'Forgot Password' on the login page and follow the email instructions.",
+    'expected_output': "Navigate to login, click 'Forgot Password', and follow the reset link sent to your email.",
+    'retrieved_content': [["Password reset is available via the login page. Users receive a reset link by email."]]
 })
 
 
@@ -168,7 +168,7 @@ runner = MetricRunner(metrics=metrics)
 
 # Requires actual_output and optionally retrieved_content
 data_item = DatasetItem(
-    query="What is Data Cloud?",
+    query="How do I reset my password?",
     actual_output="Response text...",
     retrieved_content=["Context 1", "Context 2"]
 )

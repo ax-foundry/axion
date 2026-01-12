@@ -8,10 +8,9 @@
 **A modular white box evaluation framework for AI agents.**
 
 
-<div style="background: linear-gradient(135deg, #111827 0%, #1f2937 55%, #0b3b8c 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
+<div style="background: linear-gradient(135deg, #8B9F4F 0%, #6B7A3A 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
 
-
-Axion provides plug-and-play building blocks for evaluating generative AI agents—going beyond surface-level metrics to focus on what truly matters: continuously improving agents to perform in the real world.</p>
+Moving from passive, black-box observation to active, white-box evaluation—Axion empowers builders with **actionable signals**, **automated pipelines**, and **fully transparent metrics**. See exactly why your agent succeeds or fails.
 </div>
 
 
@@ -23,6 +22,7 @@ Evaluating AI agents isn't a traditional ML task. It's a context-driven problem 
 
 ### Core Philosophy
 
+- **White-box transparency** — Black-box metrics give you numbers; white-box metrics give you understanding
 - **Metrics without actionable meaning are worthless** — Dashboards full of numbers that get glanced at once a week don't drive improvement
 - **Binary judgments with critiques** — Not vague Likert scales that nobody can agree on
 - **Domain-specific evaluation** — A customer support agent and an onboarding agent shouldn't be graded with the same rubric
@@ -34,19 +34,83 @@ Evaluating AI agents isn't a traditional ML task. It's a context-driven problem 
 
 | Feature | Description |
 |---------|-------------|
-| **98+ Metrics** | Composite, heuristic, and conversational metrics covering RAG, retrieval, response quality, and agent behavior |
+| **30+ Metrics** | Composite, heuristic, and conversational metrics covering RAG, retrieval, response quality, and agent behavior |
 | **Metric Registry** | Extensible pattern for registering custom domain-specific metrics |
 | **Evaluation Runners** | Parallel batch evaluation with caching and cost estimation |
 | **Dataset Management** | `Dataset` and `DatasetItem` classes for single and multi-turn conversations |
 | **LLM-as-a-Judge** | Calibrated judge prompts with chain-of-thought reasoning |
 | **Synthetic Generation** | Generate evaluation datasets from documents or personas |
+| **Hierarchical Scoring** | Multi-level scoring with weighted dimensions and diagnostic drill-down |
+
+---
+
+## Hierarchical Scoring
+
+**What sets Axion apart:** Our scoring framework is hierarchical by design—moving from a single, intuitive overall score down into layered sub-scores. This structure delivers more than just measurement; it provides a diagnostic map of quality.
+
+```
+                    ┌─────────────────┐
+                    │  Overall Score  │
+                    │      0.82       │
+                    └────────┬────────┘
+                             │
+          ┌──────────────────┼──────────────────┐
+          ▼                  ▼                  ▼
+   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+   │  Relevance  │    │  Accuracy   │    │    Tone     │
+   │    0.91     │    │    0.78     │    │    0.85     │
+   └─────────────┘    └─────────────┘    └─────────────┘
+```
+
+**Why this matters:**
+
+- **Instant Root Cause Diagnosis** — Drill down to pinpoint whether issues stem from relevance, accuracy, tone, or other dimensions
+- **Strategic Prioritization** — Forces clarity on what really matters for your business
+- **Actionable Feedback Loop** — Each layer translates directly into actions (retraining, prompt adjustments, alignment tuning)
+- **Customizable to Business Goals** — Weight and expand dimensions to match your unique KPIs
+
+```python
+from axion.runners import evaluation_runner
+from axion.metrics import AnswerRelevancy
+from axion.dataset import DatasetItem
+
+# Define hierarchical scoring configuration
+config = {
+    'metric': {
+        'Relevance': AnswerRelevancy(metric_name='Relevancy'),
+    },
+    'model': {
+        'ANSWER_QUALITY': {'Relevance': 1.0},
+    },
+    'weights': {
+        'ANSWER_QUALITY': 1.0,
+    }
+}
+
+data_item = DatasetItem(
+    query="How do I reset my password?",
+    actual_output="To reset your password, click 'Forgot Password' on the login page and follow the email instructions.",
+)
+
+results = evaluation_runner(
+    evaluation_inputs=[data_item],
+    scoring_config=config,  # Or pass path to config.yaml
+    evaluation_name="Hierarchical Evaluation"
+)
+
+# Generate scorecard with hierarchical breakdown
+results.to_scorecard()
+```
 
 ---
 
 ## Quick Start
 
 ```bash
-pip install axion
+# Clone and install
+git clone https://github.com/ax-foundry/axion.git
+cd axion
+pip install -e .
 ```
 
 ```python
@@ -55,30 +119,13 @@ from axion.metrics import Faithfulness, AnswerRelevancy
 from axion.runners import evaluation_runner
 
 # Load your evaluation dataset
-dataset = Dataset.from_json("eval_data.json")
+dataset = Dataset.from_csv("eval_data.csv")
 
 # Select metrics for your use case
 metrics = [Faithfulness(), AnswerRelevancy()]
 
 # Run evaluation
 results = await evaluation_runner(dataset, metrics)
-```
-
----
-
-## Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/ax-foundry/axion.git
-cd axion
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-
-# Install with dev dependencies
-pip install -e ".[dev]"
 ```
 
 ### Configuration
@@ -88,6 +135,16 @@ Create a `.env` file:
 ```bash
 OPENAI_API_KEY=<your-key>
 LOG_LEVEL="INFO"
+```
+
+### Development Installation
+
+```bash
+# With dev dependencies (for contributing/testing)
+pip install -e ".[dev]"
+
+# With tracing support
+pip install -e ".[tracing]"
 ```
 
 ---

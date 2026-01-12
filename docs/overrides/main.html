@@ -6,3 +6,22 @@
     <strong>Click here to go to latest.</strong>
   </a>
 {% endblock %}
+
+{% block announce %}
+<div class="announcement-banner" id="announcement-banner">
+  <span>Welcome to the Axion documentation!</span>
+  <a href="https://github.com/ax-foundry/axion">View on GitHub &rarr;</a>
+  <button class="close-btn" onclick="dismissBanner()" aria-label="Dismiss">&times;</button>
+</div>
+<script>
+  // Check if banner was previously dismissed
+  if (localStorage.getItem('axion-banner-dismissed') === 'true') {
+    document.getElementById('announcement-banner').classList.add('hidden');
+  }
+
+  function dismissBanner() {
+    document.getElementById('announcement-banner').classList.add('hidden');
+    localStorage.setItem('axion-banner-dismissed', 'true');
+  }
+</script>
+{% endblock %}

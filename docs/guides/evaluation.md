@@ -10,7 +10,7 @@ from axion.metrics import Faithfulness, AnswerRelevancy
 from axion.runners import evaluation_runner
 
 # Load dataset
-dataset = Dataset.from_json("eval_data.json")
+dataset = Dataset.from_csv("eval_data.csv")
 
 # Run evaluation
 results = await evaluation_runner(

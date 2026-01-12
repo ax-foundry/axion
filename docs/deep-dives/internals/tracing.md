@@ -315,7 +315,7 @@ Spans support `set_input()` and `set_output()` methods for capturing data that a
 async with tracer.async_span('my-operation') as span:
     # Capture the input data
     span.set_input({
-        'query': 'What is Data Cloud?',
+        'query': 'How do I reset my password?',
         'context': ['doc1', 'doc2'],
     })
 
@@ -399,9 +399,9 @@ class MetricService:
         # AnswerRelevancy has its own tracer and auto-captured as a child span
         metric = AnswerRelevancy()
         data_item = DatasetItem(
-            query="What is Data Cloud?",
-            actual_output="Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-            expected_output="Data Cloud is a hyperscale data platform built directly into Salesforce.",
+            query="How do I reset my password?",
+            actual_output="To reset your password, click 'Forgot Password' on the login page and follow the email instructions.",
+            expected_output="Navigate to login, click 'Forgot Password', and follow the reset link sent to your email.",
         )
         return await metric.execute(data_item)
 
@@ -509,15 +509,15 @@ Just initialize your tracer and everything else traces automatically.
 
 ## Installation
 
-The tracing providers are optional dependencies:
+The tracing providers are optional dependencies. From the project root:
 
 ```bash
 # Install with Logfire support
-pip install axion[logfire]
+pip install -e ".[logfire]"
 
 # Install with Langfuse support
-pip install axion[langfuse]
+pip install -e ".[langfuse]"
 
 # Install with all tracing providers
-pip install axion[tracing]
+pip install -e ".[tracing]"
 ```
