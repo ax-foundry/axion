@@ -517,6 +517,11 @@ class RagasRunner(BaseMetricRunner):
             input_data = format_input(input_data)
             EvaluationValidation.ensure_required_fields_present(input_data, self._name)
 
+            # Reset cost tracking before evaluation
+            llm = getattr(self.metric, 'llm', None)
+            if llm and hasattr(llm, 'reset_cost'):
+                llm.reset_cost()
+
             span.set_input({
                 'query': getattr(input_data, 'query', None),
                 'actual_output': getattr(input_data, 'actual_output', None),
@@ -609,6 +614,11 @@ class DeepEvalRunner(BaseMetricRunner):
 
             input_data = format_input(input_data)
             EvaluationValidation.ensure_required_fields_present(input_data, self._name)
+
+            # Reset cost tracking before evaluation
+            model = getattr(self.metric, 'model', None)
+            if model and hasattr(model, 'reset_cost'):
+                model.reset_cost()
 
             span.set_input({
                 'query': getattr(input_data, 'query', None),

@@ -165,7 +165,7 @@ from axion.runners import (
     ErrorConfig
 )
 from axion.metrics import AnswerCompleteness, Latency
-from axion.integrations.models import RagasLLM, DeepEvalLLM
+from axion.integrations.models import LiteLLMRagas, LiteLLMDeepEval
 from axion.runners.api import PromptTemplateAPIRunner
 
 import pandas as pd
@@ -187,8 +187,8 @@ dataframe = pd.DataFrame([
 ])
 
 # Configure LLM models for third-party metrics
-deepeval_model = DeepEvalLLM('gpt-4')
-ragas_model = RagasLLM('gpt-4')
+deepeval_model = LiteLLMDeepEval(model='gpt-4') # Optional
+ragas_model = LiteLLMRagas(model='gpt-4') # Optional
 
 # Configure the task to evaluate
 api_runner = PromptTemplateAPIRunner(config='...')

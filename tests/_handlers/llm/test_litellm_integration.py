@@ -49,6 +49,7 @@ def create_mock_response(
     content: str = '{"answer": "test answer", "confidence": 0.95}',
     prompt_tokens: int = 100,
     completion_tokens: int = 50,
+    response_cost: float = None,
 ):
     """Create a mock LiteLLM response object."""
     mock_response = MagicMock()
@@ -57,6 +58,8 @@ def create_mock_response(
     mock_response.usage = MagicMock()
     mock_response.usage.prompt_tokens = prompt_tokens
     mock_response.usage.completion_tokens = completion_tokens
+    # LiteLLM stores cost in _hidden_params
+    mock_response._hidden_params = {'response_cost': response_cost}
     return mock_response
 
 
@@ -105,8 +108,8 @@ class TestLiteLLMCostEstimation:
     """Test cost estimation with LiteLLM integration."""
 
     @pytest.mark.asyncio
-    async def test_cost_estimation_uses_litellm(self):
-        """Verify handler uses litellm.completion_cost when available."""
+    async def test_cost_estimation_uses_response_cost(self):
+        """Verify handler uses response._hidden_params['response_cost'] as primary source."""
 
         class TestHandler(LLMHandler):
             instruction = 'Answer the question.'
@@ -118,13 +121,41 @@ class TestLiteLLMCostEstimation:
         expected_cost = 0.00123
 
         with patch('litellm.acompletion', new_callable=AsyncMock) as mock_acompletion:
-            mock_response = create_mock_response()
+            # Create response with cost in _hidden_params
+            mock_response = create_mock_response(response_cost=expected_cost)
+            mock_acompletion.return_value = mock_response
+
+            with patch('litellm.completion_cost') as mock_cost:
+                await handler.execute({'query': 'Test query'})
+
+                # Verify completion_cost was NOT called since _hidden_params had cost
+                mock_cost.assert_not_called()
+
+                # Verify cost estimate was set from _hidden_params
+                assert handler.cost_estimate == expected_cost
+
+    @pytest.mark.asyncio
+    async def test_cost_estimation_fallback_to_completion_cost(self):
+        """Verify handler falls back to completion_cost when _hidden_params is empty."""
+
+        class TestHandler(LLMHandler):
+            instruction = 'Answer the question.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = MockLLM(model='gpt-4o')
+
+        handler = TestHandler()
+        expected_cost = 0.00456
+
+        with patch('litellm.acompletion', new_callable=AsyncMock) as mock_acompletion:
+            # Create response with no cost in _hidden_params (None/0)
+            mock_response = create_mock_response(response_cost=0.0)
             mock_acompletion.return_value = mock_response
 
             with patch('litellm.completion_cost', return_value=expected_cost) as mock_cost:
                 await handler.execute({'query': 'Test query'})
 
-                # Verify completion_cost was called with the response
+                # Verify completion_cost was called as fallback
                 mock_cost.assert_called_once_with(completion_response=mock_response)
 
                 # Verify cost estimate was set
@@ -132,7 +163,7 @@ class TestLiteLLMCostEstimation:
 
     @pytest.mark.asyncio
     async def test_cost_estimation_fallback_to_manual(self):
-        """Verify handler falls back to LLMCostEstimator when litellm.completion_cost fails."""
+        """Verify handler falls back to LLMCostEstimator when all LiteLLM methods fail."""
 
         class TestHandler(LLMHandler):
             instruction = 'Answer the question.'
@@ -143,8 +174,9 @@ class TestLiteLLMCostEstimation:
         handler = TestHandler()
 
         with patch('litellm.acompletion', new_callable=AsyncMock) as mock_acompletion:
+            # Create response with no cost in _hidden_params
             mock_acompletion.return_value = create_mock_response(
-                prompt_tokens=1000, completion_tokens=500
+                prompt_tokens=1000, completion_tokens=500, response_cost=0.0
             )
 
             # Make completion_cost raise an exception

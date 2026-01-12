@@ -1636,9 +1636,9 @@ class MetricRunnerRegistryExtractor(BaseRegistryExtractor):
         if framework_name == 'axion':
             metric_example = 'from axion.metrics import AnswerRelevancy\nmetric = AnswerRelevancy()'
         elif framework_name == 'ragas':
-            metric_example = 'from ragas.metrics import Faithfulness\nfrom axion.integrations.models import RagasLLM\nmetric = Faithfulness(llm=RagasLLM())'
+            metric_example = 'from ragas.metrics import Faithfulness\nfrom axion.integrations.models import LiteLLMRagas\nmetric = Faithfulness(llm=LiteLLMRagas()) # optional: LiteLLMRagas()'
         elif framework_name == 'deepeval':
-            metric_example = 'from deepeval.metrics import AnswerRelevancyMetric\nfrom axion.integrations.models import DeepEvalLLM\nmetric = AnswerRelevancyMetric(model=DeepEvalLLM())'
+            metric_example = 'from deepeval.metrics import AnswerRelevancyMetric\nfrom axion.integrations.models import LiteLLMDeepEval\nmetric = AnswerRelevancyMetric(model=LiteLLMDeepEval()) # optional: LiteLLMDeepEval()'
         else:
             metric_example = '# Your metric instance\nmetric = YourMetric()'
 

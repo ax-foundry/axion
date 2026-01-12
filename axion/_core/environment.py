@@ -215,10 +215,13 @@ class AppSettings(BaseSettings, AxionConfig):
         env_prefix='',
         case_sensitive=False,
         validate_assignment=True,
-        extra='ignore',
+        extra='allow',
         env_file=dotenv_path,
         env_file_encoding='utf-8',
     )
+
+    # User extension namespace
+    ext: dict[str, Any] = Field(default_factory=dict)
 
 
 # Global Settings

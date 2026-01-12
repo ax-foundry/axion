@@ -295,12 +295,17 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 completion_tokens = usage.completion_tokens if usage else 0
 
                 # Estimate cost using LiteLLM's built-in pricing (supports 100+ models)
+                # Priority: response_cost > completion_cost > LLMCostEstimator
                 try:
-                    self.cost_estimate = litellm.completion_cost(
-                        completion_response=response
-                    )
+                    # Primary: Use response_cost from LiteLLM (real-time pricing)
+                    self.cost_estimate = response._hidden_params.get('response_cost', 0.0)
+                    if not self.cost_estimate:
+                        # Fallback: Use completion_cost function
+                        self.cost_estimate = litellm.completion_cost(
+                            completion_response=response
+                        )
                 except Exception:
-                    # Fallback to manual estimation for unsupported/custom models
+                    # Final fallback: Manual estimation for unsupported/custom models
                     self.cost_estimate = LLMCostEstimator.estimate(
                         model_name=model_name,
                         prompt_tokens=prompt_tokens,

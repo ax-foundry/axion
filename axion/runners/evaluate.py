@@ -254,17 +254,17 @@ class EvaluationRunner(RunnerMixin):
                 model_name = kwargs.pop('model_name')
 
                 if 'deepeval' in module_path:
-                    from axion.integrations.models import DeepEvalLLM
+                    from axion.integrations.models import LiteLLMDeepEval
 
-                    deepeval_model = DeepEvalLLM(model_name=model_name)
+                    deepeval_model = LiteLLMDeepEval(model=model_name)
 
                     # DeepEval uses 'model' parameter
                     kwargs['model'] = deepeval_model
 
                 elif 'ragas' in module_path:
-                    from axion.integrations.models import RagasLLM
+                    from axion.integrations.models import LiteLLMRagas
 
-                    ragas_model = RagasLLM(model_name=model_name)
+                    ragas_model = LiteLLMRagas(model=model_name)
 
                     # Ragas uses 'llm' parameter
                     kwargs['llm'] = ragas_model

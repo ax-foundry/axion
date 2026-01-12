@@ -14,7 +14,7 @@ Simple observability for AI applications with automatic context management. Supp
 ## Quick Start
 
 ```python
-from axion._core.tracing import init_tracer, trace
+from axion.tracing import init_tracer, trace
 
 class MyService:
     def __init__(self):
@@ -112,7 +112,7 @@ LANGFUSE_BASE_URL=https://cloud.langfuse.com  # EU region (default)
 You can override the global setting by passing an argument to `configure_tracing`.
 
 ```python
-from axion._core.tracing import configure_tracing, TracingMode
+from axion.tracing import configure_tracing, TracingMode
 
 # Configure based on the Pydantic settings object (standard way)
 configure_tracing()
@@ -138,7 +138,7 @@ The tracing system uses a decorator-based registry pattern, similar to `LLMRegis
 ### How It Works
 
 ```python
-from axion._core.tracing import TracerRegistry, BaseTracer
+from axion.tracing import TracerRegistry, BaseTracer
 
 # List all registered providers
 providers = TracerRegistry.list_providers()
@@ -154,7 +154,7 @@ tracer = TracerClass.create(metadata_type='llm')
 You can create custom tracer implementations by subclassing `BaseTracer` and registering with the `@TracerRegistry.register()` decorator:
 
 ```python
-from axion._core.tracing.registry import TracerRegistry, BaseTracer
+from axion.tracing import TracerRegistry, BaseTracer
 from contextlib import contextmanager, asynccontextmanager
 
 @TracerRegistry.register('my_custom_tracer')
@@ -213,7 +213,7 @@ The tracer attribute is required for `@trace` decorator.
 The `@trace` decorator automatically looks for a tracer attribute on the class instance (`self`) to create and manage spans.
 
 ```python
-from axion._core.tracing import init_tracer, trace
+from axion.tracing import init_tracer, trace
 
 class DecoratorService:
     def __init__(self):
@@ -239,7 +239,7 @@ await service.run()
 Use `init_tracer` at the top level of a service or class to start a new trace context. Use `get_current_tracer` in downstream functions or services that you expect to be called within an existing trace, allowing them to add child spans without needing the tracer to be passed in manually.
 
 ```python
-from axion._core.tracing import get_current_tracer, init_tracer
+from axion.tracing import get_current_tracer, init_tracer
 
 class ServiceA:
     def __init__(self):
@@ -273,7 +273,7 @@ os.environ['TRACING_MODE'] = 'langfuse'
 os.environ['LANGFUSE_PUBLIC_KEY'] = 'pk-lf-...'
 os.environ['LANGFUSE_SECRET_KEY'] = 'sk-lf-...'
 
-from axion._core.tracing import configure_tracing, Tracer
+from axion.tracing import configure_tracing, Tracer
 
 configure_tracing()
 tracer = Tracer('llm')
@@ -376,7 +376,7 @@ handler.metadata.name = "Sentiment Analysis"
 
 ```python
 import asyncio
-from axion._core.tracing import init_tracer, trace
+from axion.tracing import init_tracer, trace
 from axion.metrics import AnswerRelevancy
 from axion.dataset import DatasetItem
 from axion._core.metadata.schema import ToolMetadata

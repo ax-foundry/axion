@@ -32,7 +32,7 @@ For most use cases, you can simply import the global `logger` instance. For larg
 
 ```python
 # Best Practice: Get a module-specific logger
-from axion.core.logging import get_logger
+from axion.logging import get_logger
 
 # The __name__ variable automatically gets the current module's name
 logger = get_logger(__name__)
@@ -65,7 +65,7 @@ Call `configure_logging` once at application startup.
 This is the simplest and most common configuration. It reads all settings from your Pydantic settings object.
 
 ```python
-from axion.core.logging import configure_logging, logger
+from axion.logging import configure_logging, logger
 
 # Reads level, rich status, etc., from the global settings
 configure_logging()
@@ -78,7 +78,7 @@ logger.info("Using the configuration from the environment.")
 You can pass arguments to `configure_logging` to override the values from the settings object for a specific session. This is especially useful for testing.
 
 ```python
-from axion.core.logging import configure_logging, logger
+from axion.logging import configure_logging, logger
 
 # This will force the log level to DEBUG for this session,
 # ignoring the value in the settings object.
@@ -105,7 +105,7 @@ The RichLogger provides several high-level methods to make your logs more expres
 ### Example
 
 ```python
-from axion.core.logging import logger
+from axion.logging import logger
 import time
 
 users = [
@@ -126,7 +126,7 @@ with logger.log_operation("Process User Data"):
 For better organization and debugging, create module-specific loggers:
 
 ```python
-from axion.core.logging import get_logger
+from axion.logging import get_logger
 
 # Each module gets its own logger
 logger = get_logger(__name__)
@@ -144,7 +144,7 @@ class MyService:
 ### Error Handling with Rich Logging
 
 ```python
-from axion.core.logging import logger
+from axion.logging import logger
 
 try:
     risky_operation()
@@ -157,7 +157,7 @@ except Exception as e:
 ### Conditional Logging
 
 ```python
-from axion.core.logging import logger
+from axion.logging import logger
 
 def debug_intensive_operation(data):
     if logger.isEnabledFor(logging.DEBUG):
@@ -179,7 +179,7 @@ def debug_intensive_operation(data):
 
 ```python
 # ✅ Good
-from axion.core.logging import get_logger
+from axion.logging import get_logger
 logger = get_logger(__name__)
 
 # ✅ Good - At startup
