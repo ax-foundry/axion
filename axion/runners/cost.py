@@ -143,6 +143,7 @@ class CostExtractor:
     # Extraction strategies in priority order
     EXTRACTION_STRATEGIES = [
         '_extract_direct_cost',
+        '_extract_evaluation_cost',  # DeepEval metric.evaluation_cost
         '_extract_from_llm',
         '_extract_from_model',
         '_extract_from_evaluation_model',
@@ -190,6 +191,22 @@ class CostExtractor:
                 cost_estimate=float(cost),
                 source='direct',
                 details={'attribute': 'cost_estimate'},
+            )
+        return None
+
+    def _extract_evaluation_cost(self, metric: Any) -> Optional[CostResult]:
+        """
+        Extract cost from metric.evaluation_cost (DeepEval pattern).
+
+        DeepEval metrics expose evaluation_cost as a direct attribute
+        after execution.
+        """
+        cost = getattr(metric, 'evaluation_cost', None)
+        if cost is not None and isinstance(cost, (int, float)) and cost > 0:
+            return CostResult(
+                cost_estimate=float(cost),
+                source='deepeval_evaluation_cost',
+                details={'attribute': 'evaluation_cost'},
             )
         return None
 
@@ -450,6 +467,94 @@ class CostAggregator:
             source = result.source
             by_source[source] = by_source.get(source, 0.0) + result.cost_estimate
         return by_source
+
+
+class CostProviderMixin:
+    """
+    Mixin for custom metrics to track costs from LiteLLM responses.
+
+    This mixin provides methods to accumulate costs across multiple LLM calls
+    and exposes a cost_estimate property that works with the CostExtractor.
+
+    Example:
+        >>> class MyMetric(BaseMetric, CostProviderMixin):
+        ...     async def execute(self, item, **kwargs):
+        ...         self.reset_cost()
+        ...         response = litellm.completion(...)
+        ...         self.add_cost_from_response(response)
+        ...         return result
+    """
+
+    _accumulated_cost: float = 0.0
+    _accumulated_input_tokens: int = 0
+    _accumulated_output_tokens: int = 0
+
+    def add_cost_from_response(self, response: Any) -> None:
+        """
+        Extract and accumulate cost from a LiteLLM response.
+
+        Prioritizes response._hidden_params['response_cost'] (real-time pricing),
+        falling back to litellm.completion_cost() if not available.
+
+        Args:
+            response: A LiteLLM completion response object
+        """
+        import litellm
+
+        # Primary: Use response_cost from LiteLLM (real-time pricing)
+        cost = 0.0
+        try:
+            cost = response._hidden_params.get('response_cost', 0.0)
+            if not cost:
+                # Fallback: Use completion_cost function
+                cost = litellm.completion_cost(completion_response=response)
+        except Exception:
+            pass
+
+        self._accumulated_cost += cost
+
+        # Track token usage if available
+        usage = getattr(response, 'usage', None)
+        if usage:
+            self._accumulated_input_tokens += getattr(usage, 'prompt_tokens', 0) or 0
+            self._accumulated_output_tokens += getattr(usage, 'completion_tokens', 0) or 0
+
+    def add_cost(
+        self,
+        cost_usd: float,
+        input_tokens: int = 0,
+        output_tokens: int = 0,
+    ) -> None:
+        """
+        Manually add cost and token usage.
+
+        Args:
+            cost_usd: Cost in USD to add
+            input_tokens: Number of input/prompt tokens
+            output_tokens: Number of output/completion tokens
+        """
+        self._accumulated_cost += cost_usd
+        self._accumulated_input_tokens += input_tokens
+        self._accumulated_output_tokens += output_tokens
+
+    def reset_cost(self) -> None:
+        """Reset accumulated costs. Call this before each metric execution."""
+        self._accumulated_cost = 0.0
+        self._accumulated_input_tokens = 0
+        self._accumulated_output_tokens = 0
+
+    @property
+    def cost_estimate(self) -> float:
+        """Return the accumulated cost. Works with CostExtractor."""
+        return self._accumulated_cost
+
+    @property
+    def accumulated_tokens(self) -> TokenUsage:
+        """Return the accumulated token usage."""
+        return TokenUsage(
+            input_tokens=self._accumulated_input_tokens,
+            output_tokens=self._accumulated_output_tokens,
+        )
 
 
 # Singleton instance for convenience

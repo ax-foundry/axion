@@ -1,7 +1,7 @@
-from axion.integrations.models.deepeval_llm import DeepEvalLLM
-from axion.integrations.models.ragas_llm import RagasLLM
+from axion.integrations.models.litellm_ragas import LiteLLMRagas
+from axion.integrations.models.litellm_deepeval import LiteLLMDeepEval
 
 __all__ = [
-    'DeepEvalLLM',
-    'RagasLLM',
+    'LiteLLMRagas',
+    'LiteLLMDeepEval',
 ]

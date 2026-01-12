@@ -161,9 +161,9 @@ runner = MetricRunner(metrics=[metric])
 **Usage Example:**
 ```python
 from ragas.metrics import Faithfulness
-from axion.integrations.models import RagasLLM
+from axion.integrations.models import LiteLLMRagas
 # Ragas metrics are automatically detected and executed with RagasRunner
-metrics = [Faithfulness(llm=RagasLLM())]
+metrics = [Faithfulness(llm=LiteLLMRagas())]
 runner = MetricRunner(metrics=metrics)
 
 # Requires actual_output and optionally retrieved_content
@@ -185,10 +185,10 @@ data_item = DatasetItem(
 **Usage Example:**
 ```python
 from deepeval.metrics import AnswerRelevancyMetric
-from axion.integrations.models import DeepEvalLLM
+from axion.integrations.models import LiteLLMDeepEval
 # DeepEval metrics are automatically detected
 metrics = [
-    AnswerRelevancyMetric(model=DeepEvalLLM()),
+    AnswerRelevancyMetric(model=LiteLLMDeepEval()),
 ]
 runner = MetricRunner(metrics=metrics)
 

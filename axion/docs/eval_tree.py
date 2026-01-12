@@ -6,13 +6,13 @@ def python_template(key: str, item: Any) -> str:
 from axion.metrics import AnswerRelevancy
 from ragas.metrics import Faithfulness
 from deepeval.metrics import ContextualRecallMetric
-from axion.integrations.models import RagasLLM, DeepEvalLLM
+from axion.integrations.models import LiteLLMRagas, LiteLLMDeepEval
 
 config = {
     'metric': {
         'answer_relevancy': AnswerRelevancy(),
-        'faithfulness': Faithfulness(llm=RagasLLM()),
-        'contextual_recall': ContextualRecallMetric(model=DeepEvalLLM()),
+        'faithfulness': Faithfulness(llm=LiteLLMRagas()),
+        'contextual_recall': ContextualRecallMetric(model=LiteLLMDeepEval()),
     },
     'model': {
         'ANSWER_QUALITY': {

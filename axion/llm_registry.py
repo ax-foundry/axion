@@ -1,3 +1,4 @@
+import warnings
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Type
 
@@ -9,71 +10,26 @@ logger = get_logger(__name__)
 
 class LLMCostEstimator:
     """
-    This class provides model-specific pricing for popular LLMs including OpenAI, Anthropic, and Google models.
-    It calculates the estimated cost of a given request based on the number of prompt and completion tokens.
+    DEPRECATED: Use LiteLLM's native cost tracking instead.
 
-    Note: When using LiteLLM in the handler, `litellm.completion_cost()` is preferred for accurate
-    real-time pricing. This class serves as a fallback for custom/internal models.
+    Prefer using `response._hidden_params["response_cost"]` or `litellm.completion_cost()`
+    for accurate real-time pricing from api.litellm.ai.
 
-    Example:
+    This class now delegates to LiteLLM's cost calculation and is maintained only
+    for backward compatibility.
+
+    Example (deprecated):
     ```
-     cost = LLMCostEstimator.estimate("gpt-4o", prompt_tokens=1500, completion_tokens=500)
-     print(f"Estimated cost: ${cost}")
+    # Old way (deprecated):
+    cost = LLMCostEstimator.estimate("gpt-4o", prompt_tokens=1500, completion_tokens=500)
+
+    # New way (recommended):
+    response = litellm.completion(...)
+    cost = response._hidden_params.get("response_cost", 0.0)
+    # or
+    cost = litellm.completion_cost(completion_response=response)
     ```
     """
-
-    MODEL_PRICING: Dict[str, Dict[str, float]] = {
-        # OpenAI Models
-        'gpt-4o-mini': {'input': 0.150 / 1e6, 'output': 0.600 / 1e6},
-        'gpt-4o': {'input': 2.50 / 1e6, 'output': 10.00 / 1e6},
-        'gpt-4-turbo': {'input': 10.00 / 1e6, 'output': 30.00 / 1e6},
-        'gpt-4-turbo-preview': {'input': 10.00 / 1e6, 'output': 30.00 / 1e6},
-        'gpt-4-0125-preview': {'input': 10.00 / 1e6, 'output': 30.00 / 1e6},
-        'gpt-4-1106-preview': {'input': 10.00 / 1e6, 'output': 30.00 / 1e6},
-        'gpt-4': {'input': 30.00 / 1e6, 'output': 60.00 / 1e6},
-        'gpt-4-32k': {'input': 60.00 / 1e6, 'output': 120.00 / 1e6},
-        'gpt-3.5-turbo-1106': {'input': 1.00 / 1e6, 'output': 2.00 / 1e6},
-        'gpt-3.5-turbo': {'input': 0.50 / 1e6, 'output': 1.50 / 1e6},
-        'gpt-3.5-turbo-16k': {'input': 3.00 / 1e6, 'output': 4.00 / 1e6},
-        'gpt-3.5-turbo-0125': {'input': 0.50 / 1e6, 'output': 1.50 / 1e6},
-        'gpt-3.5-turbo-instruct': {'input': 1.50 / 1e6, 'output': 2.00 / 1e6},
-        'o1': {'input': 15.00 / 1e6, 'output': 60.00 / 1e6},
-        'o1-preview': {'input': 15.00 / 1e6, 'output': 60.00 / 1e6},
-        'o1-2024-12-17': {'input': 15.00 / 1e6, 'output': 60.00 / 1e6},
-        'o3-mini': {'input': 1.10 / 1e6, 'output': 4.40 / 1e6},
-        'o3-mini-2025-01-31': {'input': 1.10 / 1e6, 'output': 4.40 / 1e6},
-        'o4-mini': {'input': 1.10 / 1e6, 'output': 4.40 / 1e6},
-        'gpt-4.1': {'input': 2.00 / 1e6, 'output': 8.00 / 1e6},
-        'gpt-4.1-mini': {'input': 0.4 / 1e6, 'output': 1.60 / 1e6},
-        'gpt-4.1-nano': {'input': 0.1 / 1e6, 'output': 0.4 / 1e6},
-        'gpt-4.5-preview': {'input': 75.00 / 1e6, 'output': 150.00 / 1e6},
-        'gpt-5': {'input': 1.25 / 1e6, 'output': 10.00 / 1e6},
-        'gpt-5-2025-08-07': {'input': 1.25 / 1e6, 'output': 10.00 / 1e6},
-        'gpt-5-mini': {'input': 0.25 / 1e6, 'output': 2.00 / 1e6},
-        'gpt-5-mini-2025-08-07': {'input': 0.25 / 1e6, 'output': 2.00 / 1e6},
-        'gpt-5-nano': {'input': 0.05 / 1e6, 'output': 0.40 / 1e6},
-        'gpt-5-nano-2025-08-07': {'input': 0.05 / 1e6, 'output': 0.40 / 1e6},
-        'gpt-5-chat-latest': {'input': 1.25 / 1e6, 'output': 10.00 / 1e6},
-        # Anthropic Claude Models (use with "anthropic/" prefix in LiteLLM)
-        'claude-3-5-sonnet-20241022': {'input': 3.00 / 1e6, 'output': 15.00 / 1e6},
-        'claude-3-5-sonnet-latest': {'input': 3.00 / 1e6, 'output': 15.00 / 1e6},
-        'claude-3-5-haiku-20241022': {'input': 0.80 / 1e6, 'output': 4.00 / 1e6},
-        'claude-3-opus-20240229': {'input': 15.00 / 1e6, 'output': 75.00 / 1e6},
-        'claude-3-sonnet-20240229': {'input': 3.00 / 1e6, 'output': 15.00 / 1e6},
-        'claude-3-haiku-20240307': {'input': 0.25 / 1e6, 'output': 1.25 / 1e6},
-        # Google Gemini Models (use with "gemini/" prefix in LiteLLM)
-        'gemini-1.5-pro': {'input': 1.25 / 1e6, 'output': 5.00 / 1e6},
-        'gemini-1.5-pro-latest': {'input': 1.25 / 1e6, 'output': 5.00 / 1e6},
-        'gemini-1.5-flash': {'input': 0.075 / 1e6, 'output': 0.30 / 1e6},
-        'gemini-1.5-flash-latest': {'input': 0.075 / 1e6, 'output': 0.30 / 1e6},
-        'gemini-2.0-flash-exp': {'input': 0.10 / 1e6, 'output': 0.40 / 1e6},
-        'gemini-pro': {'input': 0.50 / 1e6, 'output': 1.50 / 1e6},
-    }
-
-    DEFAULT_PRICING: Dict[str, float] = {
-        'input': 2.50 / 1e6,
-        'output': 10.00 / 1e6,
-    }  # Default to gpt-4o pricing
 
     @classmethod
     def estimate(
@@ -84,43 +40,55 @@ class LLMCostEstimator:
         round_level: int = 8,
     ) -> float:
         """
-        Estimate the cost of an LLM call for a given model based on token usage.
+        DEPRECATED: Estimate the cost of an LLM call using LiteLLM's pricing data.
+
+        Prefer using `response._hidden_params["response_cost"]` directly from LiteLLM
+        responses for real-time pricing.
 
         Args:
-            model_name (str): The name of the LLM model. Supports both plain names
-                (e.g., 'gpt-4o') and LiteLLM prefixed names (e.g., 'anthropic/claude-3-5-sonnet').
+            model_name (str): The name of the LLM model.
             prompt_tokens (int): The number of tokens sent in the prompt.
             completion_tokens (int): The number of tokens generated in the response.
             round_level (int): Round level for precision (default 8)
 
         Returns:
             float: The estimated total cost of the call, in USD.
-
-        Notes:
-            - Prices are per token (already calculated per million in MODEL_PRICING).
-            - If the model name is unrecognized, default pricing (gpt-4o) is applied.
-            - LiteLLM prefixed model names (e.g., 'anthropic/claude-3-5-sonnet') are
-              automatically stripped to match pricing keys.
         """
-        model_key = model_name.lower()
+        warnings.warn(
+            "LLMCostEstimator.estimate() is deprecated. "
+            "Use litellm.completion_cost() or response._hidden_params['response_cost'] instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
-        # Strip LiteLLM provider prefix if present (e.g., "anthropic/claude-3" -> "claude-3")
-        if '/' in model_key:
-            model_key = model_key.split('/', 1)[1]
+        try:
+            import litellm
 
-        pricing = cls.MODEL_PRICING.get(model_key, cls.DEFAULT_PRICING)
+            # Strip LiteLLM provider prefix if present
+            model_key = model_name.lower()
+            if '/' in model_key:
+                model_key = model_key.split('/', 1)[1]
 
-        prompt_cost = prompt_tokens * pricing['input']
-        completion_cost = completion_tokens * pricing['output']
-
-        return round(prompt_cost + completion_cost, round_level)
+            # Use LiteLLM's cost_per_token function
+            cost = litellm.cost_per_token(
+                model=model_key,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+            )
+            # litellm.cost_per_token returns a tuple (prompt_cost, completion_cost)
+            if isinstance(cost, tuple):
+                return round(cost[0] + cost[1], round_level)
+            return round(cost, round_level)
+        except Exception as e:
+            logger.warning(f'Could not estimate cost for model {model_name}: {e}')
+            return 0.0
 
     @classmethod
     def calculate_cost(
         cls, model_name: str, input_tokens: int, output_tokens: int
     ) -> float:
         """
-        Alternative method name for backward compatibility.
+        DEPRECATED: Alternative method name for backward compatibility.
 
         Args:
             model_name (str): The name of the LLM model
@@ -135,46 +103,95 @@ class LLMCostEstimator:
     @classmethod
     def get_model_pricing(cls, model_name: str) -> Dict[str, float]:
         """
-        Get the pricing information for a specific model.
+        DEPRECATED: Get the pricing information for a specific model from LiteLLM.
 
         Args:
-            model_name (str): The name of the LLM model (supports LiteLLM prefixed names)
+            model_name (str): The name of the LLM model
 
         Returns:
             Dict[str, float]: Dictionary with 'input' and 'output' pricing per token
         """
-        model_key = model_name.lower()
-        # Strip LiteLLM provider prefix if present
-        if '/' in model_key:
-            model_key = model_key.split('/', 1)[1]
-        return cls.MODEL_PRICING.get(model_key, cls.DEFAULT_PRICING).copy()
+        warnings.warn(
+            "LLMCostEstimator.get_model_pricing() is deprecated. "
+            "Use litellm.model_cost or litellm.get_model_cost_map() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        try:
+            import litellm
+
+            model_key = model_name.lower()
+            if '/' in model_key:
+                model_key = model_key.split('/', 1)[1]
+
+            # Get pricing from LiteLLM's model_cost dictionary
+            if hasattr(litellm, 'model_cost') and model_key in litellm.model_cost:
+                model_info = litellm.model_cost[model_key]
+                return {
+                    'input': model_info.get('input_cost_per_token', 0.0),
+                    'output': model_info.get('output_cost_per_token', 0.0),
+                }
+        except Exception as e:
+            logger.warning(f'Could not get pricing for model {model_name}: {e}')
+
+        # Return zero pricing if not found
+        return {'input': 0.0, 'output': 0.0}
 
     @classmethod
     def list_supported_models(cls) -> List[str]:
         """
-        List all supported models with pricing information.
+        DEPRECATED: List all supported models from LiteLLM's pricing database.
 
         Returns:
             List[str]: List of supported model names
         """
-        return list(cls.MODEL_PRICING.keys())
+        warnings.warn(
+            "LLMCostEstimator.list_supported_models() is deprecated. "
+            "Use litellm.model_cost.keys() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        try:
+            import litellm
+
+            if hasattr(litellm, 'model_cost'):
+                return list(litellm.model_cost.keys())
+        except Exception as e:
+            logger.warning(f'Could not list models: {e}')
+
+        return []
 
     @classmethod
     def add_custom_model(
         cls, model: str, input_price_per_token: float, output_price_per_token: float
     ) -> None:
         """
-        Add custom model pricing.
+        DEPRECATED: Add custom model pricing to LiteLLM's model_cost dictionary.
 
         Args:
             model (str): The name of the custom model
             input_price_per_token (float): Price per input token in USD
             output_price_per_token (float): Price per output token in USD
         """
-        cls.MODEL_PRICING[model.lower()] = {
-            'input': input_price_per_token,
-            'output': output_price_per_token,
-        }
+        warnings.warn(
+            "LLMCostEstimator.add_custom_model() is deprecated. "
+            "Use litellm.register_model() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        try:
+            import litellm
+
+            if hasattr(litellm, 'model_cost'):
+                litellm.model_cost[model.lower()] = {
+                    'input_cost_per_token': input_price_per_token,
+                    'output_cost_per_token': output_price_per_token,
+                }
+        except Exception as e:
+            logger.warning(f'Could not add custom model {model}: {e}')
 
 
 # MockLLM to bypass checks if needed

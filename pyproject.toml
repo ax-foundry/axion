@@ -71,6 +71,8 @@ dev = [
 logfire = ["logfire>=2.0.0"]
 langfuse = ["langfuse>=3.0.0"]
 tracing = ["logfire>=2.0.0", "langfuse>=3.0.0"]
+# Visualization (optional)
+plotting = ["matplotlib", "seaborn"]
 
 [project.urls]
 Homepage = "https://github.com/ax-foundry/axion"

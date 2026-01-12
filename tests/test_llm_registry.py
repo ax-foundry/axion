@@ -1,5 +1,7 @@
 import os
+import warnings
 from typing import Any
+from unittest.mock import patch, MagicMock
 
 import pytest
 from axion._core.environment import settings
@@ -109,34 +111,58 @@ def reset_settings_and_env(monkeypatch):
 # Cost Estimation Tests
 # =============================================================================
 
-def test_llm_cost_estimator_known_model():
-    """Tests cost estimation for a model with a defined price."""
-    cost = LLMCostEstimator.estimate(
-        model_name='gpt-4o', prompt_tokens=1000, completion_tokens=1000
-    )
-    # Expected: (1000 * 2.50/1e6) + (1000 * 10.00/1e6) = 0.0025 + 0.01 = 0.0125
-    assert cost == pytest.approx(0.0125)
+def test_llm_cost_estimator_emits_deprecation_warning():
+    """Tests that LLMCostEstimator.estimate() emits a deprecation warning."""
+    with patch('litellm.cost_per_token', return_value=(0.0025, 0.01)):
+        with pytest.warns(DeprecationWarning, match='LLMCostEstimator.estimate\\(\\) is deprecated'):
+            LLMCostEstimator.estimate(
+                model_name='gpt-4o', prompt_tokens=1000, completion_tokens=1000
+            )
 
 
-def test_llm_cost_estimator_unknown_model():
-    """Tests cost estimation for a model that falls back to default pricing."""
-    cost = LLMCostEstimator.estimate(
-        model_name='unknown-model', prompt_tokens=1000, completion_tokens=1000
-    )
-    # Expected: Uses default pricing (gpt-4o): (1000 * 2.50/1e6) + (1000 * 10.00/1e6) = 0.0125
-    assert cost == pytest.approx(0.0125)
+def test_llm_cost_estimator_delegates_to_litellm():
+    """Tests that cost estimation delegates to LiteLLM's cost_per_token."""
+    with patch('litellm.cost_per_token', return_value=(0.0025, 0.01)) as mock_cost:
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', DeprecationWarning)
+            cost = LLMCostEstimator.estimate(
+                model_name='gpt-4o', prompt_tokens=1000, completion_tokens=1000
+            )
+        # litellm.cost_per_token returns tuple (prompt_cost, completion_cost)
+        assert cost == pytest.approx(0.0125)
+        mock_cost.assert_called_once_with(
+            model='gpt-4o', prompt_tokens=1000, completion_tokens=1000
+        )
+
+
+def test_llm_cost_estimator_returns_zero_on_error():
+    """Tests that cost estimation returns 0.0 when LiteLLM fails."""
+    with patch('litellm.cost_per_token', side_effect=Exception('Unknown model')):
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', DeprecationWarning)
+            cost = LLMCostEstimator.estimate(
+                model_name='unknown-model', prompt_tokens=1000, completion_tokens=1000
+            )
+        assert cost == 0.0
 
 
 def test_llm_cost_estimator_strips_provider_prefix():
     """Tests that LiteLLM provider prefixes are stripped for pricing lookup."""
-    # anthropic/claude-3-5-sonnet should strip to claude-3-5-sonnet for pricing
-    cost = LLMCostEstimator.estimate(
-        model_name='anthropic/claude-3-5-sonnet-20241022',
-        prompt_tokens=1000,
-        completion_tokens=1000
-    )
-    # Expected for claude-3-5-sonnet: (1000 * 3.00/1e6) + (1000 * 15.00/1e6) = 0.003 + 0.015 = 0.018
-    assert cost == pytest.approx(0.018)
+    with patch('litellm.cost_per_token', return_value=(0.003, 0.015)) as mock_cost:
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', DeprecationWarning)
+            cost = LLMCostEstimator.estimate(
+                model_name='anthropic/claude-3-5-sonnet-20241022',
+                prompt_tokens=1000,
+                completion_tokens=1000
+            )
+        # Should strip provider prefix before calling LiteLLM
+        mock_cost.assert_called_once_with(
+            model='claude-3-5-sonnet-20241022',
+            prompt_tokens=1000,
+            completion_tokens=1000
+        )
+        assert cost == pytest.approx(0.018)
 
 
 # =============================================================================
@@ -308,15 +334,18 @@ def test_all_expected_providers_registered():
 
 def test_registry_cost_direct_argument_precedence():
     """Tests that arguments passed directly to estimate_cost override all other settings."""
-    registry = LLMRegistry(api_key='mock-key')
-    cost = registry.estimate_cost(
-        model_name='gpt-3.5-turbo',
-        provider='mock_gateway',
-        prompt_tokens=2000,
-        completion_tokens=1000,
-    )
-    # Expected for gpt-3.5-turbo: (2000 * 0.50/1e6) + (1000 * 1.50/1e6) = 0.001 + 0.0015 = 0.0025
-    assert cost == pytest.approx(0.0025)
+    with patch('litellm.cost_per_token', return_value=(0.001, 0.0015)):
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', DeprecationWarning)
+            registry = LLMRegistry(api_key='mock-key')
+            cost = registry.estimate_cost(
+                model_name='gpt-3.5-turbo',
+                provider='mock_gateway',
+                prompt_tokens=2000,
+                completion_tokens=1000,
+            )
+            # LiteLLM mock returns (0.001, 0.0015) = 0.0025
+            assert cost == pytest.approx(0.0025)
 
 
 def test_registry_cost_settings_precedence(monkeypatch):
@@ -325,11 +354,13 @@ def test_registry_cost_settings_precedence(monkeypatch):
     monkeypatch.setattr(settings, 'llm_model_name', 'gpt-4')
     monkeypatch.setattr(settings, 'openai_api_key', 'mock-key')
 
-    registry = LLMRegistry(api_key='mock-key')
-    cost = registry.estimate_cost(prompt_tokens=100, completion_tokens=200)
-
-    # Expected for gpt-4: (100 * 30.00/1e6) + (200 * 60.00/1e6) = 0.003 + 0.012 = 0.015
-    assert cost == pytest.approx(0.015)
+    with patch('litellm.cost_per_token', return_value=(0.003, 0.012)):
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', DeprecationWarning)
+            registry = LLMRegistry(api_key='mock-key')
+            cost = registry.estimate_cost(prompt_tokens=100, completion_tokens=200)
+            # LiteLLM mock returns (0.003, 0.012) = 0.015
+            assert cost == pytest.approx(0.015)
 
 
 def test_registry_cost_environment_variable_precedence(monkeypatch):
@@ -343,39 +374,43 @@ def test_registry_cost_environment_variable_precedence(monkeypatch):
     monkeypatch.setattr(settings, 'llm_model_name', os.environ.get('LLM_MODEL_NAME'))
     monkeypatch.setattr(settings, 'openai_api_key', os.environ.get('OPENAI_API_KEY'))
 
-    registry = LLMRegistry()
-    cost = registry.estimate_cost(prompt_tokens=5000, completion_tokens=1000)
-
-    # Expected for o1: (5000 * 15.00/1e6) + (1000 * 60.00/1e6) = 0.075 + 0.06 = 0.135
-    assert cost == pytest.approx(0.135)
+    with patch('litellm.cost_per_token', return_value=(0.075, 0.06)):
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', DeprecationWarning)
+            registry = LLMRegistry()
+            cost = registry.estimate_cost(prompt_tokens=5000, completion_tokens=1000)
+            # LiteLLM mock returns (0.075, 0.06) = 0.135
+            assert cost == pytest.approx(0.135)
 
 
 def test_locked_registry_cost_estimation():
     """Tests that a locked registry uses its own provider but respects the model argument."""
-    registry = LLMRegistry(provider='mock_gateway')
-
-    cost = registry.estimate_cost(
-        model_name='gpt-4o-mini', prompt_tokens=1000, completion_tokens=3000
-    )
-
-    # Expected for gpt-4o-mini: (1000 * 0.150/1e6) + (3000 * 0.600/1e6) = 0.00015 + 0.0018 = 0.00195
-    assert cost == pytest.approx(0.00195)
+    with patch('litellm.cost_per_token', return_value=(0.00015, 0.0018)):
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', DeprecationWarning)
+            registry = LLMRegistry(provider='mock_gateway')
+            cost = registry.estimate_cost(
+                model_name='gpt-4o-mini', prompt_tokens=1000, completion_tokens=3000
+            )
+            # LiteLLM mock returns (0.00015, 0.0018) = 0.00195
+            assert cost == pytest.approx(0.00195)
 
 
 def test_locked_registry_ignores_provider_argument():
     """Tests that a locked registry ignores the 'provider' argument in estimate_cost."""
-    registry = LLMRegistry(provider='mock_gateway')
-
-    # This provider argument should be ignored
-    cost = registry.estimate_cost(
-        provider='mock_no_embeddings',
-        model_name='gpt-4',
-        prompt_tokens=100,
-        completion_tokens=100,
-    )
-
-    # Expected for gpt-4: (100 * 30.00/1e6) + (100 * 60.00/1e6) = 0.003 + 0.006 = 0.009
-    assert cost == pytest.approx(0.009)
+    with patch('litellm.cost_per_token', return_value=(0.003, 0.006)):
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', DeprecationWarning)
+            registry = LLMRegistry(provider='mock_gateway')
+            # This provider argument should be ignored
+            cost = registry.estimate_cost(
+                provider='mock_no_embeddings',
+                model_name='gpt-4',
+                prompt_tokens=100,
+                completion_tokens=100,
+            )
+            # LiteLLM mock returns (0.003, 0.006) = 0.009
+            assert cost == pytest.approx(0.009)
 
 
 def test_get_provider_instance_not_registered():
