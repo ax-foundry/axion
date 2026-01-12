@@ -1834,14 +1834,18 @@ class LLMRegistryExtractor(BaseRegistryExtractor):
         class_name = item.__name__.lower()
         if 'openai' in class_name or 'client' in class_name:
             tags.extend(['openai'])
+        elif 'anthropic' in class_name:
+            tags.extend(['anthropic', 'claude'])
+        elif 'gemini' in class_name:
+            tags.extend(['gemini', 'google'])
+        elif 'vertex' in class_name:
+            tags.extend(['vertex_ai', 'google', 'gcp'])
         elif 'gateway' in class_name or 'proxy' in class_name:
             tags.extend(['gateway', 'proxy'])
         elif 'llama' in class_name or 'llamaindex' in class_name:
             tags.extend(['llamaindex'])
         elif 'huggingface' in class_name:
             tags.extend(['huggingface'])
-        elif 'anthropic' in class_name:
-            tags.extend(['anthropic', 'claude'])
         elif 'local' in class_name:
             tags.extend(['local', 'selfhosted'])
 
@@ -1881,6 +1885,12 @@ class LLMRegistryExtractor(BaseRegistryExtractor):
         provider_type = 'Unknown'
         if 'openai' in class_name:
             provider_type = 'OpenAI Compatible'
+        elif 'anthropic' in class_name:
+            provider_type = 'Anthropic'
+        elif 'gemini' in class_name:
+            provider_type = 'Google Gemini'
+        elif 'vertex' in class_name:
+            provider_type = 'Google Vertex AI'
         elif 'gateway' in class_name:
             provider_type = 'Gateway/Proxy'
         elif 'llama' in class_name:
@@ -1903,11 +1913,13 @@ class LLMRegistryExtractor(BaseRegistryExtractor):
             'color': 'success' if has_llm else 'danger',
         }
 
+        # Check SUPPORTS_EMBEDDINGS attribute first, fall back to hasattr
+        supports_embeddings = getattr(item, 'SUPPORTS_EMBEDDINGS', has_embedding)
         fields['embedding_support'] = {
-            'value': 'Yes' if has_embedding else 'No',
+            'value': 'Yes' if supports_embeddings else 'No',
             'type': 'badge',
             'label': 'Embedding Support',
-            'color': 'success' if has_embedding else 'warning',
+            'color': 'success' if supports_embeddings else 'warning',
         }
 
         # Cost estimation support
@@ -2053,7 +2065,7 @@ embedding_model = registry.get_embedding_model(model_name="your-embedding-model"
 
 # Advanced usage with custom parameters
 llm_with_params = registry.get_llm(
-    model_name="gpt-4o",
+    model_name="your-model",
     temperature=0.7,
     max_tokens=1000,
 )
