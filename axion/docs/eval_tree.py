@@ -11,8 +11,8 @@ from axion.integrations.models import LiteLLMRagas, LiteLLMDeepEval
 config = {
     'metric': {
         'answer_relevancy': AnswerRelevancy(),
-        'faithfulness': Faithfulness(llm=LiteLLMRagas()),
-        'contextual_recall': ContextualRecallMetric(model=LiteLLMDeepEval()),
+        'faithfulness': Faithfulness(llm=LiteLLMRagas()), # optional: LiteLLMRagas()
+        'contextual_recall': ContextualRecallMetric(model=LiteLLMDeepEval()), # optional: LiteLLMDeepEval()
     },
     'model': {
         'ANSWER_QUALITY': {

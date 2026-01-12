@@ -163,7 +163,7 @@ runner = MetricRunner(metrics=[metric])
 from ragas.metrics import Faithfulness
 from axion.integrations.models import LiteLLMRagas
 # Ragas metrics are automatically detected and executed with RagasRunner
-metrics = [Faithfulness(llm=LiteLLMRagas())]
+metrics = [Faithfulness(llm=LiteLLMRagas())] # LiteLLMRagas() is optional
 runner = MetricRunner(metrics=metrics)
 
 # Requires actual_output and optionally retrieved_content
@@ -188,7 +188,7 @@ from deepeval.metrics import AnswerRelevancyMetric
 from axion.integrations.models import LiteLLMDeepEval
 # DeepEval metrics are automatically detected
 metrics = [
-    AnswerRelevancyMetric(model=LiteLLMDeepEval()),
+    AnswerRelevancyMetric(model=LiteLLMDeepEval()), # LiteLLMDeepEval() is optional
 ]
 runner = MetricRunner(metrics=metrics)
 

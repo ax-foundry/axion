@@ -175,8 +175,8 @@ dataframe = pd.DataFrame([
 ])
 
 # Configure LLM models for third-party metrics
-deepeval_model = LiteLLMDeepEval(model='gpt-4')
-ragas_model = LiteLLMRagas(model='gpt-4')
+deepeval_model = LiteLLMDeepEval(model='gpt-4') # Optional
+ragas_model = LiteLLMRagas(model='gpt-4') # Optional
 
 # Configure the task to evaluate
 api_runner = PromptTemplateAPIRunner(config='...')
