@@ -55,7 +55,7 @@
   --md-code-fg-color: #e8eaed;
 
   /* Typography */
-  --md-font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --md-font-main: "Anthropic Sans", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --md-font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Fira Code', monospace;
 
   /* Sizing */
@@ -69,60 +69,123 @@
   --md-transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   --md-transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* Sidebar Widths - Compact */
-  --md-sidebar-width: 11rem;  /* Left sidebar - was ~12.1rem */
+  /* Sidebar Widths - Claude Code Style */
+  --md-sidebar-width: 14rem;  /* Left sidebar */
 }
 
-/* ==================== Compact Sidebars ==================== */
-/* Left sidebar - tighter spacing */
+/* ==================== Left Sidebar (Claude Code Style) ==================== */
 .md-sidebar--primary {
   width: var(--md-sidebar-width);
 }
 
 .md-sidebar--primary .md-sidebar__scrollwrap {
-  padding: 0.5rem 0;
+  padding: 1rem 0;
 }
 
 .md-sidebar--primary .md-nav {
-  padding: 0 0.5rem;
+  padding: 0 0.625rem;
+  font-size: 0.7rem;  /* 12px */
+  line-height: 1.4;
 }
 
 .md-sidebar--primary .md-nav__item {
   padding: 0;
+  margin: 0.1875rem 0;  /* 3px margin between items */
 }
 
 .md-sidebar--primary .md-nav__link {
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem 0.5rem;  /* 4px 8px */
   margin: 0;
+  font-size: 0.7rem;  /* 12px */
+  font-weight: 400;
+  color: var(--md-text-secondary);
+  letter-spacing: -0.005em;
+  white-space: normal;
+  word-wrap: break-word;
 }
 
-/* Right sidebar (TOC) - smaller and tighter */
+/* Section titles (nested nav items) */
+.md-sidebar--primary .md-nav__item--nested {
+  margin-top: 1.5rem;  /* More space between sections */
+}
+
+.md-sidebar--primary .md-nav__item--nested:first-child {
+  margin-top: 0;
+}
+
+.md-sidebar--primary .md-nav__item--nested > .md-nav__link {
+  font-size: 0.6875rem;  /* 11px - section labels */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--md-text-muted);
+  padding: 0.125rem 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Nested nav container */
+.md-sidebar--primary .md-nav--secondary {
+  padding-left: 0;
+}
+
+/* Right sidebar (TOC) */
 .md-sidebar--secondary {
-  width: 10rem;  /* Narrower TOC */
+  width: 10rem;
 }
 
 .md-sidebar--secondary .md-sidebar__scrollwrap {
-  padding: 0.5rem 0;
+  padding: 1rem 0;
 }
 
 .md-sidebar--secondary .md-nav--secondary {
   padding: 0 0.5rem;
+  font-size: 0.70rem;  /* 12px */
+  line-height: 1.4;
+}
+
+.md-sidebar--secondary .md-nav__item {
+  margin: 0.125rem 0;  /* 2px margin between items */
 }
 
 .md-sidebar--secondary .md-nav__link {
-  padding: 0.2rem 0;
-  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;  /* 4px 8px */
+  font-size: 0.65rem;  /* 12px */
+  color: var(--md-text-muted);
+  white-space: normal;
+  word-wrap: break-word;
+  border-radius: 6px;
+  transition: all var(--md-transition-fast);
 }
 
-/* Adjust content area to use reclaimed space */
+.md-sidebar--secondary .md-nav__link:hover {
+  background-color: rgba(139, 159, 79, 0.06);
+  color: var(--md-text-primary);
+}
+
+.md-sidebar--secondary .md-nav__link--active {
+  background-color: rgba(139, 159, 79, 0.12);
+  color: var(--md-primary) !important;
+  font-weight: 500;
+}
+
+[data-md-color-scheme="slate"] .md-sidebar--secondary .md-nav__link:hover {
+  background-color: rgba(164, 184, 108, 0.08);
+}
+
+[data-md-color-scheme="slate"] .md-sidebar--secondary .md-nav__link--active {
+  background-color: rgba(164, 184, 108, 0.18);
+  color: var(--md-primary-fg-color) !important;
+}
+
+/* Adjust content area */
 @media screen and (min-width: 76.25em) {
   .md-main__inner {
     max-width: none;
   }
 
   .md-content {
-    margin-left: 0.75rem;
-    margin-right: 0.75rem;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
   }
 }
 
@@ -220,12 +283,12 @@ body {
 
 /* ==================== Typography ==================== */
 .md-typeset {
-  font-size: 0.8125rem;  /* 13px - compact like Tailwind/Stripe */
+  font-size: 0.8rem;  /* 13px - compact like Tailwind/Stripe */
   line-height: 1.6;
 }
 
 .md-typeset h1 {
-  font-size: 1.625rem;  /* 26px */
+  font-size: 1.6rem;  /* 26px */
   font-weight: 600;
   margin-top: 0;
   margin-bottom: 0.875rem;
@@ -256,7 +319,7 @@ body {
 }
 
 .md-typeset h2 {
-  font-size: 1.25rem;  /* 20px */
+  font-size: 1rem;  /* 20px */
   font-weight: 600;
   color: var(--md-text-primary);
   margin-top: 1.5rem;
@@ -265,7 +328,7 @@ body {
 }
 
 .md-typeset h3 {
-  font-size: 1.0625rem;  /* 17px */
+  font-size: 1rem;  /* 17px */
   font-weight: 600;
   color: var(--md-text-secondary);
   margin-top: 1.25rem;
@@ -280,7 +343,7 @@ body {
 
 .md-typeset h5,
 .md-typeset h6 {
-  font-size: 0.875rem;  /* 14px */
+  font-size: 0.87rem;  /* 14px */
   font-weight: 600;
   color: var(--md-text-secondary);
 }
@@ -295,7 +358,7 @@ body {
 
 /* API docs heading style */
 h2.doc.doc-heading {
-  font-size: 1.125rem;  /* 18px */
+  font-size: 1rem;  /* 18px */
   font-weight: 600;
   color: var(--md-text-primary);
 }
@@ -337,15 +400,10 @@ h2.doc.doc-heading {
   color: var(--md-primary-fg-color);
 }
 
-/* ==================== Navigation ==================== */
-.md-nav {
-  font-size: 0.8125rem;
-}
-
+/* ==================== Navigation Base ==================== */
 .md-nav__link {
   color: var(--md-text-secondary);
-  transition: color var(--md-transition-fast);
-  padding: 0.25rem 0;
+  transition: all var(--md-transition-fast);
 }
 
 .md-nav__link:hover {
@@ -1130,4 +1188,111 @@ html {
 /* Hidden state for dismissed banner */
 .announcement-banner.hidden {
   display: none;
+}
+
+/* =====================================================
+   PHASE 3: CLAUDE CODE STYLE NAVIGATION
+   ===================================================== */
+
+/* ==================== Rounded Pill Navigation (Claude Code Style) ==================== */
+
+/* Primary sidebar - base link styling with pill shape */
+.md-sidebar--primary .md-nav__link {
+  border-radius: 6px;  /* Rounded corners like Claude Code */
+  transition: all var(--md-transition-fast);
+}
+
+/* Active item pill styling */
+.md-sidebar--primary .md-nav__link--active {
+  background-color: rgba(139, 159, 79, 0.12);
+  color: var(--md-primary) !important;
+  font-weight: 500;
+}
+
+/* Hover state for nav items - subtle highlight */
+.md-sidebar--primary .md-nav__link:hover:not(.md-nav__link--active) {
+  background-color: rgba(139, 159, 79, 0.06);
+  color: var(--md-text-primary);
+}
+
+/* Dark mode adjustments for pill navigation */
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-nav__link--active {
+  background-color: rgba(164, 184, 108, 0.18);
+  color: var(--md-primary-fg-color) !important;
+}
+
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-nav__link:hover:not(.md-nav__link--active) {
+  background-color: rgba(164, 184, 108, 0.08);
+  color: var(--md-text-primary);
+}
+
+/* Section labels - no pill effect, just text styling */
+.md-sidebar--primary .md-nav__item--nested > .md-nav__link {
+  background: none !important;
+  border-radius: 0 !important;
+}
+
+.md-sidebar--primary .md-nav__item--nested > .md-nav__link:hover {
+  background: none !important;
+  color: var(--md-text-secondary);
+}
+
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-nav__item--nested > .md-nav__link {
+  color: var(--md-text-muted);
+}
+
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-nav__item--nested > .md-nav__link:hover {
+  color: var(--md-text-secondary);
+}
+
+/* ==================== Enhanced Top Tabs (Claude Code Style) ==================== */
+
+.md-tabs {
+  background-color: var(--md-primary-fg-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.md-tabs__link {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  opacity: 0.85;
+  transition: all var(--md-transition-fast);
+}
+
+.md-tabs__link:hover {
+  opacity: 1;
+}
+
+.md-tabs__item--active .md-tabs__link {
+  opacity: 1;
+  font-weight: 600;
+}
+
+/* Remove old tab indicator styling */
+.md-tabs__item::after {
+  display: none;
+}
+
+/* Pill-style active indicator for tabs */
+.md-tabs__item--active {
+  position: relative;
+}
+
+.md-tabs__item--active::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 1rem);
+  height: 3px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 2px;
+}
+
+/* Dark mode tabs */
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: #1c221c;
+  border-bottom: 1px solid var(--md-border-green);
 }

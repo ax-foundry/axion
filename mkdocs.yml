@@ -4,10 +4,10 @@ repo_url: https://github.com/ax-foundry/axion
 
 nav:
   - Home: index.md
-  - Agent Evaluation Playbook: agent_playbook.md
   - Getting Started:
     - Installation: getting-started/installation.md
-  - User Guide:
+    - Agent Evaluation Playbook: agent_playbook.md
+  - Guides:
     - Hierarchical Scoring: guides/hierarchical-scoring.md
     - Working with Datasets: guides/datasets.md
     - Metrics & Evaluation: guides/metrics.md
@@ -34,7 +34,7 @@ nav:
       - Tracing: deep-dives/internals/tracing.md
       - Environment: deep-dives/internals/environment.md
       - Logging: deep-dives/internals/logging.md
-  - API Reference:
+  - Reference:
     - Dataset: reference/dataset.md
     - Schema: reference/schema.md
     - Metrics: reference/metrics.md
@@ -53,8 +53,9 @@ theme:
     text: Inter
     code: Fira Code
   features:
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
-    - navigation.expand
     - navigation.indexes
     - navigation.instant
     - navigation.tracking
