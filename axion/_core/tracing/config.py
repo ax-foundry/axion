@@ -43,6 +43,11 @@ def _ensure_providers_registered() -> None:
     except ImportError as e:
         logger.debug(f'Failed to import langfuse tracer: {e}')
 
+    try:
+        from axion._core.tracing import opik  # noqa: F401 - registers 'opik'
+    except ImportError as e:
+        logger.debug(f'Failed to import opik tracer: {e}')
+
 
 # Map TracingMode enum to (registry_key, mode_param) tuples
 # registry_key: The name used to look up the tracer in TracerRegistry
@@ -53,6 +58,7 @@ _MODE_TO_REGISTRY = {
     TracingMode.LOGFIRE_HOSTED: ('logfire', 'hosted'),
     TracingMode.LOGFIRE_OTEL: ('logfire', 'otel'),
     TracingMode.LANGFUSE: ('langfuse', None),
+    TracingMode.OPIK: ('opik', None),
 }
 
 

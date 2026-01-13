@@ -70,7 +70,8 @@ dev = [
 # Tracing providers (optional)
 logfire = ["logfire>=2.0.0"]
 langfuse = ["langfuse>=3.0.0"]
-tracing = ["logfire>=2.0.0", "langfuse>=3.0.0"]
+opik = ["opik>=1.0.0"]
+tracing = ["logfire>=2.0.0", "langfuse>=3.0.0", "opik>=1.0.0"]
 # Visualization (optional)
 plotting = ["matplotlib", "seaborn"]
 

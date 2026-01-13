@@ -1,11 +1,12 @@
 import os
 from typing import Any, List, Optional
 
-from axion._core.schema import RichEnum
 from dotenv import find_dotenv
 from pydantic import BaseModel, Field, GetCoreSchemaHandler
 from pydantic_core import CoreSchema, core_schema
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from axion._core.schema import RichEnum
 
 ###################################
 # .env File Loading Logic
@@ -31,6 +32,7 @@ class TracingMode(str, RichEnum):
     LOGFIRE_HOSTED = 'logfire_hosted'
     LOGFIRE_OTEL = 'logfire_otel'
     LANGFUSE = 'langfuse'
+    OPIK = 'opik'
 
 
 class Port(int):
@@ -202,6 +204,28 @@ class AxionConfig(BaseModel):
         default='https://cloud.langfuse.com',
         alias='LANGFUSE_BASE_URL',
         description='Langfuse API endpoint (cloud.langfuse.com for EU, us.cloud.langfuse.com for US).',
+    )
+
+    # Opik (Comet) Settings
+    opik_api_key: Optional[str] = Field(
+        default=None,
+        alias='OPIK_API_KEY',
+        description='Opik API key for authentication.',
+    )
+    opik_workspace: Optional[str] = Field(
+        default=None,
+        alias='OPIK_WORKSPACE',
+        description='Opik workspace name.',
+    )
+    opik_project_name: Optional[str] = Field(
+        default='axion',
+        alias='OPIK_PROJECT_NAME',
+        description='Opik project name for grouping traces.',
+    )
+    opik_base_url: str = Field(
+        default='https://www.comet.com/opik/api',
+        alias='OPIK_URL_OVERRIDE',
+        description='Opik API endpoint.',
     )
 
 

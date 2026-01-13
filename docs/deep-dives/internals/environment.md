@@ -97,7 +97,7 @@ The following settings are available. They are loaded from environment variables
 
 | Setting | Environment Variable Suffix | Description |
 |---|---|---|
-| `tracing_mode` | `_TRACING_MODE` | Controls tracing provider: 'noop', 'logfire_local', 'logfire_hosted', 'logfire_otel', or 'langfuse'. |
+| `tracing_mode` | `_TRACING_MODE` | Controls tracing provider: 'noop', 'logfire_local', 'logfire_hosted', 'logfire_otel', 'langfuse', or 'opik'. |
 
 ### Logfire Settings
 
@@ -117,6 +117,15 @@ The following settings are available. They are loaded from environment variables
 | `langfuse_public_key` | `_LANGFUSE_PUBLIC_KEY` | Langfuse public key for authentication. |
 | `langfuse_secret_key` | `_LANGFUSE_SECRET_KEY` | Langfuse secret key for authentication. |
 | `langfuse_base_url` | `_LANGFUSE_BASE_URL` | Langfuse API endpoint (default: https://cloud.langfuse.com). |
+
+### Opik Settings
+
+| Setting | Environment Variable Suffix | Description |
+|---|---|---|
+| `opik_api_key` | `_OPIK_API_KEY` | Opik API key for authentication. |
+| `opik_workspace` | `_OPIK_WORKSPACE` | Opik workspace name. |
+| `opik_project_name` | `_OPIK_PROJECT_NAME` | Opik project name for grouping traces (default: 'axion'). |
+| `opik_base_url` | `_OPIK_URL_OVERRIDE` | Opik API endpoint (default: https://www.comet.com/opik/api). |
 
 ## Usage in Code
 

@@ -1,6 +1,6 @@
 # Tracer Registry API Reference
 
-Registry pattern for tracing providers with support for NoOp, Logfire, and Langfuse backends.
+Registry pattern for tracing providers with support for NoOp, Logfire, Langfuse, and Opik backends.
 
 ## TracerRegistry
 
@@ -53,5 +53,19 @@ Registry pattern for tracing providers with support for NoOp, Logfire, and Langf
         - span
         - async_span
         - flush
+        - log_llm_call
+        - log_evaluation
+
+### OpikTracer
+
+::: axion._core.tracing.opik.tracer.OpikTracer
+    options:
+      show_root_heading: true
+      members:
+        - create
+        - span
+        - async_span
+        - flush
+        - shutdown
         - log_llm_call
         - log_evaluation
