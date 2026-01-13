@@ -129,10 +129,6 @@ class OpikTracer(BaseTracer):
                 import os
 
                 os.environ['OPIK_URL_OVERRIDE'] = self._base_url
-            print(self._api_key)
-            print(f'Opik workspace: {self._workspace}')
-            print(f'Opik project name: {self._project_name}')
-            print(f'Opik base url: {self._base_url}')
             self._client = Opik(
                 project_name=self._project_name,
                 workspace=self._workspace,

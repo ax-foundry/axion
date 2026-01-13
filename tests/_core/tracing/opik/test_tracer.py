@@ -34,6 +34,7 @@ class TestOpikTracer:
         mock_opik_class.assert_called_once_with(
             project_name='test-project',
             workspace='test-workspace',
+            api_key='test-key',
         )
         assert tracer._api_key == 'test-key'
         assert tracer._workspace == 'test-workspace'
