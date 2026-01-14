@@ -9,14 +9,6 @@ Manual dataset curation is essential but doesn't scale. Axion provides synthetic
 1. **Document Q&A Generation** - Create question-answer pairs from your knowledge base
 2. **Session-based Generation** - Generate Q&A from conversation transcripts
 
-## Installation
-
-The synthetic module requires `pydantic-graph` as an optional dependency:
-
-```bash
-pip install pydantic-graph
-```
-
 ## Document Q&A Generation
 
 Generate evaluation data from your documents using `DocumentQAGenerator`:

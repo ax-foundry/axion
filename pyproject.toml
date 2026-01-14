@@ -20,15 +20,11 @@ classifiers = [
 dependencies = [
 "beautifulsoup4",
 "cachetools",
-"deepeval==3.1.0",
-"diskcache==5.6.3",
-"google-search-results==2.4.2",
+"deepeval>=3.1.0",
+"diskcache>=5.6.3",
 "ipython",
-"llama-index==0.13.0",
-"llama-index-embeddings-huggingface==0.6.0",
-"llama-index-readers-docling==0.4.0",
-"llama-index-readers-s3==0.5.0",
-"loguru==0.7.2",
+"llama-index>=0.13.0",
+"loguru>=0.7.2",
 "nest-asyncio",
 "numpy",
 "litellm>=1.52.0",
@@ -37,17 +33,15 @@ dependencies = [
 "protobuf",
 "psutil",
 "pydantic",
-"pydantic-graph-1.41.0",
-"pydantic-settings==2.7.1",
-"python-dotenv==1.1.1",
-"PyYAML==6.0.1",
-"ragas==0.4.2",
+"pydantic-graph>=1.41.0",
+"pydantic-settings>=2.0.0",
+"python-dotenv>=1.0.0",
+"PyYAML>=6.0.1",
+"ragas>=0.4.2",
 "RestrictedPython",
 "requests",
 "rich",
 "s3fs",
-"scikit-learn",
-"serpapi==0.1.5",
 "tenacity",
 "tqdm",
 ]
@@ -74,6 +68,11 @@ opik = ["opik>=1.0.0"]
 tracing = ["logfire>=2.0.0", "langfuse>=3.0.0", "opik>=1.0.0"]
 # Visualization (optional)
 plotting = ["matplotlib", "seaborn"]
+# Search integrations (optional)
+search = ["google-search-results>=2.4.2", "serpapi>=0.1.5"]
+# LlamaIndex extensions (optional)
+huggingface = ["llama-index-embeddings-huggingface>=0.6.0"]
+docling = ["llama-index-readers-docling>=0.4.0"]
 
 [project.urls]
 Homepage = "https://github.com/ax-foundry/axion"

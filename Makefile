@@ -36,7 +36,6 @@ package:prerequisites
 
 test: install
 	python -m pip install pytest coverage fastapi fastapi httpx uvicorn requests
-	python -m pip -U openssl
 	coverage run -m pytest --junitxml=pytest_report.xml
 	coverage xml -o coverage.xml
 tox:

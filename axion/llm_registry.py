@@ -838,7 +838,7 @@ class GeminiProvider(BaseProvider):
 
         Uses LlamaIndex's Gemini embedding for compatibility.
         """
-        from llama_index.embeddings.gemini import GeminiEmbedding
+        from llama_index.embeddings.gemini import GeminiEmbedding  # type: ignore[import-untyped]
 
         return GeminiEmbedding(
             api_key=self.api_key, model_name=model_name, **kwargs
@@ -917,7 +917,7 @@ class VertexAIProvider(BaseProvider):
 
         Supported models: text-embedding-004, textembedding-gecko, etc.
         """
-        from llama_index.embeddings.vertex import VertexTextEmbedding
+        from llama_index.embeddings.vertex import VertexTextEmbedding  # type: ignore[import-untyped]
 
         return VertexTextEmbedding(
             model_name=model_name,
@@ -963,7 +963,13 @@ class HuggingFaceProvider(BaseProvider):
         Returns:
             LlamaIndex HuggingFaceLLM instance
         """
-        from llama_index.llms.huggingface import HuggingFaceLLM
+        try:
+            from llama_index.llms.huggingface import HuggingFaceLLM  # type: ignore[import-untyped]
+        except ImportError:
+            raise ImportError(
+                'HuggingFace dependencies not installed. '
+                'Install with: pip install axion[huggingface]'
+            )
 
         return HuggingFaceLLM(model_name=model_name, **kwargs)
 
@@ -978,6 +984,12 @@ class HuggingFaceProvider(BaseProvider):
         Returns:
             LlamaIndex HuggingFaceEmbedding instance
         """
-        from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+        try:
+            from llama_index.embeddings.huggingface import HuggingFaceEmbedding  # type: ignore[import-untyped]
+        except ImportError:
+            raise ImportError(
+                'HuggingFace dependencies not installed. '
+                'Install with: pip install axion[huggingface]'
+            )
 
         return HuggingFaceEmbedding(model_name=model_name, **kwargs)

@@ -82,8 +82,8 @@ class LatencyAnalyzer:
         """
         # Import visualization libraries only when needed
         try:
-            import matplotlib.pyplot as plt  # pyright: ignore[reportMissingImports]
-            import seaborn as sns  # pyright: ignore[reportMissingImports]
+            import matplotlib.pyplot as plt  # pyright: ignore[reportMissingImports]  # type: ignore[import-untyped]
+            import seaborn as sns  # pyright: ignore[reportMissingImports]  # type: ignore[import-untyped]
         except ImportError as e:
             raise ImportError(
                 'Visualization dependencies not installed. '

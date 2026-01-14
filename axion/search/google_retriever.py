@@ -7,9 +7,21 @@ from axion._core.environment import resolve_api_key
 from axion._core.logging import get_logger
 from axion._core.tracing import trace
 from axion._core.utils import Timer
-from serpapi import GoogleSearch
+
+try:
+    from serpapi import GoogleSearch
+except ImportError:
+    GoogleSearch = None
 
 logger = get_logger(__name__)
+
+
+def _check_search_available():
+    if GoogleSearch is None:
+        raise ImportError(
+            'Search dependencies not installed. '
+            'Install with: pip install axion[search]'
+        )
 
 
 class GoogleRetriever(BaseRetriever):
@@ -35,7 +47,7 @@ class GoogleRetriever(BaseRetriever):
             crawl_pages (bool): Whether to fetch and clean full page content from URLs in the search results.
             max_crawl_tokens (Optional[int]): Maximum number of tokens to crawl per page (if crawling is enabled).
         """
-
+        _check_search_available()
         self.num_web_results = num_web_results
         self._api_key = resolve_api_key(api_key, 'serpapi_key')
         self.crawl_pages = crawl_pages

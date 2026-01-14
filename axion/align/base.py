@@ -7,9 +7,9 @@ from axion.dataset import Dataset, DatasetItem
 from axion.metrics.base import BaseMetric, MetricEvaluationResult
 from axion.runners import MetricRunner
 from axion.schema import TestResult
-from sklearn.metrics import (
+from axion._core.metrics_utils import (
     cohen_kappa_score,
-    confusion_matrix,
+    confusion_matrix_binary,
     f1_score,
     precision_score,
     recall_score,
@@ -202,7 +202,7 @@ class BaseAlignEval(ABC):
         y_pred = valid_comparisons['llm_score'].values
 
         # Calculate confusion matrix
-        tn, fp, fn, tp = confusion_matrix(y_true, y_pred, labels=[0, 1]).ravel()
+        tn, fp, fn, tp = confusion_matrix_binary(y_true, y_pred)
 
         # Store confusion matrix counts
         self.true_negatives = int(tn)

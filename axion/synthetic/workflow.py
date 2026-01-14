@@ -20,15 +20,7 @@ from axion.synthetic.statement_extractor import StatementExtractor
 from llama_index.core import Document
 from pydantic import Field
 
-try:
-    from pydantic_graph import BaseNode, End, Graph, GraphRunContext
-except ImportError:
-    raise ImportError(
-        "The 'QAWorkflowGraph' requires the 'pydantic-graph' package. "
-        'This is purposely not installed by default. '
-        'If synthetic data generation is needed, '
-        'please install it using: pip install pydantic-graph'
-    )
+from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 
 logger = get_logger(__name__)
