@@ -349,7 +349,36 @@ print(f"Environment: {results.metadata['environment']}")
 
 ## Tracing Integration
 
-The Evaluation Runner automatically integrates with Axion's tracing system for observability. When tracing is enabled (e.g., with Langfuse), you get detailed visibility into evaluation execution.
+The Evaluation Runner automatically integrates with Axion's tracing system for observability. When tracing is enabled (e.g., with Langfuse or Opik), you get detailed visibility into evaluation execution.
+
+### Trace Granularity
+
+Control how traces are organized using the `trace_granularity` parameter:
+
+```python
+from axion.runners import evaluation_runner
+
+# Single trace mode (default) - all evaluations under one parent trace
+results = evaluation_runner(
+    evaluation_inputs=dataset,
+    scoring_metrics=[AnswerRelevancy()],
+    evaluation_name="RAG Quality Check",
+    trace_granularity='single_trace'  # or 'single' or TraceGranularity.SINGLE_TRACE
+)
+
+# Separate mode - each metric execution gets its own independent trace
+results = evaluation_runner(
+    evaluation_inputs=dataset,
+    scoring_metrics=[AnswerRelevancy()],
+    evaluation_name="RAG Quality Check",
+    trace_granularity='separate'  # or TraceGranularity.SEPARATE
+)
+```
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `single_trace` / `single` | All evaluations under one parent trace (default) | Viewing entire evaluation as one unit |
+| `separate` | Each metric execution gets its own independent trace | Detailed per-item analysis |
 
 ### Trace Names
 
@@ -359,11 +388,11 @@ The `evaluation_name` parameter is used as the trace name in your observability 
 results = evaluation_runner(
     evaluation_inputs=dataset,
     scoring_metrics=[AnswerRelevancy(), Faithfulness()],
-    evaluation_name="RAG Quality Check v2"  # Appears as trace name in Langfuse
+    evaluation_name="RAG Quality Check v2"  # Appears as trace name in Langfuse/Opik
 )
 ```
 
-This makes it easy to identify and filter evaluations in Langfuse by their purpose.
+This makes it easy to identify and filter evaluations by their purpose.
 
 ### Captured Data
 
@@ -371,19 +400,22 @@ The evaluation runner captures input/output at multiple levels:
 
 | Span | Input Captured | Output Captured |
 |------|----------------|-----------------|
-| Evaluation (root) | Config summary, input count, metrics list | Total items, metrics evaluated, status |
-| MetricRunner_Batch | Input count, metric names | Results count, pass rate |
+| Evaluation (root) | evaluation_name, dataset_name, input_count, metrics, max_concurrent | run_id, total_items, metrics_evaluated, status |
 | Metric execution | Query, actual/expected output, context | Score, passed status, explanation |
+| LLM call | Messages, model, provider | Response, token usage, cost |
 
-### Example Langfuse Output
+### Trace Hierarchy
+
+The evaluation runner produces a lean 4-level trace hierarchy:
 
 ```
-RAG Quality Check v2                          # evaluation_name
-├─ MetricRunner_Batch                         # Batch processing span
-│  ├─ (Axion) Answer Relevancy               # Individual metric spans
-│  │  └─ litellm_structured_execution        # LLM call
-│  └─ (Axion) Faithfulness
-│     └─ litellm_structured_execution
+RAG Quality Check v2                          # evaluation_name (root span)
+├─ AnswerRelevancy.execute                    # Metric logic span
+│  └─ litellm_structured                      # LLM formatting/parsing
+│     └─ llm_call                             # LLM API call (cost/tokens)
+└─ Faithfulness.execute
+   └─ litellm_structured
+      └─ llm_call
 ```
 
 ### Enabling Tracing

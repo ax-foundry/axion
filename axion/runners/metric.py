@@ -12,8 +12,9 @@ import pandas as pd
 from axion._core.asyncio import SemaphoreExecutor, gather_with_progress
 from axion._core.cache.manager import CacheManager
 from axion._core.logging import get_logger
-from axion._core.tracing import init_tracer, trace
+from axion._core.tracing import Tracer, init_tracer, trace
 from axion._core.tracing.handlers import BaseTraceHandler
+from axion._core.types import TraceGranularity
 from axion._core.utils import Timer
 from axion.dataset import Dataset, DatasetItem, format_input
 from axion.metrics.cache import AnalysisCache
@@ -206,6 +207,13 @@ class MetricRunner(RunnerMixin):
             'description': 'Enables a per-item cache for metrics that share expensive internal computations.'
         },
     )
+    trace_granularity: TraceGranularity = field(
+        default=TraceGranularity.SINGLE_TRACE,
+        repr=True,
+        metadata={
+            'description': 'Controls trace granularity: single (all under one trace) or separate (trace per metric execution).'
+        },
+    )
 
     _elapsed_time: Optional[float] = field(default=None, init=False, repr=False)
     _summary: Optional[Dict] = field(default_factory=dict, init=False, repr=False)
@@ -299,23 +307,20 @@ class MetricRunner(RunnerMixin):
                 f'Expected one of: Dataset, List[DatasetItem], or pandas.DataFrame.'
             )
 
-    @trace(name='MetricRunner_Batch')
     async def execute_batch(
         self,
         evaluation_inputs: Union[Dataset, List[DatasetItem], pd.DataFrame],
         *,
         show_progress: bool = True,
     ) -> List[TestResult]:
-        """Executes all configured metrics against the provided dataset."""
+        """Executes all configured metrics against the provided dataset.
+
+        Trace granularity behavior:
+        - SINGLE_TRACE: All metrics run under one parent trace (default)
+        - SEPARATE: Each metric execution gets its own independent trace
+        """
         self._check_valid_input(evaluation_inputs)
         dataset = input_to_dataset(evaluation_inputs, self.dataset_name)
-
-        # Capture input - batch processing info
-        if hasattr(self.tracer, 'current_span') and self.tracer.current_span:
-            self.tracer.current_span.set_input({
-                'input_count': len(dataset) if dataset else 0,
-                'metrics': [e.metric_name for e in self.executors],
-            })
 
         if not self.executors or not dataset:
             logger.warning(
@@ -323,34 +328,88 @@ class MetricRunner(RunnerMixin):
             )
             return []
 
-        with Timer() as timer:
-            logger.info(
-                f'Executing {len(self.executors)} metrics against {len(dataset)} data points...'
+        # Dispatch based on trace granularity
+        if self.trace_granularity == TraceGranularity.SEPARATE:
+            return await self._execute_batch_separate(dataset, show_progress)
+        else:
+            # Default to single trace (SINGLE_TRACE or any other value)
+            return await self._execute_batch_single_trace(dataset, show_progress)
+
+    async def _execute_batch_single_trace(
+        self,
+        dataset: Dataset,
+        show_progress: bool,
+    ) -> List[TestResult]:
+        """Execute batch with all metrics under a single parent trace."""
+        async with self.tracer.async_span('MetricRunner_Batch') as span:
+            span.set_input({
+                'input_count': len(dataset),
+                'metrics': [e.metric_name for e in self.executors],
+            })
+
+            final_results = await self._execute_metrics_for_dataset(
+                dataset, show_progress
             )
 
-            single_executors = [
-                exc for exc in self.executors if not isinstance(exc, BaseBatchRunner)
-            ]
+            # Capture output summary
+            total_scores = sum(len(r.score_results) for r in final_results)
+            passed_count = sum(
+                1 for r in final_results
+                for score in r.score_results
+                if score.passed
+            )
+            span.set_output({
+                'results_count': len(final_results),
+                'total_scores': total_scores,
+                'passed_count': passed_count,
+                'success_rate': passed_count / total_scores if total_scores else 0,
+            })
 
-            results_map = defaultdict(list)
-            tasks = []
+            return final_results
 
-            for item in dataset:
-                # Create a per-item cache if caching is enabled.
-                item_specific_cache = (
-                    AnalysisCache() if self.enable_internal_caching else None
+    async def _execute_batch_separate(
+        self,
+        dataset: Dataset,
+        show_progress: bool,
+    ) -> List[TestResult]:
+        """Execute batch with a separate trace per metric execution."""
+        results_map = defaultdict(list)
+        single_executors = [
+            exc for exc in self.executors if not isinstance(exc, BaseBatchRunner)
+        ]
+
+        for item in dataset:
+            item_specific_cache = (
+                AnalysisCache() if self.enable_internal_caching else None
+            )
+
+            for executor in single_executors:
+                # Create a fresh tracer for this metric execution (new trace_id)
+                metric_tracer = Tracer().create(
+                    metadata_type='llm',
+                    tool_metadata=executor.get_tool_metadata(),
                 )
 
-                for executor in single_executors:
+                # Temporarily replace the executor's tracer
+                original_tracer = executor.tracer
+                executor.tracer = metric_tracer
+
+                async with metric_tracer.async_span(
+                    f'metric_{executor.metric_name}_item_{item.id}'
+                ) as span:
+                    span.set_input({
+                        'item_id': item.id,
+                        'metric_name': executor.metric_name,
+                    })
+
                     cache_to_pass = None
-                    # Check both the global flag and the metric-specific attribute.
                     if self.enable_internal_caching and getattr(
                         executor.metric, 'shares_internal_cache', False
                     ):
                         cache_to_pass = item_specific_cache
 
-                    tasks.append(
-                        self._safe_execute(
+                    try:
+                        result = await self._safe_execute(
                             self.semaphore.run(
                                 self._process_single_metric,
                                 executor,
@@ -359,45 +418,110 @@ class MetricRunner(RunnerMixin):
                             ),
                             ignore_errors=self.error_config.ignore_errors,
                         )
-                    )
 
-            all_single_results = await gather_with_progress(
-                tasks, '📊 Evaluating metrics', show_progress
-            )
+                        if isinstance(result, MetricScore):
+                            results_map[result.id].append(result)
+                            span.set_output({
+                                'score': float(result.score) if result.score is not None else None,
+                                'passed': result.passed,
+                            })
+                        elif isinstance(result, Exception):
+                            logger.error(f'Metric execution failed: {result}', exc_info=False)
+                            span.set_attribute('error', str(result))
+                    finally:
+                        # Restore original tracer
+                        executor.tracer = original_tracer
 
-            for result in all_single_results:
-                if isinstance(result, MetricScore):
-                    results_map[result.id].append(result)
-                elif isinstance(result, Exception):
-                    logger.error(f'Metric execution failed: {result}', exc_info=False)
+                # Flush the tracer after each metric execution
+                if hasattr(metric_tracer, 'flush'):
+                    metric_tracer.flush()
 
-            final_results = [
-                TestResult(test_case=item, score_results=results_map.get(item.id, []))
-                for item in dataset
-            ]
-        self._elapsed_time = timer.elapsed_time
-        if self.summary_generator and self.elapsed_time is not None:
-            self._summary = self.summary_generator.execute(
-                final_results, self.elapsed_time
-            )
+        final_results = [
+            TestResult(test_case=item, score_results=results_map.get(item.id, []))
+            for item in dataset
+        ]
 
-        # Capture output - batch results summary
-        if hasattr(self.tracer, 'current_span') and self.tracer.current_span:
-            # Count passed metrics across all test results
-            total_scores = sum(len(r.score_results) for r in final_results)
-            passed_count = sum(
-                1 for r in final_results
-                for score in r.score_results
-                if score.passed
-            )
-            self.tracer.current_span.set_output({
-                'results_count': len(final_results),
-                'total_scores': total_scores,
-                'passed_count': passed_count,
-                'success_rate': passed_count / total_scores if total_scores else 0,
-            })
-
+        self._finalize_results(final_results)
         return final_results
+
+    async def _execute_metrics_for_dataset(
+        self,
+        dataset: Dataset,
+        show_progress: bool,
+    ) -> List[TestResult]:
+        """Core implementation for executing metrics against a dataset."""
+        with Timer() as timer:
+            logger.info(
+                f'Executing {len(self.executors)} metrics against {len(dataset)} data points...'
+            )
+
+            final_results = await self._execute_metrics_for_items(dataset, show_progress)
+
+        self._elapsed_time = timer.elapsed_time
+        self._finalize_results(final_results)
+        return final_results
+
+    async def _execute_metrics_for_items(
+        self,
+        items: Union[Dataset, List[DatasetItem]],
+        show_progress: bool,
+    ) -> List[TestResult]:
+        """Execute all metrics for a list of items."""
+        single_executors = [
+            exc for exc in self.executors if not isinstance(exc, BaseBatchRunner)
+        ]
+
+        results_map = defaultdict(list)
+        tasks = []
+
+        for item in items:
+            item_specific_cache = (
+                AnalysisCache() if self.enable_internal_caching else None
+            )
+
+            for executor in single_executors:
+                cache_to_pass = None
+                if self.enable_internal_caching and getattr(
+                    executor.metric, 'shares_internal_cache', False
+                ):
+                    cache_to_pass = item_specific_cache
+
+                tasks.append(
+                    self._safe_execute(
+                        self.semaphore.run(
+                            self._process_single_metric,
+                            executor,
+                            item,
+                            cache=cache_to_pass,
+                        ),
+                        ignore_errors=self.error_config.ignore_errors,
+                    )
+                )
+
+        all_results = await gather_with_progress(
+            tasks, '📊 Evaluating metrics', show_progress
+        )
+
+        for result in all_results:
+            if isinstance(result, MetricScore):
+                results_map[result.id].append(result)
+            elif isinstance(result, Exception):
+                logger.error(f'Metric execution failed: {result}', exc_info=False)
+
+        return [
+            TestResult(test_case=item, score_results=results_map.get(item.id, []))
+            for item in items
+        ]
+
+    def _finalize_results(self, final_results: List[TestResult]) -> None:
+        """Finalize results by generating summary."""
+        if self.summary_generator and self._elapsed_time is not None:
+            self._summary = self.summary_generator.execute(
+                final_results, self._elapsed_time
+            )
+        elif self.summary_generator:
+            # Generate summary even without timing for PER_ITEM/SEPARATE modes
+            self._summary = self.summary_generator.execute(final_results, 0.0)
 
     @classmethod
     def display(cls, show_helper_methods: bool = False, show_init_params: bool = False):

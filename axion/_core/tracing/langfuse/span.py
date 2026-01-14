@@ -32,6 +32,7 @@ class LangfuseSpan:
         self.is_async = is_async
         self._observation = None
         self._observation_context = None
+        self._trace_context = None
         self._span_id = str(uuid7())
         self._trace_id = tracer._trace_id if hasattr(tracer, '_trace_id') else str(uuid7())
 
@@ -60,7 +61,7 @@ class LangfuseSpan:
             # Known params: as_type, name, model (for generation), input, output
             # Everything else goes into metadata
             known_params = {'model', 'input', 'output'}
-            internal_params = {'auto_trace'}
+            internal_params = {'auto_trace', 'new_trace'}
 
             langfuse_kwargs = {}
             metadata = {}
@@ -74,14 +75,36 @@ class LangfuseSpan:
                     # Put custom attributes in metadata
                     metadata[k] = v
 
-            self._observation_context = self.tracer._client.start_as_current_observation(
-                as_type=as_type,
-                name=self.name,
-                metadata=metadata if metadata else None,
-                **langfuse_kwargs,
+            # Check if this should be a new trace (first span in a new tracer)
+            # or if explicitly requested via new_trace attribute
+            # Note: span is already on stack when __enter__ is called, so check for == 1
+            is_new_trace = (
+                self.attributes.get('new_trace', False) or
+                len(self.tracer._span_stack) == 1
             )
-            self._observation = self._observation_context.__enter__()
-            logger.debug(f'Langfuse span created: {self.name} (type={as_type})')
+
+            if is_new_trace:
+                # Create a new trace explicitly with our trace_id
+                self._trace_context = self.tracer._client.trace(
+                    id=self._trace_id,
+                    name=self.name,
+                    metadata=metadata if metadata else None,
+                )
+                self._observation_context = self._trace_context.span(
+                    name=self.name,
+                    **langfuse_kwargs,
+                )
+                self._observation = self._observation_context.__enter__()
+                logger.debug(f'Langfuse new trace created: {self.name} (trace_id={self._trace_id})')
+            else:
+                self._observation_context = self.tracer._client.start_as_current_observation(
+                    as_type=as_type,
+                    name=self.name,
+                    metadata=metadata if metadata else None,
+                    **langfuse_kwargs,
+                )
+                self._observation = self._observation_context.__enter__()
+                logger.debug(f'Langfuse span created: {self.name} (type={as_type})')
         except Exception as e:
             logger.info(f'Failed to create Langfuse span "{self.name}": {e}')
         return self

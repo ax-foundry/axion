@@ -117,6 +117,18 @@ class Span:
                 'trace_id': self.trace_id,
                 **self.attributes,
             }
+
+            # Check if this should be a new trace (first span in a new tracer)
+            is_new_trace = (
+                self.attributes.get('new_trace', False) or
+                len(self.tracer._span_stack) == 1
+            )
+
+            if is_new_trace:
+                # For new traces, use logfire.force_flush() to ensure clean separation
+                # and create span with explicit trace context markers
+                attrs['is_root_trace'] = True
+
             self.logfire_span = logfire.span(
                 f'{self.tracer.tool_metadata.name}: {self.operation_name}', **attrs
             ).__enter__()

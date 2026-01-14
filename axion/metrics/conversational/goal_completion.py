@@ -359,7 +359,7 @@ class GoalCompletion(BaseMetric):
         # Single unified goal analyzer (replaces 3+ separate components)
         self.unified_goal_analyzer = UnifiedGoalAnalyzer(**kwargs)
 
-    @trace(name='execute', capture_args=True, capture_response=True)
+    @trace(name='GoalCompletion.execute', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:

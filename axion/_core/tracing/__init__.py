@@ -27,6 +27,7 @@ Public API:
 """
 
 from axion._core.environment import TracingMode
+from axion._core.types import TraceGranularity
 from axion._core.tracing.config import (
     clear_tracing_config,
     configure_tracing,
@@ -57,6 +58,7 @@ __all__ = [
     'is_tracing_configured',
     'list_providers',
     'TracingMode',
+    'TraceGranularity',
     # Registry and base classes
     'TracerRegistry',
     'BaseTracer',

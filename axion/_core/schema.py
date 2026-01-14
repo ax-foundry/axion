@@ -430,18 +430,30 @@ class RichEnum(Enum):
     @classmethod
     def from_str(cls: Type[E], string: str, default: Optional[E] = None) -> E:
         """
-        Retrieve enum member by string value (case-insensitive for strings).
+        Retrieve enum member by string value or name (case-insensitive).
+
+        Matches against both enum values and member names, allowing flexible input:
+        - TraceGranularity.from_str('single') -> SINGLE_TRACE (by value)
+        - TraceGranularity.from_str('single_trace') -> SINGLE_TRACE (by name)
+        - TraceGranularity.from_str('SINGLE_TRACE') -> SINGLE_TRACE (by name)
         """
         if string is None:
             if default is not None:
                 return default
             raise ValueError(f'Cannot look up None in {cls.__name__}')
 
+        string_lower = string.lower()
+
         for member in cls:
+            # Match by value (case-insensitive for strings)
             val = member.value
             if string == val or (
-                isinstance(val, str) and string.lower() == val.lower()
+                isinstance(val, str) and string_lower == val.lower()
             ):
+                return member
+
+            # Match by member name (case-insensitive)
+            if string_lower == member.name.lower():
                 return member
 
         if default is not None:

@@ -110,7 +110,7 @@ class Faithfulness(BaseMetric):
         verdict = MetricVerdict.from_str(verdict_str, default=MetricVerdict.NO_EVIDENCE)
         return verdict, self.verdict_scores.get(verdict, 0.0)
 
-    @trace(name='execute', capture_args=True, capture_response=True)
+    @trace(name='Faithfulness.execute', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:

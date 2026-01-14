@@ -245,7 +245,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         return messages
 
     async def _execute_structured_call(
-        self, messages: List[Dict[str, str]]
+        self, messages: List[Dict[str, str]], attempt: int = 1
     ) -> OutputModel:
         """Execute structured output call using LiteLLM (supports OpenAI, Claude, Gemini, etc.)."""
         model_name = getattr(self.llm, 'model', 'gpt-4o')
@@ -257,10 +257,11 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             provider = getattr(getattr(self.llm, 'metadata', {}), 'provider', 'openai')
 
         async with self.async_span(
-            'litellm_structured_execution',
+            'litellm_structured',
             model=model_name,
             mode='litellm_structured',
             provider=provider,
+            attempt=attempt,
         ) as span:
             span.set_input({'messages': messages, 'model': model_name})
             try:
@@ -640,132 +641,82 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
           (supports OpenAI, Anthropic, Google, and 100+ providers)
         - Parser mode: Fallback for models without structured output support
         """
-        async with self.async_span(
-            'execute_with_retry',
-            max_retries=self.max_retries,
-            retry_delay=self.retry_delay,
-        ) as span:
-            span.set_input(input_data)  # Capture retry-level input
-            processed_data = self.process_input(input_data)
-            last_exception = None
+        processed_data = self.process_input(input_data)
+        last_exception = None
 
-            # Determine execution mode: structured (LiteLLM) or parser fallback
-            execution_mode = 'litellm_structured' if self.as_structured_llm else 'parser_mode'
-
-            span.set_attribute('execution_mode', execution_mode)
-            span.set_attribute('fallback_enabled', self.fallback_to_parser)
-            span.set_attribute('rate_limit_aware', True)
-
-            for attempt in range(self.max_retries):
-                # Each attempt gets its own span
-                async with self.async_span(
-                    f'attempt_{attempt + 1}',
-                    attempt_number=attempt + 1,
-                    auto_trace=False,
-                ) as attempt_span:
+        for attempt in range(self.max_retries):
+            try:
+                if self.as_structured_llm:
+                    # Unified path via LiteLLM (handles all providers)
+                    messages = self._build_openai_messages(processed_data)
                     try:
-                        if self.as_structured_llm:
-                            # Unified path via LiteLLM (handles all providers)
-                            attempt_span.set_attribute('mode', 'litellm_structured')
-                            messages = self._build_openai_messages(processed_data)
-                            try:
-                                result = await self._execute_structured_call(messages)
-                            except Exception as structured_error:
-                                if self.fallback_to_parser:
-                                    logger.warning_highlight(
-                                        f'Structured call failed: {str(structured_error)}. '
-                                        f'Falling back to parser mode.'
-                                    )
-                                    attempt_span.set_attribute('fallback_to_parser', True)
-                                    attempt_span.set_attribute(
-                                        'structured_error', str(structured_error)
-                                    )
+                        result = await self._execute_structured_call(
+                            messages, attempt=attempt + 1
+                        )
+                    except Exception as structured_error:
+                        if self.fallback_to_parser:
+                            logger.warning_highlight(
+                                f'Structured call failed: {str(structured_error)}. '
+                                f'Falling back to parser mode.'
+                            )
 
-                                    # Fallback to parser mode
-                                    prompt = self._build_parser_prompt(processed_data)
-                                    prompt_value = PromptValue(text=prompt)
-                                    output_string = await self._execute_parser_llm_call(
-                                        prompt
-                                    )
-                                    result = await self._parse_and_validate_parser(
-                                        output_string, prompt_value
-                                    )
-                                else:
-                                    raise structured_error
-                        else:
-                            # Parser fallback for models without structured output
-                            attempt_span.set_attribute('mode', 'parser_mode')
+                            # Fallback to parser mode
                             prompt = self._build_parser_prompt(processed_data)
                             prompt_value = PromptValue(text=prompt)
                             output_string = await self._execute_parser_llm_call(prompt)
                             result = await self._parse_and_validate_parser(
                                 output_string, prompt_value
                             )
-
-                        # Process the output through the base handler
-                        final_result = self.process_output(result, input_data)
-
-                        attempt_span.add_trace(
-                            'attempt_success',
-                            f'Attempt {attempt + 1} succeeded',
-                            {
-                                'attempt_number': attempt + 1,
-                                'total_attempts': attempt + 1,
-                            },
-                        )
-
-                        span.set_attribute('successful_attempt', attempt + 1)
-                        span.set_attribute('total_attempts', attempt + 1)
-                        span.set_output(final_result)  # Capture retry-level output
-
-                        return final_result
-
-                    except Exception as e:
-                        last_exception = e
-
-                        attempt_span.add_trace(
-                            'attempt_failed',
-                            f'Attempt {attempt + 1} failed: {str(e)}',
-                            {'attempt_number': attempt + 1, 'error': str(e)},
-                        )
-
-                        if attempt == self.max_retries - 1:
-                            # Final attempt failed
-                            span.set_attribute('all_attempts_failed', True)
-                            span.set_attribute('total_attempts', self.max_retries)
-                            logger.error_highlight(
-                                f'❌ All {self.max_retries} attempts failed. Final error: {str(e)}'
-                            )
-                            break
                         else:
-                            # Calculate delay with rate-limit awareness
-                            retry_delay = self._calculate_retry_delay(attempt, e)
+                            raise structured_error
+                else:
+                    # Parser fallback for models without structured output
+                    prompt = self._build_parser_prompt(processed_data)
+                    prompt_value = PromptValue(text=prompt)
+                    output_string = await self._execute_parser_llm_call(prompt)
+                    result = await self._parse_and_validate_parser(
+                        output_string, prompt_value
+                    )
 
-                            # Log with appropriate context
-                            if self._is_rate_limit_error(e):
-                                rate_info = RateLimitInfo.from_error(str(e))
-                                if rate_info:
-                                    logger.warning_highlight(
-                                        f'⚠️  Rate limit exceeded (attempt {attempt + 1}): '
-                                        f'{rate_info}. Waiting {retry_delay:.1f}s before retry...'
-                                    )
-                                else:
-                                    logger.warning_highlight(
-                                        f'⚠️  Rate limit error detected (attempt {attempt + 1}). '
-                                        f'Waiting {retry_delay:.1f}s before retry...'
-                                    )
-                            else:
-                                logger.warning_highlight(
-                                    f'Attempt {attempt + 1} failed: {str(e)}. '
-                                    f'Retrying in {retry_delay}s...'
-                                )
+                # Process the output through the base handler
+                return self.process_output(result, input_data)
 
-                            attempt_span.set_attribute('retry_delay', retry_delay)
-                            await asyncio.sleep(retry_delay)
+            except Exception as e:
+                last_exception = e
 
-            # All attempts failed
-            span.set_attribute('all_attempts_failed', True)
-            raise GenerationError('All retry attempts failed.') from last_exception
+                if attempt == self.max_retries - 1:
+                    # Final attempt failed
+                    logger.error_highlight(
+                        f'❌ All {self.max_retries} attempts failed. Final error: {str(e)}'
+                    )
+                    break
+                else:
+                    # Calculate delay with rate-limit awareness
+                    retry_delay = self._calculate_retry_delay(attempt, e)
+
+                    # Log with appropriate context
+                    if self._is_rate_limit_error(e):
+                        rate_info = RateLimitInfo.from_error(str(e))
+                        if rate_info:
+                            logger.warning_highlight(
+                                f'⚠️  Rate limit exceeded (attempt {attempt + 1}): '
+                                f'{rate_info}. Waiting {retry_delay:.1f}s before retry...'
+                            )
+                        else:
+                            logger.warning_highlight(
+                                f'⚠️  Rate limit error detected (attempt {attempt + 1}). '
+                                f'Waiting {retry_delay:.1f}s before retry...'
+                            )
+                    else:
+                        logger.warning_highlight(
+                            f'Attempt {attempt + 1} failed: {str(e)}. '
+                            f'Retrying in {retry_delay}s...'
+                        )
+
+                    await asyncio.sleep(retry_delay)
+
+        # All attempts failed
+        raise GenerationError('All retry attempts failed.') from last_exception
 
     @log_execution_time
     async def execute(

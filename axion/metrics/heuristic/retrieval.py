@@ -168,7 +168,7 @@ class HitRateAtK(_RetrievalMetric):
                 f'main_k ({self.main_k}) must be one of the specified k values: {self.k_list}'
             )
 
-    @trace(name='execute', capture_args=True)
+    @trace(name='HitRateAtK.execute', capture_args=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         actual_ids, expected_relevance_map, error = self._parse_item(item)
         if error:
@@ -258,7 +258,7 @@ class MeanReciprocalRank(_RetrievalMetric):
     Score is 1 / (rank of first relevant item). This metric is K-independent.
     """
 
-    @trace(name='execute', capture_args=True)
+    @trace(name='MeanReciprocalRank.execute', capture_args=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         actual_ids, expected_relevance_map, error = self._parse_item(item)
         if error:
@@ -356,7 +356,7 @@ class NDCGAtK(_RetrievalMetric):
         discounts = np.log2(np.arange(2, relevances.size + 2))
         return np.sum(relevances / discounts)
 
-    @trace(name='execute', capture_args=True)
+    @trace(name='NDCGAtK.execute', capture_args=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         actual_ids, expected_relevance_map, error = self._parse_item(item)
         if error:
@@ -488,7 +488,7 @@ class PrecisionAtK(_RetrievalMetric):
                 f'main_k ({self.main_k}) must be one of the specified k values: {self.k_list}'
             )
 
-    @trace(name='execute', capture_args=True)
+    @trace(name='PrecisionAtK.execute', capture_args=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         actual_ids, expected_relevance_map, error = self._parse_item(item)
         if error:
@@ -625,7 +625,7 @@ class RecallAtK(_RetrievalMetric):
                 f'main_k ({self.main_k}) must be one of the specified k values: {self.k_list}'
             )
 
-    @trace(name='execute', capture_args=True)
+    @trace(name='RecallAtK.execute', capture_args=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         actual_ids, expected_relevance_map, error = self._parse_item(item)
         if error:

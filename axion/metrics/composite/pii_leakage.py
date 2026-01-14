@@ -261,7 +261,7 @@ class PIILeakage(BaseMetric):
                 privacy_violations.append(verdict.reason)
         return privacy_violations
 
-    @trace(name='execute', capture_args=True, capture_response=True)
+    @trace(name='PIILeakage.execute', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """
         Compute the PII leakage score.

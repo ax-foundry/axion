@@ -82,7 +82,6 @@ class StatementExtractor(BaseMetric):
         )
     ]
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, actual_output: str) -> 'Output':
         return await super().execute(self.input_model(actual_output=actual_output))
 
@@ -226,7 +225,6 @@ class BatchRelevancyJudge(BaseMetric):
             self.instruction = _TASK_INSTRUCTION
             self.examples = _TASK_EXAMPLES
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, input_query: str, statements: List[str]) -> RelevancyOutput:
         return await super().execute(
             self.input_model(input_query=input_query, statements=statements)
@@ -266,7 +264,6 @@ Explain why the score is not higher, but also why it is at its current level. If
         )
     ]
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(
         self, irrelevant_statements: List[str], input_query: str, score: float
     ) -> 'Output':
@@ -343,7 +340,6 @@ Return a JSON object with 'verdict' (one of the four categories) and 'reason' (b
         ),
     ]
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, claim: str, evidence: str) -> 'Output':
         return await super().execute(self.input_model(claim=claim, evidence=evidence))
 
@@ -405,7 +401,6 @@ The number of verdicts MUST equal the number of claims provided."""
         )
     ]
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, claims: List[str], evidence: str) -> 'Output':
         return await super().execute(self.input_model(claims=claims, evidence=evidence))
 
@@ -440,7 +435,6 @@ Return a JSON object with a single boolean key: 'is_supported'."""
         )
     ]
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, ground_truth_statement: str, context: str) -> 'Output':
         return await super().execute(
             self.input_model(
@@ -491,7 +485,6 @@ The number of verdicts MUST equal the number of statements provided."""
         )
     ]
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, statements: List[str], context: str) -> 'Output':
         return await super().execute(
             self.input_model(statements=statements, context=context)
@@ -528,7 +521,6 @@ Return a JSON object with a single boolean key: 'is_useful'."""
         )
     ]
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, context_chunk: str, expected_output: str) -> 'Output':
         return await super().execute(
             self.input_model(
@@ -612,7 +604,6 @@ A chunk is NOT utilized if:
         ),
     ]
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, context_chunk: str, answer: str) -> 'Output':
         return await super().execute(
             self.input_model(context_chunk=context_chunk, answer=answer)
@@ -696,7 +687,6 @@ The number of verdicts MUST equal the number of chunks provided."""
         )
     ]
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, chunks: list[str], answer: str) -> 'Output':
         return await super().execute(self.input_model(chunks=chunks, answer=answer))
 
@@ -789,6 +779,5 @@ Context is INSUFFICIENT if:
         ),
     ]
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, query: str, context: str) -> 'Output':
         return await super().execute(self.input_model(query=query, context=context))
