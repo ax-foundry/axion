@@ -39,12 +39,14 @@ Public API:
 
     Types:
         - TracingMode: Enumeration of available tracer modes
+        - TraceGranularity: Controls trace granularity during evaluation
         - TracerRegistry: Registry for tracer implementations
         - BaseTracer: Abstract base class for tracer implementations
 """
 
 from axion._core.tracing import (
     BaseTracer,
+    TraceGranularity,
     Tracer,
     # Registry and base classes
     TracerRegistry,
@@ -81,6 +83,7 @@ __all__ = [
     'is_tracing_configured',
     'list_providers',
     'TracingMode',
+    'TraceGranularity',
     # Registry and base classes
     'TracerRegistry',
     'BaseTracer',
