@@ -71,35 +71,37 @@ graph TD
 
 ## Configuration
 
-Configuration is managed by a single environment variable that selects which tracing provider to use.
+Tracing auto-configures from environment variables on first use. Just use `Tracer()` and it works.
 
-### Environment Variable
+### Environment Variables
 
-Set `TRACING_MODE` to one of the following values:
+Set `TRACING_MODE` to select a provider, or let it auto-detect from available credentials:
 
-| tracing_mode | Provider | Description | Additional Env Vars Needed |
-|--------------|----------|-------------|----------------------------|
-| `noop` | NoOpTracer | Disables all tracing. Methods are available but do nothing. | None |
-| `logfire_local` | LogfireTracer | Local development with `logfire dev` command. | None |
-| `logfire_hosted` | LogfireTracer | Sends traces to Logfire cloud service. | `LOGFIRE_TOKEN` |
-| `logfire_otel` | LogfireTracer | Sends traces to custom OpenTelemetry endpoint. | `OTEL_ENDPOINT` |
-| `langfuse` | LangfuseTracer | LLM observability via Langfuse. | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` |
-| `opik` | OpikTracer | LLM observability via Opik (Comet). | `OPIK_API_KEY` |
+| Provider | Description | Auto-Detection |
+|----------|-------------|----------------|
+| `noop` | Disables all tracing (zero overhead) | Default if no credentials found |
+| `logfire` | OpenTelemetry via Logfire | `LOGFIRE_TOKEN` present |
+| `otel` | Custom OpenTelemetry endpoint | `OTEL_EXPORTER_OTLP_ENDPOINT` present |
+| `langfuse` | LLM observability via Langfuse | `LANGFUSE_SECRET_KEY` present |
+| `opik` | LLM observability via Opik (Comet) | `OPIK_API_KEY` present |
+
+**Auto-Detection Priority:** If `TRACING_MODE` is not set, the system checks for credentials in this order:
+1. `LANGFUSE_SECRET_KEY` → uses `langfuse`
+2. `OPIK_API_KEY` → uses `opik`
+3. `LOGFIRE_TOKEN` → uses `logfire`
+4. `OTEL_EXPORTER_OTLP_ENDPOINT` → uses `otel`
+5. Default → uses `noop`
 
 ### Logfire Configuration
 
 ```bash
-# For local development with Logfire UI
-TRACING_MODE=logfire_local
-
-# For Logfire cloud
-TRACING_MODE=logfire_hosted
+# For Logfire cloud (recommended)
+TRACING_MODE=logfire
 LOGFIRE_TOKEN=your-logfire-token
-LOGFIRE_PROJECT=your-project-name  # Optional
 
 # For custom OpenTelemetry endpoint
-TRACING_MODE=logfire_otel
-OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://your-otel-endpoint
+TRACING_MODE=otel
+OTEL_EXPORTER_OTLP_ENDPOINT=https://your-otel-endpoint
 ```
 
 ### Langfuse Configuration
@@ -125,23 +127,28 @@ OPIK_URL_OVERRIDE=https://www.comet.com/opik/api  # Default (cloud)
 
 ### Programmatic Configuration
 
-You can override the global setting by passing an argument to `configure_tracing`.
+Tracing auto-configures on first use of `Tracer()`. Only call `configure_tracing()` if you need to override auto-detection.
 
 ```python
-from axion.tracing import configure_tracing, TracingMode
+from axion.tracing import configure_tracing, Tracer
 
-# Configure based on the Pydantic settings object (standard way)
-configure_tracing()
+# Zero-config - auto-detects from environment variables
+tracer = Tracer('llm')
 
-# Use force=True to override any previously set configuration,
-# which is especially useful in testing environments.
-configure_tracing(tracing_mode=TracingMode.NOOP, force=True)
+# Or explicitly configure a provider
+configure_tracing(provider='langfuse')
+tracer = Tracer('llm')
 
-# Configure for Langfuse
-configure_tracing(tracing_mode=TracingMode.LANGFUSE)
+# List available providers
+from axion.tracing import list_providers
+print(list_providers())  # ['noop', 'logfire', 'otel', 'langfuse', 'opik']
 
-# Configure for Opik
-configure_tracing(tracing_mode=TracingMode.OPIK)
+# Reconfigure (e.g., for testing)
+from axion.tracing import clear_tracing_config, is_tracing_configured
+
+if is_tracing_configured():
+    clear_tracing_config()
+configure_tracing(provider='noop')
 ```
 
 ---
@@ -219,7 +226,7 @@ class MyCustomTracer(BaseTracer):
         pass
 
 # Now you can use it
-configure_tracing(tracing_mode='my_custom_tracer')
+configure_tracing(provider='my_custom_tracer')
 ```
 
 ---
@@ -506,11 +513,13 @@ Choose the right type for automatic specialized handling:
 
 | Function | Description |
 |----------|-------------|
-| `configure_tracing(tracing_mode, force)` | Configure the global tracing system |
+| `configure_tracing(provider)` | Configure the tracing provider (auto-configures if not called) |
+| `is_tracing_configured()` | Check if tracing has been configured |
+| `clear_tracing_config()` | Clear configuration (useful for testing/reconfiguration) |
+| `list_providers()` | List available providers: `['noop', 'logfire', 'otel', 'langfuse', 'opik']` |
 | `get_tracer()` | Get the configured tracer class |
 | `init_tracer(metadata_type, tool_metadata)` | Initialize a tracer instance |
-| `Tracer(metadata_type)` | Factory function for tracer instances |
-| `reset_tracing()` | Reset configuration (useful for testing) |
+| `Tracer(metadata_type)` | Factory function for tracer instances (auto-configures) |
 
 ### Context Management
 

@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
 
 import pytest
+
+# Remove tracing for testing
+from axion._core.tracing import clear_tracing_config, configure_tracing
 from axion.search.base import BaseRetriever
 from axion.search.schema import SearchNode, SearchResults
 
-# Remove tracing for testing
-from axion._core.tracing import configure_tracing
-
-configure_tracing('noop', force=True)
+clear_tracing_config()
+configure_tracing('noop')
 
 
 class DummyRetriever(BaseRetriever):

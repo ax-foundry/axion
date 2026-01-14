@@ -1,12 +1,25 @@
 """
 Public API for tracing functionality.
 
-This module re-exports all public APIs from axion._core.tracing to provide
-a cleaner import path: `from axion.tracing import init_tracer, trace`
+This module provides zero-config tracing with automatic provider detection.
+Just use Tracer() and it auto-configures from environment variables.
+
+Quick Start:
+    >>> from axion.tracing import Tracer
+    >>> tracer = Tracer('llm')  # Auto-configures from env vars
+    >>> with tracer.span('my-operation'):
+    ...     pass
+
+Environment Variables:
+    - TRACING_MODE: Provider selection (noop, logfire, otel, langfuse, opik)
+    - Auto-detects from: LANGFUSE_SECRET_KEY, OPIK_API_KEY, LOGFIRE_TOKEN
 
 Public API:
     Core Functions:
-        - configure_tracing: Configure the global tracing system
+        - configure_tracing: Configure tracing (optional, auto-configures on first use)
+        - list_providers: List available tracing providers
+        - is_tracing_configured: Check if tracing has been configured
+        - clear_tracing_config: Clear configuration (useful for testing)
         - get_tracer: Get the configured tracer class
         - init_tracer: Initialize a tracer instance
         - Tracer: Factory function for tracer instances
@@ -21,7 +34,6 @@ Public API:
 
     Utilities:
         - infer_tool_metadata: Auto-generate metadata from call stack
-        - reset_tracing: Reset configuration (useful for testing)
         - set_default_global_tracer: Set global tracer (notebook compatibility)
         - get_default_global_tracer: Get global tracer (notebook compatibility)
 
@@ -32,38 +44,42 @@ Public API:
 """
 
 from axion._core.tracing import (
-    # Core configuration
-    configure_tracing,
-    get_tracer,
-    get_tracer_mode_param,
-    reset_tracing,
-    TracingMode,
+    BaseTracer,
+    Tracer,
     # Registry and base classes
     TracerRegistry,
-    BaseTracer,
+    TracingMode,
+    # Core configuration
+    clear_tracing_config,
+    configure_tracing,
     # Context management
     get_current_tracer,
-    set_current_tracer,
-    reset_tracer_context,
+    get_default_global_tracer,
+    get_tracer,
+    get_tracer_mode_param,
+    infer_tool_metadata,
     # Factory
     init_tracer,
-    Tracer,
-    infer_tool_metadata,
+    is_tracing_configured,
+    list_providers,
+    reset_tracer_context,
+    set_current_tracer,
+    # Utilities
+    set_default_global_tracer,
     # Decorators
     trace,
     trace_function,
     trace_method,
-    # Utilities
-    set_default_global_tracer,
-    get_default_global_tracer,
 )
 
 __all__ = [
     # Core configuration
+    'clear_tracing_config',
     'configure_tracing',
     'get_tracer',
     'get_tracer_mode_param',
-    'reset_tracing',
+    'is_tracing_configured',
+    'list_providers',
     'TracingMode',
     # Registry and base classes
     'TracerRegistry',

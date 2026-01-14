@@ -28,10 +28,12 @@ Public API:
 
 from axion._core.environment import TracingMode
 from axion._core.tracing.config import (
+    clear_tracing_config,
     configure_tracing,
     get_tracer,
     get_tracer_mode_param,
-    reset_tracing,
+    is_tracing_configured,
+    list_providers,
 )
 from axion._core.tracing.context import (
     get_current_tracer,
@@ -48,10 +50,12 @@ from axion._core.tracing.utils import (
 
 __all__ = [
     # Core configuration
+    'clear_tracing_config',
     'configure_tracing',
     'get_tracer',
     'get_tracer_mode_param',
-    'reset_tracing',
+    'is_tracing_configured',
+    'list_providers',
     'TracingMode',
     # Registry and base classes
     'TracerRegistry',

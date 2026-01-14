@@ -58,36 +58,49 @@ The following settings are read from your global settings object, which is popul
 
 ### Programmatic Configuration
 
-Call `configure_logging` once at application startup.
+Call `configure_logging` once at application startup, or let it auto-configure on first use.
 
-#### Example 1: Using Global Settings
+#### Example 1: Zero-Config (Recommended)
 
-This is the simplest and most common configuration. It reads all settings from your Pydantic settings object.
+Just use `get_logger()` - it auto-configures from environment variables on first use.
 
 ```python
-from axion.logging import configure_logging, logger
+from axion.logging import get_logger
 
-# Reads level, rich status, etc., from the global settings
-configure_logging()
-
+# Auto-configures from LOG_LEVEL, LOG_RICH, etc.
+logger = get_logger(__name__)
 logger.info("Using the configuration from the environment.")
 ```
 
-#### Example 2: Overriding Global Settings
+#### Example 2: Explicit Configuration
 
-You can pass arguments to `configure_logging` to override the values from the settings object for a specific session. This is especially useful for testing.
+Call `configure_logging` before getting loggers to override defaults.
 
 ```python
-from axion.logging import configure_logging, logger
+from axion.logging import configure_logging, get_logger
 
-# This will force the log level to DEBUG for this session,
-# ignoring the value in the settings object.
-configure_logging(level="DEBUG", force=True)
+# Configure first, then get logger
+configure_logging(level="DEBUG", use_rich=True)
+logger = get_logger(__name__)
 
 logger.debug("This debug message is now visible.")
 ```
 
-> **Note:** The logger is designed to be configured only once. If you need to change the configuration after it has been set, you must include the `force=True` flag.
+#### Example 3: Reconfiguration
+
+Just call `configure_logging()` with new parameters - it applies immediately.
+
+```python
+from axion.logging import configure_logging, get_logger
+
+logger = get_logger(__name__)  # Auto-configures to INFO
+
+# Change level on the fly
+configure_logging(level="DEBUG")  # Now DEBUG
+configure_logging(level="ERROR")  # Now ERROR
+```
+
+> **Note:** Calling `configure_logging()` with explicit parameters always applies them. Calling with no parameters skips if already configured.
 
 ## Additional Logging Methods
 
@@ -169,29 +182,35 @@ def debug_intensive_operation(data):
 
 1. **Use Module-Specific Loggers**: Always use `get_logger(__name__)` for better log organization.
 
-2. **Configure Once**: Call `configure_logging()` only once at application startup.
+2. **Let It Auto-Configure**: Just use `get_logger()` - it configures automatically from environment variables.
 
-3. **Use Context Managers**: Leverage `logger.log_operation()` for timing operations.
+3. **Configure Before Use**: If you need custom settings, call `configure_logging()` before `get_logger()`.
 
-4. **Rich Methods in Development**: Use `logger.success()`, `logger.log_table()` etc. for better development experience.
+4. **Use Context Managers**: Leverage `logger.log_operation()` for timing operations.
 
-5. **Respect the Environment**: Let the logging system automatically adapt to standalone vs plugin mode.
+5. **Rich Methods in Development**: Use `logger.success()`, `logger.log_table()` etc. for better development experience.
 
 ```python
-# ✅ Good
+# ✅ Good - Zero config, auto-configures from env vars
 from axion.logging import get_logger
 logger = get_logger(__name__)
 
-# ✅ Good - At startup
-configure_logging()
+# ✅ Good - Configure before getting logger
+from axion.logging import configure_logging, get_logger
+configure_logging(level="DEBUG")
+logger = get_logger(__name__)
 
 # ✅ Good - Using context manager
 with logger.log_operation("Data Migration"):
     migrate_users()
     migrate_products()
 
-# ❌ Avoid - Configuring multiple times
-configure_logging()
-# ... later in code ...
-configure_logging()  # This will be ignored unless force=True
+# ✅ Good - Reconfigure on the fly
+from axion.logging import configure_logging
+configure_logging(level="DEBUG")  # Always applies with explicit params
+
+# ✅ Good - Check configuration state
+from axion.logging import is_logging_configured, clear_logging_config
+if is_logging_configured():
+    clear_logging_config()  # Full reset if needed
 ```

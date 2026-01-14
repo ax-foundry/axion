@@ -245,27 +245,36 @@ def configure_logging(
     use_rich: Optional[bool] = None,
     format_string: Optional[str] = None,
     file_path: Optional[str] = None,
-    force: bool = False,
-    **kwargs,
 ) -> None:
     """
-    Configures the application's logging system.
+    Configure the logging system.
 
-    Prioritizes direct function arguments over global settings, which in turn
-    are loaded from environment variables or .env files.
+    Called automatically on first use of get_logger().
+    Call explicitly to override settings at any time.
 
     Args:
-        level: Override the log level (e.g., 'DEBUG').
-        use_rich: Override the use of rich formatting.
-        format_string: Override the log format string.
-        file_path: Override the log file path.
-        force: If True, will overwrite an existing configuration.
+        level: Log level ('DEBUG', 'INFO', 'WARNING', 'ERROR').
+            If None, uses LOG_LEVEL env var or 'INFO'.
+        use_rich: Enable rich formatting. If None, uses LOG_RICH env var.
+        format_string: Custom log format string.
+        file_path: Log file path. If None, uses LOG_FILE env var.
+
+    Example:
+        >>> configure_logging(level='DEBUG', use_rich=True)
+        >>> # Or just use get_logger() directly - it auto-configures
+        >>> logger = get_logger(__name__)
+        >>> # Can reconfigure at any time
+        >>> configure_logging(level='ERROR')
     """
     global _logging_configured, _session_start_time
     init_logger = logging.getLogger(__name__)
 
-    if _logging_configured and not force:
-        init_logger.debug('Logging already configured. Skipping reconfiguration.')
+    # Check if any explicit parameters were provided
+    has_explicit_params = any(p is not None for p in [level, use_rich, format_string, file_path])
+
+    # Skip only if already configured AND no explicit parameters given
+    if _logging_configured and not has_explicit_params:
+        init_logger.debug('Logging already configured. Skipping.')
         return
 
     if not _logging_configured:
@@ -330,13 +339,63 @@ def configure_logging(
 
 def get_logger(name: str) -> RichLogger:
     """
-    Gets a logger instance. If logging is not yet configured,
-    it applies a safe default configuration first.
+    Get a logger instance, auto-configuring on first use.
+
+    This function automatically configures logging if not already configured,
+    reading settings from environment variables.
+
+    Args:
+        name: Logger name (typically __name__ for module loggers)
+
+    Returns:
+        A RichLogger instance with enhanced logging capabilities.
+
+    Example:
+        >>> logger = get_logger(__name__)
+        >>> logger.info("Hello world")
     """
     global _logging_configured
     if not _logging_configured:
         configure_logging()
     return logging.getLogger(name)
+
+
+def is_logging_configured() -> bool:
+    """
+    Check if logging has been configured.
+
+    Returns:
+        True if configure_logging() has been called (explicitly or automatically).
+
+    Example:
+        >>> is_logging_configured()
+        False
+        >>> logger = get_logger(__name__)  # Auto-configures
+        >>> is_logging_configured()
+        True
+    """
+    return _logging_configured
+
+
+def clear_logging_config() -> None:
+    """
+    Clear the logging configuration.
+
+    Resets to unconfigured state. Next get_logger() call will re-configure.
+
+    Example:
+        >>> clear_logging_config()
+        >>> configure_logging(level='DEBUG')
+    """
+    global _logging_configured, _log_stats, _session_start_time
+    _logging_configured = False
+    _log_stats.clear()
+    _session_start_time = time.monotonic()
+
+    # Clear handlers from root logger
+    root_logger = logging.getLogger()
+    if root_logger.hasHandlers():
+        root_logger.handlers.clear()
 
 
 def log_summary():
@@ -362,11 +421,12 @@ logger: RichLogger = get_logger('axion')
 
 
 __all__ = [
+    'clear_logging_config',
     'configure_logging',
     'get_logger',
-    'setup_plugin_logging',
+    'is_logging_configured',
     'log_summary',
-    'RichLogger',
     'LoguruHandler',
     'logger',
+    'RichLogger',
 ]

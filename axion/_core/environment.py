@@ -25,14 +25,30 @@ dotenv_path = (
 
 
 class TracingMode(str, RichEnum):
-    """A single enum to control all tracing behavior."""
+    """
+    Enum to control tracing behavior.
+
+    Available providers:
+        - noop: No-op tracer (default, zero overhead)
+        - logfire: Pydantic Logfire (local console or hosted with token)
+        - otel: Generic OpenTelemetry exporter
+        - langfuse: Langfuse LLM observability
+        - opik: Comet Opik LLM observability
+
+    Note: The old logfire_local, logfire_hosted, logfire_otel modes are deprecated.
+          Use 'logfire' or 'otel' instead - behavior is auto-detected from env vars.
+    """
 
     NOOP = 'noop'
-    LOGFIRE_LOCAL = 'logfire_local'
-    LOGFIRE_HOSTED = 'logfire_hosted'
-    LOGFIRE_OTEL = 'logfire_otel'
+    LOGFIRE = 'logfire'
+    OTEL = 'otel'
     LANGFUSE = 'langfuse'
     OPIK = 'opik'
+
+    # Deprecated aliases (kept for backward compatibility)
+    LOGFIRE_LOCAL = 'logfire'  # Maps to logfire
+    LOGFIRE_HOSTED = 'logfire'  # Maps to logfire
+    LOGFIRE_OTEL = 'otel'  # Maps to otel
 
 
 class Port(int):
@@ -176,8 +192,9 @@ class AxionConfig(BaseModel):
     tracing_mode: TracingMode = Field(
         default=TracingMode.NOOP,
         description=(
-            "Controls tracing behavior: 'noop' (disabled), 'logfire_local' (for `logfire dev`), "
-            "'logfire_hosted' (requires token), or 'logfire_otel' (requires custom endpoint)."
+            "Controls tracing provider: 'noop' (disabled), 'logfire' (Pydantic Logfire), "
+            "'otel' (OpenTelemetry), 'langfuse' (Langfuse), or 'opik' (Comet Opik). "
+            "If not set, auto-detects from provider-specific env vars."
         ),
     )
     otel_endpoint: Optional[str] = Field(
@@ -314,3 +331,61 @@ def resolve_api_key(
         f'{display_service_name} API key not found. Please provide it as an '
         f'argument or set the {env_var_suggestion} environment variable.'
     )
+
+
+def detect_tracing_provider() -> str:
+    """
+    Auto-detect tracing provider from environment variables.
+
+    This function checks for provider-specific environment variables and returns
+    the appropriate provider name. It enables zero-config usage where users only
+    need to set their provider's API key.
+
+    Priority order:
+    1. Explicit TRACING_MODE env var (if set to non-default value)
+    2. Auto-detect from provider-specific keys:
+       - LANGFUSE_SECRET_KEY → 'langfuse'
+       - OPIK_API_KEY → 'opik'
+       - LOGFIRE_TOKEN → 'logfire'
+       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT → 'otel'
+    3. Default to 'noop'
+
+    Returns:
+        Provider name string: 'noop', 'logfire', 'otel', 'langfuse', or 'opik'
+
+    Example:
+        >>> # With LANGFUSE_SECRET_KEY set in environment
+        >>> detect_tracing_provider()
+        'langfuse'
+    """
+    # Check if explicit tracing mode is set (not default noop)
+    explicit_mode = os.getenv('TRACING_MODE') or os.getenv('AXION_TRACING_MODE')
+    if explicit_mode and explicit_mode.lower() != 'noop':
+        return explicit_mode.lower()
+
+    # Auto-detect from provider-specific env vars
+    if os.getenv('LANGFUSE_SECRET_KEY'):
+        return 'langfuse'
+    if os.getenv('OPIK_API_KEY'):
+        return 'opik'
+    if os.getenv('LOGFIRE_TOKEN'):
+        return 'logfire'
+    if os.getenv('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT'):
+        return 'otel'
+
+    # Default to noop
+    return 'noop'
+
+
+def list_tracing_providers() -> list[str]:
+    """
+    List all available tracing providers.
+
+    Returns:
+        List of provider names that can be used with configure_tracing().
+
+    Example:
+        >>> list_tracing_providers()
+        ['noop', 'logfire', 'otel', 'langfuse', 'opik']
+    """
+    return ['noop', 'logfire', 'otel', 'langfuse', 'opik']

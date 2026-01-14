@@ -1,22 +1,24 @@
-from typing import Optional, Type, Union
+from typing import Optional, Type
 
-from axion._core.environment import TracingMode, settings
+from axion._core.environment import detect_tracing_provider, list_tracing_providers
 from axion._core.logging import get_logger
 from axion._core.tracing.registry import BaseTracer, TracerRegistry
 
 logger = get_logger(__name__)
 
 __all__ = [
+    'clear_tracing_config',
     'configure_tracing',
     'get_tracer',
     'get_tracer_mode_param',
-    'reset_tracing',
+    'is_tracing_configured',
+    'list_providers',
 ]
 
 # Global configuration state
 _tracer_instance: Optional[Type[BaseTracer]] = None
 _tracing_configured: bool = False
-_tracer_mode_param: Optional[str] = None  # For logfire mode (local/hosted/otel)
+_tracer_mode_param: Optional[str] = None
 
 
 def _ensure_providers_registered() -> None:
@@ -26,170 +28,170 @@ def _ensure_providers_registered() -> None:
     This function is called lazily when configure_tracing() is first invoked,
     ensuring all built-in providers are registered before use.
     """
-    # Import each provider module - the @TracerRegistry.register decorator
-    # will automatically register them when the module is imported
     try:
-        from axion._core.tracing import noop  # noqa: F401 - registers 'noop'
+        from axion._core.tracing import noop  # noqa: F401
     except ImportError as e:
         logger.debug(f'Failed to import noop tracer: {e}')
 
     try:
-        from axion._core.tracing import logfire  # noqa: F401 - registers 'logfire'
+        from axion._core.tracing import logfire  # noqa: F401
     except ImportError as e:
         logger.debug(f'Failed to import logfire tracer: {e}')
 
     try:
-        from axion._core.tracing import langfuse  # noqa: F401 - registers 'langfuse'
+        from axion._core.tracing import langfuse  # noqa: F401
     except ImportError as e:
         logger.debug(f'Failed to import langfuse tracer: {e}')
 
     try:
-        from axion._core.tracing import opik  # noqa: F401 - registers 'opik'
+        from axion._core.tracing import opik  # noqa: F401
     except ImportError as e:
         logger.debug(f'Failed to import opik tracer: {e}')
 
 
-# Map TracingMode enum to (registry_key, mode_param) tuples
-# registry_key: The name used to look up the tracer in TracerRegistry
-# mode_param: Optional parameter passed to the tracer for sub-modes (e.g., logfire local/hosted/otel)
-_MODE_TO_REGISTRY = {
-    TracingMode.NOOP: ('noop', None),
-    TracingMode.LOGFIRE_LOCAL: ('logfire', 'local'),
-    TracingMode.LOGFIRE_HOSTED: ('logfire', 'hosted'),
-    TracingMode.LOGFIRE_OTEL: ('logfire', 'otel'),
-    TracingMode.LANGFUSE: ('langfuse', None),
-    TracingMode.OPIK: ('opik', None),
+# Map provider strings to (registry_key, mode_param) tuples
+_PROVIDER_TO_REGISTRY = {
+    'noop': ('noop', None),
+    'logfire': ('logfire', None),
+    'otel': ('logfire', 'otel'),
+    'langfuse': ('langfuse', None),
+    'opik': ('opik', None),
 }
 
 
-def configure_tracing(
-    tracing_mode: Optional[Union[TracingMode, str]] = None, force: bool = False
-) -> None:
+def configure_tracing(provider: Optional[str] = None) -> None:
     """
-    Configures the application's tracing system based on the unified tracing_mode.
+    Configure the tracing provider.
 
-    Prioritizes a direct function argument over the global settings object.
+    Called automatically on first use of Tracer() or get_tracer().
+    Call explicitly to switch providers at any time.
 
     Args:
-        tracing_mode: Override the tracing mode to use.
-        force: If True, will overwrite an existing configuration.
+        provider: Provider name. One of: 'noop', 'logfire', 'otel', 'langfuse', 'opik'.
+            If None, auto-detects from environment variables.
+
+    Auto-Detection Priority:
+        1. TRACING_MODE env var
+        2. LANGFUSE_SECRET_KEY → 'langfuse'
+        3. OPIK_API_KEY → 'opik'
+        4. LOGFIRE_TOKEN → 'logfire'
+        5. OTEL_EXPORTER_OTLP_ENDPOINT → 'otel'
+        6. Default: 'noop'
+
+    Example:
+        >>> configure_tracing(provider='langfuse')
+        >>> # Or just use Tracer() directly - it auto-configures
+        >>> tracer = Tracer('llm')
+        >>> # Can switch providers at any time
+        >>> configure_tracing(provider='opik')
     """
     global _tracer_instance, _tracing_configured, _tracer_mode_param
-    logger.debug('Attempting to configure tracing...')
+    logger.debug('Configuring tracing...')
 
-    # Ensure all providers are registered
     _ensure_providers_registered()
 
-    # Resolve the final tracing mode, prioritizing the direct argument.
-    final_mode_arg = tracing_mode or settings.tracing_mode
+    # Resolve provider
+    final_provider = provider.lower() if provider else detect_tracing_provider()
 
-    # Convert string argument to Enum member if necessary
-    try:
-        final_mode = TracingMode(str(final_mode_arg).lower())
-    except ValueError:
+    # Validate
+    valid_providers = list_tracing_providers()
+    if final_provider not in valid_providers:
         logger.warning(
-            f"Unknown tracing_mode '{final_mode_arg}' provided. "
-            f"Falling back to global setting: '{settings.tracing_mode.value}'"
+            f"Unknown provider '{final_provider}'. "
+            f"Available: {valid_providers}. Using 'noop'."
         )
-        final_mode = settings.tracing_mode
+        final_provider = 'noop'
 
-    # Check if reconfiguration is necessary
-    if _tracing_configured and not force:
-        current_mode = getattr(_tracer_instance, '_tracing_mode', None)
-        if current_mode == final_mode:
-            logger.debug(
-                f'Tracing already configured with mode "{final_mode}". Skipping.'
-            )
+    # Skip if already configured with same provider
+    if _tracing_configured:
+        current = getattr(_tracer_instance, '_tracing_provider', None)
+        if current == final_provider:
+            logger.debug(f'Already configured with "{final_provider}". Skipping.')
             return
-        else:
-            logger.debug(
-                f"Reconfiguring tracer from '{current_mode}' to '{final_mode}'"
-            )
 
-    # Look up the registry key and mode parameter for this TracingMode
-    registry_info = _MODE_TO_REGISTRY.get(final_mode)
-    if not registry_info:
-        logger.error(
-            f"No tracer implementation registered for mode '{final_mode}'. Using NOOP."
-        )
-        registry_key, mode_param = 'noop', None
-        final_mode = TracingMode.NOOP
-    else:
-        registry_key, mode_param = registry_info
+    # Look up registry
+    registry_key, mode_param = _PROVIDER_TO_REGISTRY.get(final_provider, ('noop', None))
 
-    # Get the tracer class from the registry
+    # Get tracer class
     try:
         TracerClass = TracerRegistry.get(registry_key)
     except ValueError as e:
-        logger.error(f'{e}. Falling back to NOOP.')
+        logger.error(f'{e}. Falling back to noop.')
         TracerClass = TracerRegistry.get('noop')
-        final_mode = TracingMode.NOOP
+        final_provider = 'noop'
         mode_param = None
 
-    # Set the global tracer to the CLASS itself (not an instance)
+    # Set global state
     _tracer_instance = TracerClass
     _tracer_mode_param = mode_param
-    setattr(_tracer_instance, '_tracing_mode', final_mode)
-
+    setattr(_tracer_instance, '_tracing_provider', final_provider)
     _tracing_configured = True
-    logger.debug(f"Tracing successfully configured to use mode: '{final_mode.value}'")
+
+    logger.debug(f"Tracing configured: '{final_provider}'")
 
 
 def get_tracer() -> Type[BaseTracer]:
     """
-    Gets the configured tracer class (not instance).
+    Get the configured tracer class.
 
-    This function returns the tracer class that has been configured via
-    configure_tracing(). If tracing hasn't been configured yet, it will
-    apply a default configuration first.
+    Auto-configures if not already configured.
 
     Returns:
-        The configured tracer class (LogfireTracer, NoOpTracer, LangfuseTracer, etc.)
+        The tracer class (not an instance).
 
     Example:
-        ```
-        TracerClass = get_tracer()
-        tracer_instance = TracerClass.create(metadata_type='llm')
-        ```
+        >>> TracerClass = get_tracer()
+        >>> tracer = TracerClass.create(metadata_type='llm')
     """
-    global _tracer_instance, _tracing_configured
     if not _tracing_configured:
-        logger.debug('Tracing not configured. Applying default configuration.')
         configure_tracing()
-
     return _tracer_instance  # type: ignore
 
 
 def get_tracer_mode_param() -> Optional[str]:
-    """
-    Gets the mode parameter for the current tracer configuration.
-
-    For Logfire tracers, this returns 'local', 'hosted', or 'otel'.
-    For other tracers, this returns None.
-
-    Returns:
-        The mode parameter string, or None if not applicable.
-    """
+    """Get the mode parameter for logfire tracer ('otel' or None)."""
     return _tracer_mode_param
 
 
-def reset_tracing() -> None:
+def is_tracing_configured() -> bool:
     """
-    Resets the tracing configuration.
+    Check if tracing has been configured.
 
-    This function clears the global tracer configuration, allowing for
-    fresh configuration. This is particularly useful for testing scenarios
-    or when you need to completely reconfigure tracing from scratch.
+    Returns:
+        True if configure_tracing() has been called (explicitly or automatically).
 
     Example:
-        ```
-        # Reset and reconfigure
-        reset_tracing()
-        configure_tracing(tracing_mode='noop')
-        ```
+        >>> is_tracing_configured()
+        False
+        >>> tracer = Tracer('llm')  # Auto-configures
+        >>> is_tracing_configured()
+        True
+    """
+    return _tracing_configured
+
+
+def clear_tracing_config() -> None:
+    """
+    Clear the tracing configuration.
+
+    Resets to unconfigured state. Next Tracer() call will re-configure.
+
+    Example:
+        >>> clear_tracing_config()
+        >>> configure_tracing(provider='opik')
     """
     global _tracer_instance, _tracing_configured, _tracer_mode_param
     _tracer_instance = None
     _tracing_configured = False
     _tracer_mode_param = None
-    logger.debug('Tracing configuration reset.')
+    logger.debug('Tracing configuration cleared.')
+
+
+def list_providers() -> list[str]:
+    """
+    List available tracing providers.
+
+    Returns:
+        ['noop', 'logfire', 'otel', 'langfuse', 'opik']
+    """
+    return list_tracing_providers()

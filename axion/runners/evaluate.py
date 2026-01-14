@@ -13,7 +13,7 @@ from axion._core.cache.manager import CacheManager
 from axion._core.cache.schema import CacheConfig
 from axion._core.config import Config
 from axion._core.error import InvalidConfig
-from axion._core.logging import configure_logging, get_logger
+from axion._core.logging import get_logger
 from axion._core.metadata.schema import ToolMetadata
 from axion._core.tracing import init_tracer, trace
 from axion._core.tracing.handlers import BaseTraceHandler
@@ -34,9 +34,7 @@ from axion.schema import ErrorConfig, EvaluationResult
 from axion.utils import lazy_import
 from axion.validation import EvaluationValidation
 
-# Set logging for error for bulk
 logger = get_logger(__name__)
-configure_logging(level='ERROR', use_rich=False)
 
 
 @dataclass

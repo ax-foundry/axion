@@ -6,7 +6,8 @@ from unittest.mock import patch
 import numpy as np
 import pandas as pd
 import pytest
-from axion._core.tracing import configure_tracing
+
+from axion._core.tracing import clear_tracing_config, configure_tracing
 from axion.dataset import DatasetItem
 from axion.runners.metric import (
     AxionRunner,
@@ -19,7 +20,8 @@ from axion.runners.metric import (
 from axion.runners.summary import MetricSummary
 from axion.schema import ErrorConfig, MetricScore, TestResult
 
-configure_tracing('noop', force=True)
+clear_tracing_config()
+configure_tracing('noop')
 
 
 # Mock metric implementations for testing

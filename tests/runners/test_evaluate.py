@@ -1,8 +1,10 @@
 from unittest.mock import Mock, patch
 
 import pytest
-from axion._core.tracing import configure_tracing
+from pydantic import BaseModel
+
 from axion._core.cache.schema import CacheConfig
+from axion._core.tracing import clear_tracing_config, configure_tracing
 from axion.dataset import DatasetItem
 from axion.runners import (
     EvaluationConfig,
@@ -11,9 +13,9 @@ from axion.runners import (
 )
 from axion.runners.summary import MetricSummary
 from axion.schema import ErrorConfig, EvaluationResult
-from pydantic import BaseModel
 
-configure_tracing('noop', force=True)
+clear_tracing_config()
+configure_tracing('noop')
 
 
 class MockTaskOutput(BaseModel):
