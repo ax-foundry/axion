@@ -40,6 +40,7 @@ class OpikSpan:
         self.is_async = is_async
         self._opik_span = None
         self._opik_context = None
+        self._opik_trace = None
         self._span_id = str(uuid7())
         self._trace_id = (
             tracer._trace_id if hasattr(tracer, '_trace_id') else str(uuid7())
@@ -68,7 +69,7 @@ class OpikSpan:
 
             # Extract known Opik span parameters
             known_params = {'model', 'provider', 'input', 'output'}
-            internal_params = {'auto_trace'}
+            internal_params = {'auto_trace', 'new_trace'}
 
             opik_kwargs = {}
             metadata = {}
@@ -81,13 +82,35 @@ class OpikSpan:
                 else:
                     metadata[k] = v
 
-            # Use Opik's context manager API
-            self._opik_context = opik.start_as_current_span(
-                name=self.name,
-                type=span_type,
-                metadata=metadata if metadata else None,
+            # Check if this should be a new trace (first span in a new tracer)
+            # Note: span is already on stack when __enter__ is called, so check for == 1
+            is_new_trace = (
+                self.attributes.get('new_trace', False) or
+                len(self.tracer._span_stack) == 1
             )
-            self._opik_span = self._opik_context.__enter__()
+
+            if is_new_trace:
+                # Create a new trace explicitly with our trace_id
+                self._opik_trace = self.tracer._client.trace(
+                    id=self._trace_id,
+                    name=self.name,
+                    metadata=metadata if metadata else None,
+                )
+                self._opik_context = self._opik_trace.span(
+                    name=self.name,
+                    type=span_type,
+                )
+                self._opik_span = self._opik_context.__enter__()
+                logger.debug(f'Opik new trace created: {self.name} (trace_id={self._trace_id})')
+            else:
+                # Use Opik's context manager API for nested spans
+                self._opik_context = opik.start_as_current_span(
+                    name=self.name,
+                    type=span_type,
+                    metadata=metadata if metadata else None,
+                )
+                self._opik_span = self._opik_context.__enter__()
+                logger.debug(f'Opik span created: {self.name} (type={span_type})')
 
             # Set additional attributes on the span
             if 'input' in opik_kwargs:
@@ -99,7 +122,6 @@ class OpikSpan:
             if 'provider' in opik_kwargs:
                 self._opik_span.provider = opik_kwargs['provider']
 
-            logger.debug(f'Opik span created: {self.name} (type={span_type})')
         except Exception as e:
             logger.info(f'Failed to create Opik span "{self.name}": {e}')
         return self

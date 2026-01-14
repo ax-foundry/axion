@@ -17,6 +17,7 @@ from axion._core.logging import get_logger
 from axion._core.metadata.schema import ToolMetadata
 from axion._core.tracing import init_tracer, trace
 from axion._core.tracing.handlers import BaseTraceHandler
+from axion._core.types import TraceGranularity
 from axion._core.utils import Timer
 from axion._core.uuid import uuid7
 from axion.dataset import Dataset, DatasetItem
@@ -108,6 +109,11 @@ class EvaluationConfig:
 
         run_id (Optional[str], optional):
             An optional identifier for this specific run. Useful for repeatability and audit logging.
+
+        trace_granularity (TraceGranularity, optional):
+            Controls trace granularity during evaluation. Options:
+            - SINGLE_TRACE (default): All evaluations under one parent trace
+            - SEPARATE: Each metric execution gets its own independent trace
     """
 
     evaluation_name: str
@@ -131,6 +137,7 @@ class EvaluationConfig:
     dataset_name: Optional[str] = None
     run_id: Optional[str] = None
     enable_internal_caching: bool = True
+    trace_granularity: TraceGranularity = TraceGranularity.SINGLE_TRACE
 
     def __post_init__(self):
         """Validate and finalize scoring configuration."""
@@ -377,6 +384,7 @@ class EvaluationRunner(RunnerMixin):
                 error_config=config.error_config,
                 tracer=self.tracer,
                 enable_internal_caching=config.enable_internal_caching,
+                trace_granularity=config.trace_granularity,
             )
 
         # Hierarchical strategy
@@ -470,9 +478,25 @@ class EvaluationRunner(RunnerMixin):
 
         return results if return_result else None
 
-    @trace(name='Evaluation_execute')
     async def execute(self) -> EvaluationResult:
-        """Executes the entire evaluation and returns the final result."""
+        """Executes the entire evaluation and returns the final result.
+
+        For SINGLE_TRACE mode, wraps execution in a trace span.
+        For PER_ITEM and SEPARATE modes, skips the wrapper span to allow
+        each item/metric to create its own independent trace.
+        """
+        if self.config.trace_granularity == TraceGranularity.SINGLE_TRACE:
+            return await self._execute_with_trace()
+        else:
+            return await self._execute_impl()
+
+    @trace(name='Evaluation_execute')
+    async def _execute_with_trace(self) -> EvaluationResult:
+        """Execute with trace span wrapper (for SINGLE_TRACE mode)."""
+        return await self._execute_impl()
+
+    async def _execute_impl(self) -> EvaluationResult:
+        """Internal implementation of evaluation execution."""
         logger.info(
             f"Starting evaluation '{self.config.evaluation_name}' with run_id: {self.run_id}"
         )
@@ -572,7 +596,14 @@ async def _run_evaluation_async(
     This function runs an evaluation with telemetry instrumentation, capturing
     dataset characteristics, scoring configuration, runtime, and outcome status
     for observability and performance analysis.
+
+    For PER_ITEM and SEPARATE trace granularity modes, the wrapper span is skipped
+    to allow each item/metric to create its own independent trace.
     """
+    # For non-SINGLE_TRACE modes, skip the wrapper span to allow separate traces
+    if config.trace_granularity != TraceGranularity.SINGLE_TRACE:
+        return await _run_evaluation_no_wrapper(config, tracer)
+
     span_name = config.evaluation_name or 'evaluation_runner'
     async with tracer.async_span(span_name) as span:
         # Capture input - the evaluation configuration
@@ -656,6 +687,30 @@ async def _run_evaluation_async(
             return None
 
 
+async def _run_evaluation_no_wrapper(
+    config: 'EvaluationConfig', tracer: Any
+) -> EvaluationResult:
+    """
+    Execute an evaluation without a wrapper span.
+
+    Used for PER_ITEM and SEPARATE trace granularity modes where each
+    item/metric creates its own independent trace.
+    """
+    timer = Timer()
+    timer.start()
+
+    try:
+        runner = EvaluationRunner(config, tracer=tracer)
+        result = await runner.execute()
+        timer.stop()
+        return result
+
+    except Exception as e:
+        logger.error(f"Error running evaluation_runner: {str(e)}")
+        timer.stop()
+        return None
+
+
 def evaluation_runner(
     evaluation_inputs: Union[Dataset, List[DatasetItem], pd.DataFrame],
     evaluation_name: str,
@@ -678,6 +733,7 @@ def evaluation_runner(
     show_progress: bool = True,
     dataset_name: Optional[str] = None,
     run_id: Optional[str] = None,
+    trace_granularity: TraceGranularity = TraceGranularity.SINGLE_TRACE,
 ) -> EvaluationResult:
     """
     Synchronously runs an evaluation experiment to evaluate metrics over a given dataset,
@@ -731,6 +787,10 @@ def evaluation_runner(
             Optional name of the dataset.
         run_id (Optional[str], optional):
             An optional identifier for this specific run.
+        trace_granularity (TraceGranularity, optional):
+            Controls trace granularity during evaluation. Options:
+            - SINGLE_TRACE (default): All evaluations under one parent trace
+            - SEPARATE: Each metric execution gets its own independent trace
 
     Returns:
         EvaluationResult:
@@ -766,5 +826,6 @@ def evaluation_runner(
         show_progress=show_progress,
         dataset_name=dataset_name,
         run_id=run_id,
+        trace_granularity=trace_granularity,
     )
     return run_async_function(_run_evaluation_async, config, tracer)

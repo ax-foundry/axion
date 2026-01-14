@@ -30,6 +30,19 @@ class EvaluationStatus(RichEnum):
     ERROR = 'error'
 
 
+class TraceGranularity(RichEnum):
+    """
+    Controls trace granularity during batch evaluation.
+
+    Attributes:
+        SINGLE_TRACE: All evaluations under one parent trace (default)
+        SEPARATE: Each metric execution gets its own independent trace
+    """
+
+    SINGLE_TRACE = 'single'
+    SEPARATE = 'separate'
+
+
 # =============================================================================
 # Field Name Constants
 # =============================================================================
@@ -180,5 +193,6 @@ __all__ = [
     'ComponentType',
     'EvaluationType',
     'EvaluationStatus',
+    'TraceGranularity',
     'FieldNames',
 ]
