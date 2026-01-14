@@ -4,9 +4,45 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-from axion._core.schema import LLMRunnable, RichBaseModel
+from axion._core.schema import (
+    AIMessage,
+    BaseMessage,
+    EmbeddingRunnable,
+    HumanMessage,
+    LLMRunnable,
+    PromptValue,
+    RichBaseModel,
+    RichEnum,
+    RichSerializer,
+    ToolCall,
+    ToolMessage,
+)
 from axion.dataset import DatasetItem
 from pydantic import Field
+
+__all__ = [
+    # Core base classes
+    'RichBaseModel',
+    'RichSerializer',
+    'RichEnum',
+    # Message types
+    'BaseMessage',
+    'HumanMessage',
+    'AIMessage',
+    'ToolMessage',
+    'ToolCall',
+    # Protocols
+    'LLMRunnable',
+    'EmbeddingRunnable',
+    # Utilities
+    'PromptValue',
+    # Evaluation models
+    'MetricScore',
+    'ComponentResult',
+    'TestResult',
+    'EvaluationResult',
+    'ErrorConfig',
+]
 
 
 def strftime() -> str:

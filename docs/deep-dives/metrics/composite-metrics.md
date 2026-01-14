@@ -23,7 +23,7 @@ import numpy as np
 
 from axion.metrics.base import BaseMetric, MetricEvaluationResult
 from axion.dataset import DatasetItem
-from axion._core.schema import RichBaseModel
+from axion.schema import RichBaseModel
 from axion._core.logging import get_logger
 
 logger = get_logger(__name__)

@@ -276,11 +276,14 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
                 with Timer() as timer:
                     # Make the LiteLLM API call - routes to correct provider based on model name
+                    # Extract API key from LLM wrapper to ensure provider-agnostic auth
+                    api_key = getattr(self.llm, '_api_key', None)
                     response = await litellm.acompletion(
                         model=model_name,
                         messages=messages,
                         response_format=response_format,
                         temperature=getattr(self.llm, 'temperature', 0.0),
+                        api_key=api_key,
                     )
 
                 # Extract the JSON response

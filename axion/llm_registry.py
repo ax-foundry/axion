@@ -606,10 +606,13 @@ class LLMRegistry:
         Returns:
             An instance of a language model client.
         """
-        model_name = model_name or settings.llm_model_name
-
         if self._provider_instance and not provider:
-            # Registry is locked to a provider
+            # Registry is locked to a provider - use provider's default first
+            model_name = (
+                model_name
+                or getattr(self._provider_instance, 'DEFAULT_LLM_MODEL', None)
+                or settings.llm_model_name
+            )
             logger.debug(
                 f"Using locked provider to create LLM client for model '{model_name}'"
             )
@@ -618,6 +621,11 @@ class LLMRegistry:
         # Flexible mode or provider override
         provider_name = provider or settings.llm_provider
         provider_instance = self._get_provider_instance(provider_name, **kwargs)
+        model_name = (
+            model_name
+            or getattr(provider_instance, 'DEFAULT_LLM_MODEL', None)
+            or settings.llm_model_name
+        )
         logger.debug(
             f"Using '{provider_name}' provider to create LLM client for model '{model_name}'"
         )
@@ -640,10 +648,13 @@ class LLMRegistry:
         Returns:
             An instance of an embedding model client.
         """
-        model_name = model_name or settings.embedding_model_name
-
         if self._provider_instance and not provider:
-            # Registry is locked to a provider
+            # Registry is locked to a provider - use provider's default first
+            model_name = (
+                model_name
+                or getattr(self._provider_instance, 'DEFAULT_EMBEDDING_MODEL', None)
+                or settings.embedding_model_name
+            )
             logger.debug(
                 f"Using locked provider to create embedding client for model '{model_name}'"
             )
@@ -654,6 +665,11 @@ class LLMRegistry:
         # Flexible mode or provider override
         provider_name = provider or settings.embedding_provider
         provider_instance = self._get_provider_instance(provider_name, **kwargs)
+        model_name = (
+            model_name
+            or getattr(provider_instance, 'DEFAULT_EMBEDDING_MODEL', None)
+            or settings.embedding_model_name
+        )
         logger.debug(
             f"Using '{provider_name}' provider to create embedding client for model '{model_name}'"
         )
@@ -733,6 +749,8 @@ class OpenAIProvider(BaseProvider):
     """
 
     LITELLM_PREFIX = ''  # OpenAI is LiteLLM's default, no prefix needed
+    DEFAULT_LLM_MODEL = 'gpt-4o'
+    DEFAULT_EMBEDDING_MODEL = 'text-embedding-ada-002'
 
     def __init__(self, api_key: Optional[str] = None, **credentials):
         """Initialize OpenAI provider with optional API key."""
@@ -766,12 +784,14 @@ class AnthropicProvider(BaseProvider):
 
     Example:
         >>> registry = LLMRegistry(provider='anthropic')
-        >>> llm = registry.get_llm('claude-3-5-sonnet-20241022')
-        >>> llm = registry.get_llm('claude-3-opus-20240229')
+        >>> llm = registry.get_llm('claude-sonnet-4-5-20250929')
+        >>> llm = registry.get_llm('claude-opus-4-5-20251101')
     """
 
     LITELLM_PREFIX = 'anthropic/'
     SUPPORTS_EMBEDDINGS = False  # Anthropic does not provide embedding models
+    DEFAULT_LLM_MODEL = 'claude-sonnet-4-5-20250929'
+    DEFAULT_EMBEDDING_MODEL = None
 
     def __init__(self, api_key: Optional[str] = None, **credentials):
         """Initialize Anthropic provider with optional API key."""
@@ -805,6 +825,8 @@ class GeminiProvider(BaseProvider):
     """
 
     LITELLM_PREFIX = 'gemini/'
+    DEFAULT_LLM_MODEL = 'gemini-2.0-flash'
+    DEFAULT_EMBEDDING_MODEL = 'text-embedding-004'
 
     def __init__(self, api_key: Optional[str] = None, **credentials):
         """Initialize Gemini provider with optional API key."""
@@ -847,6 +869,8 @@ class VertexAIProvider(BaseProvider):
 
     LITELLM_PREFIX = 'vertex_ai/'
     SUPPORTS_EMBEDDINGS = True
+    DEFAULT_LLM_MODEL = 'gemini-2.0-flash'
+    DEFAULT_EMBEDDING_MODEL = 'text-embedding-004'
 
     def __init__(
         self,
@@ -916,6 +940,9 @@ class HuggingFaceProvider(BaseProvider):
         >>> registry = LLMRegistry(provider='huggingface')
         >>> llm = registry.get_llm('meta-llama/Llama-2-7b-chat-hf')
     """
+
+    DEFAULT_LLM_MODEL = None  # HuggingFace requires explicit model specification
+    DEFAULT_EMBEDDING_MODEL = None
 
     def __init__(self, api_key: Optional[str] = None, **credentials):
         """Initialize HuggingFace provider."""
