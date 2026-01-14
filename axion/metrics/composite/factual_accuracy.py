@@ -179,7 +179,7 @@ class FactualAccuracy(BaseMetric):
         self.statement_generator = StatementGenerator(**kwargs)
         self.judge = FactualityJudge(**kwargs)
 
-    @trace(name='execute', capture_args=True)
+    @trace(name='FactualAccuracy.execute', capture_args=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         self._validate_required_metric_fields(item)
 

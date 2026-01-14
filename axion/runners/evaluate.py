@@ -110,10 +110,10 @@ class EvaluationConfig:
         run_id (Optional[str], optional):
             An optional identifier for this specific run. Useful for repeatability and audit logging.
 
-        trace_granularity (TraceGranularity, optional):
-            Controls trace granularity during evaluation. Options:
-            - SINGLE_TRACE (default): All evaluations under one parent trace
-            - SEPARATE: Each metric execution gets its own independent trace
+        trace_granularity (Union[TraceGranularity, str], optional):
+            Controls trace granularity during evaluation. Accepts enum or string values:
+            - 'single_trace' / 'single' / SINGLE_TRACE (default): All evaluations under one parent trace
+            - 'separate' / SEPARATE: Each metric execution gets its own independent trace
     """
 
     evaluation_name: str
@@ -137,10 +137,14 @@ class EvaluationConfig:
     dataset_name: Optional[str] = None
     run_id: Optional[str] = None
     enable_internal_caching: bool = True
-    trace_granularity: TraceGranularity = TraceGranularity.SINGLE_TRACE
+    trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SINGLE_TRACE
 
     def __post_init__(self):
         """Validate and finalize scoring configuration."""
+        # Convert string to TraceGranularity enum if needed
+        if isinstance(self.trace_granularity, str):
+            self.trace_granularity = TraceGranularity.from_str(self.trace_granularity)
+
         # Load from YAML path if 'scoring_config' is a string path
         if isinstance(self.scoring_config, str):
             try:
@@ -490,10 +494,60 @@ class EvaluationRunner(RunnerMixin):
         else:
             return await self._execute_impl()
 
-    @trace(name='Evaluation_execute')
     async def _execute_with_trace(self) -> EvaluationResult:
         """Execute with trace span wrapper (for SINGLE_TRACE mode)."""
-        return await self._execute_impl()
+        span_name = self.config.evaluation_name or 'Evaluation_execute'
+        async with self.tracer.async_span(span_name) as span:
+            # Capture input - evaluation configuration
+            input_count = (
+                len(self.config.evaluation_inputs)
+                if hasattr(self.config.evaluation_inputs, '__len__')
+                else 0
+            )
+
+            # Get metric names from scoring_metrics or scoring_config
+            metric_names = []
+            if self.config.scoring_metrics:
+                metric_names = [type(m).__name__ for m in self.config.scoring_metrics]
+            elif isinstance(self.config.scoring_config, list):
+                metric_names = [type(m).__name__ for m in self.config.scoring_config]
+            elif isinstance(self.config.scoring_config, dict):
+                metric_dict = self.config.scoring_config.get('metric', {})
+                if isinstance(metric_dict, dict):
+                    metric_names = list(metric_dict.keys())
+
+            span.set_input({
+                'evaluation_name': self.config.evaluation_name,
+                'dataset_name': self.config.dataset_name,
+                'input_count': input_count,
+                'metrics': metric_names,
+                'max_concurrent': self.config.max_concurrent,
+            })
+
+            try:
+                result = await self._execute_impl()
+
+                # Capture output - evaluation results summary
+                span.set_output({
+                    'run_id': result.run_id,
+                    'total_items': len(result.results) if result.results else 0,
+                    'metrics_evaluated': (
+                        [s.name for s in result.results[0].score_results]
+                        if result.results and result.results[0].score_results
+                        else []
+                    ),
+                    'status': 'completed',
+                })
+
+                return result
+
+            except Exception as e:
+                span.set_output({
+                    'status': 'failed',
+                    'error_type': type(e).__name__,
+                    'error_message': str(e)[:500],
+                })
+                raise
 
     async def _execute_impl(self) -> EvaluationResult:
         """Internal implementation of evaluation execution."""
@@ -733,7 +787,7 @@ def evaluation_runner(
     show_progress: bool = True,
     dataset_name: Optional[str] = None,
     run_id: Optional[str] = None,
-    trace_granularity: TraceGranularity = TraceGranularity.SINGLE_TRACE,
+    trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SINGLE_TRACE,
 ) -> EvaluationResult:
     """
     Synchronously runs an evaluation experiment to evaluate metrics over a given dataset,
@@ -787,10 +841,10 @@ def evaluation_runner(
             Optional name of the dataset.
         run_id (Optional[str], optional):
             An optional identifier for this specific run.
-        trace_granularity (TraceGranularity, optional):
-            Controls trace granularity during evaluation. Options:
-            - SINGLE_TRACE (default): All evaluations under one parent trace
-            - SEPARATE: Each metric execution gets its own independent trace
+        trace_granularity (Union[TraceGranularity, str], optional):
+            Controls trace granularity during evaluation. Accepts enum or string values:
+            - 'single_trace' / 'single' / SINGLE_TRACE (default): All evaluations under one parent trace
+            - 'separate' / SEPARATE: Each metric execution gets its own independent trace
 
     Returns:
         EvaluationResult:

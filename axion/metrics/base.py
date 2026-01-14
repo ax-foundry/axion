@@ -189,7 +189,6 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
             self.embed_model, 'embed_model', 'unknown'
         )
 
-    @trace(name='execute', capture_args=True)
     async def execute(
         self,
         item: Union[DatasetItem, dict],

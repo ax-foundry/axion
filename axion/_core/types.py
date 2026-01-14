@@ -34,6 +34,10 @@ class TraceGranularity(RichEnum):
     """
     Controls trace granularity during batch evaluation.
 
+    Can be specified as enum or string (case-insensitive):
+        - TraceGranularity.SINGLE_TRACE or 'single_trace' or 'single'
+        - TraceGranularity.SEPARATE or 'separate'
+
     Attributes:
         SINGLE_TRACE: All evaluations under one parent trace (default)
         SEPARATE: Each metric execution gets its own independent trace

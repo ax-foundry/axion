@@ -197,7 +197,6 @@ For each inefficiency:
     def _build_instruction_with_goal(self, goal: str) -> str:
         return self.instruction.format(primary_goal=goal)
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(
         self, input_data: InefficiencyDetectionInput
     ) -> InefficiencyDetectionOutput:
@@ -277,7 +276,6 @@ Be realistic - don't over-optimize.
             actual_turn_count=actual_count,
         )
 
-    @trace(name='execute', capture_args=True, capture_response=True)
     async def execute(self, input_data: OptimalPathAnalysisInput) -> OptimalPath:
         original_instruction = self.instruction
         self.instruction = self._build_instruction_with_context(
@@ -368,7 +366,7 @@ class ConversationEfficiency(BaseMetric):
         self.inefficiency_detector = InefficiencyDetector(**kwargs)
         self.optimal_path_analyzer = OptimalPathAnalyzer(**kwargs)
 
-    @trace(name='execute', capture_args=True, capture_response=True)
+    @trace(name='ConversationEfficiency.execute', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:

@@ -200,53 +200,36 @@ class BaseHandler(ABC, Generic[InputModel, OutputModel]):
     @asynccontextmanager
     async def _generation_context(self, callbacks: Callbacks = None):
         """
-        Context manager for handling generation lifecycle and callbacks with unified tracing.
+        Context manager for handling generation lifecycle and callbacks.
 
         Args:
             callbacks: Callbacks for tracking progress.
         """
         callbacks = callbacks or []
+        try:
+            self.tracer.start(handler_type=self.__class__.__name__)
 
-        # Main generation span covers the entire handler execution
-        # Use metadata.name if available, otherwise fall back to class name
-        span_name = (
-            getattr(self.metadata, 'name', None)
-            or self.__class__.__name__
-        )
-        async with self.async_span(
-            span_name,
-            handler_name=self.name,
-            handler_type=self.__class__.__name__,
-            callbacks_count=len(callbacks),
-        ) as span:
-            try:
-                self.tracer.start(handler_type=self.__class__.__name__)
+            # Execute callback hooks
+            for cb in callbacks:
+                if hasattr(cb, 'on_generation_start'):
+                    await cb.on_generation_start()
 
-                # Execute callback hooks
-                for cb in callbacks:
-                    if hasattr(cb, 'on_generation_start'):
-                        await cb.on_generation_start()
+            yield
 
-                span.set_attribute('callbacks_started', len(callbacks))
-                yield
+        except Exception as e:
+            self.tracer.fail(str(e))
 
-            except Exception as e:
-                self.tracer.fail(str(e))
-                span.set_attribute('generation_failed', True)
-                span.set_attribute('error_message', str(e)[:200])
+            for cb in callbacks:
+                if hasattr(cb, 'on_generation_error'):
+                    await cb.on_generation_error(error=e)
+            raise
 
-                for cb in callbacks:
-                    if hasattr(cb, 'on_generation_error'):
-                        await cb.on_generation_error(error=e)
-                raise
+        finally:
+            self.tracer.complete()
 
-            finally:
-                self.tracer.complete()
-                span.set_attribute('generation_completed', True)
-
-                for cb in callbacks:
-                    if hasattr(cb, 'on_generation_end'):
-                        await cb.on_generation_end()
+            for cb in callbacks:
+                if hasattr(cb, 'on_generation_end'):
+                    await cb.on_generation_end()
 
     @abstractmethod
     async def execute(

@@ -417,14 +417,44 @@ async def process(self, data: dict):
 
 Axion components use meaningful span names for better observability:
 
-**Evaluation Runner**: Uses `evaluation_name` as the trace name in Langfuse:
+**Evaluation Runner**: Uses `evaluation_name` as the trace name in Langfuse/Opik:
 ```python
 results = evaluation_runner(
     evaluation_inputs=dataset,
     scoring_metrics=[AnswerRelevancy()],
     evaluation_name="My RAG Evaluation"  # This becomes the trace name
 )
-# Appears as "My RAG Evaluation" in Langfuse instead of "evaluation_runner"
+# Appears as "My RAG Evaluation" in Langfuse/Opik instead of "evaluation_runner"
+```
+
+**Trace Granularity**: Control how evaluation traces are organized:
+```python
+# Single trace (default) - all evaluations under one parent
+results = evaluation_runner(
+    evaluation_inputs=dataset,
+    scoring_metrics=[AnswerRelevancy()],
+    evaluation_name="My Evaluation",
+    trace_granularity='single_trace'  # or 'single'
+)
+
+# Separate traces - each metric execution gets its own trace
+results = evaluation_runner(
+    evaluation_inputs=dataset,
+    scoring_metrics=[AnswerRelevancy()],
+    evaluation_name="My Evaluation",
+    trace_granularity='separate'
+)
+```
+
+**Evaluation Trace Hierarchy** (lean 4-level structure):
+```
+My RAG Evaluation                             # evaluation_name (root)
+├─ AnswerRelevancy.execute                    # Metric logic
+│  └─ litellm_structured                      # LLM formatting/parsing
+│     └─ llm_call                             # LLM API call (cost/tokens)
+└─ Faithfulness.execute
+   └─ litellm_structured
+      └─ llm_call
 ```
 
 **LLM Handlers**: Use `metadata.name` or class name as the span name:

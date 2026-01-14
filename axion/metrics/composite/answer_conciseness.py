@@ -177,7 +177,7 @@ class AnswerConciseness(BaseMetric):
         super().__init__(**kwargs)
         self.judge = ConcisenessJudge(**kwargs)
 
-    @trace(name='execute', capture_args=True)
+    @trace(name='AnswerConciseness.execute', capture_args=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         self._validate_required_metric_fields(item)
 
