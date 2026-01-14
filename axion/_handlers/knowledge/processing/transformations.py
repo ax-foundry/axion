@@ -16,7 +16,7 @@ from llama_index.core.node_parser import (
 )
 from llama_index.core.schema import Document, Node, TransformComponent
 from pydantic import Field
-from sklearn.metrics.pairwise import cosine_similarity
+from axion._core.metrics_utils import cosine_similarity
 
 logger = get_logger(__name__)
 

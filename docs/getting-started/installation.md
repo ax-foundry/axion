@@ -28,17 +28,57 @@ pip install -e ".[dev]"
 
 ## Optional Dependencies
 
-Install with specific extras for additional functionality:
+Axion uses optional dependencies to keep the core installation lightweight. Install extras based on what you need:
+
+### Tracing Providers
 
 ```bash
-# Logfire tracing support
+# Logfire (OpenTelemetry-based)
 pip install -e ".[logfire]"
 
-# Langfuse tracing support
+# Langfuse (LLM-specific observability)
 pip install -e ".[langfuse]"
+
+# Opik
+pip install -e ".[opik]"
 
 # All tracing providers
 pip install -e ".[tracing]"
+```
+
+### Search Integrations
+
+```bash
+# Google Search via SerpAPI
+pip install -e ".[search]"
+```
+
+Requires `SERPAPI_KEY` environment variable.
+
+### LlamaIndex Extensions
+
+```bash
+# HuggingFace embeddings and LLMs
+pip install -e ".[huggingface]"
+
+# Docling document reader (PDF, DOCX, HTML, images)
+pip install -e ".[docling]"
+```
+
+### Visualization
+
+```bash
+# Matplotlib and Seaborn for plotting
+pip install -e ".[plotting]"
+```
+
+### Combining Extras
+
+Install multiple extras at once:
+
+```bash
+# Example: search + tracing + plotting
+pip install -e ".[search,tracing,plotting]"
 ```
 
 ## Configuration

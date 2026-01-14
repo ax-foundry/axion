@@ -42,7 +42,6 @@ dependencies = [
 "requests",
 "rich",
 "s3fs",
-"scikit-learn",
 "tenacity",
 "tqdm",
 ]
