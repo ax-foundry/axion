@@ -60,7 +60,13 @@ class DirectoryLoader(BaseDocumentLoader):
         """Create reader instance based on type."""
 
         if self.reader_type == 'docling':
-            from llama_index.readers.docling import DoclingReader
+            try:
+                from llama_index.readers.docling import DoclingReader
+            except ImportError:
+                raise ImportError(
+                    'Docling reader not installed. '
+                    'Install with: pip install axion[docling]'
+                )
 
             return DoclingReader()
         else:
