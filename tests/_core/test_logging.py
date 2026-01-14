@@ -2,11 +2,13 @@ import asyncio
 import logging
 
 import pytest
+
 from axion._core.logging import (
     DEFAULT_LOG_LEVEL,
     RICH_AVAILABLE,
     _log_stats,
     _to_bool,
+    clear_logging_config,
     configure_logging,
     get_logger,
 )
@@ -29,10 +31,8 @@ def test_basic_logging_levels_and_stats(capsys):
     """
     Tests that basic logging calls are emitted and that stats are tracked correctly.
     """
+    configure_logging(level='DEBUG', use_rich=False)
     logger = get_logger('test_logger')
-    configure_logging(
-        level='DEBUG', use_rich=False, force=True
-    )  # Use simple formatter for predictable output
 
     logger.debug('debug message')
     logger.info('info message')
@@ -61,9 +61,8 @@ def test_custom_methods_emit_expected_prefixes(capsys):
     """
     Tests the custom logging methods like success(), warning_highlight(), etc.
     """
+    configure_logging(level='INFO', use_rich=False)
     logger = get_logger('custom_logger')
-    # Using rich=True to ensure emojis are part of the formatted message
-    configure_logging(level='INFO', use_rich=False, force=True)
 
     logger.success('yay!')
     logger.warning_highlight('be careful')
@@ -79,8 +78,8 @@ def test_log_json_pretty_prints_and_logs(capsys):
     """
     Tests that log_json correctly formats and outputs JSON data.
     """
+    configure_logging(level='INFO', use_rich=False)
     logger = get_logger('json_logger')
-    configure_logging(level='INFO', use_rich=False, force=True)
     data = {'foo': 'bar', 'baz': [1, 2, 3]}
 
     logger.log_json(data, title='My JSON')
@@ -105,8 +104,8 @@ def test_log_operation_context_manager_success(capsys):
     """
     Tests the log_operation context manager on a successful operation.
     """
+    configure_logging(level='INFO', use_rich=False)
     logger = get_logger('op_logger')
-    configure_logging(level='INFO', use_rich=False, force=True)
 
     with logger.log_operation('test_op'):
         pass
@@ -121,8 +120,8 @@ def test_log_operation_context_manager_exception(capsys):
     """
     Tests the log_operation context manager when an exception occurs.
     """
+    configure_logging(level='INFO', use_rich=False)
     logger = get_logger('op_logger_fail')
-    configure_logging(level='INFO', use_rich=False, force=True)
 
     with pytest.raises(ValueError, match='fail!'):
         with logger.log_operation('failing_op'):
@@ -138,8 +137,8 @@ async def test_async_log_operation_success(capsys):
     """
     Tests the async_log_operation context manager on a successful operation.
     """
+    configure_logging(level='INFO', use_rich=False)
     logger = get_logger('async_logger')
-    configure_logging(level='INFO', use_rich=False, force=True)
 
     async with logger.async_log_operation('async_op'):
         await asyncio.sleep(0.01)
@@ -155,8 +154,8 @@ async def test_async_log_operation_exception(capsys):
     """
     Tests the async_log_operation context manager when an exception occurs.
     """
+    configure_logging(level='INFO', use_rich=False)
     logger = get_logger('async_logger_fail')
-    configure_logging(level='INFO', use_rich=False, force=True)
 
     with pytest.raises(RuntimeError, match='fail async!'):
         async with logger.async_log_operation('fail_async_op'):
@@ -167,16 +166,17 @@ async def test_async_log_operation_exception(capsys):
     assert '❌ Failed Async | fail_async_op after' in captured
 
 
-def test_configure_logging_force_reconfigures():
+def test_clear_logging_config_allows_reconfiguration():
     """
-    Tests that `force=True` allows re-configuration.
+    Tests that clear_logging_config() allows re-configuration.
     """
     # Initial default configuration
     _ = get_logger('reconfig_test')
     assert logging.getLogger().level == logging.getLevelName(DEFAULT_LOG_LEVEL)
 
-    # Force re-configuration to a different level
-    configure_logging(level='DEBUG', force=True)
+    # Clear and re-configure to a different level
+    clear_logging_config()
+    configure_logging(level='DEBUG')
     assert logging.getLogger().level == logging.DEBUG
 
 
@@ -185,8 +185,8 @@ def test_log_table_prints_table(capsys):
     """
     Tests that log_table() prints a table with Rich.
     """
+    configure_logging(level='INFO', use_rich=False)
     logger = get_logger('table_logger')
-    configure_logging(level='INFO', use_rich=False, force=True)
 
     data = [{'name': 'Alice', 'score': 10}, {'name': 'Bob', 'score': 15}]
     logger.log_table(data, title='Scores')
@@ -203,8 +203,8 @@ def test_log_table_empty_data_logs_message(capsys):
     """
     Tests that log_table() handles empty data gracefully.
     """
+    configure_logging(level='INFO', use_rich=False)
     logger = get_logger('table_logger_empty')
-    configure_logging(level='INFO', use_rich=False, force=True)
 
     logger.log_table([], title='Empty Table')
     captured = capsys.readouterr().err
@@ -215,8 +215,8 @@ def test_log_performance_message_format(capsys):
     """
     Tests the format of the log_performance() message.
     """
+    configure_logging(level='INFO', use_rich=False)
     logger = get_logger('perf_logger')
-    configure_logging(level='INFO', use_rich=False, force=True)
 
     logger.log_performance('my_operation', 1.2345, throughput=100, errors=2)
     captured = capsys.readouterr().err
@@ -232,7 +232,6 @@ def test_log_exception_logs_error(capsys):
     Tests that log_exception() correctly logs an exception with a traceback.
     """
     logger = get_logger('exc_logger')
-    configure_logging(level='ERROR', use_rich=False, force=True)
 
     try:
         raise ValueError('test error')

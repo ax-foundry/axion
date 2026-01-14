@@ -49,8 +49,32 @@ Create a `.env` file in your project root:
 # Required for LLM-based metrics
 OPENAI_API_KEY=<your-key>
 
-# Optional settings
+# Optional: Logging settings
 LOG_LEVEL="INFO"
+LOG_RICH="true"
+
+# Optional: Tracing (auto-detects if credentials present)
+TRACING_MODE="langfuse"  # or: noop, logfire, otel, opik
+LANGFUSE_SECRET_KEY=<your-key>
+LANGFUSE_PUBLIC_KEY=<your-key>
+```
+
+### Programmatic Configuration
+
+Use `axion.init()` to configure both logging and tracing at once:
+
+```python
+import axion
+
+# Initialize with custom settings
+axion.init(
+    tracing='langfuse',  # or: noop, logfire, otel, opik
+    log_level='DEBUG',
+    log_rich=True,
+)
+
+# Or just let it auto-configure from environment variables
+# (no init() call needed - works automatically)
 ```
 
 ## Verify Installation

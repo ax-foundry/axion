@@ -3,13 +3,14 @@ from unittest.mock import Mock, patch
 
 import pytest
 import requests
+
+# Remove tracing for testing
+from axion._core.tracing import clear_tracing_config, configure_tracing
 from axion.search.schema import SearchNode, SearchResults
 from axion.search.you_retriever import YouRetriever
 
-# Remove tracing for testing
-from axion._core.tracing import configure_tracing
-
-configure_tracing('noop', force=True)
+clear_tracing_config()
+configure_tracing('noop')
 
 
 @pytest.fixture

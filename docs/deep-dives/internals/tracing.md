@@ -1,6 +1,6 @@
 # Axion Tracing System
 
-Simple observability for AI applications with automatic context management. Supports multiple backends including Logfire (OpenTelemetry) and Langfuse for LLM-specific observability.
+Simple observability for AI applications with automatic context management. Supports multiple backends including Logfire (OpenTelemetry), Langfuse, and Opik (Comet) for LLM-specific observability.
 
 ## Why Use Axion Tracing?
 
@@ -39,13 +39,14 @@ await MyService().run()
 
 ## Tracing Providers
 
-Axion supports three built-in tracing providers, all managed through a unified registry system:
+Axion supports four built-in tracing providers, all managed through a unified registry system:
 
 | Provider | Description | Use Case |
 |----------|-------------|----------|
 | `noop` | No-operation tracer with zero overhead | Testing, production without tracing |
 | `logfire` | OpenTelemetry-based tracing via Logfire | General observability, performance monitoring |
 | `langfuse` | LLM-specific observability platform | LLM cost tracking, prompt management, evaluations |
+| `opik` | Comet's open-source LLM observability | LLM tracing, cost tracking, evaluations |
 
 ### Provider Comparison
 
@@ -54,47 +55,53 @@ graph TD
     A[TracerRegistry] --> B[NoOpTracer]
     A --> C[LogfireTracer]
     A --> D[LangfuseTracer]
+    A --> E[OpikTracer]
 
-    B --> E[Zero Overhead]
-    C --> F[OpenTelemetry Backend]
-    C --> G[Logfire Cloud/Local UI]
-    D --> H[LLM Observability]
-    D --> I[Cost Tracking]
-    D --> J[Prompt Management]
+    B --> F[Zero Overhead]
+    C --> G[OpenTelemetry Backend]
+    C --> H[Logfire Cloud/Local UI]
+    D --> I[LLM Observability]
+    D --> J[Cost Tracking]
+    D --> K[Prompt Management]
+    E --> L[Open Source LLM Tracing]
+    E --> M[Comet Integration]
 ```
 
 ---
 
 ## Configuration
 
-Configuration is managed by a single environment variable that selects which tracing provider to use.
+Tracing auto-configures from environment variables on first use. Just use `Tracer()` and it works.
 
-### Environment Variable
+### Environment Variables
 
-Set `TRACING_MODE` to one of the following values:
+Set `TRACING_MODE` to select a provider, or let it auto-detect from available credentials:
 
-| tracing_mode | Provider | Description | Additional Env Vars Needed |
-|--------------|----------|-------------|----------------------------|
-| `noop` | NoOpTracer | Disables all tracing. Methods are available but do nothing. | None |
-| `logfire_local` | LogfireTracer | Local development with `logfire dev` command. | None |
-| `logfire_hosted` | LogfireTracer | Sends traces to Logfire cloud service. | `LOGFIRE_TOKEN` |
-| `logfire_otel` | LogfireTracer | Sends traces to custom OpenTelemetry endpoint. | `OTEL_ENDPOINT` |
-| `langfuse` | LangfuseTracer | LLM observability via Langfuse. | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` |
+| Provider | Description | Auto-Detection |
+|----------|-------------|----------------|
+| `noop` | Disables all tracing (zero overhead) | Default if no credentials found |
+| `logfire` | OpenTelemetry via Logfire | `LOGFIRE_TOKEN` present |
+| `otel` | Custom OpenTelemetry endpoint | `OTEL_EXPORTER_OTLP_ENDPOINT` present |
+| `langfuse` | LLM observability via Langfuse | `LANGFUSE_SECRET_KEY` present |
+| `opik` | LLM observability via Opik (Comet) | `OPIK_API_KEY` present |
+
+**Auto-Detection Priority:** If `TRACING_MODE` is not set, the system checks for credentials in this order:
+1. `LANGFUSE_SECRET_KEY` → uses `langfuse`
+2. `OPIK_API_KEY` → uses `opik`
+3. `LOGFIRE_TOKEN` → uses `logfire`
+4. `OTEL_EXPORTER_OTLP_ENDPOINT` → uses `otel`
+5. Default → uses `noop`
 
 ### Logfire Configuration
 
 ```bash
-# For local development with Logfire UI
-TRACING_MODE=logfire_local
-
-# For Logfire cloud
-TRACING_MODE=logfire_hosted
+# For Logfire cloud (recommended)
+TRACING_MODE=logfire
 LOGFIRE_TOKEN=your-logfire-token
-LOGFIRE_PROJECT=your-project-name  # Optional
 
 # For custom OpenTelemetry endpoint
-TRACING_MODE=logfire_otel
-OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://your-otel-endpoint
+TRACING_MODE=otel
+OTEL_EXPORTER_OTLP_ENDPOINT=https://your-otel-endpoint
 ```
 
 ### Langfuse Configuration
@@ -107,22 +114,41 @@ LANGFUSE_BASE_URL=https://cloud.langfuse.com  # EU region (default)
 # or https://us.cloud.langfuse.com for US region
 ```
 
+### Opik Configuration
+
+```bash
+TRACING_MODE=opik
+OPIK_API_KEY=your-opik-api-key
+OPIK_WORKSPACE=your-workspace-name  # Optional
+OPIK_PROJECT_NAME=axion  # Optional, defaults to 'axion'
+OPIK_URL_OVERRIDE=https://www.comet.com/opik/api  # Default (cloud)
+# or http://localhost:5173/api for self-hosted
+```
+
 ### Programmatic Configuration
 
-You can override the global setting by passing an argument to `configure_tracing`.
+Tracing auto-configures on first use of `Tracer()`. Only call `configure_tracing()` if you need to override auto-detection.
 
 ```python
-from axion.tracing import configure_tracing, TracingMode
+from axion.tracing import configure_tracing, Tracer
 
-# Configure based on the Pydantic settings object (standard way)
-configure_tracing()
+# Zero-config - auto-detects from environment variables
+tracer = Tracer('llm')
 
-# Use force=True to override any previously set configuration,
-# which is especially useful in testing environments.
-configure_tracing(tracing_mode=TracingMode.NOOP, force=True)
+# Or explicitly configure a provider
+configure_tracing(provider='langfuse')
+tracer = Tracer('llm')
 
-# Configure for Langfuse
-configure_tracing(tracing_mode=TracingMode.LANGFUSE)
+# List available providers
+from axion.tracing import list_providers
+print(list_providers())  # ['noop', 'logfire', 'otel', 'langfuse', 'opik']
+
+# Reconfigure (e.g., for testing)
+from axion.tracing import clear_tracing_config, is_tracing_configured
+
+if is_tracing_configured():
+    clear_tracing_config()
+configure_tracing(provider='noop')
 ```
 
 ---
@@ -142,7 +168,7 @@ from axion.tracing import TracerRegistry, BaseTracer
 
 # List all registered providers
 providers = TracerRegistry.list_providers()
-print(providers)  # ['noop', 'logfire', 'langfuse']
+print(providers)  # ['noop', 'logfire', 'langfuse', 'opik']
 
 # Get a specific tracer class
 TracerClass = TracerRegistry.get('langfuse')
@@ -200,7 +226,7 @@ class MyCustomTracer(BaseTracer):
         pass
 
 # Now you can use it
-configure_tracing(tracing_mode='my_custom_tracer')
+configure_tracing(provider='my_custom_tracer')
 ```
 
 ---
@@ -306,6 +332,49 @@ tracer.log_evaluation(
 # Important: Flush traces before exiting
 tracer.flush()
 ```
+
+### Opik-Specific Features
+
+Opik (by Comet) provides open-source LLM observability with similar features:
+
+```python
+import os
+os.environ['TRACING_MODE'] = 'opik'
+os.environ['OPIK_API_KEY'] = 'your-api-key'
+os.environ['OPIK_WORKSPACE'] = 'your-workspace'
+
+from axion.tracing import configure_tracing, Tracer
+
+configure_tracing()
+tracer = Tracer('llm')
+
+# Create spans that appear in Opik dashboard
+with tracer.span('my-operation', model='gpt-4') as span:
+    # Your code here
+    span.set_input({'query': 'Hello, how are you?'})
+    span.set_output({'response': 'I am doing well!'})
+    span.set_usage(prompt_tokens=10, completion_tokens=8)
+
+# Log LLM calls with token usage
+tracer.log_llm_call(
+    name='chat_completion',
+    model='gpt-4',
+    provider='openai',
+    prompt='Hello, how are you?',
+    response='I am doing well, thank you!',
+    prompt_tokens=10,
+    completion_tokens=8,
+)
+
+# Important: Flush traces before exiting
+tracer.flush()
+```
+
+**Key Opik features:**
+- Open-source and self-hostable
+- LLM-specific span types ('llm', 'tool', 'general')
+- Token usage tracking via `usage` attribute
+- Integration with Comet ML platform
 
 ### Input/Output Capture
 
@@ -444,11 +513,13 @@ Choose the right type for automatic specialized handling:
 
 | Function | Description |
 |----------|-------------|
-| `configure_tracing(tracing_mode, force)` | Configure the global tracing system |
+| `configure_tracing(provider)` | Configure the tracing provider (auto-configures if not called) |
+| `is_tracing_configured()` | Check if tracing has been configured |
+| `clear_tracing_config()` | Clear configuration (useful for testing/reconfiguration) |
+| `list_providers()` | List available providers: `['noop', 'logfire', 'otel', 'langfuse', 'opik']` |
 | `get_tracer()` | Get the configured tracer class |
 | `init_tracer(metadata_type, tool_metadata)` | Initialize a tracer instance |
-| `Tracer(metadata_type)` | Factory function for tracer instances |
-| `reset_tracing()` | Reset configuration (useful for testing) |
+| `Tracer(metadata_type)` | Factory function for tracer instances (auto-configures) |
 
 ### Context Management
 
@@ -517,6 +588,9 @@ pip install -e ".[logfire]"
 
 # Install with Langfuse support
 pip install -e ".[langfuse]"
+
+# Install with Opik support
+pip install -e ".[opik]"
 
 # Install with all tracing providers
 pip install -e ".[tracing]"

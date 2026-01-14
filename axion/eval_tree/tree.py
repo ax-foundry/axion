@@ -29,7 +29,6 @@ from axion.schema import (
 from axion.utils import lazy_import
 
 logger = get_logger(__name__)
-configure_logging(level='ERROR', use_rich=False)
 
 
 class EvalTree(TreeMixin):

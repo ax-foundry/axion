@@ -213,13 +213,12 @@ class TracerRegistry:
 
     @classmethod
     def display(cls) -> None:
-        """Display the tracer registry in a formatted table."""
-        if not cls._registry:
-            logger.info('No tracers registered')
-            return
+        """Display the tracer registry in a rich HTML format."""
+        from axion.docs.display_registry import (
+            create_tracer_registry_display,
+            prepare_tracer_registry,
+        )
 
-        table_data = [
-            {'name': name, 'class': tracer_class.__name__}
-            for name, tracer_class in cls._registry.items()
-        ]
-        logger.log_table(table_data, title='Registered Tracers')
+        prepared_registry = prepare_tracer_registry(cls._registry)
+        tracer_display = create_tracer_registry_display()
+        tracer_display.display(prepared_registry)

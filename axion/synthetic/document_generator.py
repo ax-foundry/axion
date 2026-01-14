@@ -13,9 +13,7 @@ from axion._handlers.knowledge.ingestion import Ingestion
 from axion._handlers.knowledge.loaders import DirectoryLoader
 from llama_index.core import Document
 
-# Set logging for error for bulk
 logger = get_logger(__name__)
-configure_logging(level='ERROR', use_rich=False)
 
 
 class DocumentQAGenerator:

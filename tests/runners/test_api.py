@@ -3,7 +3,8 @@ from typing import Any, Callable, Dict, List, Optional, Union
 
 import pandas as pd
 import pytest
-from axion._core.tracing import configure_tracing
+
+from axion._core.tracing import clear_tracing_config, configure_tracing
 from axion.dataset import DatasetItem
 from axion.runners.api import (
     APIResponseData,
@@ -12,7 +13,8 @@ from axion.runners.api import (
     RetryConfig,
 )
 
-configure_tracing('noop', force=True)
+clear_tracing_config()
+configure_tracing('noop')
 
 
 @APIRunner.register('test_api')

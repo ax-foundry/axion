@@ -2378,3 +2378,127 @@ def create_settings_display():
         usage_button_text='📝 Usage Examples',
     )
     return GenericRegistryDisplay(extractor, config)
+
+
+class TracerRegistryExtractor(BaseRegistryExtractor):
+    """Extractor for TracerRegistry items."""
+
+    def get_title(self, item: Any) -> str:
+        # Get class name, remove 'Tracer' suffix for cleaner display
+        class_name = item.__name__
+        if class_name.endswith('Tracer'):
+            class_name = class_name[:-6]
+        return class_name
+
+    def get_subtitle(self, item: Any) -> str:
+        return getattr(item, '_registry_key', item.__name__)
+
+    def get_description(self, item: Any) -> str:
+        doc = item.__doc__ or ''
+        if doc:
+            # Get first paragraph of docstring
+            lines = doc.strip().split('\n\n')[0].split('\n')
+            return ' '.join(line.strip() for line in lines if line.strip())
+        return 'Tracer implementation for observability'
+
+    def get_tags(self, item: Any) -> List[str]:
+        tags = ['tracer']
+        class_name = item.__name__.lower()
+
+        if 'noop' in class_name:
+            tags.append('testing')
+        elif 'logfire' in class_name:
+            tags.extend(['opentelemetry', 'observability'])
+        elif 'langfuse' in class_name:
+            tags.extend(['llm', 'observability'])
+        elif 'opik' in class_name:
+            tags.extend(['llm', 'comet'])
+
+        return tags
+
+    def get_fields(self, item: Any) -> Dict[str, Any]:
+        # Analyze available methods
+        core_methods = []
+        optional_methods = []
+
+        for method in ['span', 'async_span', 'start', 'complete', 'fail']:
+            if hasattr(item, method):
+                core_methods.append(method)
+
+        for method in ['flush', 'shutdown', 'log_llm_call', 'log_evaluation']:
+            if hasattr(item, method):
+                optional_methods.append(method)
+
+        return {
+            'core_methods': {
+                'value': core_methods,
+                'type': 'field_list',
+                'label': 'Core Methods',
+                'field_class': 'required',
+            },
+            'optional_methods': {
+                'value': optional_methods,
+                'type': 'field_list',
+                'label': 'Optional Methods',
+                'field_class': 'optional',
+            },
+        }
+
+    def get_usage_example(self, key: str, item: Any) -> str:
+        return f"""# Usage example for {key} tracer
+from axion._core.tracing import configure_tracing, Tracer
+
+# Configure tracing mode
+configure_tracing(tracing_mode='{key}')
+
+# Create a tracer instance
+tracer = Tracer('llm')
+
+# Use spans for tracing operations
+with tracer.span('my-operation') as span:
+    span.set_input({{'query': 'Hello'}})
+    # ... your code ...
+    span.set_output({{'response': 'Hi!'}})
+
+# Flush traces before exiting
+tracer.flush()
+"""
+
+    def get_details_content(self, key: str, item: Any) -> str:
+        class_name = item.__name__
+        doc = item.__doc__ or 'No documentation available.'
+
+        return f"""
+<h3>{class_name}</h3>
+<p><strong>Registry Key:</strong> <code>{key}</code></p>
+<h4>Description</h4>
+<p>{doc}</p>
+<h4>Configuration</h4>
+<p>Set <code>TRACING_MODE={key}</code> in your environment or use:</p>
+<pre><code>configure_tracing(tracing_mode='{key}')</code></pre>
+"""
+
+
+def create_tracer_registry_display():
+    """Create a Tracer Registry display."""
+    extractor = TracerRegistryExtractor()
+    config = DisplayConfig(
+        title='Tracer Registry',
+        icon='🔍',
+        description='Available tracing providers for observability',
+        show_badges=True,
+        show_tags=True,
+        show_filters=True,
+        details_button_text='📖 Tracer Details',
+        usage_button_text='⚡ Usage Examples',
+    )
+    return GenericRegistryDisplay(extractor, config)
+
+
+def prepare_tracer_registry(registry: Dict) -> Dict:
+    """Prepare the TracerRegistry by adding registry keys to tracer classes."""
+    prepared_registry = {}
+    for key, tracer_class in registry.items():
+        tracer_class._registry_key = key
+        prepared_registry[key] = tracer_class
+    return prepared_registry

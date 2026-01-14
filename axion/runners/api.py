@@ -7,7 +7,7 @@ from typing import Any, Callable, ClassVar, Dict, List, Optional, Type, Union
 import pandas as pd
 from axion._core.config.config import Config
 from axion._core.asyncio import SemaphoreExecutor
-from axion._core.logging import configure_logging, get_logger
+from axion._core.logging import get_logger
 from axion._core.metadata.schema import ToolMetadata
 from axion._core.schema import RichBaseModel
 from axion._core.tracing import init_tracer, trace
@@ -22,9 +22,7 @@ from tenacity import (
     wait_fixed,
 )
 
-# Set logging for error for bulk
 logger = get_logger(__name__)
-configure_logging(level='ERROR', use_rich=False)
 
 
 @dataclass

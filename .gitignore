@@ -1,6 +1,7 @@
 .ipynb_checkpoints/
 .DS_Store
-__pycache__
+__pycache__/
+tests/**/__pycache__/
 
 build
 doc/build

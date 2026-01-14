@@ -11,7 +11,7 @@ import pandas as pd
 
 from axion._core.asyncio import SemaphoreExecutor, gather_with_progress
 from axion._core.cache.manager import CacheManager
-from axion._core.logging import configure_logging, get_logger
+from axion._core.logging import get_logger
 from axion._core.tracing import init_tracer, trace
 from axion._core.tracing.handlers import BaseTraceHandler
 from axion._core.utils import Timer
@@ -26,7 +26,6 @@ from axion.schema import ErrorConfig, MetricScore, TestResult
 from axion.validation import EvaluationValidation
 
 logger = get_logger(__name__)
-configure_logging(level='ERROR', use_rich=False)
 
 
 class BaseMetricRunner(ABC):
