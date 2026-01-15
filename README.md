@@ -201,6 +201,16 @@ pytest
 
 ---
 
+## Why "Axion"?
+
+**A**gent **X**-Ray **I**nspection & **O**ptimization **N**etwork
+
+The name draws inspiration from the [axion](https://en.wikipedia.org/wiki/Axion)—a hypothetical particle in physics proposed to solve the "strong CP problem" in quantum chromodynamics. Physicists Frank Wilczek and Steven Weinberg named it after a laundry detergent, hoping it would "clean up" their theoretical mess.
+
+Like its namesake, this toolkit provides lightweight, modular components that work together to solve complex problems. Axions in physics are characterized by being incredibly small yet potentially accounting for much of the universe's dark matter through sheer numbers. Similarly, Axion the toolkit offers small, focused tools that combine to tackle the substantial challenge of AI agent evaluation.
+
+---
+
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.
