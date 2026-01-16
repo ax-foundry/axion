@@ -179,7 +179,7 @@ class ToneStyleConsistency(BaseMetric):
         super().__init__(**kwargs)
         self.tone_judge = ToneJudge(**kwargs)
 
-    @trace(name='ToneStyleConsistency.execute', capture_args=True)
+    @trace(name='ToneStyleConsistency', capture_args=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         self._validate_required_metric_fields(item)
 

@@ -1,6 +1,7 @@
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple
 
 import numpy as np
+
 from axion._core.schema import RichBaseModel, RichEnum
 from axion._core.tracing import trace
 from axion.dataset import DatasetItem
@@ -110,7 +111,7 @@ class Faithfulness(BaseMetric):
         verdict = MetricVerdict.from_str(verdict_str, default=MetricVerdict.NO_EVIDENCE)
         return verdict, self.verdict_scores.get(verdict, 0.0)
 
-    @trace(name='Faithfulness.execute', capture_args=True, capture_response=True)
+    @trace(name='Faithfulness', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:
@@ -280,3 +281,47 @@ class Faithfulness(BaseMetric):
                 ]
             )
         return signals
+
+    def get_diagnostic_data(
+        self,
+        result: FaithfulnessResult,
+        mode: Literal['failures', 'successes', 'all'] = 'failures',
+    ) -> List[Dict[str, Any]]:
+        """Extract claims for analysis or prompt learning.
+
+        Args:
+            result: The FaithfulnessResult from metric execution.
+            mode: What to extract:
+                - 'failures': Only claims not FULLY_SUPPORTED (default)
+                - 'successes': Only FULLY_SUPPORTED claims
+                - 'all': All claims with 'passed' field
+
+        Returns:
+            List of dicts with claim details.
+            When mode='all', includes 'passed' boolean.
+        """
+        data = []
+        for claim in result.judged_claims:
+            verdict = claim.faithfulness_verdict
+            verdict_value = getattr(verdict, 'value', None)
+
+            # FULLY_SUPPORTED = success, everything else = failure
+            passed = verdict_value and verdict_value.upper() == 'FULLY_SUPPORTED'
+
+            # Filter based on mode
+            if mode == 'failures' and passed:
+                continue
+            if mode == 'successes' and not passed:
+                continue
+
+            item = {
+                'claim': claim.claim_text,
+                'verdict': verdict_value,
+                'reason': getattr(verdict, 'reason', 'N/A'),
+            }
+
+            if mode == 'all':
+                item['passed'] = passed
+
+            data.append(item)
+        return data

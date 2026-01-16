@@ -205,7 +205,7 @@ class CitationPresence(BaseMetric):
             return True
         return False
 
-    @trace(name='CitationPresence.execute', capture_args=True)
+    @trace(name='CitationPresence', capture_args=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """Evaluate citation presence for the entire conversation or single-turn response."""
 

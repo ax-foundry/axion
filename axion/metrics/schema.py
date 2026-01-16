@@ -1,9 +1,20 @@
 import json
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Generic, List, Optional, Tuple, TypeVar, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
+
+from pydantic import BaseModel, Field, field_serializer
 
 from axion._core.schema import RichBaseModel
-from pydantic import BaseModel, Field, field_serializer
 
 T = TypeVar('T', bound=BaseModel)
 

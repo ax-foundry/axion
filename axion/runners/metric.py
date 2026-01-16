@@ -13,6 +13,7 @@ from axion._core.asyncio import SemaphoreExecutor, gather_with_progress
 from axion._core.cache.manager import CacheManager
 from axion._core.logging import get_logger
 from axion._core.tracing import Tracer, init_tracer, trace
+from axion._core.tracing.context import reset_tracer_context, set_current_tracer
 from axion._core.tracing.handlers import BaseTraceHandler
 from axion._core.types import TraceGranularity
 from axion._core.utils import Timer
@@ -207,7 +208,7 @@ class MetricRunner(RunnerMixin):
             'description': 'Enables a per-item cache for metrics that share expensive internal computations.'
         },
     )
-    trace_granularity: TraceGranularity = field(
+    trace_granularity: Union[TraceGranularity, str] = field(
         default=TraceGranularity.SINGLE_TRACE,
         repr=True,
         metadata={
@@ -219,6 +220,10 @@ class MetricRunner(RunnerMixin):
     _summary: Optional[Dict] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self):
+        # Convert string to enum if needed (defensive, should already be enum from EvaluationConfig)
+        if isinstance(self.trace_granularity, str):
+            self.trace_granularity = TraceGranularity.from_str(self.trace_granularity)
+
         self.tracer = init_tracer(
             metadata_type='base',
             tool_metadata=self.get_tool_metadata(),
@@ -394,21 +399,25 @@ class MetricRunner(RunnerMixin):
                 original_tracer = executor.tracer
                 executor.tracer = metric_tracer
 
-                async with metric_tracer.async_span(
-                    f'metric_{executor.metric_name}_item_{item.id}'
-                ) as span:
-                    span.set_input({
-                        'item_id': item.id,
-                        'metric_name': executor.metric_name,
-                    })
+                # Set the metric_tracer in context so child handlers
+                # (via active_tracer property) properly nest under it
+                context_token = set_current_tracer(metric_tracer)
 
-                    cache_to_pass = None
-                    if self.enable_internal_caching and getattr(
-                        executor.metric, 'shares_internal_cache', False
-                    ):
-                        cache_to_pass = item_specific_cache
+                try:
+                    async with metric_tracer.async_span(
+                        f'metric_{executor.metric_name}_item_{item.id}'
+                    ) as span:
+                        span.set_input({
+                            'item_id': item.id,
+                            'metric_name': executor.metric_name,
+                        })
 
-                    try:
+                        cache_to_pass = None
+                        if self.enable_internal_caching and getattr(
+                            executor.metric, 'shares_internal_cache', False
+                        ):
+                            cache_to_pass = item_specific_cache
+
                         result = await self._safe_execute(
                             self.semaphore.run(
                                 self._process_single_metric,
@@ -428,9 +437,10 @@ class MetricRunner(RunnerMixin):
                         elif isinstance(result, Exception):
                             logger.error(f'Metric execution failed: {result}', exc_info=False)
                             span.set_attribute('error', str(result))
-                    finally:
-                        # Restore original tracer
-                        executor.tracer = original_tracer
+                finally:
+                    # Restore original tracer and reset context
+                    executor.tracer = original_tracer
+                    reset_tracer_context(context_token)
 
                 # Flush the tracer after each metric execution
                 if hasattr(metric_tracer, 'flush'):

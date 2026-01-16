@@ -1,7 +1,9 @@
 import re
-from typing import Dict, List, Literal, Optional, Set
+from typing import Any, Dict, List, Literal, Optional, Set
 
 import numpy as np
+from pydantic import Field, field_validator
+
 from axion._core.logging import get_logger
 from axion._core.schema import AIMessage, HumanMessage, RichBaseModel
 from axion._core.tracing import trace
@@ -12,7 +14,6 @@ from axion.metrics.base import (
     metric,
 )
 from axion.metrics.schema import SignalDescriptor
-from pydantic import Field, field_validator
 
 logger = get_logger(__name__)
 
@@ -989,7 +990,7 @@ class AnswerCriteria(BaseMetric):
 
         return MetricEvaluationResult(score=final_score, signals=result_data)
 
-    @trace(name='AnswerCriteria.execute', capture_args=True, capture_response=True)
+    @trace(name='AnswerCriteria', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """
         Compute the score based on criteria.
@@ -1161,3 +1162,47 @@ class AnswerCriteria(BaseMetric):
             )
 
         return signals
+
+    def get_diagnostic_data(
+        self,
+        result: AnswerCriteriaResult,
+        mode: Literal['failures', 'successes', 'all'] = 'failures',
+    ) -> List[Dict[str, Any]]:
+        """Extract aspects for analysis or prompt learning.
+
+        Args:
+            result: The AnswerCriteriaResult from metric execution.
+            mode: What to extract:
+                - 'failures': Only aspects with missing concepts (default)
+                - 'successes': Only fully covered aspects
+                - 'all': All aspects with 'passed' field
+
+        Returns:
+            List of dicts with aspect details.
+            When mode='all', includes 'passed' boolean.
+        """
+        data = []
+        for aspect in result.aspect_breakdown:
+            # An aspect passes if it's covered AND has no missing concepts
+            passed = aspect.covered and not aspect.concepts_missing
+
+            # Filter based on mode
+            if mode == 'failures' and passed:
+                continue
+            if mode == 'successes' and not passed:
+                continue
+
+            item = {
+                'aspect': aspect.aspect,
+                'covered': aspect.covered,
+                'concepts_missing': aspect.concepts_missing,
+                'concepts_covered': aspect.concepts_covered,
+                'coverage_pct': aspect.concepts_coverage_percentage,
+                'reason': aspect.reason,
+            }
+
+            if mode == 'all':
+                item['passed'] = passed
+
+            data.append(item)
+        return data

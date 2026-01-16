@@ -90,26 +90,50 @@ class OpikSpan:
             )
 
             if is_new_trace:
+                # Flush any pending traces before starting a new one
+                # This ensures clean separation between traces
+                try:
+                    self.tracer._client.flush()
+                except Exception:
+                    pass
+
                 # Create a new trace explicitly with our trace_id
                 self._opik_trace = self.tracer._client.trace(
                     id=self._trace_id,
                     name=self.name,
                     metadata=metadata if metadata else None,
                 )
+                # Store the trace on the tracer so nested spans can access it
+                self.tracer._current_trace = self._opik_trace
+
+                # Create the root span under this trace using trace.span()
+                # This ensures spans go to the correct project
                 self._opik_context = self._opik_trace.span(
-                    name=self.name,
-                    type=span_type,
-                )
-                self._opik_span = self._opik_context.__enter__()
-                logger.debug(f'Opik new trace created: {self.name} (trace_id={self._trace_id})')
-            else:
-                # Use Opik's context manager API for nested spans
-                self._opik_context = opik.start_as_current_span(
                     name=self.name,
                     type=span_type,
                     metadata=metadata if metadata else None,
                 )
                 self._opik_span = self._opik_context.__enter__()
+                logger.debug(f'Opik new trace created: {self.name} (trace_id={self._trace_id})')
+            else:
+                # For nested spans, use the current trace's span method
+                # This ensures all spans go to the same project
+                parent_trace = getattr(self.tracer, '_current_trace', None)
+                if parent_trace:
+                    self._opik_context = parent_trace.span(
+                        name=self.name,
+                        type=span_type,
+                        metadata=metadata if metadata else None,
+                    )
+                    self._opik_span = self._opik_context.__enter__()
+                else:
+                    # Fallback to global context only if no parent trace
+                    self._opik_context = opik.start_as_current_span(
+                        name=self.name,
+                        type=span_type,
+                        metadata=metadata if metadata else None,
+                    )
+                    self._opik_span = self._opik_context.__enter__()
                 logger.debug(f'Opik span created: {self.name} (type={span_type})')
 
             # Set additional attributes on the span
@@ -142,13 +166,17 @@ class OpikSpan:
             except Exception as e:
                 logger.debug(f'Failed to close Opik span: {e}')
 
-        # Auto-flush when exiting the outermost span
+        # Auto-flush and clear current trace when exiting the outermost span
         if len(self.tracer._span_stack) == 1 and self.tracer._client:
             try:
                 self.tracer._client.flush()
                 logger.debug('Opik traces auto-flushed (outermost span closed)')
             except Exception as e:
                 logger.debug(f'Failed to auto-flush Opik traces: {e}')
+
+            # Clear the current trace so the next trace starts fresh
+            if self._opik_trace:
+                self.tracer._current_trace = None
 
         return False
 

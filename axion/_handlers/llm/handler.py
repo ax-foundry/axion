@@ -324,7 +324,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
                 try:
                     # Log the call to tracer
-                    self.tracer.log_llm_call(
+                    self.active_tracer.log_llm_call(
                         model=model_name,
                         prompt=json.dumps(messages),
                         response=response_text,
@@ -457,7 +457,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
                 # Log the call to tracer
                 prompt_str = messages_to_prompt(messages)
-                self.tracer.log_llm_call(
+                self.active_tracer.log_llm_call(
                     model=model_name,
                     prompt=prompt_str,
                     response=str(response),
@@ -559,7 +559,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 span.set_attribute('cost_estimate', self.cost_estimate)
 
                 # Log the call to tracer
-                self.tracer.log_llm_call(
+                self.active_tracer.log_llm_call(
                     model=model_name,
                     prompt=prompt,
                     response=response.text,
@@ -577,7 +577,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 span.set_attribute('error', str(e))
                 span.set_attribute('error_type', type(e).__name__)
 
-                self.tracer.log_llm_call(
+                self.active_tracer.log_llm_call(
                     model=model_name,
                     prompt=prompt,
                     response='',

@@ -403,6 +403,7 @@ class EvaluationRunner(RunnerMixin):
                 max_concurrent=config.max_concurrent,
                 summary_generator=config.summary_generator,
                 enable_internal_caching=config.enable_internal_caching,
+                trace_granularity=config.trace_granularity,
             )
 
         # Invalid case

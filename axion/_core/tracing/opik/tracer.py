@@ -334,24 +334,46 @@ class OpikTracer(BaseTracer):
             latency = kwargs.get('latency')
             cost = kwargs.get('cost_estimate')
 
-            # Create an LLM span using Opik's context manager API
-            with opik.start_as_current_span(
-                name=kwargs.get('name', 'llm_call'),
-                type='llm',
-            ) as span:
-                span.input = prompt
-                span.output = response
-                span.model = model
-                span.provider = provider
-                span.usage = {
-                    'prompt_tokens': prompt_tokens,
-                    'completion_tokens': completion_tokens,
-                    'total_tokens': prompt_tokens + completion_tokens,
-                }
-                span.metadata = {
-                    'latency': latency,
-                    'cost_estimate': cost,
-                }
+            # Use parent span name if available, otherwise default to 'llm_call'
+            default_name = self._current_span.name if self._current_span else 'llm_call'
+            name = kwargs.get('name', default_name)
+
+            # Use the current trace's span method to ensure correct project
+            # Fall back to global context if no current trace
+            if self._current_trace:
+                with self._current_trace.span(name=name, type='llm') as span:
+                    span.input = prompt
+                    span.output = response
+                    span.model = model
+                    span.provider = provider
+                    span.usage = {
+                        'prompt_tokens': prompt_tokens,
+                        'completion_tokens': completion_tokens,
+                        'total_tokens': prompt_tokens + completion_tokens,
+                    }
+                    span.metadata = {
+                        'latency': latency,
+                        'cost_estimate': cost,
+                    }
+            else:
+                # Fallback to global context (may go to Default Project)
+                with opik.start_as_current_span(
+                    name=name,
+                    type='llm',
+                ) as span:
+                    span.input = prompt
+                    span.output = response
+                    span.model = model
+                    span.provider = provider
+                    span.usage = {
+                        'prompt_tokens': prompt_tokens,
+                        'completion_tokens': completion_tokens,
+                        'total_tokens': prompt_tokens + completion_tokens,
+                    }
+                    span.metadata = {
+                        'latency': latency,
+                        'cost_estimate': cost,
+                    }
 
         except Exception as e:
             logger.info(f'Failed to log LLM call to Opik: {e}')

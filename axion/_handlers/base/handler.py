@@ -6,7 +6,7 @@ from axion._core.error import InvalidConfig
 from axion._core.logging import get_logger
 from axion._core.metadata.schema import BaseExecutionMetadata, ToolMetadata
 from axion._core.schema import Callbacks, InputModel, OutputModel
-from axion._core.tracing import init_tracer
+from axion._core.tracing import get_current_tracer_safe, init_tracer
 from axion._core.tracing.handlers import BaseTraceHandler
 
 logger = get_logger(__name__)
@@ -164,6 +164,20 @@ class BaseHandler(ABC, Generic[InputModel, OutputModel]):
             input_data = self.input_model(**input_data)
         return input_data
 
+    @property
+    def active_tracer(self) -> BaseTraceHandler:
+        """
+        Get the active tracer, preferring context tracer for proper span hierarchy.
+
+        When a parent span is active (e.g., from a @trace decorator), this ensures
+        child spans nest correctly under the parent instead of creating separate traces.
+
+        Returns:
+            The current context tracer if available, otherwise self.tracer.
+        """
+        context_tracer = get_current_tracer_safe()
+        return context_tracer if context_tracer is not None else self.tracer
+
     def span(self, operation_name: str, **attributes):
         """
         Convenience function to create a unified span for operation tracking.
@@ -172,7 +186,7 @@ class BaseHandler(ABC, Generic[InputModel, OutputModel]):
             operation_name: Name of the operation being tracked.
             **attributes: Additional attributes to attach to the span.
         """
-        return self.tracer.span(operation_name, **attributes)
+        return self.active_tracer.span(operation_name, **attributes)
 
     def async_span(self, operation_name: str, **attributes):
         """
@@ -182,20 +196,20 @@ class BaseHandler(ABC, Generic[InputModel, OutputModel]):
             operation_name: Name of the operation being tracked.
             **attributes: Additional attributes to attach to the span.
         """
-        return self.tracer.async_span(operation_name, **attributes)
+        return self.active_tracer.async_span(operation_name, **attributes)
 
     def add_trace(
         self, event_type: str, message: str, metadata: Optional[Dict[str, Any]] = None
     ):
         """
-        Convince function to cdd a trace event (use sparingly - spans with auto_trace handle most cases).
+        Convenience function to add a trace event (use sparingly - spans with auto_trace handle most cases).
 
         Args:
             event_type: Type of event (e.g., 'validation_passed', 'config_loaded')
             message: Human-readable message describing the event
             metadata: Optional additional metadata for the event
         """
-        self.tracer.add_trace(event_type, message, metadata)
+        self.active_tracer.add_trace(event_type, message, metadata)
 
     @asynccontextmanager
     async def _generation_context(self, callbacks: Callbacks = None):
@@ -206,8 +220,9 @@ class BaseHandler(ABC, Generic[InputModel, OutputModel]):
             callbacks: Callbacks for tracking progress.
         """
         callbacks = callbacks or []
+        tracer = self.active_tracer
         try:
-            self.tracer.start(handler_type=self.__class__.__name__)
+            tracer.start(handler_type=self.__class__.__name__)
 
             # Execute callback hooks
             for cb in callbacks:
@@ -217,7 +232,7 @@ class BaseHandler(ABC, Generic[InputModel, OutputModel]):
             yield
 
         except Exception as e:
-            self.tracer.fail(str(e))
+            tracer.fail(str(e))
 
             for cb in callbacks:
                 if hasattr(cb, 'on_generation_error'):
@@ -225,7 +240,7 @@ class BaseHandler(ABC, Generic[InputModel, OutputModel]):
             raise
 
         finally:
-            self.tracer.complete()
+            tracer.complete()
 
             for cb in callbacks:
                 if hasattr(cb, 'on_generation_end'):

@@ -60,7 +60,7 @@ class ContextualRanking(BaseMetric):
         super().__init__(**kwargs)
         self.engine = RAGAnalyzer(mode=mode, **kwargs)
 
-    @trace(name='ContextualRanking.execute', capture_args=True, capture_response=True)
+    @trace(name='ContextualRanking', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:

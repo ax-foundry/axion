@@ -51,10 +51,14 @@ class EvalTree(TreeMixin):
         max_concurrent: int = 5,
         summary_generator: Optional[BaseSummary] = None,
         enable_internal_caching: bool = True,
+        trace_granularity=None,
     ):
+        from axion._core.types import TraceGranularity
+
         self.config: Config = config if isinstance(config, Config) else Config(config)
         self.max_concurrent = max_concurrent
         self.enable_internal_caching = enable_internal_caching
+        self.trace_granularity = trace_granularity or TraceGranularity.SINGLE_TRACE
         self.nodes: Dict[str, Node] = {}
         self.root_node: Optional[ComponentNode] = None
         self.summary_generator = summary_generator or HierarchicalSummary()
@@ -185,6 +189,7 @@ class EvalTree(TreeMixin):
                 max_concurrent=self.max_concurrent,
                 enable_internal_caching=self.enable_internal_caching,
                 summary_generator=None,  # Handles this later
+                trace_granularity=self.trace_granularity,
             )
             metric_results: List[TestResult] = await master_runner.execute_batch(
                 dataset, show_progress=show_progress

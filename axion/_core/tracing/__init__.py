@@ -38,6 +38,7 @@ from axion._core.tracing.config import (
 )
 from axion._core.tracing.context import (
     get_current_tracer,
+    get_current_tracer_safe,
     reset_tracer_context,
     set_current_tracer,
 )
@@ -64,6 +65,7 @@ __all__ = [
     'BaseTracer',
     # Context management
     'get_current_tracer',
+    'get_current_tracer_safe',
     'set_current_tracer',
     'reset_tracer_context',
     # Factory

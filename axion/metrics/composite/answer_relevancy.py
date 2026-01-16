@@ -1,6 +1,8 @@
-from typing import List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 import numpy as np
+from pydantic import Field
+
 from axion._core.logging import get_logger
 from axion._core.schema import AIMessage, HumanMessage, RichBaseModel
 from axion._core.tracing import trace
@@ -15,7 +17,6 @@ from axion.metrics.internals.engine import RAGAnalyzer
 from axion.metrics.internals.judges import RelevancyExplainer
 from axion.metrics.internals.schema import EvaluationMode
 from axion.metrics.schema import SignalDescriptor
-from pydantic import Field
 
 logger = get_logger(__name__)
 
@@ -344,7 +345,7 @@ class AnswerRelevancy(BaseMetric):
             signals=result_data,
         )
 
-    @trace(name='AnswerRelevancy.execute', capture_args=True, capture_response=True)
+    @trace(name='AnswerRelevancy', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:
@@ -451,3 +452,44 @@ class AnswerRelevancy(BaseMetric):
                 ]
             )
         return signals
+
+    def get_diagnostic_data(
+        self,
+        result: AnswerRelevancyResult,
+        mode: Literal['failures', 'successes', 'all'] = 'failures',
+    ) -> List[Dict[str, Any]]:
+        """Extract statements for analysis or prompt learning.
+
+        Args:
+            result: The AnswerRelevancyResult from metric execution.
+            mode: What to extract:
+                - 'failures': Only irrelevant statements (default)
+                - 'successes': Only relevant statements
+                - 'all': All statements with 'passed' field
+
+        Returns:
+            List of dicts with statement details.
+            When mode='all', includes 'passed' boolean.
+        """
+        data = []
+        for stmt in result.statement_breakdown:
+            passed = stmt.is_relevant
+
+            # Filter based on mode
+            if mode == 'failures' and passed:
+                continue
+            if mode == 'successes' and not passed:
+                continue
+
+            item = {
+                'statement': stmt.statement,
+                'verdict': stmt.verdict,
+                'reason': stmt.reason,
+                'turn_index': stmt.turn_index,
+            }
+
+            if mode == 'all':
+                item['passed'] = passed
+
+            data.append(item)
+        return data

@@ -338,7 +338,7 @@ class CitationRelevancy(BaseMetric):
 
         return all_verdicts, total_citations
 
-    @trace(name='CitationRelevancy.execute', capture_args=True, capture_response=True)
+    @trace(name='CitationRelevancy', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """
         Executes the citation relevance workflow: extract, judge, score.

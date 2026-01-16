@@ -1,6 +1,7 @@
-from typing import List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 import numpy as np
+
 from axion._core.schema import RichBaseModel
 from axion._core.tracing import trace
 from axion.dataset import DatasetItem
@@ -47,7 +48,7 @@ class ContextualRecall(BaseMetric):
         super().__init__(**kwargs)
         self.engine = RAGAnalyzer(mode=mode, **kwargs)
 
-    @trace(name='ContextualRecall.execute', capture_args=True, capture_response=True)
+    @trace(name='ContextualRecall', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:
@@ -147,3 +148,42 @@ class ContextualRecall(BaseMetric):
             )
 
         return signals
+
+    def get_diagnostic_data(
+        self,
+        result: ContextualRecallResult,
+        mode: Literal['failures', 'successes', 'all'] = 'failures',
+    ) -> List[Dict[str, Any]]:
+        """Extract statements for analysis or prompt learning.
+
+        Args:
+            result: The ContextualRecallResult from metric execution.
+            mode: What to extract:
+                - 'failures': Only unsupported statements (default)
+                - 'successes': Only supported statements
+                - 'all': All statements with 'passed' field
+
+        Returns:
+            List of dicts with statement details.
+            When mode='all', includes 'passed' boolean.
+        """
+        data = []
+        for stmt in result.judged_statements:
+            passed = stmt.is_supported_by_context
+
+            # Filter based on mode
+            if mode == 'failures' and passed:
+                continue
+            if mode == 'successes' and not passed:
+                continue
+
+            item = {
+                'statement': stmt.statement_text,
+                'supported': stmt.is_supported_by_context,
+            }
+
+            if mode == 'all':
+                item['passed'] = passed
+
+            data.append(item)
+        return data

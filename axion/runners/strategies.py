@@ -60,7 +60,7 @@ class HierarchicalScoringStrategy(BaseScoringStrategy):
         Args:
             config (Dict[str, Any]): The configuration dictionary for EvalTree.
             **kwargs: Additional arguments to pass to the EvalTree,
-                      e.g., max_concurrent, summary_generator.
+                      e.g., max_concurrent, summary_generator, trace_granularity.
         """
         from axion.eval_tree.tree import EvalTree
 

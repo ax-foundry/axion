@@ -61,7 +61,7 @@ class ToolCorrectness(BaseMetric):
         self.parameter_matching_strategy = parameter_matching_strategy
         self.fuzzy_threshold = fuzzy_threshold
 
-    @trace(name='ToolCorrectness.execute', capture_args=True, capture_response=True)
+    @trace(name='ToolCorrectness', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem) -> MetricEvaluationResult:
         """
         Evaluate tool correctness for the given dataset item.
