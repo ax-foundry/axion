@@ -229,7 +229,9 @@ class CriteriaChecker(BaseMetric[CriteriaCheckerInput, CriteriaCheckerOutput]):
                             aspect='Umpire Declaration',
                             covered=False,
                             concepts_covered=[],
-                            concepts_missing=['Umpire must declare infield fly while ball is in the air'],
+                            concepts_missing=[
+                                'Umpire must declare infield fly while ball is in the air'
+                            ],
                             reason='The response makes no mention of the umpire declaration requirement, leaving this factual requirement completely unaddressed.',
                         ),
                     ]

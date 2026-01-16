@@ -138,4 +138,3 @@ class ThrottledTopicExtractor(ThrottledBaseExtractor):
         return [
             result if not isinstance(result, Exception) else {} for result in results
         ]
-

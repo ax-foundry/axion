@@ -35,9 +35,7 @@ class BaseAPI:
         self._session_id = None
         self.domain = domain or os.environ.get('API_DOMAIN')
         self._consumer_key = consumer_key or os.environ.get('API_CONSUMER_KEY')
-        self._consumer_secret = consumer_secret or os.environ.get(
-            'API_CONSUMER_SECRET'
-        )
+        self._consumer_secret = consumer_secret or os.environ.get('API_CONSUMER_SECRET')
         self._token = token
         self._auth_type = auth_type
         self._username = kwargs.get('username', None)
