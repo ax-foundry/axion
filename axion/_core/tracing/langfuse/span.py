@@ -66,45 +66,46 @@ class LangfuseSpan:
             langfuse_kwargs = {}
             metadata = {}
 
+            logger.warning(
+                f'[SPAN DEBUG] LangfuseSpan.__enter__ for "{self.name}": '
+                f'received attributes keys: {list(self.attributes.keys())}'
+            )
+            logger.warning(
+                f'[SPAN DEBUG] LangfuseSpan.__enter__ for "{self.name}": '
+                f'span_stack depth: {len(self.tracer._span_stack)}'
+            )
+
             for k, v in self.attributes.items():
                 if k in internal_params:
                     continue
                 elif k in known_params:
                     langfuse_kwargs[k] = v
+                    logger.warning(
+                        f'[SPAN DEBUG] LangfuseSpan.__enter__ for "{self.name}": '
+                        f'adding "{k}" to langfuse_kwargs, value preview: {str(v)[:200]}'
+                    )
                 else:
                     # Put custom attributes in metadata
                     metadata[k] = v
 
-            is_root_span = len(self.tracer._span_stack) == 1
+            logger.warning(
+                f'[SPAN DEBUG] LangfuseSpan.__enter__ for "{self.name}": '
+                f'calling start_as_current_observation with langfuse_kwargs keys: {list(langfuse_kwargs.keys())}'
+            )
 
-            if is_root_span:
-                # For root spans: Create trace explicitly so we can control its input/output
-                self._trace_context = self.tracer._client.trace(
-                    id=self._trace_id,
-                    name=self.name,
-                    metadata=metadata if metadata else None,
-                )
-                # Create observation linked to this trace using trace_id parameter
-                self._observation_context = self.tracer._client.start_as_current_observation(
-                    as_type=as_type,
-                    name=self.name,
-                    trace_id=self._trace_id,
-                    metadata=metadata if metadata else None,
-                    **langfuse_kwargs,
-                )
-                self._observation = self._observation_context.__enter__()
-                logger.debug(f'Langfuse root span created: {self.name} (trace_id={self._trace_id})')
-            else:
-                # For child spans: Use start_as_current_observation
-                # This automatically nests under the current observation
-                self._observation_context = self.tracer._client.start_as_current_observation(
-                    as_type=as_type,
-                    name=self.name,
-                    metadata=metadata if metadata else None,
-                    **langfuse_kwargs,
-                )
-                self._observation = self._observation_context.__enter__()
-                logger.debug(f'Langfuse child span created: {self.name} (type={as_type})')
+            # Use start_as_current_observation for ALL spans
+            # This automatically handles nesting - children nest under the current observation
+            self._observation_context = self.tracer._client.start_as_current_observation(
+                as_type=as_type,
+                name=self.name,
+                metadata=metadata if metadata else None,
+                **langfuse_kwargs,
+            )
+            self._observation = self._observation_context.__enter__()
+            logger.warning(
+                f'[SPAN DEBUG] LangfuseSpan.__enter__ for "{self.name}": '
+                f'observation created, observation_id={getattr(self._observation, "id", "N/A")}'
+            )
         except Exception as e:
             logger.info(f'Failed to create Langfuse span "{self.name}": {e}')
         return self
@@ -182,30 +183,30 @@ class LangfuseSpan:
         self.tracer.add_trace(event_type, message, trace_metadata)
 
     def set_input(self, data: Any) -> None:
-        """Set the input data for this span (and trace if this is a root span)."""
-        try:
-            serialized = self._serialize_data(data)
-            # Set input on the span/observation
-            if self._observation:
+        """Set the input data for this span."""
+        import traceback
+        logger.warning(
+            f'[SPAN DEBUG] set_input called for "{self.name}": '
+            f'data preview: {str(data)[:300]}'
+        )
+        logger.warning(
+            f'[SPAN DEBUG] set_input call stack:\n{"".join(traceback.format_stack()[-5:-1])}'
+        )
+        if self._observation:
+            try:
+                serialized = self._serialize_data(data)
                 self._observation.update(input=serialized)
-            # Also set input on the trace for root spans (so it shows at trace level in UI)
-            if self._trace_context:
-                self._trace_context.update(input=serialized)
-        except Exception as e:
-            logger.debug(f'Failed to set input on Langfuse span: {e}')
+            except Exception as e:
+                logger.debug(f'Failed to set input on Langfuse span: {e}')
 
     def set_output(self, data: Any) -> None:
-        """Set the output data for this span (and trace if this is a root span)."""
-        try:
-            serialized = self._serialize_data(data)
-            # Set output on the span/observation
-            if self._observation:
+        """Set the output data for this span."""
+        if self._observation:
+            try:
+                serialized = self._serialize_data(data)
                 self._observation.update(output=serialized)
-            # Also set output on the trace for root spans (so it shows at trace level in UI)
-            if self._trace_context:
-                self._trace_context.update(output=serialized)
-        except Exception as e:
-            logger.debug(f'Failed to set output on Langfuse span: {e}')
+            except Exception as e:
+                logger.debug(f'Failed to set output on Langfuse span: {e}')
 
     def _serialize_data(self, data: Any) -> Any:
         """Serialize data for tracing (handles Pydantic models, dicts, etc.)."""
