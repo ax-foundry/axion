@@ -4,14 +4,11 @@ from typing import Any, Callable, Dict, Optional
 
 from pydantic import BaseModel
 
-from axion._core.logging import get_logger
 from axion._core.tracing.statistics import (
     MAX_ARG_LENGTH,
     MAX_ERROR_LENGTH,
     MAX_RESULT_LENGTH,
 )
-
-_debug_logger = get_logger(__name__)
 
 
 def trace(
@@ -194,19 +191,7 @@ def trace(
             # Pass input directly in attributes so it's set at span creation time
             # This ensures the input is captured before any child spans can interfere
             if capture_args:
-                input_data = _build_input_data((self,) + args, kwargs)
-                attributes['input'] = input_data
-                _debug_logger.warning(
-                    f'[TRACE DEBUG] @trace async_wrapper for "{span_name}": '
-                    f'capture_args={capture_args}, input_data keys={list(input_data.keys()) if isinstance(input_data, dict) else type(input_data)}'
-                )
-                _debug_logger.warning(
-                    f'[TRACE DEBUG] @trace async_wrapper input_data preview: {str(input_data)[:500]}'
-                )
-
-            _debug_logger.warning(
-                f'[TRACE DEBUG] @trace async_wrapper calling async_span("{span_name}") with attributes keys: {list(attributes.keys())}'
-            )
+                attributes['input'] = _build_input_data((self,) + args, kwargs)
 
             async with self.tracer.async_span(span_name, **attributes) as span:
                 try:

@@ -66,32 +66,14 @@ class LangfuseSpan:
             langfuse_kwargs = {}
             metadata = {}
 
-            logger.warning(
-                f'[SPAN DEBUG] LangfuseSpan.__enter__ for "{self.name}": '
-                f'received attributes keys: {list(self.attributes.keys())}'
-            )
-            logger.warning(
-                f'[SPAN DEBUG] LangfuseSpan.__enter__ for "{self.name}": '
-                f'span_stack depth: {len(self.tracer._span_stack)}'
-            )
-
             for k, v in self.attributes.items():
                 if k in internal_params:
                     continue
                 elif k in known_params:
                     langfuse_kwargs[k] = v
-                    logger.warning(
-                        f'[SPAN DEBUG] LangfuseSpan.__enter__ for "{self.name}": '
-                        f'adding "{k}" to langfuse_kwargs, value preview: {str(v)[:200]}'
-                    )
                 else:
                     # Put custom attributes in metadata
                     metadata[k] = v
-
-            logger.warning(
-                f'[SPAN DEBUG] LangfuseSpan.__enter__ for "{self.name}": '
-                f'calling start_as_current_observation with langfuse_kwargs keys: {list(langfuse_kwargs.keys())}'
-            )
 
             # Use start_as_current_observation for ALL spans
             # This automatically handles nesting - children nest under the current observation
@@ -102,10 +84,7 @@ class LangfuseSpan:
                 **langfuse_kwargs,
             )
             self._observation = self._observation_context.__enter__()
-            logger.warning(
-                f'[SPAN DEBUG] LangfuseSpan.__enter__ for "{self.name}": '
-                f'observation created, observation_id={getattr(self._observation, "id", "N/A")}'
-            )
+            logger.debug(f'Langfuse span created: {self.name} (type={as_type})')
         except Exception as e:
             logger.info(f'Failed to create Langfuse span "{self.name}": {e}')
         return self
@@ -184,14 +163,6 @@ class LangfuseSpan:
 
     def set_input(self, data: Any) -> None:
         """Set the input data for this span."""
-        import traceback
-        logger.warning(
-            f'[SPAN DEBUG] set_input called for "{self.name}": '
-            f'data preview: {str(data)[:300]}'
-        )
-        logger.warning(
-            f'[SPAN DEBUG] set_input call stack:\n{"".join(traceback.format_stack()[-5:-1])}'
-        )
         if self._observation:
             try:
                 serialized = self._serialize_data(data)
