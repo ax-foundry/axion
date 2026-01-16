@@ -32,7 +32,7 @@ def test_metric_score_with_values():
 
 def test_test_result_structure():
     test_case = DatasetItem(
-        id='test1', input='What is AI?', expected_output='Artificial Intelligence.'
+        id='test1', query='What is AI?', expected_output='Artificial Intelligence.'
     )
     metric = MetricScore(name='faithfulness', score=1.0)
     result = TestResult(test_case=test_case, score_results=[metric])
@@ -43,7 +43,7 @@ def test_test_result_structure():
 
 
 def test_evaluation_result_to_dataframe():
-    test_case = DatasetItem(id='123', input='Q?', expected_output='A.')
+    test_case = DatasetItem(id='123', query='Q?', expected_output='A.')
     metric = MetricScore(name='clarity', score=0.9)
     result = TestResult(test_case=test_case, score_results=[metric])
 

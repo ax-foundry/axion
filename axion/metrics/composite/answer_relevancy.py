@@ -344,7 +344,7 @@ class AnswerRelevancy(BaseMetric):
             signals=result_data,
         )
 
-    @trace(name='AnswerRelevancy.execute', capture_args=True, capture_response=True)
+    @trace(name='AnswerRelevancy', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:

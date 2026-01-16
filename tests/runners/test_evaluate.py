@@ -76,8 +76,8 @@ class TestExperimentRunner:
     def sample_dataset_items(self):
         """Create sample dataset items for testing"""
         return [
-            DatasetItem(id='item1', data={'input': 'test1'}),
-            DatasetItem(id='item2', data={'input': 'test2'}),
+            DatasetItem(id='item1', query='test1'),
+            DatasetItem(id='item2', query='test2'),
         ]
 
     def test_runner_initialization(self, mock_config):
@@ -187,7 +187,7 @@ class TestExperimentRunner:
     @pytest.mark.asyncio
     async def test_execute_full_workflow(self, mock_config):
         """Test the complete execute workflow"""
-        mock_config.evaluation_inputs = [DatasetItem(id='test', data={'input': 'test'})]
+        mock_config.evaluation_inputs = [DatasetItem(id='test', query='test')]
 
         # Create a proper async mock that returns the expected value
         async def mock_task_func(item):

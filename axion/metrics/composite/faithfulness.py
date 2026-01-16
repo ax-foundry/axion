@@ -81,7 +81,7 @@ class Faithfulness(BaseMetric):
             **kwargs: Additional keyword arguments passed to the RAGAnalyzer.
         """
         super().__init__(**kwargs)
-        self.engine = RAGAnalyzer(mode=mode, **kwargs)
+        self.engine = RAGAnalyzer(mode=mode, tracer=self.tracer, **kwargs)
         self.strict_mode = strict_mode
 
         # Start with the defaults
@@ -110,7 +110,7 @@ class Faithfulness(BaseMetric):
         verdict = MetricVerdict.from_str(verdict_str, default=MetricVerdict.NO_EVIDENCE)
         return verdict, self.verdict_scores.get(verdict, 0.0)
 
-    @trace(name='Faithfulness.execute', capture_args=True, capture_response=True)
+    @trace(name='Faithfulness', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:

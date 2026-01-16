@@ -54,12 +54,6 @@ class LLMCostEstimator:
         Returns:
             float: The estimated total cost of the call, in USD.
         """
-        warnings.warn(
-            "LLMCostEstimator.estimate() is deprecated. "
-            "Use litellm.completion_cost() or response._hidden_params['response_cost'] instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
         try:
             import litellm

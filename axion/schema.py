@@ -188,7 +188,7 @@ class ComponentResult(RichBaseModel):
 
 
 # Pydantic forward reference resolution for recursive type
-ComponentResult.update_forward_refs()
+ComponentResult.model_rebuild()
 
 
 @dataclass
@@ -209,6 +209,9 @@ class TestResult:
             Optional metadata for storing extra context such as timestamps, evaluator info,
             experiment variant, evaluation notes, or model config parameters.
     """
+
+    # Prevent pytest from collecting this as a test class
+    __test__ = False
 
     test_case: Optional[DatasetItem]
     score_results: List[MetricScore]

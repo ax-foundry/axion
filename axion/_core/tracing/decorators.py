@@ -161,13 +161,13 @@ def trace(
                 return func(self, *args, **kwargs)
 
             attributes = _build_attributes((self,) + args, kwargs)
+            # Pass input directly in attributes so it's set at span creation time
+            # This ensures the input is captured before any child spans can interfere
+            if capture_args:
+                attributes['input'] = _build_input_data((self,) + args, kwargs)
+
             with self.tracer.span(span_name, **attributes) as span:
                 try:
-                    # Capture input for Langfuse/tracing visibility
-                    if capture_args and hasattr(span, 'set_input'):
-                        input_data = _build_input_data((self,) + args, kwargs)
-                        span.set_input(input_data)
-
                     result = func(self, *args, **kwargs)
                     _capture_result_attributes(span, result)
 
@@ -188,13 +188,13 @@ def trace(
                 return await func(self, *args, **kwargs)
 
             attributes = _build_attributes((self,) + args, kwargs)
+            # Pass input directly in attributes so it's set at span creation time
+            # This ensures the input is captured before any child spans can interfere
+            if capture_args:
+                attributes['input'] = _build_input_data((self,) + args, kwargs)
+
             async with self.tracer.async_span(span_name, **attributes) as span:
                 try:
-                    # Capture input for Langfuse/tracing visibility
-                    if capture_args and hasattr(span, 'set_input'):
-                        input_data = _build_input_data((self,) + args, kwargs)
-                        span.set_input(input_data)
-
                     result = await func(self, *args, **kwargs)
                     _capture_result_attributes(span, result)
 

@@ -5,7 +5,7 @@ from axion._core.schema import AIMessage, HumanMessage, RichBaseModel
 from axion.dataset import DatasetItem
 from axion.metrics.base import BaseMetric
 from axion.metrics.cache import AnalysisCache
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 logger = get_logger(__name__)
 
@@ -285,6 +285,8 @@ class UserFrictionAnalyzerInput(RichBaseModel):
 class UserFrictionAnalyzerOutput(RichBaseModel):
     """Output from friction analysis."""
 
+    model_config = ConfigDict(validate_assignment=True, str_strip_whitespace=True)
+
     friction_score: float = Field(
         description='A score from 0.0 (no friction) to 1.0 (high friction), indicating user frustration, confusion, or effort'
     )
@@ -292,11 +294,6 @@ class UserFrictionAnalyzerOutput(RichBaseModel):
         default_factory=list,
         description="Specific indicators of friction found in the user's message",
     )
-
-    class Config:
-        # Ensure validation is strict
-        validate_assignment = True
-        str_strip_whitespace = True
 
 
 class UserFrictionAnalyzer(

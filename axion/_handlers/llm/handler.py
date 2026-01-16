@@ -754,18 +754,8 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
             if hasattr(self, 'tracer'):
                 self.tracer.metadata.input_data = input_dump
-                if hasattr(self.tracer, 'current_span') and self.tracer.current_span:
-                    span = self.tracer.current_span
-                    span.set_input(formatted_input)  # Capture full input data
-                    span.set_attribute('input_type', type(formatted_input).__name__)
-                    span.set_attribute('input_size', len(str(input_dump)))
-                    span.set_attribute('handler_type', 'llm')
-                    span.set_attribute(
-                        'execution_mode',
-                        'litellm_structured'
-                        if self.as_structured_llm
-                        else 'parser_mode',
-                    )
+                # Note: Don't set_input on current_span here - it may be a parent span
+                # The child span created in _execute_structured_call will set its own input
 
             result = await self._execute_with_retry(formatted_input)
 
@@ -773,15 +763,8 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 try:
                     result_dump = result.model_dump()
                     self.tracer.metadata.output_data = result_dump
-
-                    if (
-                        hasattr(self.tracer, 'current_span')
-                        and self.tracer.current_span
-                    ):
-                        span = self.tracer.current_span
-                        span.set_output(result)  # Capture full output data
-                        span.set_attribute('output_type', type(result).__name__)
-                        span.set_attribute('output_size', len(str(result_dump)))
+                    # Note: Don't set_output on current_span here - it may be a parent span
+                    # The child span created in _execute_structured_call handles its own output
                 except AttributeError:
                     pass
 

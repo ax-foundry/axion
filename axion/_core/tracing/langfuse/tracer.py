@@ -324,10 +324,14 @@ class LangfuseTracer(BaseTracer):
             latency = kwargs.get('latency')
             cost = kwargs.get('cost_estimate')
 
+            # Use parent span name if available, otherwise default to 'llm_call'
+            default_name = self._current_span.name if self._current_span else 'llm_call'
+            name = kwargs.get('name', default_name)
+
             # Create a generation observation and update with usage
             with self._client.start_as_current_observation(
                 as_type='generation',
-                name=kwargs.get('name', 'llm_call'),
+                name=name,
                 model=model,
                 input=prompt,
                 output=response,

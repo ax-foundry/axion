@@ -1,5 +1,6 @@
 import numpy as np
 from axion.dataset import DatasetItem
+from axion._core.tracing import trace
 from axion.metrics.base import (
     BaseMetric,
     MetricEvaluationResult,
@@ -114,6 +115,7 @@ class Latency(BaseMetric):
 
         return explanation
 
+    @trace(name='Latency', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """
         Returns the latency recorded for a given test case as the metric score.

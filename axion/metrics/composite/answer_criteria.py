@@ -989,7 +989,7 @@ class AnswerCriteria(BaseMetric):
 
         return MetricEvaluationResult(score=final_score, signals=result_data)
 
-    @trace(name='AnswerCriteria.execute', capture_args=True, capture_response=True)
+    @trace(name='AnswerCriteria', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """
         Compute the score based on criteria.

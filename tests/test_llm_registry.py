@@ -111,14 +111,6 @@ def reset_settings_and_env(monkeypatch):
 # Cost Estimation Tests
 # =============================================================================
 
-def test_llm_cost_estimator_emits_deprecation_warning():
-    """Tests that LLMCostEstimator.estimate() emits a deprecation warning."""
-    with patch('litellm.cost_per_token', return_value=(0.0025, 0.01)):
-        with pytest.warns(DeprecationWarning, match='LLMCostEstimator.estimate\\(\\) is deprecated'):
-            LLMCostEstimator.estimate(
-                model_name='gpt-4o', prompt_tokens=1000, completion_tokens=1000
-            )
-
 
 def test_llm_cost_estimator_delegates_to_litellm():
     """Tests that cost estimation delegates to LiteLLM's cost_per_token."""

@@ -396,7 +396,7 @@ class PIILeakageHeuristic(BaseMetric):
 
         return categories
 
-    @trace(name='PIILeakageHeuristic.execute', capture_args=True, capture_response=True)
+    @trace(name='PIILeakageHeuristic', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """
         Evaluate PII leakage using heuristic detection.

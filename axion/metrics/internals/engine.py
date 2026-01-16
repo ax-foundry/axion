@@ -5,6 +5,8 @@ from typing import Any, Callable, Dict, List, Optional, Set, TypeVar
 
 from axion._core.asyncio import SemaphoreExecutor
 from axion._core.logging import get_logger
+from axion._core.metadata.schema import ToolMetadata
+from axion._core.tracing import init_tracer
 from axion._core.utils import Timer
 from axion.dataset import DatasetItem
 from axion.metrics.base import BaseMetric
@@ -100,13 +102,23 @@ class RAGAnalyzer:
             max_concurrent_llm_calls: Concurrency limit for parallel judge calls
             force_granular: Bypass batch judges and use concurrent granular calls
             allow_fallback: Allow fallback to granular when batch calls fail
-            **kwargs: Additional judge configuration (e.g., shared model)
+            **kwargs: Additional judge configuration (e.g., shared model, tracer)
         """
         self.mode = mode
         self.force_granular = force_granular
         self.allow_fallback = allow_fallback
+        self.tracer = init_tracer('llm', self._get_tool_metadata(), kwargs.get('tracer'))
         self.judges = self._initialize_judges(**kwargs)
         self.executor = SemaphoreExecutor(max_concurrent=max_concurrent_llm_calls)
+
+    def _get_tool_metadata(self) -> ToolMetadata:
+        """Get tool metadata for tracer initialization."""
+        return ToolMetadata(
+            name=self.__class__.__name__,
+            description='RAG Analyzer Engine',
+            owner='AXION',
+            version='1.0.0',
+        )
 
     def _initialize_judges(self, **kwargs) -> Dict[JudgeType, BaseMetric]:
         """Initialize all judge instances with shared configuration."""
