@@ -10,7 +10,7 @@ logger = get_logger(__name__)
 
 class LLMCostEstimator:
     """
-    DEPRECATED: Use LiteLLM's native cost tracking instead.
+    Use LiteLLM's native cost tracking if possible instead.
 
     Prefer using `response._hidden_params["response_cost"]` or `litellm.completion_cost()`
     for accurate real-time pricing from api.litellm.ai.
@@ -18,12 +18,11 @@ class LLMCostEstimator:
     This class now delegates to LiteLLM's cost calculation and is maintained only
     for backward compatibility.
 
-    Example (deprecated):
+    Example:
     ```
-    # Old way (deprecated):
     cost = LLMCostEstimator.estimate("gpt-4o", prompt_tokens=1500, completion_tokens=500)
 
-    # New way (recommended):
+    # Recommended:
     response = litellm.completion(...)
     cost = response._hidden_params.get("response_cost", 0.0)
     # or
@@ -40,7 +39,7 @@ class LLMCostEstimator:
         round_level: int = 8,
     ) -> float:
         """
-        DEPRECATED: Estimate the cost of an LLM call using LiteLLM's pricing data.
+        Estimate the cost of an LLM call using LiteLLM's pricing data.
 
         Prefer using `response._hidden_params["response_cost"]` directly from LiteLLM
         responses for real-time pricing.
@@ -82,7 +81,7 @@ class LLMCostEstimator:
         cls, model_name: str, input_tokens: int, output_tokens: int
     ) -> float:
         """
-        DEPRECATED: Alternative method name for backward compatibility.
+        Alternative method name for backward compatibility.
 
         Args:
             model_name (str): The name of the LLM model
@@ -97,7 +96,7 @@ class LLMCostEstimator:
     @classmethod
     def get_model_pricing(cls, model_name: str) -> Dict[str, float]:
         """
-        DEPRECATED: Get the pricing information for a specific model from LiteLLM.
+        Get the pricing information for a specific model from LiteLLM.
 
         Args:
             model_name (str): The name of the LLM model
@@ -105,12 +104,6 @@ class LLMCostEstimator:
         Returns:
             Dict[str, float]: Dictionary with 'input' and 'output' pricing per token
         """
-        warnings.warn(
-            'LLMCostEstimator.get_model_pricing() is deprecated. '
-            'Use litellm.model_cost or litellm.get_model_cost_map() instead.',
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
         try:
             import litellm
@@ -135,17 +128,11 @@ class LLMCostEstimator:
     @classmethod
     def list_supported_models(cls) -> List[str]:
         """
-        DEPRECATED: List all supported models from LiteLLM's pricing database.
+        List all supported models from LiteLLM's pricing database.
 
         Returns:
             List[str]: List of supported model names
         """
-        warnings.warn(
-            'LLMCostEstimator.list_supported_models() is deprecated. '
-            'Use litellm.model_cost.keys() instead.',
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
         try:
             import litellm
@@ -162,19 +149,13 @@ class LLMCostEstimator:
         cls, model: str, input_price_per_token: float, output_price_per_token: float
     ) -> None:
         """
-        DEPRECATED: Add custom model pricing to LiteLLM's model_cost dictionary.
+        Add custom model pricing to LiteLLM's model_cost dictionary.
 
         Args:
             model (str): The name of the custom model
             input_price_per_token (float): Price per input token in USD
             output_price_per_token (float): Price per output token in USD
         """
-        warnings.warn(
-            'LLMCostEstimator.add_custom_model() is deprecated. '
-            'Use litellm.register_model() instead.',
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
         try:
             import litellm
