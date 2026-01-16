@@ -6,6 +6,7 @@ import pandas as pd
 from axion._core.config import Config
 from axion._core.error import InvalidConfig
 from axion._core.logging import configure_logging, get_logger
+from axion._core.types import TraceGranularity
 from axion._core.utils import Timer
 from axion.dataset import Dataset, DatasetItem, format_input
 from axion.eval_tree._tree import TreeMixin
@@ -51,10 +52,12 @@ class EvalTree(TreeMixin):
         max_concurrent: int = 5,
         summary_generator: Optional[BaseSummary] = None,
         enable_internal_caching: bool = True,
+        trace_granularity: TraceGranularity = TraceGranularity.SINGLE_TRACE,
     ):
         self.config: Config = config if isinstance(config, Config) else Config(config)
         self.max_concurrent = max_concurrent
         self.enable_internal_caching = enable_internal_caching
+        self.trace_granularity = trace_granularity
         self.nodes: Dict[str, Node] = {}
         self.root_node: Optional[ComponentNode] = None
         self.summary_generator = summary_generator or HierarchicalSummary()
@@ -185,6 +188,7 @@ class EvalTree(TreeMixin):
                 max_concurrent=self.max_concurrent,
                 enable_internal_caching=self.enable_internal_caching,
                 summary_generator=None,  # Handles this later
+                trace_granularity=self.trace_granularity,
             )
             metric_results: List[TestResult] = await master_runner.execute_batch(
                 dataset, show_progress=show_progress
