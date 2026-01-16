@@ -719,7 +719,7 @@ class AnswerCompleteness(BaseMetric):
                 'evaluation_type': 'sub_question',
             }
 
-    @trace(name='AnswerCompleteness.execute', capture_args=True, capture_response=True)
+    @trace(name='AnswerCompleteness', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """
         Compute the completeness score, returning a structured result object

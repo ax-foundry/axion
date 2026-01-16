@@ -6,6 +6,7 @@ from axion.metrics.base import (
     MetricEvaluationResult,
     metric,
 )
+from axion._core.tracing import trace
 
 
 @metric(
@@ -31,6 +32,7 @@ class LevenshteinRatio(BaseMetric):
         super().__init__(**kwargs)
         self.case_sensitive = case_sensitive
 
+    @trace(name='LevenshteinRatio', capture_args=True, capture_response=True)   
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """
         Computes the Levenshtein ratio between the actual and expected outputs.

@@ -366,7 +366,7 @@ class ConversationEfficiency(BaseMetric):
         self.inefficiency_detector = InefficiencyDetector(**kwargs)
         self.optimal_path_analyzer = OptimalPathAnalyzer(**kwargs)
 
-    @trace(name='ConversationEfficiency.execute', capture_args=True, capture_response=True)
+    @trace(name='ConversationEfficiency', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:

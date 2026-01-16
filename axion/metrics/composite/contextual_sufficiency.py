@@ -52,7 +52,7 @@ class ContextualSufficiency(BaseMetric):
         super().__init__(**kwargs)
         self.engine = RAGAnalyzer(mode=mode, **kwargs)
 
-    @trace(name='ContextualSufficiency.execute', capture_args=True, capture_response=True)
+    @trace(name='ContextualSufficiency', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:

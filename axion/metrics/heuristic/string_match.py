@@ -4,6 +4,7 @@ from axion.metrics.base import (
     MetricEvaluationResult,
     metric,
 )
+from axion._core.tracing import trace
 
 
 @metric(
@@ -17,6 +18,8 @@ from axion.metrics.base import (
     tags=['heuristic', 'binary'],
 )
 class ExactStringMatch(BaseMetric):
+
+    @trace(name='ExactStringMatch', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """
         Returns 1.0 if the actual output exactly matches the expected output (after stripping).

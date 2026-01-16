@@ -551,7 +551,7 @@ class PersonaToneAdherence(BaseMetric):
         )
         return self.persona
 
-    @trace(name='PersonaTone.execute', capture_args=True, capture_response=True)
+    @trace(name='PersonaTone', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:

@@ -583,7 +583,7 @@ class ConversationFlow(BaseMetric):
         self.issue_detector = IssueDetector(self.config)
         self.score_calculator = FlowScoreCalculator(self.config)
 
-    @trace(name='ConversationFlow.execute', capture_args=True, capture_response=True)
+    @trace(name='ConversationFlow', capture_args=True, capture_response=True)
     async def execute(
         self, item: DatasetItem, cache: Optional[AnalysisCache] = None
     ) -> MetricEvaluationResult:

@@ -3,6 +3,7 @@ from collections import Counter
 from typing import List
 
 from axion.dataset import DatasetItem
+from axion._core.tracing import trace
 from axion.metrics.base import (
     BaseMetric,
     MetricEvaluationResult,
@@ -72,6 +73,7 @@ class SentenceBLEU(BaseMetric):
         self.smoothing = smoothing
         super().__init__(**kwargs)
 
+    @trace(name='SentenceBLEU', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """Computes the sentence-level BLEU score for a single DatasetItem."""
         candidate_str = item.actual_output or ''
