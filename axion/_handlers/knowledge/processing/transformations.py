@@ -6,8 +6,6 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 
 import numpy as np
-from axion._core.logging import get_logger
-from axion._core.schema import RichEnum
 from llama_index.core.embeddings import BaseEmbedding
 from llama_index.core.node_parser import (
     MarkdownNodeParser,
@@ -16,7 +14,10 @@ from llama_index.core.node_parser import (
 )
 from llama_index.core.schema import Document, Node, TransformComponent
 from pydantic import Field
+
+from axion._core.logging import get_logger
 from axion._core.metrics_utils import cosine_similarity
+from axion._core.schema import RichEnum
 
 logger = get_logger(__name__)
 
@@ -629,7 +630,7 @@ class GoogleDocParser(BaseTransformComponent):
                 level_str = numbered_match.group(1)
                 header_text = numbered_match.group(3).strip()
                 level = min(level_str.count('.') + 2, 6)  # Start at H2
-                processed_lines.append(f"{'#' * level} {header_text}")
+                processed_lines.append(f'{"#" * level} {header_text}')
                 continue
 
             processed_lines.append(line)

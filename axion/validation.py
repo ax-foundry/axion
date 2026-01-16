@@ -1,8 +1,9 @@
 from typing import List, Union
 
 import pandas as pd
-from axion.dataset import DatasetItem
+
 from axion._core.types import FieldNames
+from axion.dataset import DatasetItem
 
 
 class EvaluationValidation:

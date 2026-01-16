@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+
 from axion._core.tracing.logfire.span import Span
 
 

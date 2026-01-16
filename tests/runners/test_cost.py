@@ -1,6 +1,5 @@
 """Tests for the cost extraction utilities."""
 
-import pytest
 from axion.runners.cost import (
     CostAggregator,
     CostExtractor,

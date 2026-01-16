@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import numpy as np
 import pytest
+
 from axion._core.schema import AIMessage, HumanMessage
 from axion.dataset import DatasetItem
 from axion.dataset_schema import MultiTurnConversation
@@ -311,9 +312,7 @@ class TestStrictMode:
     """Test strict mode functionality for URL validation across turns."""
 
     @pytest.mark.asyncio
-    @patch(
-        'axion.metrics.heuristic.citation_presence.CitationPresence._validate_urls'
-    )
+    @patch('axion.metrics.heuristic.citation_presence.CitationPresence._validate_urls')
     async def test_strict_mode_valid_urls_multi_turn(self, mock_validate_urls):
         """Test strict mode success where one turn has valid URLs."""
 
@@ -353,9 +352,7 @@ class TestStrictMode:
         assert result.signals.total_assistant_messages == 2
 
     @pytest.mark.asyncio
-    @patch(
-        'axion.metrics.heuristic.citation_presence.CitationPresence._validate_urls'
-    )
+    @patch('axion.metrics.heuristic.citation_presence.CitationPresence._validate_urls')
     async def test_strict_mode_invalid_urls_multi_turn(self, mock_validate_urls):
         """Test strict mode failure where all found URLs are invalid."""
         mock_validate_urls.return_value = []

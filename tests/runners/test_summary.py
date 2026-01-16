@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 import pytest
+
 from axion.runners.summary import (
     BaseSummary,
     MetricSummary,

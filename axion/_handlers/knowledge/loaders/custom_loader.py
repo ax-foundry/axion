@@ -1,9 +1,10 @@
 from typing import Dict, List
 
-from axion._core.logging import get_logger
-from axion._handlers.knowledge.loaders.base import BaseDocumentLoader
 from llama_index.core import Document
 from llama_index.core.readers.base import BaseReader
+
+from axion._core.logging import get_logger
+from axion._handlers.knowledge.loaders.base import BaseDocumentLoader
 
 logger = get_logger(__name__)
 
@@ -20,7 +21,6 @@ class CustomReaderLoader(BaseDocumentLoader):
 
         documents = await self.executor.run(_load_sync)
         logger.info(
-            f'Loaded {len(documents)} documents using '
-            f'{self.reader.__class__.__name__}'
+            f'Loaded {len(documents)} documents using {self.reader.__class__.__name__}'
         )
         return self._add_loader_metadata(documents)

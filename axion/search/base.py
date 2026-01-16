@@ -2,11 +2,11 @@ import re
 from datetime import datetime, timedelta
 from typing import List, Optional
 
-from axion.search.schema import SearchNode, SearchResults
 from axion._core.asyncio import run_async_function
 from axion._core.metadata.schema import ToolMetadata
 from axion._core.tracing import init_tracer
 from axion._core.tracing.handlers import BaseTraceHandler
+from axion.search.schema import SearchNode, SearchResults
 
 
 class BaseRetriever:

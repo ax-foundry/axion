@@ -2,11 +2,12 @@ import asyncio
 import re
 from typing import List, Optional
 
+from pydantic import Field
+
 from axion._core.logging import get_logger
 from axion._core.schema import LLMRunnable, RichBaseModel
 from axion._core.tracing.handlers import BaseTraceHandler
 from axion._handlers.llm.handler import LLMHandler
-from pydantic import Field
 
 logger = get_logger(__name__)
 
@@ -137,7 +138,7 @@ class StatementExtractor:
         logger.info(
             f'Total extracted: {total_before_dedup}, Unique: {len(unique_statements)}, '
             f'Duplicates removed: {total_before_dedup - len(unique_statements)} '
-            f'({(1 - len(unique_statements)/total_before_dedup) * 100:.1f}% dedup rate)'
+            f'({(1 - len(unique_statements) / total_before_dedup) * 100:.1f}% dedup rate)'
         )
 
         return unique_statements

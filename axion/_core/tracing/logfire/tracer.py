@@ -149,7 +149,7 @@ class LogfireTracer(BaseTracer):
                 logfire.configure(**config)
 
             self.logger.debug(
-                f"Logfire successfully configured for service: {config['service_name']}"
+                f'Logfire successfully configured for service: {config["service_name"]}'
             )
 
         except Exception as e:
@@ -390,7 +390,7 @@ class LogfireTracer(BaseTracer):
         self.log_performance('llm_call', latency or 0, **llm_data)
         self.add_trace(
             'llm_call',
-            f"LLM call {'failed' if error else 'completed'}: {model}",
+            f'LLM call {"failed" if error else "completed"}: {model}',
             llm_data,
         )
 
@@ -442,7 +442,9 @@ class LogfireTracer(BaseTracer):
         }
 
         self.log_performance('database_query', latency, **db_data)
-        self.add_trace('database_query', f'Query completed: {rows_affected} rows', db_data)
+        self.add_trace(
+            'database_query', f'Query completed: {rows_affected} rows', db_data
+        )
 
     def log_evaluation(
         self,
@@ -522,7 +524,7 @@ class LogfireTracer(BaseTracer):
         self.log_performance('evaluation', latency, **evaluation_data)
         self.add_trace(
             'evaluation',
-            f"Evaluation {'failed' if error else 'completed'}: {evaluator_name} on {dataset_size} datapoints",
+            f'Evaluation {"failed" if error else "completed"}: {evaluator_name} on {dataset_size} datapoints',
             evaluation_data,
         )
 

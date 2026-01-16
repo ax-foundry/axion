@@ -14,9 +14,7 @@ configure_tracing('noop')
 @pytest.fixture
 def google_retriever():
     """Create a GoogleRetriever instance with default settings."""
-    with patch(
-        'axion._core.environment.resolve_api_key', return_value='mock-api-key'
-    ):
+    with patch('axion._core.environment.resolve_api_key', return_value='mock-api-key'):
         retriever = GoogleRetriever(api_key='mock-api-key')
         return retriever
 

@@ -1,14 +1,15 @@
 import asyncio
 from typing import Any, Dict, List, Optional, Type, Union
 
+from llama_index.core import Document
+from llama_index.core.ingestion import IngestionPipeline
+from llama_index.core.schema import MetadataMode, Node, TextNode, TransformComponent
+
 from axion._core.error import InvalidConfig
 from axion._core.logging import get_logger
 from axion._core.utils import Timer
 from axion._handlers.knowledge.processing.metadata import MetadataManagementMixin
 from axion._handlers.knowledge.processing.strategies import PipelineStrategy
-from llama_index.core import Document
-from llama_index.core.ingestion import IngestionPipeline
-from llama_index.core.schema import MetadataMode, Node, TextNode, TransformComponent
 
 logger = get_logger(__name__)
 
@@ -146,7 +147,7 @@ class DocumentTransformer(MetadataManagementMixin):
         if self._pipeline:
             self._pipeline.disable_cache = not self.enable_cache
             logger.info(
-                f"Configured pipeline - Cache: {'enabled' if self.enable_cache else 'disabled'}"
+                f'Configured pipeline - Cache: {"enabled" if self.enable_cache else "disabled"}'
             )
 
     def set_strategy(
@@ -196,7 +197,7 @@ class DocumentTransformer(MetadataManagementMixin):
         """Configure parallel processing settings."""
         self.num_workers = num_workers
         logger.info(
-            f"Set parallel processing: {num_workers if num_workers else 'sequential'}"
+            f'Set parallel processing: {num_workers if num_workers else "sequential"}'
         )
         return self
 
@@ -205,7 +206,7 @@ class DocumentTransformer(MetadataManagementMixin):
         self.enable_cache = enable_cache
         if self._pipeline:
             self._pipeline.disable_cache = not enable_cache
-        logger.info(f"Set caching: {'enabled' if enable_cache else 'disabled'}")
+        logger.info(f'Set caching: {"enabled" if enable_cache else "disabled"}')
         return self
 
     async def execute(
@@ -241,11 +242,11 @@ class DocumentTransformer(MetadataManagementMixin):
         use_batching = len(documents) > batch
 
         logger.info(
-            f"Processing {len(documents)} documents "
-            f"[workers: {workers or 'sequential'}, "
-            f"batching: {'yes' if use_batching else 'no'}, "
-            f""
-            f"metadata_config: {self._has_metadata_config()}]"
+            f'Processing {len(documents)} documents '
+            f'[workers: {workers or "sequential"}, '
+            f'batching: {"yes" if use_batching else "no"}, '
+            f''
+            f'metadata_config: {self._has_metadata_config()}]'
         )
 
         with Timer() as timer:
@@ -293,9 +294,9 @@ class DocumentTransformer(MetadataManagementMixin):
                 'metadata_config': self.get_metadata_config(),
             }
             logger.info(
-                f"Processing complete: {self.metrics['documents_per_second']:.1f} docs/sec, "
-                f""
-                f"{self.metrics['memory_used_mb']:.1f}MB memory used"
+                f'Processing complete: {self.metrics["documents_per_second"]:.1f} docs/sec, '
+                f''
+                f'{self.metrics["memory_used_mb"]:.1f}MB memory used'
             )
         else:
             logger.info(
@@ -393,7 +394,7 @@ class DocumentTransformer(MetadataManagementMixin):
             except ValueError:
                 raise ValueError(
                     f"Invalid metadata_mode: '{metadata_mode}'. Must be one of: "
-                    f"{', '.join(m.value for m in MetadataMode)}"
+                    f'{", ".join(m.value for m in MetadataMode)}'
                 )
 
         return node.get_content(metadata_mode=metadata_mode)

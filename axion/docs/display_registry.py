@@ -274,22 +274,34 @@ print(result.pretty())"""
             <ul>
                 <li><strong>Key:</strong> <code>{config.key}</code></li>
                 <li><strong>Default Threshold:</strong> {config.default_threshold}</li>
-                <li><strong>Score Range:</strong> {config.score_range[0]} - {config.score_range[1]}</li>
+                <li><strong>Score Range:</strong> {config.score_range[0]} - {
+            config.score_range[1]
+        }</li>
                 <li><strong>Required Fields:</strong> {len(config.required_fields)}</li>
-                <li><strong>Optional Fields:</strong> {len(getattr(config, 'optional_fields', []))}</li>
+                <li><strong>Optional Fields:</strong> {
+            len(getattr(config, 'optional_fields', []))
+        }</li>
             </ul>
 
             <h4>Field Details</h4>
             <div class="field-details">
                 <h5>Required:</h5>
                 <ul>
-                    {''.join(f'<li><code>{field}</code></li>' for field in config.required_fields)}
+                    {
+            ''.join(
+                f'<li><code>{field}</code></li>' for field in config.required_fields
+            )
+        }
                 </ul>
 
-                {f'''<h5>Optional:</h5>
+                {
+            f'''<h5>Optional:</h5>
                 <ul>
                     {''.join(f'<li><code>{field}</code></li>' for field in config.optional_fields)}
-                </ul>''' if getattr(config, 'optional_fields', []) else ''}
+                </ul>'''
+            if getattr(config, 'optional_fields', [])
+            else ''
+        }
             </div>
 
             <h4>Usage Notes</h4>
@@ -463,7 +475,7 @@ class GenericRegistryDisplay:
             fields_html += f'<li class="field-item {field_class}-field">{field}</li>'
 
         count_text = (
-            f" ({len(field_info['value'])})"
+            f' ({len(field_info["value"])})'
             if field_info.get('show_count', True)
             else ''
         )
@@ -511,7 +523,7 @@ class GenericRegistryDisplay:
             print(f'\n{i:2d}. {title}')
             print(f'    Key: {key}')
             print(f'    Description: {description}')
-            print(f"    Tags: {', '.join(tags)}")
+            print(f'    Tags: {", ".join(tags)}')
             print('-' * 60)
 
     def _get_base_styles(self) -> str:
@@ -1381,7 +1393,7 @@ print(response.actual_output)
             ]
             if bases:
                 inheritance_info = (
-                    f"<li><strong>Inherits from:</strong> {', '.join(bases)}</li>"
+                    f'<li><strong>Inherits from:</strong> {", ".join(bases)}</li>'
                 )
 
         return f"""
@@ -1468,7 +1480,7 @@ def display_table(registry: Dict) -> None:
     print(f'📊 Found {len(registry)} available metrics:\n')
 
     # Enhanced table with more columns
-    header = f"{'Key':<25} | {'Name':<25} | {'Threshold':<9} | {'Range':<8} | {'Req Fields':<12} | {'Opt Fields':<12} | {'Tags'}"
+    header = f'{"Key":<25} | {"Name":<25} | {"Threshold":<9} | {"Range":<8} | {"Req Fields":<12} | {"Opt Fields":<12} | {"Tags"}'
     print(header)
     print('-' * len(header))
 
@@ -1634,7 +1646,9 @@ class MetricRunnerRegistryExtractor(BaseRegistryExtractor):
 
         # Create framework-specific example
         if framework_name == 'axion':
-            metric_example = 'from axion.metrics import AnswerRelevancy\nmetric = AnswerRelevancy()'
+            metric_example = (
+                'from axion.metrics import AnswerRelevancy\nmetric = AnswerRelevancy()'
+            )
         elif framework_name == 'ragas':
             metric_example = 'from ragas.metrics import Faithfulness\nfrom axion.integrations.models import LiteLLMRagas\nmetric = Faithfulness(llm=LiteLLMRagas()) # optional: LiteLLMRagas()'
         elif framework_name == 'deepeval':
@@ -1704,7 +1718,7 @@ print(f"Score: {{result.score}}, Explanation: {{result.explanation}}")"""
             ]
             if bases:
                 inheritance_info = (
-                    f"<li><strong>Inherits from:</strong> {', '.join(bases)}</li>"
+                    f'<li><strong>Inherits from:</strong> {", ".join(bases)}</li>'
                 )
 
         # Framework-specific notes
@@ -1853,7 +1867,7 @@ class LLMRegistryExtractor(BaseRegistryExtractor):
 
     def get_fields(self, item: Any) -> Dict[str, Any]:
         # Analyze the class to extract field information
-        fields = {}
+        fields: Dict[str, Any] = {}
 
         # Check available methods
         has_llm = hasattr(item, 'create_llm')
@@ -2105,7 +2119,7 @@ print(response.text)"""
             ]
             if bases:
                 inheritance_info = (
-                    f"<li><strong>Inherits from:</strong> {', '.join(bases)}</li>"
+                    f'<li><strong>Inherits from:</strong> {", ".join(bases)}</li>'
                 )
 
         # Provider-specific details

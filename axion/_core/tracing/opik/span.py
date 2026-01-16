@@ -85,8 +85,8 @@ class OpikSpan:
             # Check if this should be a new trace (first span in a new tracer)
             # Note: span is already on stack when __enter__ is called, so check for == 1
             is_new_trace = (
-                self.attributes.get('new_trace', False) or
-                len(self.tracer._span_stack) == 1
+                self.attributes.get('new_trace', False)
+                or len(self.tracer._span_stack) == 1
             )
 
             if is_new_trace:
@@ -101,7 +101,9 @@ class OpikSpan:
                     type=span_type,
                 )
                 self._opik_span = self._opik_context.__enter__()
-                logger.debug(f'Opik new trace created: {self.name} (trace_id={self._trace_id})')
+                logger.debug(
+                    f'Opik new trace created: {self.name} (trace_id={self._trace_id})'
+                )
             else:
                 # Use Opik's context manager API for nested spans
                 self._opik_context = opik.start_as_current_span(

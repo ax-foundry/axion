@@ -2,6 +2,7 @@ import json
 
 import pandas as pd
 import pytest
+
 from axion.dataset import (
     AIMessage,
     Dataset,
@@ -848,12 +849,12 @@ class TestConversationExtractionStrategy:
         item = DatasetItem(conversation=sample_conversation)
 
         assert item.conversation_extraction_strategy == 'last'
-        assert (
-            item.query == 'Second user query'
-        ), 'Default strategy should pick the last user query.'
-        assert (
-            item.actual_output == 'Second AI response'
-        ), 'Default strategy should pick the last AI response.'
+        assert item.query == 'Second user query', (
+            'Default strategy should pick the last user query.'
+        )
+        assert item.actual_output == 'Second AI response', (
+            'Default strategy should pick the last AI response.'
+        )
 
     def test_explicit_last_strategy(self, sample_conversation):
         """
@@ -865,12 +866,12 @@ class TestConversationExtractionStrategy:
         )
 
         assert item.conversation_extraction_strategy == 'last'
-        assert (
-            item.query == 'Second user query'
-        ), "Explicit 'last' strategy should pick the last user query."
-        assert (
-            item.actual_output == 'Second AI response'
-        ), "Explicit 'last' strategy should pick the last AI response."
+        assert item.query == 'Second user query', (
+            "Explicit 'last' strategy should pick the last user query."
+        )
+        assert item.actual_output == 'Second AI response', (
+            "Explicit 'last' strategy should pick the last AI response."
+        )
 
     def test_first_strategy(self, sample_conversation):
         """
@@ -883,12 +884,12 @@ class TestConversationExtractionStrategy:
         )
 
         assert item.conversation_extraction_strategy == 'first'
-        assert (
-            item.query == 'First user query'
-        ), "'first' strategy should pick the first user query."
-        assert (
-            item.actual_output == 'First AI response'
-        ), "'first' strategy should pick the first AI response."
+        assert item.query == 'First user query', (
+            "'first' strategy should pick the first user query."
+        )
+        assert item.actual_output == 'First AI response', (
+            "'first' strategy should pick the first AI response."
+        )
 
     def test_actual_output_is_not_overwritten_if_provided(self, sample_conversation):
         """
@@ -918,9 +919,9 @@ class TestConversationExtractionStrategy:
         convo = MultiTurnConversation(messages=[HumanMessage(content='Hello?')])
         item = DatasetItem(conversation=convo)
         assert item.query == 'Hello?'
-        assert (
-            item.actual_output is None
-        ), 'actual_output should be None if no AI message is present.'
+        assert item.actual_output is None, (
+            'actual_output should be None if no AI message is present.'
+        )
 
 
 @pytest.fixture

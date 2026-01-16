@@ -118,8 +118,7 @@ class OpikTracer(BaseTracer):
 
         if not self._api_key:
             logger.warning(
-                'Opik API key not configured. '
-                'Set OPIK_API_KEY environment variable.'
+                'Opik API key not configured. Set OPIK_API_KEY environment variable.'
             )
             return
 
@@ -239,7 +238,9 @@ class OpikTracer(BaseTracer):
             span_id=trace_metadata.get('span_id'),
             trace_id=trace_metadata.get('trace_id'),
         )
-        self.logger.log(logging.DEBUG, f'[{event_type}] {message}', extra=trace_metadata)
+        self.logger.log(
+            logging.DEBUG, f'[{event_type}] {message}', extra=trace_metadata
+        )
 
     def start(self, **attributes) -> None:
         """Start execution tracking."""
@@ -395,9 +396,7 @@ class OpikTracer(BaseTracer):
             'end_time': self._metadata.end_time,
             'latency': self._metadata.latency,
             'traces_count': (
-                len(self._metadata.traces)
-                if hasattr(self._metadata, 'traces')
-                else 0
+                len(self._metadata.traces) if hasattr(self._metadata, 'traces') else 0
             ),
         }
 
@@ -412,14 +411,14 @@ class OpikTracer(BaseTracer):
             {
                 'metric': 'Execution ID',
                 'value': stats['execution_id'][:8] + '...',
-                'details': f"Status: {stats['status']}",
+                'details': f'Status: {stats["status"]}',
             },
             {
                 'metric': 'Execution Time',
                 'value': (
-                    f"{stats.get('latency', 0):.3f}s" if stats.get('latency') else 'N/A'
+                    f'{stats.get("latency", 0):.3f}s' if stats.get('latency') else 'N/A'
                 ),
-                'details': f"Traces: {stats.get('traces_count', 0)}",
+                'details': f'Traces: {stats.get("traces_count", 0)}',
             },
         ]
         self.log_table(table, title='Execution Statistics')

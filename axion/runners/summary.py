@@ -7,6 +7,7 @@ from collections import defaultdict
 from typing import Any, Dict, List
 
 import numpy as np
+
 from axion.schema import TestResult
 
 
@@ -87,36 +88,36 @@ class SimpleSummary(BaseSummary):
         time_text = time.strftime('%M:%S', time.gmtime(total_time))
 
         # Executive dashboard
-        print(f"\n{self.COLORS['bold']}{self.COLORS['accent']}")
+        print(f'\n{self.COLORS["bold"]}{self.COLORS["accent"]}')
         print('╔' + '═' * table_width + '╗')
         print('║' + ' EVALUATION REPORT '.center(table_width) + '║')
         print('╠' + '═' * table_width + '╣')
 
         # Performance line
         perf_content = f' Performance Score: {overall_performance:.1%}'
-        print(f"║{perf_content}{' ' * (table_width - len(perf_content))}║")
+        print(f'║{perf_content}{" " * (table_width - len(perf_content))}║')
 
         # Consistency line
         consistency_content = f' Consistency Index: {consistency:.1%}'
         print(
-            f"║{consistency_content}{' ' * (table_width - len(consistency_content))}║"
+            f'║{consistency_content}{" " * (table_width - len(consistency_content))}║'
         )
 
         # Task runs line (only if provided)
         if total_task_runs is not None:
             runs_content = f' Task Runs: {total_task_runs:,}'
-            print(f"║{runs_content}{' ' * (table_width - len(runs_content))}║")
+            print(f'║{runs_content}{" " * (table_width - len(runs_content))}║')
 
         # Samples line
         samples_content = f' Samples Analyzed: {len(results):,}'
-        print(f"║{samples_content}{' ' * (table_width - len(samples_content))}║")
+        print(f'║{samples_content}{" " * (table_width - len(samples_content))}║')
 
         # Time line
         time_content = f' Execution Time: {time_text}'
-        print(f"║{time_content}{' ' * (table_width - len(time_content))}║")
+        print(f'║{time_content}{" " * (table_width - len(time_content))}║')
 
         print('╚' + '═' * table_width + '╝')
-        print(f"{self.COLORS['reset']}\n")
+        print(f'{self.COLORS["reset"]}\n')
 
         return {}
 
@@ -204,11 +205,11 @@ class MetricSummary(BaseSummary):
         diff = second_half_avg - first_half_avg
 
         if diff > 0.05:
-            return f"{self.COLORS['excellent']}↗{self.COLORS['reset']}"  # Improving
+            return f'{self.COLORS["excellent"]}↗{self.COLORS["reset"]}'  # Improving
         elif diff < -0.05:
-            return f"{self.COLORS['poor']}↘{self.COLORS['reset']}"  # Declining
+            return f'{self.COLORS["poor"]}↘{self.COLORS["reset"]}'  # Declining
         else:
-            return f"{self.COLORS['good']}→{self.COLORS['reset']}"  # Stable
+            return f'{self.COLORS["good"]}→{self.COLORS["reset"]}'  # Stable
 
     def _create_distribution_histogram(
         self, scores: List[float], width: int = 30
@@ -312,7 +313,7 @@ class MetricSummary(BaseSummary):
         """Print enhanced summary box with metric success rates and optional task runs."""
         # Top border
         print(
-            f"{self.COLORS['accent']}╔{'═' * (header_width - 2)}╗{self.COLORS['reset']}"
+            f'{self.COLORS["accent"]}╔{"═" * (header_width - 2)}╗{self.COLORS["reset"]}'
         )
 
         # Title line - centered
@@ -320,50 +321,50 @@ class MetricSummary(BaseSummary):
         title_padding = (header_width - len(title_text) - 2) // 2
         remaining_padding = header_width - len(title_text) - title_padding - 2
         print(
-            f"{self.COLORS['accent']}║{' ' * title_padding}{self.COLORS['bold']}{title_text}{self.COLORS['reset']}{' ' * remaining_padding}{self.COLORS['accent']}║{self.COLORS['reset']}"
+            f'{self.COLORS["accent"]}║{" " * title_padding}{self.COLORS["bold"]}{title_text}{self.COLORS["reset"]}{" " * remaining_padding}{self.COLORS["accent"]}║{self.COLORS["reset"]}'
         )
 
         # Separator
         print(
-            f"{self.COLORS['accent']}╠{'═' * (header_width - 2)}╣{self.COLORS['reset']}"
+            f'{self.COLORS["accent"]}╠{"═" * (header_width - 2)}╣{self.COLORS["reset"]}'
         )
 
         # Task Runs line (only if total_task_runs is provided)
         if 'total_task_runs' in overall_stats:
-            task_runs_text = f"{overall_stats['total_task_runs']:,} task runs"
+            task_runs_text = f'{overall_stats["total_task_runs"]:,} task runs'
             task_runs_base = f' Task Runs: {task_runs_text}'
             task_runs_padding = header_width - len(task_runs_base) - 3
             print(
-                f"{self.COLORS['accent']}║{self.COLORS['reset']}  Task Runs: {self.COLORS['bold']}{task_runs_text}{self.COLORS['reset']}{' ' * task_runs_padding}{self.COLORS['accent']}║{self.COLORS['reset']}"
+                f'{self.COLORS["accent"]}║{self.COLORS["reset"]}  Task Runs: {self.COLORS["bold"]}{task_runs_text}{self.COLORS["reset"]}{" " * task_runs_padding}{self.COLORS["accent"]}║{self.COLORS["reset"]}'
             )
 
         # Metric Success Rate line
         success_rate = overall_stats['metric_success_rate']
-        success_text = f"{overall_stats['total_successful_metrics']}/{overall_stats['total_expected_metrics']} ({success_rate:.1%})"
+        success_text = f'{overall_stats["total_successful_metrics"]}/{overall_stats["total_expected_metrics"]} ({success_rate:.1%})'
         success_base = f' Metrics Success: {success_text}'
         success_padding = header_width - len(success_base) - 3
         success_color = self._get_performance_color(success_rate)
         print(
-            f"{self.COLORS['accent']}║{self.COLORS['reset']}  Metrics Success: {success_color}{self.COLORS['bold']}{success_text}{self.COLORS['reset']}{' ' * success_padding}{self.COLORS['accent']}║{self.COLORS['reset']}"
+            f'{self.COLORS["accent"]}║{self.COLORS["reset"]}  Metrics Success: {success_color}{self.COLORS["bold"]}{success_text}{self.COLORS["reset"]}{" " * success_padding}{self.COLORS["accent"]}║{self.COLORS["reset"]}'
         )
 
         # Execution Time line
         time_base = f' Execution Time: {time_str}'
         time_padding = header_width - len(time_base) - 3
         print(
-            f"{self.COLORS['accent']}║{self.COLORS['reset']}  Execution Time: {self.COLORS['bold']}{time_str}{self.COLORS['reset']}{' ' * time_padding}{self.COLORS['accent']}║{self.COLORS['reset']}"
+            f'{self.COLORS["accent"]}║{self.COLORS["reset"]}  Execution Time: {self.COLORS["bold"]}{time_str}{self.COLORS["reset"]}{" " * time_padding}{self.COLORS["accent"]}║{self.COLORS["reset"]}'
         )
 
         # Analysis Complete line
         complete_base = ' Analysis Complete: ✓'
         complete_padding = header_width - len(complete_base) - 3
         print(
-            f"{self.COLORS['accent']}║{self.COLORS['reset']}  Analysis Complete: {self.COLORS['excellent']}{self.COLORS['bold']}✓{self.COLORS['reset']}{' ' * complete_padding}{self.COLORS['accent']}║{self.COLORS['reset']}"
+            f'{self.COLORS["accent"]}║{self.COLORS["reset"]}  Analysis Complete: {self.COLORS["excellent"]}{self.COLORS["bold"]}✓{self.COLORS["reset"]}{" " * complete_padding}{self.COLORS["accent"]}║{self.COLORS["reset"]}'
         )
 
         # Bottom border
         print(
-            f"{self.COLORS['accent']}╚{'═' * (header_width - 2)}╝{self.COLORS['reset']}\n"
+            f'{self.COLORS["accent"]}╚{"═" * (header_width - 2)}╝{self.COLORS["reset"]}\n'
         )
 
     def _print_header(self, overall_stats: Dict[str, Any], total_time: float):
@@ -373,22 +374,22 @@ class MetricSummary(BaseSummary):
         # Dynamic header based on terminal width
         header_width = min(self.terminal_width - 4, 80)
 
-        print(f"\n{self.COLORS['header']}{self.COLORS['bold']}")
+        print(f'\n{self.COLORS["header"]}{self.COLORS["bold"]}')
         print('=' * header_width)
         print('EVALUATION REPORT'.center(header_width))
         print('=' * header_width)
-        print(f"{self.COLORS['reset']}")
+        print(f'{self.COLORS["reset"]}')
         self._print_summary_box_enhanced(
             overall_stats, time_str, header_width=header_width
         )
-        print(f"{self.COLORS['dim']}{'─' * 50}{self.COLORS['reset']}\n")
+        print(f'{self.COLORS["dim"]}{"─" * 50}{self.COLORS["reset"]}\n')
 
     def _print_metric_details(self, insights: Dict):
         """Print detailed metric analysis."""
         print(
-            f"{self.COLORS['header']}{self.COLORS['bold']}📋 DETAILED METRIC ANALYSIS{self.COLORS['reset']}"
+            f'{self.COLORS["header"]}{self.COLORS["bold"]}📋 DETAILED METRIC ANALYSIS{self.COLORS["reset"]}'
         )
-        print(f"{self.COLORS['dim']}{'─' * 50}{self.COLORS['reset']}\n")
+        print(f'{self.COLORS["dim"]}{"─" * 50}{self.COLORS["reset"]}\n')
 
         for name, insight in insights.items():
             color = self._get_performance_color(insight['avg'])
@@ -397,7 +398,7 @@ class MetricSummary(BaseSummary):
             name = normalize_metric_name(name)
             # Metric header
             print(
-                f"{color}{self.COLORS['bold']}▶ {name}{self.COLORS['reset']} {insight['trend']}"
+                f'{color}{self.COLORS["bold"]}▶ {name}{self.COLORS["reset"]} {insight["trend"]}'
             )
 
             # Performance bar
@@ -405,19 +406,19 @@ class MetricSummary(BaseSummary):
             if avg_score <= 1.0:
                 bar = self._create_bar_chart(avg_score, 1.0, 25)
                 print(
-                    f"  Average Performance: {bar} {color}{avg_score:.2f}{self.COLORS['reset']}"
+                    f'  Average Performance: {bar} {color}{avg_score:.2f}{self.COLORS["reset"]}'
                 )
             else:
                 print(
-                    f"  Average Performance: {color}{avg_score:.2f}{self.COLORS['reset']}"
+                    f'  Average Performance: {color}{avg_score:.2f}{self.COLORS["reset"]}'
                 )
 
             # Key metrics in columns
             print(
                 '  📊 Statistics: '
-                + f"Median: {insight['median']:.2f} | "
-                + f"Range: {insight['min']:.2f}-{insight['max']:.2f} | "
-                + f"Std Dev: {insight['std_dev']:.2f}"
+                + f'Median: {insight["median"]:.2f} | '
+                + f'Range: {insight["min"]:.2f}-{insight["max"]:.2f} | '
+                + f'Std Dev: {insight["std_dev"]:.2f}'
             )
 
             # Metric success rate (successful runs / total expected runs)
@@ -425,15 +426,15 @@ class MetricSummary(BaseSummary):
             success_color = self._get_performance_color(success_rate)
             print(
                 f'  🔧 Metric Success: {success_color}'
-                + f"{insight['valid_count']}/{insight['total_count']} ({success_rate:.1%}){self.COLORS['reset']} "
+                + f'{insight["valid_count"]}/{insight["total_count"]} ({success_rate:.1%}){self.COLORS["reset"]} '
                 + 'metrics ran successfully'
             )
 
             # Pass rate (passed / successful runs)
             print(
-                f"  ✅ Pass Rate:      {self._get_performance_color(insight['pass_rate'])}"
-                + f"{insight['pass_rate']:.1%}{self.COLORS['reset']} "
-                + f"({insight['passed']} passed out of {insight['valid_count']} successful)"
+                f'  ✅ Pass Rate:      {self._get_performance_color(insight["pass_rate"])}'
+                + f'{insight["pass_rate"]:.1%}{self.COLORS["reset"]} '
+                + f'({insight["passed"]} passed out of {insight["valid_count"]} successful)'
             )
 
             # Distribution if enabled
@@ -463,7 +464,7 @@ class MetricSummary(BaseSummary):
         """
         if not results:
             print(
-                f"{self.COLORS['warning']}⚠️  No results to summarize.{self.COLORS['reset']}"
+                f'{self.COLORS["warning"]}⚠️  No results to summarize.{self.COLORS["reset"]}'
             )
             return {}
 
@@ -498,11 +499,11 @@ class MetricSummary(BaseSummary):
         self._print_metric_details(insights)
 
         # Footer
-        print(f"\n{self.COLORS['dim']}{'─' * 60}{self.COLORS['reset']}")
+        print(f'\n{self.COLORS["dim"]}{"─" * 60}{self.COLORS["reset"]}')
         print(
-            f"{self.COLORS['accent']}📊 Report generated at {time.strftime('%Y-%m-%d %H:%M:%S')}{self.COLORS['reset']}"
+            f'{self.COLORS["accent"]}📊 Report generated at {time.strftime("%Y-%m-%d %H:%M:%S")}{self.COLORS["reset"]}'
         )
-        print(f"{self.COLORS['dim']}{'─' * 60}{self.COLORS['reset']}\n")
+        print(f'{self.COLORS["dim"]}{"─" * 60}{self.COLORS["reset"]}\n')
         return insights
 
 

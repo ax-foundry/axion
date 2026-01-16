@@ -2,13 +2,14 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Type, Union
 
+from pydantic import BaseModel, ValidationError, model_validator
+
 from axion._core.config import Config, ConfigurationError
 from axion.dataset import DatasetItem
 from axion.metrics.base import BaseMetric, MetricEvaluationResult
 from axion.metrics.execution_environment import (
     create_execution_environment,
 )
-from pydantic import BaseModel, ValidationError, model_validator
 
 try:
     from RestrictedPython import compile_restricted_exec, safe_globals
@@ -218,7 +219,7 @@ def load_metric_from_yaml(yaml_path: Union[str, Path]) -> Type[BaseMetric]:
         definition = MetricConfiguration(**config)
 
         logger.debug(
-            f"Successfully parsed metric definition with {'heuristic' if definition.heuristic else 'instruction'}"
+            f'Successfully parsed metric definition with {"heuristic" if definition.heuristic else "instruction"}'
         )
 
         # Create the dynamic metric class following BaseMetric pattern exactly

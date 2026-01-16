@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 import numpy as np
+
 from axion._core.schema import RichBaseModel
 from axion._core.tracing import trace
 from axion.dataset import DatasetItem
@@ -128,7 +129,7 @@ class ContextualSufficiency(BaseMetric):
                 extractor=lambda r: r.overall_score,
                 description='Binary score: 1.0 if context is sufficient, 0.0 if not.',
                 headline_display=True,
-                score_mapping={1.0: 'Sufficient', 0.0: 'Insufficient'},
+                score_mapping={'Sufficient': 1.0, 'Insufficient': 0.0},
             ),
             SignalDescriptor(
                 name='is_sufficient',

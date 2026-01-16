@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 import numpy as np
+
 from axion._core.schema import RichBaseModel
 from axion._core.tracing import trace
 from axion.dataset import DatasetItem
@@ -133,7 +134,7 @@ class ContextualRecall(BaseMetric):
                         ].is_supported_by_context,
                         description='The verdict on whether this ground truth statement is supported by the context.',
                         headline_display=True,
-                        score_mapping={True: 1.0, False: 0.0},
+                        score_mapping={'True': 1.0, 'False': 0.0},
                     ),
                     SignalDescriptor(
                         name='statement_text',

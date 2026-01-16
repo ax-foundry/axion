@@ -1,11 +1,12 @@
 from typing import List, Literal, Optional, Union
 
+from pydantic import ConfigDict, Field
+
 from axion._core.logging import get_logger
 from axion._core.schema import AIMessage, HumanMessage, RichBaseModel
 from axion.dataset import DatasetItem
 from axion.metrics.base import BaseMetric
 from axion.metrics.cache import AnalysisCache
-from pydantic import ConfigDict, Field
 
 logger = get_logger(__name__)
 
@@ -564,7 +565,7 @@ async def _compute_turn_analysis(
     for i, msg in enumerate(item.conversation.messages):
         role = 'user' if isinstance(msg, HumanMessage) else 'agent'
         context = '\n'.join(
-            f"{'User' if isinstance(m, HumanMessage) else 'Agent'}: {m.content or ''}"
+            f'{"User" if isinstance(m, HumanMessage) else "Agent"}: {m.content or ""}'
             for m in item.conversation.messages[:i]
         )
 

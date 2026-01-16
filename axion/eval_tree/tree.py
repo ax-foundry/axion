@@ -3,9 +3,10 @@ from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
+
 from axion._core.config import Config
 from axion._core.error import InvalidConfig
-from axion._core.logging import configure_logging, get_logger
+from axion._core.logging import get_logger
 from axion._core.types import TraceGranularity
 from axion._core.utils import Timer
 from axion.dataset import Dataset, DatasetItem, format_input
@@ -403,13 +404,14 @@ class EvalTree(TreeMixin):
     @classmethod
     def display(cls):
         """Display Usage Documentation"""
+        from IPython.display import HTML, display
+
         from axion.docs.eval_tree import (
             documentation_template,
             python_template,
             yaml_template,
         )
         from axion.docs.render import create_multi_usage_modal_card
-        from IPython.display import HTML, display
 
         evaluation_runner_card = create_multi_usage_modal_card(
             key='eval_tree',

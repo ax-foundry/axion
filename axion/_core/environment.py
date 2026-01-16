@@ -194,7 +194,7 @@ class AxionConfig(BaseModel):
         description=(
             "Controls tracing provider: 'noop' (disabled), 'logfire' (Pydantic Logfire), "
             "'otel' (OpenTelemetry), 'langfuse' (Langfuse), or 'opik' (Comet Opik). "
-            "If not set, auto-detects from provider-specific env vars."
+            'If not set, auto-detects from provider-specific env vars.'
         ),
     )
     otel_endpoint: Optional[str] = Field(

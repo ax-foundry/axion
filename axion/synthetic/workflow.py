@@ -4,6 +4,10 @@ from dataclasses import dataclass, field
 from functools import wraps
 from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, TypedDict, Union
 
+from llama_index.core import Document
+from pydantic import Field
+from pydantic_graph import BaseNode, End, Graph, GraphRunContext
+
 from axion._core.logging import get_logger
 from axion._core.metadata.schema import ToolMetadata
 from axion._core.schema import EmbeddingRunnable, LLMRunnable, RichBaseModel
@@ -17,11 +21,6 @@ from axion.synthetic.reflection import (
     QAValidator,
 )
 from axion.synthetic.statement_extractor import StatementExtractor
-from llama_index.core import Document
-from pydantic import Field
-
-from pydantic_graph import BaseNode, End, Graph, GraphRunContext
-
 
 logger = get_logger(__name__)
 
@@ -300,7 +299,7 @@ class ProcessSessions(BaseNode[QAWorkflowState, QAWorkflowDeps, QAWorkflowResult
         logger.info('Processing session input.')
         conversation_text = '\n'.join(
             [
-                f"{msg.get('role', 'user')}: {msg.get('content', '')}"
+                f'{msg.get("role", "user")}: {msg.get("content", "")}'
                 for msg in ctx.state.session_messages
             ]
         )
@@ -483,7 +482,9 @@ class ValidateQAPairs(BaseNode[QAWorkflowState, QAWorkflowDeps, QAWorkflowResult
             return HandleError()
 
         quality_threshold_met = average_quality >= state.validation_threshold
-        max_iterations_reached = state.current_iteration >= state.max_reflection_iterations
+        max_iterations_reached = (
+            state.current_iteration >= state.max_reflection_iterations
+        )
 
         if quality_threshold_met or max_iterations_reached:
             if max_iterations_reached and not quality_threshold_met:
@@ -688,7 +689,7 @@ class QAWorkflowGraph:
     def visualize_graph(self):
         """Generate a visual representation of the workflow graph"""
         try:
-            from IPython.display import display, Markdown
+            from IPython.display import Markdown, display
 
             mermaid_code = self.graph.mermaid_code(start_node=InitializeWorkflow)
             display(Markdown(f'```mermaid\n{mermaid_code}\n```'))

@@ -1,26 +1,27 @@
 import os
 import warnings
 from typing import Any
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
+
 from axion._core.environment import settings
 from axion.llm_registry import (
+    AnthropicProvider,
     BaseProvider,
+    GeminiProvider,
+    HuggingFaceProvider,
+    LiteLLMWrapper,
     LLMCostEstimator,
     LLMRegistry,
-    LiteLLMWrapper,
     OpenAIProvider,
-    AnthropicProvider,
-    GeminiProvider,
     VertexAIProvider,
-    HuggingFaceProvider,
 )
-
 
 # =============================================================================
 # Mock Classes for Testing
 # =============================================================================
+
 
 class MockLlamaIndexLLM:
     def __init__(self, **kwargs):
@@ -74,6 +75,7 @@ class MockNoEmbeddingsProvider(BaseProvider):
 # =============================================================================
 # Fixtures
 # =============================================================================
+
 
 @pytest.fixture(autouse=True)
 def reset_settings_and_env(monkeypatch):
@@ -146,13 +148,13 @@ def test_llm_cost_estimator_strips_provider_prefix():
             cost = LLMCostEstimator.estimate(
                 model_name='anthropic/claude-3-5-sonnet-20241022',
                 prompt_tokens=1000,
-                completion_tokens=1000
+                completion_tokens=1000,
             )
         # Should strip provider prefix before calling LiteLLM
         mock_cost.assert_called_once_with(
             model='claude-3-5-sonnet-20241022',
             prompt_tokens=1000,
-            completion_tokens=1000
+            completion_tokens=1000,
         )
         assert cost == pytest.approx(0.018)
 
@@ -160,6 +162,7 @@ def test_llm_cost_estimator_strips_provider_prefix():
 # =============================================================================
 # Provider Attribute Tests
 # =============================================================================
+
 
 def test_provider_litellm_prefix_attributes():
     """Tests that all providers have correct LITELLM_PREFIX values."""
@@ -195,6 +198,7 @@ def test_all_providers_inherit_from_base():
 # =============================================================================
 # Model Prefixing Tests
 # =============================================================================
+
 
 def test_openai_provider_no_prefix():
     """Tests that OpenAI provider doesn't add a prefix."""
@@ -253,6 +257,7 @@ def test_vertex_ai_provider_no_double_prefix():
 # LiteLLMWrapper Tests
 # =============================================================================
 
+
 def test_litellm_wrapper_created_by_openai():
     """Tests that OpenAI provider returns LiteLLMWrapper."""
     registry = LLMRegistry(provider='openai')
@@ -299,10 +304,13 @@ def test_litellm_wrapper_temperature_custom():
 # Embedding Tests
 # =============================================================================
 
+
 def test_anthropic_embeddings_raises_not_implemented():
     """Tests that Anthropic provider raises NotImplementedError for embeddings."""
     registry = LLMRegistry(provider='anthropic')
-    with pytest.raises(NotImplementedError, match='Anthropic does not provide embedding models'):
+    with pytest.raises(
+        NotImplementedError, match='Anthropic does not provide embedding models'
+    ):
         registry.get_embedding_model('text-embedding-ada-002')
 
 
@@ -316,6 +324,7 @@ def test_mock_no_embeddings_provider():
 # =============================================================================
 # Registry Tests
 # =============================================================================
+
 
 def test_all_expected_providers_registered():
     """Tests that all expected providers are registered."""
@@ -433,6 +442,7 @@ def test_provider_switching_via_flexible_registry():
 # =============================================================================
 # Base Provider Tests
 # =============================================================================
+
 
 def test_base_provider_has_create_litellm_wrapper():
     """Tests that BaseProvider has _create_litellm_wrapper method."""

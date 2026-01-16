@@ -1,17 +1,18 @@
 import asyncio
 import base64
 from io import BytesIO
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
+from pydantic import Field
+
 from axion._core.asyncio import SemaphoreExecutor, run_async_function
 from axion._core.logging import get_logger
 from axion._core.schema import LLMRunnable, RichBaseModel
-from axion.reporting.explanation_templates import ExplanationTemplates
 from axion._handlers.llm.handler import LLMHandler
 from axion._handlers.utils import camel_to_snake
-from pydantic import Field
+from axion.reporting.explanation_templates import ExplanationTemplates
 
 logger = get_logger(__name__)
 
@@ -80,7 +81,7 @@ class MetricExplainer:
     def __init__(
         self,
         metric_definitions: dict = None,
-        explanation_callback: callable = None,
+        explanation_callback: Optional[Callable] = None,
         instruction: Optional[str] = None,
         llm: Optional[LLMRunnable] = None,
         max_concurrent: int = 10,

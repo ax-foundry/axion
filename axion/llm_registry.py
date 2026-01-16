@@ -10,7 +10,7 @@ logger = get_logger(__name__)
 
 class LLMCostEstimator:
     """
-    DEPRECATED: Use LiteLLM's native cost tracking instead.
+    Use LiteLLM's native cost tracking if possible instead.
 
     Prefer using `response._hidden_params["response_cost"]` or `litellm.completion_cost()`
     for accurate real-time pricing from api.litellm.ai.
@@ -18,12 +18,11 @@ class LLMCostEstimator:
     This class now delegates to LiteLLM's cost calculation and is maintained only
     for backward compatibility.
 
-    Example (deprecated):
+    Example:
     ```
-    # Old way (deprecated):
     cost = LLMCostEstimator.estimate("gpt-4o", prompt_tokens=1500, completion_tokens=500)
 
-    # New way (recommended):
+    # Recommended:
     response = litellm.completion(...)
     cost = response._hidden_params.get("response_cost", 0.0)
     # or
@@ -40,7 +39,7 @@ class LLMCostEstimator:
         round_level: int = 8,
     ) -> float:
         """
-        DEPRECATED: Estimate the cost of an LLM call using LiteLLM's pricing data.
+        Estimate the cost of an LLM call using LiteLLM's pricing data.
 
         Prefer using `response._hidden_params["response_cost"]` directly from LiteLLM
         responses for real-time pricing.
@@ -82,7 +81,7 @@ class LLMCostEstimator:
         cls, model_name: str, input_tokens: int, output_tokens: int
     ) -> float:
         """
-        DEPRECATED: Alternative method name for backward compatibility.
+        Alternative method name for backward compatibility.
 
         Args:
             model_name (str): The name of the LLM model
@@ -97,7 +96,7 @@ class LLMCostEstimator:
     @classmethod
     def get_model_pricing(cls, model_name: str) -> Dict[str, float]:
         """
-        DEPRECATED: Get the pricing information for a specific model from LiteLLM.
+        Get the pricing information for a specific model from LiteLLM.
 
         Args:
             model_name (str): The name of the LLM model
@@ -105,12 +104,6 @@ class LLMCostEstimator:
         Returns:
             Dict[str, float]: Dictionary with 'input' and 'output' pricing per token
         """
-        warnings.warn(
-            "LLMCostEstimator.get_model_pricing() is deprecated. "
-            "Use litellm.model_cost or litellm.get_model_cost_map() instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
         try:
             import litellm
@@ -135,17 +128,11 @@ class LLMCostEstimator:
     @classmethod
     def list_supported_models(cls) -> List[str]:
         """
-        DEPRECATED: List all supported models from LiteLLM's pricing database.
+        List all supported models from LiteLLM's pricing database.
 
         Returns:
             List[str]: List of supported model names
         """
-        warnings.warn(
-            "LLMCostEstimator.list_supported_models() is deprecated. "
-            "Use litellm.model_cost.keys() instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
         try:
             import litellm
@@ -162,19 +149,13 @@ class LLMCostEstimator:
         cls, model: str, input_price_per_token: float, output_price_per_token: float
     ) -> None:
         """
-        DEPRECATED: Add custom model pricing to LiteLLM's model_cost dictionary.
+        Add custom model pricing to LiteLLM's model_cost dictionary.
 
         Args:
             model (str): The name of the custom model
             input_price_per_token (float): Price per input token in USD
             output_price_per_token (float): Price per output token in USD
         """
-        warnings.warn(
-            "LLMCostEstimator.add_custom_model() is deprecated. "
-            "Use litellm.register_model() instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
 
         try:
             import litellm
@@ -228,7 +209,7 @@ class LiteLLMWrapper:
         provider: str = 'openai',
         temperature: float = 0.0,
         api_key: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         Initialize the LiteLLM wrapper.
@@ -283,19 +264,13 @@ class LiteLLMWrapper:
             call_kwargs['api_key'] = self._api_key
 
         response = litellm.completion(
-            model=self.model,
-            messages=messages,
-            temperature=temperature,
-            **call_kwargs
+            model=self.model, messages=messages, temperature=temperature, **call_kwargs
         )
 
         # Handle case where content is None (e.g., tool calls, function calls)
         content = response.choices[0].message.content or ''
 
-        return CompletionResponse(
-            text=content,
-            raw=response
-        )
+        return CompletionResponse(text=content, raw=response)
 
     async def acomplete(self, prompt: str, **kwargs) -> 'CompletionResponse':
         """
@@ -325,19 +300,13 @@ class LiteLLMWrapper:
             call_kwargs['api_key'] = self._api_key
 
         response = await litellm.acompletion(
-            model=self.model,
-            messages=messages,
-            temperature=temperature,
-            **call_kwargs
+            model=self.model, messages=messages, temperature=temperature, **call_kwargs
         )
 
         # Handle case where content is None (e.g., tool calls, function calls)
         content = response.choices[0].message.content or ''
 
-        return CompletionResponse(
-            text=content,
-            raw=response
-        )
+        return CompletionResponse(text=content, raw=response)
 
     def chat(self, messages: List[Dict[str, str]], **kwargs) -> 'CompletionResponse':
         """
@@ -369,21 +338,17 @@ class LiteLLMWrapper:
             call_kwargs['api_key'] = self._api_key
 
         response = litellm.completion(
-            model=self.model,
-            messages=messages,
-            temperature=temperature,
-            **call_kwargs
+            model=self.model, messages=messages, temperature=temperature, **call_kwargs
         )
 
         # Handle case where content is None (e.g., tool calls, function calls)
         content = response.choices[0].message.content or ''
 
-        return CompletionResponse(
-            text=content,
-            raw=response
-        )
+        return CompletionResponse(text=content, raw=response)
 
-    async def achat(self, messages: List[Dict[str, str]], **kwargs) -> 'CompletionResponse':
+    async def achat(
+        self, messages: List[Dict[str, str]], **kwargs
+    ) -> 'CompletionResponse':
         """
         Generate a chat completion from a list of messages (asynchronous).
 
@@ -404,19 +369,13 @@ class LiteLLMWrapper:
             call_kwargs['api_key'] = self._api_key
 
         response = await litellm.acompletion(
-            model=self.model,
-            messages=messages,
-            temperature=temperature,
-            **call_kwargs
+            model=self.model, messages=messages, temperature=temperature, **call_kwargs
         )
 
         # Handle case where content is None (e.g., tool calls, function calls)
         content = response.choices[0].message.content or ''
 
-        return CompletionResponse(
-            text=content,
-            raw=response
-        )
+        return CompletionResponse(text=content, raw=response)
 
 
 class CompletionResponse:
@@ -436,7 +395,11 @@ class CompletionResponse:
         return self.text
 
     def __repr__(self) -> str:
-        return f"CompletionResponse(text='{self.text[:50]}...')" if len(self.text) > 50 else f"CompletionResponse(text='{self.text}')"
+        return (
+            f"CompletionResponse(text='{self.text[:50]}...')"
+            if len(self.text) > 50
+            else f"CompletionResponse(text='{self.text}')"
+        )
 
 
 class BaseProvider(ABC):
@@ -486,7 +449,7 @@ class BaseProvider(ABC):
             provider=self.LITELLM_PREFIX.rstrip('/') or 'openai',
             temperature=temperature,
             api_key=self.api_key,
-            **kwargs
+            **kwargs,
         )
 
     def create_llm(self, model_name: str, **kwargs) -> Any:
@@ -832,11 +795,11 @@ class GeminiProvider(BaseProvider):
 
         Uses LlamaIndex's Gemini embedding for compatibility.
         """
-        from llama_index.embeddings.gemini import GeminiEmbedding  # type: ignore[import-untyped]
-
-        return GeminiEmbedding(
-            api_key=self.api_key, model_name=model_name, **kwargs
+        from llama_index.embeddings.gemini import (
+            GeminiEmbedding,  # type: ignore[import-untyped]
         )
+
+        return GeminiEmbedding(api_key=self.api_key, model_name=model_name, **kwargs)
 
 
 @LLMRegistry.register('vertex_ai')
@@ -871,7 +834,7 @@ class VertexAIProvider(BaseProvider):
         vertex_project: Optional[str] = None,
         vertex_location: Optional[str] = None,
         vertex_credentials: Optional[str] = None,
-        **credentials
+        **credentials,
     ):
         """Initialize Vertex AI provider with GCP configuration."""
         # Vertex AI uses service account auth, not API keys - remove if passed
@@ -902,7 +865,7 @@ class VertexAIProvider(BaseProvider):
             provider='vertex_ai',
             temperature=temperature,
             api_key=None,  # Vertex AI doesn't use API keys
-            **{**vertex_kwargs, **kwargs}
+            **{**vertex_kwargs, **kwargs},
         )
 
     def create_embedding_model(self, model_name: str, **kwargs) -> Any:
@@ -911,14 +874,16 @@ class VertexAIProvider(BaseProvider):
 
         Supported models: text-embedding-004, textembedding-gecko, etc.
         """
-        from llama_index.embeddings.vertex import VertexTextEmbedding  # type: ignore[import-untyped]
+        from llama_index.embeddings.vertex import (
+            VertexTextEmbedding,  # type: ignore[import-untyped]
+        )
 
         return VertexTextEmbedding(
             model_name=model_name,
             project=self.vertex_project,
             location=self.vertex_location,
             credentials_path=self.vertex_credentials,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -958,7 +923,9 @@ class HuggingFaceProvider(BaseProvider):
             LlamaIndex HuggingFaceLLM instance
         """
         try:
-            from llama_index.llms.huggingface import HuggingFaceLLM  # type: ignore[import-untyped]
+            from llama_index.llms.huggingface import (
+                HuggingFaceLLM,  # type: ignore[import-untyped]
+            )
         except ImportError:
             raise ImportError(
                 'HuggingFace dependencies not installed. '
@@ -979,7 +946,9 @@ class HuggingFaceProvider(BaseProvider):
             LlamaIndex HuggingFaceEmbedding instance
         """
         try:
-            from llama_index.embeddings.huggingface import HuggingFaceEmbedding  # type: ignore[import-untyped]
+            from llama_index.embeddings.huggingface import (
+                HuggingFaceEmbedding,  # type: ignore[import-untyped]
+            )
         except ImportError:
             raise ImportError(
                 'HuggingFace dependencies not installed. '

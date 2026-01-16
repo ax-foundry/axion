@@ -1,6 +1,8 @@
 from typing import List, Literal, Optional
 
 import numpy as np
+from pydantic import Field
+
 from axion._core.logging import get_logger
 from axion._core.schema import HumanMessage, RichBaseModel
 from axion._core.tracing import trace
@@ -21,7 +23,6 @@ from axion.metrics.internals.conversation_utils import (
     get_or_compute_turn_analysis,
 )
 from axion.metrics.schema import SignalDescriptor
-from pydantic import Field
 
 logger = get_logger(__name__)
 

@@ -1,5 +1,7 @@
 from typing import Annotated, Any, Dict, List, Optional, Union
 
+from pydantic import Field, field_validator
+
 from axion._core.schema import (
     AIMessage,
     HumanMessage,
@@ -8,7 +10,6 @@ from axion._core.schema import (
     ToolMessage,
 )
 from axion._core.types import FieldNames
-from pydantic import Field, field_validator
 
 Conversation = Annotated[
     Union[HumanMessage, AIMessage, ToolMessage], Field(discriminator='role')
@@ -46,7 +47,7 @@ class RichDatasetBaseModel(RichBaseModel):
 
     def __repr__(self) -> str:
         """Overrides the default repr to provide a cleaner, user-friendly output."""
-        return f"{self.__class__.__name__}({self.__repr_str__(', ')})"
+        return f'{self.__class__.__name__}({self.__repr_str__(", ")})'
 
     def __repr_str__(self, join_str: str) -> str:
         """Custom string representation for cleaner output."""
@@ -76,14 +77,14 @@ class RichDatasetBaseModel(RichBaseModel):
                 ),
             }
 
-            summary_parts = [f"{counts['user']} user"]
+            summary_parts = [f'{counts["user"]} user']
             if counts['assistant'] > 0:
-                summary_parts.append(f"{counts['assistant']} AI")
+                summary_parts.append(f'{counts["assistant"]} AI')
             if counts['tool'] > 0:
-                summary_parts.append(f"{counts['tool']} tool")
+                summary_parts.append(f'{counts["tool"]} tool')
 
             parts.append(
-                f"conversation=({len(messages)} messages: {', '.join(summary_parts)})"
+                f'conversation=({len(messages)} messages: {", ".join(summary_parts)})'
             )
 
         # Add outputs
@@ -173,4 +174,4 @@ class RichDatasetBaseModel(RichBaseModel):
         for label, value, placeholder in outputs:
             if value is None and label in hide_when_none:
                 continue
-            lines.append(f"  {label}: {value if value else placeholder or ''}".rstrip())
+            lines.append(f'  {label}: {value if value else placeholder or ""}'.rstrip())

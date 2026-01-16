@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 import numpy as np
+
 from axion._core.schema import RichBaseModel
 from axion._core.tracing import trace
 from axion.dataset import DatasetItem
@@ -132,7 +133,7 @@ class ContextualRelevancy(BaseMetric):
                         ].is_relevant_to_query,
                         description='The verdict on whether this context chunk is relevant.',
                         headline_display=True,
-                        score_mapping={True: 1.0, False: 0.0},
+                        score_mapping={'True': 1.0, 'False': 0.0},
                     ),
                     SignalDescriptor(
                         name='chunk_text',

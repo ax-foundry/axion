@@ -46,12 +46,14 @@ def display_base_statistics(
         {
             'metric': 'Execution ID',
             'value': stats['execution_id'][:8] + '...',
-            'details': f"Status: {stats['status']}",
+            'details': f'Status: {stats["status"]}',
         },
         {
             'metric': 'Execution Time',
-            'value': _fmt(stats.get('latency'), 3, 's') if stats.get('latency') else 'N/A',
-            'details': f"Traces: {stats.get('traces_count', 0)}",
+            'value': _fmt(stats.get('latency'), 3, 's')
+            if stats.get('latency')
+            else 'N/A',
+            'details': f'Traces: {stats.get("traces_count", 0)}',
         },
     ]
 
@@ -72,22 +74,22 @@ def display_llm_statistics(
         {
             'metric': 'Total Calls',
             'value': _fmt(stats['total_calls']),
-            'details': f"Success: {stats['successful_calls']}, Failed: {stats['failed_calls']}",
+            'details': f'Success: {stats["successful_calls"]}, Failed: {stats["failed_calls"]}',
         },
         {
             'metric': 'Success Rate',
-            'value': f"{stats['success_rate']:.1%}",
-            'details': f"({stats['successful_calls']}/{stats['total_calls']})",
+            'value': f'{stats["success_rate"]:.1%}',
+            'details': f'({stats["successful_calls"]}/{stats["total_calls"]})',
         },
         {
             'metric': 'Token Usage',
             'value': _fmt(stats['total_tokens']),
-            'details': f"Prompt: {_fmt(stats['total_prompt_tokens'])}, Completion: {_fmt(stats['total_completion_tokens'])}",
+            'details': f'Prompt: {_fmt(stats["total_prompt_tokens"])}, Completion: {_fmt(stats["total_completion_tokens"])}',
         },
         {
             'metric': 'Average Latency',
             'value': _fmt(stats['average_latency'], 3, 's'),
-            'details': f"Total: {_fmt(stats['total_latency'], 3)}s",
+            'details': f'Total: {_fmt(stats["total_latency"], 3)}s',
         },
         {
             'metric': 'Avg Tokens/Call',
@@ -97,11 +99,13 @@ def display_llm_statistics(
     ]
 
     if stats.get('total_cost_estimate', 0) > 0:
-        table.append({
-            'metric': 'Estimated Cost',
-            'value': f"${stats['total_cost_estimate']:.4f}",
-            'details': f"${stats['total_cost_estimate'] / stats['total_calls']:.4f} per call",
-        })
+        table.append(
+            {
+                'metric': 'Estimated Cost',
+                'value': f'${stats["total_cost_estimate"]:.4f}',
+                'details': f'${stats["total_cost_estimate"] / stats["total_calls"]:.4f} per call',
+            }
+        )
 
     log_table(table, 'LLM Execution Statistics')
 
@@ -120,22 +124,22 @@ def display_evaluation_statistics(
         {
             'metric': 'Total Evaluations',
             'value': _fmt(stats['total_evaluations']),
-            'details': f"Success: {stats['successful_evaluations']}, Failed: {stats['failed_evaluations']}",
+            'details': f'Success: {stats["successful_evaluations"]}, Failed: {stats["failed_evaluations"]}',
         },
         {
             'metric': 'Success Rate',
-            'value': f"{stats['success_rate']:.1%}",
-            'details': f"({stats['successful_evaluations']}/{stats['total_evaluations']})",
+            'value': f'{stats["success_rate"]:.1%}',
+            'details': f'({stats["successful_evaluations"]}/{stats["total_evaluations"]})',
         },
         {
             'metric': 'Total Datapoints',
             'value': _fmt(stats['total_datapoints']),
-            'details': f"Across {len(stats.get('unique_datasets', []))} datasets",
+            'details': f'Across {len(stats.get("unique_datasets", []))} datasets',
         },
         {
             'metric': 'Avg Evaluation Time',
             'value': _fmt(stats['average_evaluation_latency'], 3, 's'),
-            'details': f"Total: {_fmt(stats['total_evaluation_time'], 3)}s",
+            'details': f'Total: {_fmt(stats["total_evaluation_time"], 3)}s',
         },
         {
             'metric': 'Avg Time/Datapoint',
@@ -145,27 +149,35 @@ def display_evaluation_statistics(
     ]
 
     if stats.get('total_cost_estimate', 0) > 0:
-        table.append({
-            'metric': 'Estimated Cost',
-            'value': f"${stats['total_cost_estimate']:.4f}",
-            'details': f"${stats['total_cost_estimate'] / stats['total_evaluations']:.4f} per evaluation",
-        })
+        table.append(
+            {
+                'metric': 'Estimated Cost',
+                'value': f'${stats["total_cost_estimate"]:.4f}',
+                'details': f'${stats["total_cost_estimate"] / stats["total_evaluations"]:.4f} per evaluation',
+            }
+        )
 
     if stats.get('total_tokens_used', 0) > 0:
-        table.append({
-            'metric': 'Tokens Used',
-            'value': _fmt(stats['total_tokens_used']),
-            'details': f"{_fmt(stats['total_tokens_used'] / stats['total_evaluations'])} per evaluation",
-        })
+        table.append(
+            {
+                'metric': 'Tokens Used',
+                'value': _fmt(stats['total_tokens_used']),
+                'details': f'{_fmt(stats["total_tokens_used"] / stats["total_evaluations"])} per evaluation',
+            }
+        )
 
     # Check for metric-specific statistics
-    metric_stats = [(k, v) for k, v in stats.items() if k.startswith(('avg_', 'min_', 'max_'))]
+    metric_stats = [
+        (k, v) for k, v in stats.items() if k.startswith(('avg_', 'min_', 'max_'))
+    ]
     if metric_stats:
-        table.append({
-            'metric': 'Evaluation Metrics',
-            'value': f"{len([k for k in stats.keys() if k.startswith('avg_')])} metrics",
-            'details': 'See detailed breakdown below',
-        })
+        table.append(
+            {
+                'metric': 'Evaluation Metrics',
+                'value': f'{len([k for k in stats.keys() if k.startswith("avg_")])} metrics',
+                'details': 'See detailed breakdown below',
+            }
+        )
 
     log_table(table, 'Evaluation Execution Statistics')
 
@@ -184,11 +196,13 @@ def display_evaluation_statistics(
             max_key = f'max_{metric_name}'
 
             if all(key in stats for key in [avg_key, min_key, max_key]):
-                metric_table.append({
-                    'metric': metric_name,
-                    'average': _fmt(stats[avg_key], 3),
-                    'range': f'{_fmt(stats[min_key], 3)} - {_fmt(stats[max_key], 3)}',
-                })
+                metric_table.append(
+                    {
+                        'metric': metric_name,
+                        'average': _fmt(stats[avg_key], 3),
+                        'range': f'{_fmt(stats[min_key], 3)} - {_fmt(stats[max_key], 3)}',
+                    }
+                )
 
         if metric_table:
             log_table(metric_table, 'Detailed Evaluation Metrics')
@@ -208,28 +222,32 @@ def display_knowledge_statistics(
         {
             'metric': 'Total Retrievals',
             'value': _fmt(stats.get('total_retrievals', 0)),
-            'details': f"Documents: {stats.get('total_documents_retrieved', 0)}",
+            'details': f'Documents: {stats.get("total_documents_retrieved", 0)}',
         },
         {
             'metric': 'Total LLM Calls',
             'value': _fmt(stats.get('total_llm_calls', 0)),
-            'details': f"Tokens: {_fmt(stats.get('total_tokens', 0))}",
+            'details': f'Tokens: {_fmt(stats.get("total_tokens", 0))}',
         },
     ]
 
     if 'average_retrieval_latency' in stats:
-        table.append({
-            'metric': 'Avg Retrieval Time',
-            'value': _fmt(stats['average_retrieval_latency'], 3, 's'),
-            'details': f"Files: {stats.get('unique_files', 0)}",
-        })
+        table.append(
+            {
+                'metric': 'Avg Retrieval Time',
+                'value': _fmt(stats['average_retrieval_latency'], 3, 's'),
+                'details': f'Files: {stats.get("unique_files", 0)}',
+            }
+        )
 
     if 'average_relevance_score' in stats:
-        table.append({
-            'metric': 'Avg Relevance Score',
-            'value': _fmt(stats['average_relevance_score'], 3),
-            'details': f"Range: {stats['min_relevance_score']:.3f} - {stats['max_relevance_score']:.3f}",
-        })
+        table.append(
+            {
+                'metric': 'Avg Relevance Score',
+                'value': _fmt(stats['average_relevance_score'], 3),
+                'details': f'Range: {stats["min_relevance_score"]:.3f} - {stats["max_relevance_score"]:.3f}',
+            }
+        )
 
     log_table(table, 'Knowledge Execution Statistics')
 

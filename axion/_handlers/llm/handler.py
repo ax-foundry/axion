@@ -3,6 +3,9 @@ import json
 from typing import Any, Dict, Generic, List, Optional, Tuple, Union
 
 import litellm
+from llama_index.core.llms import ChatMessage, MessageRole
+from pydantic import BaseModel
+
 from axion._core.environment import settings
 from axion._core.error import GenerationError
 from axion._core.logging import get_logger
@@ -20,8 +23,6 @@ from axion._handlers.llm.schema import PromptSection
 from axion._handlers.utils import generate_fake_instance, messages_to_prompt
 from axion._handlers.validation import Validation
 from axion.llm_registry import LLMCostEstimator
-from llama_index.core.llms import ChatMessage, MessageRole
-from pydantic import BaseModel
 
 logger = get_logger(__name__)
 
@@ -112,7 +113,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         # Configure custom base URL if needed (for proxies/gateways)
         if self.api_base_url or settings.api_base_url:
             litellm.api_base = self.api_base_url or settings.api_base_url
-        
+
         # Set API key if available from settings (fallback when env vars not set)
         if settings.openai_api_key:
             litellm.api_key = settings.openai_api_key
@@ -201,7 +202,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         """Build messages in OpenAI format for raw API calls."""
         messages = [{'role': 'system', 'content': self.instruction}]
         # Add examples as conversation pairs
-        for idx, (input_example, output_example) in enumerate[Tuple[InputModel, OutputModel]](self.examples):
+        for idx, (input_example, output_example) in enumerate[
+            Tuple[InputModel, OutputModel]
+        ](self.examples):
             messages.append(
                 {
                     'role': 'user',
@@ -302,7 +305,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 # Priority: response_cost > completion_cost > LLMCostEstimator
                 try:
                     # Primary: Use response_cost from LiteLLM (real-time pricing)
-                    self.cost_estimate = response._hidden_params.get('response_cost', 0.0)
+                    self.cost_estimate = response._hidden_params.get(
+                        'response_cost', 0.0
+                    )
                     if not self.cost_estimate:
                         # Fallback: Use completion_cost function
                         self.cost_estimate = litellm.completion_cost(
@@ -846,7 +851,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             # LiteLLM structured mode - uses OpenAI message format
             messages = self._build_openai_messages(query_input)
             prompt_text = '\n---\n'.join(
-                [f"## {m['role'].upper()}\n\n{m['content']}" for m in messages]
+                [f'## {m["role"].upper()}\n\n{m["content"]}' for m in messages]
             )
         else:
             # Parser fallback mode
@@ -882,7 +887,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             'provider': provider,
             'examples_count': len(self.examples),
             'has_parser': self.parser is not None,
-            'execution_mode': 'litellm_structured' if self.as_structured_llm else 'parser_mode',
+            'execution_mode': 'litellm_structured'
+            if self.as_structured_llm
+            else 'parser_mode',
             'generation_fake_sample': self.generation_fake_sample,
             'fallback_to_parser': self.fallback_to_parser,
             'rate_limit_aware': True,

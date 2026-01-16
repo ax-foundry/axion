@@ -3,6 +3,8 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 import numpy as np
+from pydantic import Field
+
 from axion._core.logging import get_logger
 from axion._core.schema import HumanMessage, RichBaseModel
 from axion._core.tracing import trace
@@ -24,7 +26,6 @@ from axion.metrics.internals.conversation_utils import (
     get_or_compute_turn_analysis,
 )
 from axion.metrics.schema import SignalDescriptor
-from pydantic import Field
 
 logger = get_logger(__name__)
 
@@ -202,7 +203,7 @@ class StateLoopDetector:
                                 state_progression[i]['start_turn'],
                                 state_progression[i + window_size * 2 - 1]['end_turn'],
                             ),
-                            description=f"Repeated sequence: {' → '.join(window1)}",
+                            description=f'Repeated sequence: {" → ".join(window1)}',
                             metadata={'pattern': window1, 'repetitions': 2},
                         )
                     )
@@ -537,11 +538,11 @@ class ConversationFlowResult(RichBaseModel):
     def summary(self) -> str:
         """Generate concise summary of analysis."""
         return (
-            f"Flow Score: {self.final_score:.3f} | "
-            f"{self.score_components.explain()} | "
-            f"Issues: {len(self.issues)} detected | "
-            f"States: {' → '.join(s['state'] for s in self.state_progression[:5])}"
-            f"{'...' if len(self.state_progression) > 5 else ''}"
+            f'Flow Score: {self.final_score:.3f} | '
+            f'{self.score_components.explain()} | '
+            f'Issues: {len(self.issues)} detected | '
+            f'States: {" → ".join(s["state"] for s in self.state_progression[:5])}'
+            f'{"..." if len(self.state_progression) > 5 else ""}'
         )
 
 
@@ -668,7 +669,7 @@ class ConversationFlow(BaseMetric):
                 break
             msg = item.conversation.messages[i]
             role = 'User' if isinstance(msg, HumanMessage) else 'Agent'
-            lines.append(f"{role}: {msg.content or ''}")
+            lines.append(f'{role}: {msg.content or ""}')
         return '\n'.join(lines)
 
     @staticmethod
@@ -870,7 +871,7 @@ class ConversationFlow(BaseMetric):
         # === PER-MOMENT SIGNALS ===
         for i, moment in enumerate(result.moments):
             moment_id = moment.id if moment.id is not None else i
-            group_name = f"Moment {moment_id}: {moment.topic[:40]}{'...' if len(moment.topic) > 40 else ''}"
+            group_name = f'Moment {moment_id}: {moment.topic[:40]}{"..." if len(moment.topic) > 40 else ""}'
 
             signals.extend(
                 [
@@ -918,7 +919,7 @@ class ConversationFlow(BaseMetric):
 
         # === STATE PROGRESSION ===
         for i, state_seg in enumerate(result.state_progression):
-            group_name = f"State {i + 1}: {state_seg['state']}"
+            group_name = f'State {i + 1}: {state_seg["state"]}'
 
             signals.extend(
                 [
@@ -939,7 +940,7 @@ class ConversationFlow(BaseMetric):
                         name='turn_range',
                         group=group_name,
                         extractor=lambda r, idx=i: (
-                            f"{r.state_progression[idx]['start_turn']}-{r.state_progression[idx]['end_turn']}"
+                            f'{r.state_progression[idx]["start_turn"]}-{r.state_progression[idx]["end_turn"]}'
                         ),
                         description='Turn range for this state',
                     ),

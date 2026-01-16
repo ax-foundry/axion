@@ -1,12 +1,13 @@
 from typing import Any, Dict, List, Literal, Optional
 
 import requests
-from axion.search.base import BaseRetriever
-from axion.search.schema import SearchNode, SearchResults
+
 from axion._core.environment import resolve_api_key
 from axion._core.error import CustomValidationError
 from axion._core.logging import get_logger
 from axion._core.tracing import trace
+from axion.search.base import BaseRetriever
+from axion.search.schema import SearchNode, SearchResults
 
 logger = get_logger(__name__)
 

@@ -1,8 +1,9 @@
 from typing import List
 
+from llama_index.core import Document
+
 from axion._core.logging import get_logger
 from axion._handlers.knowledge.loaders.base import BaseDocumentLoader
-from llama_index.core import Document
 
 logger = get_logger(__name__)
 

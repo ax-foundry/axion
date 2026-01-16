@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 
-from axion._core.asyncio import SemaphoreExecutor
 from llama_index.core import Document
+
+from axion._core.asyncio import SemaphoreExecutor
 
 
 class BaseDocumentLoader(ABC):

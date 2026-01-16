@@ -42,7 +42,7 @@ def infer_tool_metadata(
         module_name = caller_frame.f_globals.get('__name__', 'unknown_module')
 
         # Generate a descriptive name and description
-        name = f"{name_prefix}_{module_name.split('.')[-1]}"
+        name = f'{name_prefix}_{module_name.split(".")[-1]}'
         description = f'Auto-generated metadata for module: {module_name}'
 
     except Exception:

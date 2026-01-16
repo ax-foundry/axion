@@ -5,6 +5,14 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Literal, Optional, Union
 
 import pandas as pd
+from pydantic import (
+    ConfigDict,
+    Field,
+    computed_field,
+    field_validator,
+    model_validator,
+)
+
 from axion._core.asyncio import run_async_function
 from axion._core.error import CustomValidationError
 from axion._core.logging import get_logger
@@ -16,21 +24,14 @@ from axion._core.schema import (
     ToolCall,
     ToolMessage,
 )
+from axion._core.types import FieldNames
 from axion._core.uuid import uuid7
 from axion.dataset_schema import (
     MultiTurnConversation,
     RichDatasetBaseModel,
 )
 from axion.synthetic import GenerationParams
-from axion._core.types import FieldNames
 from axion.utils import current_datetime, format_value
-from pydantic import (
-    ConfigDict,
-    Field,
-    computed_field,
-    field_validator,
-    model_validator,
-)
 
 logger = get_logger(__name__)
 
@@ -340,7 +341,7 @@ class DatasetItem(RichDatasetBaseModel):
             return ''
         lines = []
         for msg in self.multi_turn_conversation.messages:
-            lines.append(f"{msg.role.capitalize()}: {msg.content or ''}")
+            lines.append(f'{msg.role.capitalize()}: {msg.content or ""}')
             if isinstance(msg, AIMessage) and msg.tool_calls:
                 for tool_call in msg.tool_calls:
                     lines.append(
@@ -763,7 +764,7 @@ class Dataset(RichSerializer):
     def __post_init__(self):
         if not self.name:
             self.name = (
-                f"dataset-{current_datetime().replace(' ', '_').replace(':', '-')}"
+                f'dataset-{current_datetime().replace(" ", "_").replace(":", "-")}'
             )
         self._validate_name(self.name)
 

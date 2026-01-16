@@ -2,8 +2,9 @@ import asyncio
 from collections import defaultdict
 from typing import Any, Dict, Optional
 
-from axion._core.logging import get_logger
 from cachetools import LRUCache
+
+from axion._core.logging import get_logger
 
 logger = get_logger(__name__)
 

@@ -2,8 +2,6 @@ import asyncio
 from abc import ABC
 from typing import Any, Dict, List, Optional, Sequence, Union
 
-from axion._core.asyncio import SemaphoreExecutor
-from axion._core.logging import get_logger
 from llama_index.core.extractors import (
     BaseExtractor,
     KeywordExtractor,
@@ -13,6 +11,9 @@ from llama_index.core.extractors import (
 )
 from llama_index.core.schema import BaseNode
 from pydantic import Field, PrivateAttr
+
+from axion._core.asyncio import SemaphoreExecutor
+from axion._core.logging import get_logger
 
 logger = get_logger(__name__)
 

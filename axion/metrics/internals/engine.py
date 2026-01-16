@@ -107,7 +107,9 @@ class RAGAnalyzer:
         self.mode = mode
         self.force_granular = force_granular
         self.allow_fallback = allow_fallback
-        self.tracer = init_tracer('llm', self._get_tool_metadata(), kwargs.get('tracer'))
+        self.tracer = init_tracer(
+            'llm', self._get_tool_metadata(), kwargs.get('tracer')
+        )
         self.judges = self._initialize_judges(**kwargs)
         self.executor = SemaphoreExecutor(max_concurrent=max_concurrent_llm_calls)
 
@@ -695,8 +697,8 @@ class RAGAnalyzer:
             return result.verdicts
         except Exception as e:
             logger.warning(
-                f"Batch {strategy.batch_judge.name} failed: {e}. "
-                f"{'Falling back to granular.' if self.allow_fallback else 'No fallback allowed.'}"
+                f'Batch {strategy.batch_judge.name} failed: {e}. '
+                f'{"Falling back to granular." if self.allow_fallback else "No fallback allowed."}'
             )
             if not self.allow_fallback:
                 raise

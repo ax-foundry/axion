@@ -1,8 +1,9 @@
 from unittest.mock import MagicMock
 
 import pytest
-from axion._core.parsers.parse.parser import AIOutputParser
 from pydantic import BaseModel, ValidationError
+
+from axion._core.parsers.parse.parser import AIOutputParser
 
 
 class MockOutputModel(BaseModel):

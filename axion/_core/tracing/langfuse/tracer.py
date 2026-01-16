@@ -107,9 +107,7 @@ class LangfuseTracer(BaseTracer):
     def _initialize_client(self) -> None:
         """Initialize the Langfuse client."""
         if not LANGFUSE_AVAILABLE:
-            logger.warning(
-                'langfuse package not installed. Run: pip install langfuse'
-            )
+            logger.warning('langfuse package not installed. Run: pip install langfuse')
             return
 
         if not self._public_key or not self._secret_key:
@@ -230,7 +228,9 @@ class LangfuseTracer(BaseTracer):
             span_id=trace_metadata.get('span_id'),
             trace_id=trace_metadata.get('trace_id'),
         )
-        self.logger.log(logging.DEBUG, f'[{event_type}] {message}', extra=trace_metadata)
+        self.logger.log(
+            logging.DEBUG, f'[{event_type}] {message}', extra=trace_metadata
+        )
 
     def start(self, **attributes) -> None:
         """Start execution tracking."""
@@ -392,9 +392,7 @@ class LangfuseTracer(BaseTracer):
             'end_time': self._metadata.end_time,
             'latency': self._metadata.latency,
             'traces_count': (
-                len(self._metadata.traces)
-                if hasattr(self._metadata, 'traces')
-                else 0
+                len(self._metadata.traces) if hasattr(self._metadata, 'traces') else 0
             ),
         }
 
@@ -409,14 +407,14 @@ class LangfuseTracer(BaseTracer):
             {
                 'metric': 'Execution ID',
                 'value': stats['execution_id'][:8] + '...',
-                'details': f"Status: {stats['status']}",
+                'details': f'Status: {stats["status"]}',
             },
             {
                 'metric': 'Execution Time',
                 'value': (
-                    f"{stats.get('latency', 0):.3f}s" if stats.get('latency') else 'N/A'
+                    f'{stats.get("latency", 0):.3f}s' if stats.get('latency') else 'N/A'
                 ),
-                'details': f"Traces: {stats.get('traces_count', 0)}",
+                'details': f'Traces: {stats.get("traces_count", 0)}',
             },
         ]
         self.log_table(table, title='Execution Statistics')

@@ -2,13 +2,14 @@ import warnings
 from typing import Any, Dict, List, Literal, Optional
 
 import requests
-from axion.search.base import BaseRetriever
-from axion.search.extract_text import resolve_text_from_result
-from axion.search.schema import SearchNode, SearchResults
+
 from axion._core.environment import resolve_api_key
 from axion._core.logging import get_logger
 from axion._core.tracing import trace
 from axion._core.utils import Timer
+from axion.search.base import BaseRetriever
+from axion.search.extract_text import resolve_text_from_result
+from axion.search.schema import SearchNode, SearchResults
 
 logger = get_logger(__name__)
 

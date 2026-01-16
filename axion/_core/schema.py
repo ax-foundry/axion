@@ -18,11 +18,12 @@ from typing import (
     get_type_hints,
 )
 
-from axion._core.error import CustomValidationError
-from axion._core.uuid import uuid7
 from llama_index.core.base.llms.base import CompletionResponse
 from pydantic import BaseModel, Field, ValidationError, field_validator
 from pydantic.config import ConfigDict
+
+from axion._core.error import CustomValidationError
+from axion._core.uuid import uuid7
 
 InputModel = TypeVar('InputModel', bound=BaseModel)
 OutputModel = TypeVar('OutputModel', bound=BaseModel)
@@ -202,7 +203,7 @@ class RichBaseModel(BaseModel):
             if error_type == 'literal_error':
                 allowed_values = err.get('ctx', {}).get('expected', [])
                 if allowed_values:
-                    suggestion = f"\n  Allowed values: {', '.join(repr(v) for v in allowed_values)}"
+                    suggestion = f'\n  Allowed values: {", ".join(repr(v) for v in allowed_values)}'
 
                     # Check for possible typos
                     input_value = err.get('input')
@@ -231,9 +232,7 @@ class RichBaseModel(BaseModel):
                 suggestion = f'\n  Expected type: {expected_type}'
 
             # Add details to the error message
-            detail = (
-                f'❌ {field}{field_description}:\n' f'  Error: {error_msg}{suggestion}'
-            )
+            detail = f'❌ {field}{field_description}:\n  Error: {error_msg}{suggestion}'
             error_details.append(detail)
 
         # Add example of correct usage if available
@@ -266,17 +265,17 @@ class RichBaseModel(BaseModel):
 
                 annotation_name = getattr(annotation, '__name__', str(annotation))
 
-                if annotation == str or annotation_name == 'str':
+                if annotation is str or annotation_name == 'str':
                     example[field_name] = f'example_{field_name}'
-                elif annotation == int or annotation_name == 'int':
+                elif annotation is int or annotation_name == 'int':
                     example[field_name] = 42
-                elif annotation == float or annotation_name == 'float':
+                elif annotation is float or annotation_name == 'float':
                     example[field_name] = 3.14
-                elif annotation == bool or annotation_name == 'bool':
+                elif annotation is bool or annotation_name == 'bool':
                     example[field_name] = True
-                elif annotation == list or annotation_name.startswith('list'):
+                elif annotation is list or annotation_name.startswith('list'):
                     example[field_name] = []
-                elif annotation == dict or annotation_name.startswith('dict'):
+                elif annotation is dict or annotation_name.startswith('dict'):
                     example[field_name] = {}
                 else:
                     example[field_name] = '...'
@@ -447,9 +446,7 @@ class RichEnum(Enum):
         for member in cls:
             # Match by value (case-insensitive for strings)
             val = member.value
-            if string == val or (
-                isinstance(val, str) and string_lower == val.lower()
-            ):
+            if string == val or (isinstance(val, str) and string_lower == val.lower()):
                 return member
 
             # Match by member name (case-insensitive)
@@ -569,7 +566,7 @@ class ToolMessage(BaseMessage):
 
         # If content is None, create a summary
         if values.get('retrieved_content'):
-            return f"Retrieved {len(values['retrieved_content'])} content chunk(s)."
+            return f'Retrieved {len(values["retrieved_content"])} content chunk(s).'
         if values.get('tool_output'):
             try:
                 # Try to serialize the raw output

@@ -1,6 +1,7 @@
 import numpy as np
-from axion.dataset import DatasetItem
+
 from axion._core.tracing import trace
+from axion.dataset import DatasetItem
 from axion.metrics.base import (
     BaseMetric,
     MetricEvaluationResult,

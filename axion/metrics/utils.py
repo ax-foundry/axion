@@ -46,7 +46,12 @@ def validate_required_metric_fields(
     available_fields = []
 
     # Skip pydantic internal attributes that trigger deprecation warnings when accessed
-    _pydantic_skip = {'model_fields', 'model_computed_fields', 'model_config', 'model_extra'}
+    _pydantic_skip = {
+        'model_fields',
+        'model_computed_fields',
+        'model_config',
+        'model_extra',
+    }
 
     # Check what fields are available and which are missing
     for field_name in dir(item):
@@ -65,10 +70,10 @@ def validate_required_metric_fields(
         error_msg = f"❌ Metric '{name}' cannot run due to missing required data.\n\n"
 
         # Show what's missing
-        error_msg += f"Missing fields: {', '.join(missing_fields)}\n"
+        error_msg += f'Missing fields: {", ".join(missing_fields)}\n'
 
         # Show what's required
-        error_msg += f"Required fields: {', '.join(required_fields)}\n\n"
+        error_msg += f'Required fields: {", ".join(required_fields)}\n\n'
 
         # Provide helpful suggestions
         error_msg += '💡 Suggestions:\n'

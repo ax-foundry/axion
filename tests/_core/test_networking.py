@@ -1,4 +1,5 @@
 import pytest
+
 from axion._core.networking import RateLimitInfo
 
 # Test data for parsing different valid error message formats
@@ -62,9 +63,9 @@ def test_from_error_failure(error_message):
     info = RateLimitInfo.from_error(error_message)
 
     # Assert that the parsing failed and returned None
-    assert (
-        info is None
-    ), 'RateLimitInfo should be None for non-matching or malformed errors'
+    assert info is None, (
+        'RateLimitInfo should be None for non-matching or malformed errors'
+    )
 
 
 def test_get_wait_time_default_buffer():

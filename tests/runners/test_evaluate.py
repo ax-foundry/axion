@@ -147,9 +147,7 @@ class TestExperimentRunner:
 
         with (
             patch('axion._core.tracing.init_tracer'),
-            patch(
-                'axion._core.cache.manager.CacheManager'
-            ) as mock_cache_manager,
+            patch('axion._core.cache.manager.CacheManager') as mock_cache_manager,
         ):
             mock_cache_manager.return_value = None
             runner = EvaluationRunner(mock_config)

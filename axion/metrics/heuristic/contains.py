@@ -1,5 +1,5 @@
-from axion.dataset import DatasetItem
 from axion._core.tracing import trace
+from axion.dataset import DatasetItem
 from axion.metrics.base import (
     BaseMetric,
     MetricEvaluationResult,
@@ -18,7 +18,6 @@ from axion.metrics.base import (
     tags=['heuristic', 'binary'],
 )
 class ContainsMatch(BaseMetric):
-    
     @trace(name='ContainsMatch', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         """

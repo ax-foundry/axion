@@ -12,7 +12,7 @@ import pandas as pd
 from axion._core.asyncio import SemaphoreExecutor, gather_with_progress
 from axion._core.cache.manager import CacheManager
 from axion._core.logging import get_logger
-from axion._core.tracing import Tracer, init_tracer, trace
+from axion._core.tracing import Tracer, init_tracer
 from axion._core.tracing.handlers import BaseTraceHandler
 from axion._core.types import TraceGranularity
 from axion._core.utils import Timer
@@ -342,10 +342,12 @@ class MetricRunner(RunnerMixin):
     ) -> List[TestResult]:
         """Execute batch with all metrics under a single parent trace."""
         async with self.tracer.async_span('MetricRunner_Batch') as span:
-            span.set_input({
-                'input_count': len(dataset),
-                'metrics': [e.metric_name for e in self.executors],
-            })
+            span.set_input(
+                {
+                    'input_count': len(dataset),
+                    'metrics': [e.metric_name for e in self.executors],
+                }
+            )
 
             final_results = await self._execute_metrics_for_dataset(
                 dataset, show_progress
@@ -354,16 +356,16 @@ class MetricRunner(RunnerMixin):
             # Capture output summary
             total_scores = sum(len(r.score_results) for r in final_results)
             passed_count = sum(
-                1 for r in final_results
-                for score in r.score_results
-                if score.passed
+                1 for r in final_results for score in r.score_results if score.passed
             )
-            span.set_output({
-                'results_count': len(final_results),
-                'total_scores': total_scores,
-                'passed_count': passed_count,
-                'success_rate': passed_count / total_scores if total_scores else 0,
-            })
+            span.set_output(
+                {
+                    'results_count': len(final_results),
+                    'total_scores': total_scores,
+                    'passed_count': passed_count,
+                    'success_rate': passed_count / total_scores if total_scores else 0,
+                }
+            )
 
             return final_results
 
@@ -397,10 +399,12 @@ class MetricRunner(RunnerMixin):
                 async with metric_tracer.async_span(
                     f'metric_{executor.metric_name}_item_{item.id}'
                 ) as span:
-                    span.set_input({
-                        'item_id': item.id,
-                        'metric_name': executor.metric_name,
-                    })
+                    span.set_input(
+                        {
+                            'item_id': item.id,
+                            'metric_name': executor.metric_name,
+                        }
+                    )
 
                     cache_to_pass = None
                     if self.enable_internal_caching and getattr(
@@ -421,12 +425,18 @@ class MetricRunner(RunnerMixin):
 
                         if isinstance(result, MetricScore):
                             results_map[result.id].append(result)
-                            span.set_output({
-                                'score': float(result.score) if result.score is not None else None,
-                                'passed': result.passed,
-                            })
+                            span.set_output(
+                                {
+                                    'score': float(result.score)
+                                    if result.score is not None
+                                    else None,
+                                    'passed': result.passed,
+                                }
+                            )
                         elif isinstance(result, Exception):
-                            logger.error(f'Metric execution failed: {result}', exc_info=False)
+                            logger.error(
+                                f'Metric execution failed: {result}', exc_info=False
+                            )
                             span.set_attribute('error', str(result))
                     finally:
                         # Restore original tracer
@@ -455,7 +465,9 @@ class MetricRunner(RunnerMixin):
                 f'Executing {len(self.executors)} metrics against {len(dataset)} data points...'
             )
 
-            final_results = await self._execute_metrics_for_items(dataset, show_progress)
+            final_results = await self._execute_metrics_for_items(
+                dataset, show_progress
+            )
 
         self._elapsed_time = timer.elapsed_time
         self._finalize_results(final_results)
@@ -573,14 +585,16 @@ class AxionRunner(BaseMetricRunner):
 
             input_data = format_input(input_data)
 
-            span.set_input({
-                'query': getattr(input_data, 'query', None),
-                'actual_output': getattr(input_data, 'actual_output', None),
-                'expected_output': getattr(input_data, 'expected_output', None),
-                'retrieved_content': getattr(input_data, 'retrieved_content', None),
-                'additional_input': getattr(input_data, 'additional_input', None),
-                'latency': getattr(input_data, 'latency', None),
-            })
+            span.set_input(
+                {
+                    'query': getattr(input_data, 'query', None),
+                    'actual_output': getattr(input_data, 'actual_output', None),
+                    'expected_output': getattr(input_data, 'expected_output', None),
+                    'retrieved_content': getattr(input_data, 'retrieved_content', None),
+                    'additional_input': getattr(input_data, 'additional_input', None),
+                    'latency': getattr(input_data, 'latency', None),
+                }
+            )
 
             try:
                 result = await self.metric.execute(input_data, cache=cache)
@@ -593,12 +607,14 @@ class AxionRunner(BaseMetricRunner):
                 span.set_attribute('score', float(score))
                 span.set_attribute('passed', self._has_passed(score))
 
-                span.set_output({
-                    'score': float(score) if not np.isnan(score) else None,
-                    'passed': self._has_passed(score),
-                    'explanation': getattr(result, 'explanation', None),
-                    'signals': signals,
-                })
+                span.set_output(
+                    {
+                        'score': float(score) if not np.isnan(score) else None,
+                        'passed': self._has_passed(score),
+                        'explanation': getattr(result, 'explanation', None),
+                        'signals': signals,
+                    }
+                )
 
                 return MetricScore(
                     id=input_data.id,
@@ -645,12 +661,14 @@ class RagasRunner(BaseMetricRunner):
             if llm and hasattr(llm, 'reset_cost'):
                 llm.reset_cost()
 
-            span.set_input({
-                'query': getattr(input_data, 'query', None),
-                'actual_output': getattr(input_data, 'actual_output', None),
-                'expected_output': getattr(input_data, 'expected_output', None),
-                'retrieved_content': getattr(input_data, 'retrieved_content', None),
-            })
+            span.set_input(
+                {
+                    'query': getattr(input_data, 'query', None),
+                    'actual_output': getattr(input_data, 'actual_output', None),
+                    'expected_output': getattr(input_data, 'expected_output', None),
+                    'retrieved_content': getattr(input_data, 'retrieved_content', None),
+                }
+            )
 
             try:
                 async with self.tracer.async_span('create_sample') as sample_span:
@@ -660,15 +678,17 @@ class RagasRunner(BaseMetricRunner):
 
                     additional = input_data.additional_input
 
-                    sample_span.set_input({
-                        'user_input': input_data.query,
-                        'response': input_data.actual_output,
-                        'reference': input_data.expected_output,
-                        'retrieved_contexts': self._prepare_retrieved_content(
-                            input_data.retrieved_content
-                        ),
-                        'reference_contexts': additional.get('reference_contexts'),
-                    })
+                    sample_span.set_input(
+                        {
+                            'user_input': input_data.query,
+                            'response': input_data.actual_output,
+                            'reference': input_data.expected_output,
+                            'retrieved_contexts': self._prepare_retrieved_content(
+                                input_data.retrieved_content
+                            ),
+                            'reference_contexts': additional.get('reference_contexts'),
+                        }
+                    )
 
                     sample = SingleTurnSample(
                         user_input=input_data.query,
@@ -682,11 +702,14 @@ class RagasRunner(BaseMetricRunner):
                         rubrics=additional.get('rubrics'),
                     )
 
-                    sample_span.set_output({
-                        'sample_type': 'SingleTurnSample',
-                        'has_reference': input_data.expected_output is not None,
-                        'has_retrieved_contexts': input_data.retrieved_content is not None,
-                    })
+                    sample_span.set_output(
+                        {
+                            'sample_type': 'SingleTurnSample',
+                            'has_reference': input_data.expected_output is not None,
+                            'has_retrieved_contexts': input_data.retrieved_content
+                            is not None,
+                        }
+                    )
                 score = await self.metric.single_turn_ascore(sample)
                 span.set_attribute('score', float(score))
 
@@ -696,10 +719,12 @@ class RagasRunner(BaseMetricRunner):
                 cost = extract_cost(self.metric)
 
                 # Capture output - the metric result
-                span.set_output({
-                    'score': float(score) if score is not None else None,
-                    'passed': self._has_passed(score),
-                })
+                span.set_output(
+                    {
+                        'score': float(score) if score is not None else None,
+                        'passed': self._has_passed(score),
+                    }
+                )
 
                 return MetricScore(
                     id=input_data.id,
@@ -743,12 +768,14 @@ class DeepEvalRunner(BaseMetricRunner):
             if model and hasattr(model, 'reset_cost'):
                 model.reset_cost()
 
-            span.set_input({
-                'query': getattr(input_data, 'query', None),
-                'actual_output': getattr(input_data, 'actual_output', None),
-                'expected_output': getattr(input_data, 'expected_output', None),
-                'retrieved_content': getattr(input_data, 'retrieved_content', None),
-            })
+            span.set_input(
+                {
+                    'query': getattr(input_data, 'query', None),
+                    'actual_output': getattr(input_data, 'actual_output', None),
+                    'expected_output': getattr(input_data, 'expected_output', None),
+                    'retrieved_content': getattr(input_data, 'retrieved_content', None),
+                }
+            )
 
             try:
                 async with self.tracer.async_span('create_test_case') as test_case_span:
@@ -758,16 +785,18 @@ class DeepEvalRunner(BaseMetricRunner):
 
                     additional = input_data.additional_input
 
-                    test_case_span.set_input({
-                        'input': input_data.query,
-                        'actual_output': input_data.actual_output,
-                        'expected_output': input_data.expected_output,
-                        'retrieval_context': self._prepare_retrieved_content(
-                            input_data.retrieved_content
-                        ),
-                        'completion_time': input_data.latency,
-                        'context': additional.get('context'),
-                    })
+                    test_case_span.set_input(
+                        {
+                            'input': input_data.query,
+                            'actual_output': input_data.actual_output,
+                            'expected_output': input_data.expected_output,
+                            'retrieval_context': self._prepare_retrieved_content(
+                                input_data.retrieved_content
+                            ),
+                            'completion_time': input_data.latency,
+                            'context': additional.get('context'),
+                        }
+                    )
 
                     test_case = LLMTestCase(
                         input=input_data.query,
@@ -785,12 +814,16 @@ class DeepEvalRunner(BaseMetricRunner):
                         additional_metadata=input_data.metadata,
                     )
 
-                    test_case_span.set_output({
-                        'test_case_type': 'LLMTestCase',
-                        'has_expected_output': input_data.expected_output is not None,
-                        'has_retrieval_context': input_data.retrieved_content is not None,
-                        'has_completion_time': input_data.latency is not None,
-                    })
+                    test_case_span.set_output(
+                        {
+                            'test_case_type': 'LLMTestCase',
+                            'has_expected_output': input_data.expected_output
+                            is not None,
+                            'has_retrieval_context': input_data.retrieved_content
+                            is not None,
+                            'has_completion_time': input_data.latency is not None,
+                        }
+                    )
 
                 await self.metric.a_measure(test_case, _show_indicator=False)
                 score = self.metric.score
@@ -799,11 +832,13 @@ class DeepEvalRunner(BaseMetricRunner):
                 # Extract cost using scalable cost extraction utility
                 cost = extract_cost(self.metric)
 
-                span.set_output({
-                    'score': float(score) if score is not None else None,
-                    'passed': self._has_passed(score),
-                    'explanation': getattr(self.metric, 'reason', None),
-                })
+                span.set_output(
+                    {
+                        'score': float(score) if score is not None else None,
+                        'passed': self._has_passed(score),
+                        'explanation': getattr(self.metric, 'reason', None),
+                    }
+                )
 
                 return MetricScore(
                     id=input_data.id,

@@ -120,8 +120,8 @@ class Span:
 
             # Check if this should be a new trace (first span in a new tracer)
             is_new_trace = (
-                self.attributes.get('new_trace', False) or
-                len(self.tracer._span_stack) == 1
+                self.attributes.get('new_trace', False)
+                or len(self.tracer._span_stack) == 1
             )
 
             if is_new_trace:

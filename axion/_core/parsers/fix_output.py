@@ -1,10 +1,11 @@
 from typing import Optional
 
+from pydantic import BaseModel
+
 from axion._core.schema import LLMRunnable
 from axion._core.tracing.handlers import BaseTraceHandler
 from axion._handlers.llm.handler import LLMHandler
 from axion.llm_registry import LLMRegistry
-from pydantic import BaseModel
 
 
 class OutputStringAndPrompt(BaseModel):
