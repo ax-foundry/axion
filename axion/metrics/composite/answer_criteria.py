@@ -57,59 +57,55 @@ class CriteriaDecomposer(BaseMetric[CriteriaDecomposerInput, CriteriaDecomposerO
     examples = [
         (
             CriteriaDecomposerInput(
-                query='How can Data Cloud Provisioning be used as a Sandbox?',
-                criteria='The answer must accurately describe how Data Cloud Provisioning can be used as a Sandbox, including the supported sandbox types (Developer, Developer Pro, Partial Copy, Full Copy) and the fact that only metadata, not data, is replicated. It should correctly identify the primary uses of a Data Cloud sandbox, such as testing changes, providing a training environment, testing packages, and isolating development. The answer should also specify that some Data Cloud features are not replicated but can be re-created.',
+                query='What is the infield fly rule in baseball?',
+                criteria='The answer must accurately describe the infield fly rule, including when it applies (fewer than two outs, runners on first and second or bases loaded), what happens when it is called (batter is automatically out), and why it exists (to prevent the defense from intentionally dropping a fly ball to turn a double play). The answer should also mention that runners may advance at their own risk.',
             ),
             CriteriaDecomposerOutput(
                 key_aspects=[
-                    'Data Cloud Sandbox Overview',
-                    'Sandbox Types and Replication',
-                    'Primary Use Cases',
-                    'Feature Limitations and Workarounds',
+                    'Rule Conditions',
+                    'Rule Effect',
+                    'Purpose of the Rule',
+                    'Runner Advancement',
                 ],
                 aspect_details={
-                    'Data Cloud Sandbox Overview': [
-                        'Data Cloud Provisioning can be used as a Sandbox',
-                        'Accurate description of sandbox functionality',
-                        'Clear explanation of the provisioning process',
+                    'Rule Conditions': [
+                        'Fewer than two outs required',
+                        'Runners on first and second base, or bases loaded',
+                        'Fair fly ball that can be caught with ordinary effort',
                     ],
-                    'Sandbox Types and Replication': [
-                        'Supported sandbox types (Developer, Developer Pro, Partial Copy, Full Copy)',
-                        'Only metadata is replicated',
-                        'Data is not replicated in sandboxes',
+                    'Rule Effect': [
+                        'Batter is automatically out when rule is invoked',
+                        'Umpire must declare infield fly while ball is in the air',
                     ],
-                    'Primary Use Cases': [
-                        'Testing changes before production deployment',
-                        'Providing training environments',
-                        'Testing packages',
-                        'Isolating development work',
+                    'Purpose of the Rule': [
+                        'Prevents defense from intentionally dropping the ball',
+                        'Protects baserunners from unfair double plays',
                     ],
-                    'Feature Limitations and Workarounds': [
-                        'Some Data Cloud features are not replicated',
-                        'Non-replicated features can be re-created',
-                        'Understanding of feature replication boundaries',
+                    'Runner Advancement': [
+                        'Runners may advance at their own risk',
+                        'Applies whether ball is caught or dropped',
                     ],
                 },
             ),
         ),
         (
             CriteriaDecomposerInput(
-                query='What is the link for Public Sector Solutions documentation?',
-                criteria='The answer must accurately identify the link for Public Sector Solutions documentation. The link provided should lead directly to the main documentation page for Salesforce Public Sector Solutions.',
+                query='What is the link for the official MLB rulebook?',
+                criteria='The answer must accurately identify the link for the official MLB rulebook. The link provided should lead directly to the official rules page on MLB.com.',
             ),
             CriteriaDecomposerOutput(
                 key_aspects=[
-                    'Specific Public Sector Solutions Link',
+                    'Official Rulebook Link',
                     'Resource Description',
                 ],
                 aspect_details={
-                    'Public Sector Solutions Documentation Link': [
-                        'Precise and complete link to Public Sector Solutions documentation is provided',
+                    'Official Rulebook Link': [
+                        'Precise and complete link to official MLB rulebook is provided',
                         'Link is accessible and functional',
                     ],
                     'Resource Description': [
-                        'Indication that the link is the primary resource for Public Sector Solutions',
-                        'Comprehensive information on features of documentation are mentioned',
+                        'Indication that the link is the authoritative source for MLB rules',
+                        'Comprehensive information on rule coverage mentioned',
                     ],
                 },
             ),
@@ -205,36 +201,36 @@ class CriteriaChecker(BaseMetric[CriteriaCheckerInput, CriteriaCheckerOutput]):
             # Example 2: Partial coverage - one aspect covered, one missing
             (
                 CriteriaCheckerInput(
-                    query='What is Data Cloud?',
-                    response='Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.',
-                    key_aspects=['Platform Foundation', 'Integration with Agentforce'],
+                    query='What is the infield fly rule?',
+                    response='The infield fly rule is a baseball rule that protects baserunners by declaring the batter out on certain easy pop-ups.',
+                    key_aspects=['Rule Definition', 'Umpire Declaration'],
                     aspect_details={
-                        'Platform Foundation': [
-                            'Data Cloud is built on the Salesforce Platform'
+                        'Rule Definition': [
+                            'Protects baserunners from unfair double plays'
                         ],
-                        'Integration with Agentforce': [
-                            'Data Cloud is connected to Agentforce'
+                        'Umpire Declaration': [
+                            'Umpire must declare infield fly while ball is in the air'
                         ],
                     },
-                    criteria='Correctly identifies Data Cloud is built on the Salesforce Platform. Tells that it is connected to Agentforce',
+                    criteria='Correctly identifies that the rule protects baserunners. Mentions that the umpire must declare infield fly.',
                 ),
                 CriteriaCheckerOutput(
                     aspect_results=[
                         AspectCoverageResult(
-                            aspect='Platform Foundation',
+                            aspect='Rule Definition',
                             covered=True,
                             concepts_covered=[
-                                'Data Cloud is built on the Salesforce Platform'
+                                'Protects baserunners from unfair double plays'
                             ],
                             concepts_missing=[],
-                            reason='The response explicitly states that Data Cloud is "built on the Salesforce Platform", directly satisfying this factual requirement.',
+                            reason='The response explicitly states that the rule "protects baserunners", directly satisfying this factual requirement.',
                         ),
                         AspectCoverageResult(
-                            aspect='Integration with Agentforce',
+                            aspect='Umpire Declaration',
                             covered=False,
                             concepts_covered=[],
-                            concepts_missing=['Data Cloud is connected to Agentforce'],
-                            reason='The response makes no mention of Agentforce or any integration with it, leaving this factual requirement completely unaddressed.',
+                            concepts_missing=['Umpire must declare infield fly while ball is in the air'],
+                            reason='The response makes no mention of the umpire declaration requirement, leaving this factual requirement completely unaddressed.',
                         ),
                     ]
                 ),
@@ -242,28 +238,28 @@ class CriteriaChecker(BaseMetric[CriteriaCheckerInput, CriteriaCheckerOutput]):
             # Example 3: Factual inaccuracy - contradicts criteria
             (
                 CriteriaCheckerInput(
-                    query='How is data handled in a Data Cloud sandbox?',
-                    response='In a Data Cloud sandbox, a small subset of your production data is automatically copied over to get you started, along with all the metadata.',
-                    key_aspects=['Data Replication Rule'],
+                    query='When does the infield fly rule apply?',
+                    response='The infield fly rule applies with two outs and a runner on first base only.',
+                    key_aspects=['Rule Conditions'],
                     aspect_details={
-                        'Data Replication Rule': [
-                            'Only metadata is replicated',
-                            'Customer data is not replicated',
+                        'Rule Conditions': [
+                            'Fewer than two outs required',
+                            'Runners on first and second or bases loaded',
                         ]
                     },
-                    criteria='The answer must clearly state that only metadata is copied to a Data Cloud sandbox, and that customer data is not replicated.',
+                    criteria='The answer must clearly state that the rule applies with fewer than two outs, and requires runners on first and second base or bases loaded.',
                 ),
                 CriteriaCheckerOutput(
                     aspect_results=[
                         AspectCoverageResult(
-                            aspect='Data Replication Rule',
+                            aspect='Rule Conditions',
                             covered=False,
                             concepts_covered=[],
                             concepts_missing=[
-                                'Only metadata is replicated',
-                                'Customer data is not replicated',
+                                'Fewer than two outs required',
+                                'Runners on first and second or bases loaded',
                             ],
-                            reason='The response incorrectly states that "a small subset of your production data is automatically copied", which directly contradicts the criteria requirement that only metadata (not customer data) is replicated. This factual inaccuracy means neither concept is covered.',
+                            reason='The response incorrectly states that the rule applies with "two outs and a runner on first base only", which directly contradicts the criteria requirement that the rule applies with fewer than two outs and runners on first and second or bases loaded. This factual inaccuracy means neither concept is covered.',
                         ),
                     ]
                 ),
@@ -271,45 +267,45 @@ class CriteriaChecker(BaseMetric[CriteriaCheckerInput, CriteriaCheckerOutput]):
             # Example 4: Precise factual requirement not met
             (
                 CriteriaCheckerInput(
-                    query="What's the link for Public Sector Solutions documentation?",
-                    response='Here are some links for Public Sector Solutions documentation: [Public Sector Solutions Accredited Professional Exam Guide](https://trailhead.salesforce.com/en/help?article=Public-Sector-Solutions-AP-Exam-Guide). Let me know if you need further assistance!',
+                    query="What's the link for the official MLB rulebook?",
+                    response='Here are some links for baseball rules: [Baseball Wikipedia](https://en.wikipedia.org/wiki/Baseball_rules). Let me know if you need further assistance!',
                     key_aspects=[
-                        'Public Sector Solutions Documentation Link',
+                        'Official MLB Rulebook Link',
                         'Resource Description',
                     ],
                     aspect_details={
-                        'Public Sector Solutions Documentation Link': [
-                            'Precise and complete link to Public Sector Solutions documentation is provided',
+                        'Official MLB Rulebook Link': [
+                            'Precise and complete link to official MLB rulebook is provided',
                             'Link is accessible and functional',
                         ],
                         'Resource Description': [
-                            'Indication that the link is the primary resource for Public Sector Solutions',
-                            'Comprehensive information on features such as licensing, permitting, inspections, and social program management is mentioned',
+                            'Indication that the link is the authoritative source for MLB rules',
+                            'Comprehensive information on rule coverage mentioned',
                         ],
                     },
-                    criteria='The answer must accurately identify the link for Public Sector Solutions documentation. The link provided should lead directly to the main documentation page for Salesforce Public Sector Solutions, as referenced in the article, rather than general Salesforce help, third-party sites, or other related but not direct documentation.',
+                    criteria='The answer must accurately identify the link for the official MLB rulebook. The link provided should lead directly to the official rules page on MLB.com, not Wikipedia or other third-party sites.',
                 ),
                 CriteriaCheckerOutput(
                     aspect_results=[
                         AspectCoverageResult(
-                            aspect='Public Sector Solutions Documentation Link',
+                            aspect='Official MLB Rulebook Link',
                             covered=False,
                             concepts_covered=[],
                             concepts_missing=[
-                                'Precise and complete link to Public Sector Solutions documentation is provided',
+                                'Precise and complete link to official MLB rulebook is provided',
                                 'Link is accessible and functional',
                             ],
-                            reason='The response provides multiple related links (exam guides, data models, API references) but does NOT provide the precise, singular link to the main Public Sector Solutions documentation page as required. The criteria specifically asks for "the link" (singular) that leads "directly to the main documentation page", not a collection of tangentially related resources. This fails to meet the factual precision requirement.',
+                            reason='The response provides a Wikipedia link but does NOT provide the precise link to the official MLB rulebook page as required. The criteria specifically asks for the official MLB.com rules page, not third-party sites. This fails to meet the factual precision requirement.',
                         ),
                         AspectCoverageResult(
                             aspect='Resource Description',
                             covered=False,
                             concepts_covered=[],
                             concepts_missing=[
-                                'Indication that the link is the primary resource for Public Sector Solutions',
-                                'Comprehensive information on features such as licensing, permitting, inspections, and social program management is mentioned',
+                                'Indication that the link is the authoritative source for MLB rules',
+                                'Comprehensive information on rule coverage mentioned',
                             ],
-                            reason='Since the response does not provide the main documentation link, it also fails to indicate that link as the primary resource. Additionally, none of the specific features (licensing, permitting, inspections, social program management) are mentioned in the response.',
+                            reason='Since the response does not provide the official MLB link, it also fails to indicate that link as the authoritative source. Additionally, no information about rule coverage is mentioned in the response.',
                         ),
                     ]
                 ),
@@ -317,35 +313,35 @@ class CriteriaChecker(BaseMetric[CriteriaCheckerInput, CriteriaCheckerOutput]):
             # Example 5: Multiple concepts, partial coverage acceptable
             (
                 CriteriaCheckerInput(
-                    query='What are the benefits of using Data Cloud?',
-                    response='Data Cloud provides unified customer profiles, real-time data activation, and seamless integration with Salesforce CRM. It helps businesses make data-driven decisions.',
-                    key_aspects=['Key Benefits'],
+                    query='What are the key conditions for the infield fly rule?',
+                    response='The infield fly rule applies when there are fewer than two outs, with runners on first and second base or bases loaded, and a fair fly ball is hit that can be caught with ordinary effort.',
+                    key_aspects=['Rule Conditions'],
                     aspect_details={
-                        'Key Benefits': [
-                            'Unified customer profiles',
-                            'Real-time data activation',
-                            'Integration capabilities',
-                            'Advanced analytics and insights',
-                            'Data-driven decision making',
+                        'Rule Conditions': [
+                            'Fewer than two outs',
+                            'Runners on first and second or bases loaded',
+                            'Fair fly ball',
+                            'Ordinary effort required',
+                            'Infielder positioning',
                         ]
                     },
-                    criteria='The answer should describe multiple key benefits of Data Cloud, including unified profiles, real-time activation, integration capabilities, analytics, and data-driven decision making.',
+                    criteria='The answer should describe the key conditions for the infield fly rule, including out count, runner positions, ball type, and effort level.',
                 ),
                 CriteriaCheckerOutput(
                     aspect_results=[
                         AspectCoverageResult(
-                            aspect='Key Benefits',
+                            aspect='Rule Conditions',
                             covered=True,
                             concepts_covered=[
-                                'Unified customer profiles',
-                                'Real-time data activation',
-                                'Integration capabilities',
-                                'Data-driven decision making',
+                                'Fewer than two outs',
+                                'Runners on first and second or bases loaded',
+                                'Fair fly ball',
+                                'Ordinary effort required',
                             ],
                             concepts_missing=[
-                                'Advanced analytics and insights',
+                                'Infielder positioning',
                             ],
-                            reason='The response addresses 4 out of 5 key concepts. It explicitly mentions unified customer profiles, real-time data activation, integration with Salesforce CRM, and data-driven decision making. While it does not specifically mention "advanced analytics", the overall coverage is substantial and addresses the core requirement of describing multiple key benefits.',
+                            reason='The response addresses 4 out of 5 key concepts. It explicitly mentions fewer than two outs, runners on first and second or bases loaded, fair fly ball, and ordinary effort. While it does not specifically mention "infielder positioning", the overall coverage is substantial and addresses the core requirement of describing the key conditions.',
                         ),
                     ]
                 ),

@@ -42,31 +42,31 @@ class AspectDecomposer(BaseMetric[AspectDecomposerInput, AspectDecomposerOutput]
 
     input_model = AspectDecomposerInput
     output_model = AspectDecomposerOutput
-    description = 'Salesforce Query Aspect Analyzer'
+    description = 'Query Aspect Analyzer'
     examples = [
         (
             AspectDecomposerInput(
-                query='How can I set up Agentforce and Data Cloud in Salesforce for our sales team to increase productivity through Slack?',
+                query='How can I configure Python virtual environments and pip for our development team to improve dependency management through VS Code?',
                 expected_aspects=[
-                    'Agentforce',
-                    'Data Cloud',
-                    'Slack',
-                    'SDR',
+                    'Virtual Environments',
+                    'pip',
+                    'VS Code',
+                    'Development Team',
                 ],
             ),
             AspectDecomposerOutput(
                 aspects_details={
-                    'Agentforce': [
+                    'Virtual Environments': [
                         'Setup or configuration',
                     ],
-                    'Data Cloud': [
-                        'Setup or configuration',
+                    'pip': [
+                        'Package management setup',
                     ],
-                    'Slack': [
-                        'Salesforce-Slack integration',
+                    'VS Code': [
+                        'Python-VS Code integration',
                     ],
-                    'SDR': [
-                        'Productivity features for sales team',
+                    'Development Team': [
+                        'Workflow improvements for developers',
                     ],
                 }
             ),
@@ -133,70 +133,70 @@ class AspectCompletenessChecker(
 
     input_model = AspectCompletenessCheckerInput
     output_model = AspectCompletenessCheckerOutput
-    description = 'Salesforce Response Aspect Coverage Checker'
+    description = 'Response Aspect Coverage Checker'
     examples = [
         (
             AspectCompletenessCheckerInput(
-                query='How can I set up Agentforce and Data Cloud in Salesforce for our sales team to increase productivity through Slack?',
-                response="To set up Agentforce in Salesforce, first ensure you have the appropriate licenses. Navigate to Setup > Einstein > Agentforce and complete the initial configuration. You'll need to enable relevant features and assign user permissions. For Data Cloud setup, go to Setup > Integration > Data Cloud and follow the guided setup. You'll need to connect your data sources and configure data mapping.",
+                query='How can I configure Python virtual environments and pip for our development team to improve dependency management through VS Code?',
+                response="To set up Python virtual environments, first ensure you have Python installed. Use 'python -m venv myenv' to create a virtual environment, then activate it using the appropriate command for your OS. For pip setup, run 'pip install --upgrade pip' within your environment. You'll need to create a requirements.txt file to manage dependencies.",
                 expected_aspects=[
-                    'Agentforce',
-                    'Data Cloud',
-                    'Slack',
-                    'SDR',
+                    'Virtual Environments',
+                    'pip',
+                    'VS Code',
+                    'Development Team',
                 ],
                 aspect_details={
-                    'Agentforce': [
+                    'Virtual Environments': [
                         'Setup or configuration',
                     ],
-                    'Data Cloud': [
-                        'Setup or configuration',
+                    'pip': [
+                        'Package management setup',
                     ],
-                    'Slack': [
-                        'Salesforce-Slack integration',
+                    'VS Code': [
+                        'Python-VS Code integration',
                     ],
-                    'SDR': [
-                        'Productivity features for sales team',
+                    'Development Team': [
+                        'Workflow improvements for developers',
                     ],
                 },
             ),
             AspectCompletenessCheckerOutput(
                 aspect_results=[
                     AspectCoverageResult(
-                        aspect='Agentforce',
+                        aspect='Virtual Environments',
                         covered=True,
                         concepts_covered=[
                             'Setup or configuration',
                         ],
                         concepts_missing=[],
-                        reason='The response covers Agentforce setup including navigation path and configuration steps.',
+                        reason='The response covers virtual environment setup including the venv command and activation.',
                     ),
                     AspectCoverageResult(
-                        aspect='Data Cloud',
+                        aspect='pip',
                         covered=True,
                         concepts_covered=[
-                            'Setup or configuration',
+                            'Package management setup',
                         ],
                         concepts_missing=[],
-                        reason='The response covers Data Cloud setup process and mentions data source connections.',
+                        reason='The response covers pip setup and mentions requirements.txt for dependency management.',
                     ),
                     AspectCoverageResult(
-                        aspect='Slack',
+                        aspect='VS Code',
                         covered=False,
                         concepts_covered=[],
                         concepts_missing=[
-                            'Salesforce-Slack integration',
+                            'Python-VS Code integration',
                         ],
-                        reason='The response does not mention Slack integration at all.',
+                        reason='The response does not mention VS Code integration at all.',
                     ),
                     AspectCoverageResult(
-                        aspect='SDR',
+                        aspect='Development Team',
                         covered=False,
                         concepts_covered=[],
                         concepts_missing=[
-                            'Productivity features for sales team',
+                            'Workflow improvements for developers',
                         ],
-                        reason='The response does not address how these tools help with sales team productivity.',
+                        reason='The response does not address how these tools help with team workflow.',
                     ),
                 ]
             ),
@@ -232,14 +232,14 @@ class ExpectedAnswerAnalyzer(
     examples = [
         (
             ExpectedAnswerAnalyzerInput(
-                query='What is Sales Cloud?',
-                expected_output='Sales Cloud is a CRM platform that helps manage leads, track opportunities, and automate sales processes. It is designed for B2B sales teams.',
+                query='What is the infield fly rule?',
+                expected_output='The infield fly rule is a baseball rule that protects baserunners by declaring the batter out on certain easy pop-ups. It applies with fewer than two outs and runners on first and second or bases loaded.',
             ),
             ExpectedAnswerAnalyzerOutput(
                 key_points=[
-                    'What is the primary function of Sales Cloud?',
-                    'What specific features does it offer (leads, opportunities, automation)?',
-                    'Who is the target audience for Sales Cloud?',
+                    'What is the primary purpose of the infield fly rule?',
+                    'Under what conditions does the rule apply (outs, runners)?',
+                    'Who does the rule protect and how?',
                 ]
             ),
         )
@@ -275,27 +275,27 @@ class QueryDecomposer(BaseMetric[QueryDecomposerInput, QueryDecomposerOutput]):
 
     input_model = QueryDecomposerInput
     output_model = QueryDecomposerOutput
-    description = 'Salesforce Query Decomposer'
+    description = 'Query Decomposer'
     examples = [
         (
             QueryDecomposerInput(
-                query='What are the key differences between Salesforce Sales Cloud and Service Cloud, and which would be better for our small business with 15 employees focused on customer retention?',
+                query='What are the key differences between Python lists and tuples, and which would be better for our data processing pipeline that needs immutability?',
             ),
             QueryDecomposerOutput(
                 sub_questions=[
-                    'What are the key differences between Sales Cloud and Service Cloud?',
-                    'Which platform is better for customer retention and small businesses?',
+                    'What are the key differences between Python lists and tuples?',
+                    'Which data structure is better for immutability requirements?',
                 ]
             ),
         ),
         (
             QueryDecomposerInput(
-                query='How can I set up Agentforce and Data Cloud in Salesforce for our sales team to increase productivity through Slack?'
+                query='How can I set up virtual environments and pip for our development team to improve dependency management through VS Code?'
             ),
             QueryDecomposerOutput(
                 sub_questions=[
-                    'How do you set up Agentforce and Data Cloud in Salesforce?',
-                    'How do you integrate with Slack for sales team productivity?',
+                    'How do you set up virtual environments and pip?',
+                    'How do you integrate with VS Code for team development?',
                 ]
             ),
         ),
@@ -333,28 +333,28 @@ class SubQuestionChecker(BaseMetric[SubQuestionCheckerInput, SubQuestionCheckerO
 
     input_model = SubQuestionCheckerInput
     output_model = SubQuestionCheckerOutput
-    description = 'Salesforce Response Sub-Question Checker'
+    description = 'Response Sub-Question Checker'
     examples = [
         (
             SubQuestionCheckerInput(
-                query="What's the difference between Salesforce Professional and Enterprise editions, and which one should our 50-person company choose?",
-                response='Salesforce Professional Edition offers essential CRM features including lead and opportunity management, customizable dashboards, and standard reports. It allows for up to 5 custom apps and limited API access. Enterprise Edition builds on these capabilities with more advanced features such as workflow automation, approval processes, and unlimited custom apps. It also provides full API access and supports more complex organizational structures through role hierarchies.',
+                query="What's the difference between Python lists and tuples, and which one should our data pipeline use for configuration values?",
+                response='Python lists are mutable, ordered collections that can be modified after creation. They support methods like append(), insert(), and remove(). Tuples are immutable, ordered collections that cannot be changed once created. They are typically faster and use less memory than lists. Tuples also support tuple unpacking and can be used as dictionary keys.',
                 sub_questions=[
-                    'What are the key differences between the two editions?',
-                    'Which edition is recommended for a 50-person company?',
+                    'What are the key differences between lists and tuples?',
+                    'Which data structure is recommended for configuration values?',
                 ],
             ),
             SubQuestionCheckerOutput(
                 results=[
                     SubQuestionResult(
-                        sub_question='What are the key differences between the two editions?',
+                        sub_question='What are the key differences between lists and tuples?',
                         addressed=True,
-                        reason='The response highlights key differences such as custom app limits, API access levels, workflow automation, and organizational structure support.',
+                        reason='The response highlights key differences such as mutability, available methods, performance, and use cases like dictionary keys.',
                     ),
                     SubQuestionResult(
-                        sub_question='Which edition is recommended for a 50-person company?',
+                        sub_question='Which data structure is recommended for configuration values?',
                         addressed=False,
-                        reason='The response does not provide a specific recommendation for a 50-person company.',
+                        reason='The response does not provide a specific recommendation for configuration values.',
                     ),
                 ]
             ),

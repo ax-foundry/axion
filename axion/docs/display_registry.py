@@ -149,10 +149,10 @@ metric = {class_name}()
 from axion.dataset import DatasetItem
 
 data_item = DatasetItem(
-    query = "What is Data Cloud?",
-    actual_output = "Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-    expected_output = "Data Cloud is a hyperscale data platform built directly into Salesforce.",
-    retrieved_content = ["built on the Salesforce Platform", "Unlocks Enterprise Value"],
+    query = "What is the infield fly rule in baseball?",
+    actual_output = "The infield fly rule prevents the defense from intentionally dropping a fly ball to turn a double play.",
+    expected_output = "The infield fly rule protects baserunners by declaring the batter out on certain easy pop-ups.",
+    retrieved_content = ["The infield fly rule prevents unfair advantage.", "Applies with runners on first and second."],
     latency = 2.13
 )
 result = await metric.execute(data_item)
@@ -221,9 +221,9 @@ metric = {class_name}()
 from axion.dataset import DatasetItem
 
 data_item = DatasetItem(
-    query = "What is Data Cloud?",
-    actual_output = "Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-    additional_input={{"Complete": "Address that Data Cloud is a platform on Salesforce."}} # Metric defaults to "Complete"
+    query = "What is the infield fly rule in baseball?",
+    actual_output = "The infield fly rule prevents the defense from intentionally dropping a fly ball to turn a double play.",
+    additional_input={{"Complete": "Explain the purpose and conditions of the infield fly rule."}} # Metric defaults to "Complete"
 )
 result = await metric.execute(data_item)
 print(result.pretty())"""
@@ -241,8 +241,8 @@ metric = {class_name}()
 from axion.dataset import DatasetItem
 
 data_item = DatasetItem(
-    query = "What is Data Cloud?",
-    actual_output = "Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform. For more details, you can refer to the following articles: - [Expiration Period of Password Resets and Email Verification Links](https://help.salesforce.com/s/articleView?id=000390510&type=1) [Data Cloud Learning Paths](https://help.salesforce.com/s/articleView?id=data.c360_a_customer360_lm.htm&type=5)",
+    query = "What is the infield fly rule in baseball?",
+    actual_output = "The infield fly rule prevents the defense from intentionally dropping a fly ball to turn a double play. For more details, refer to: - [Infield Fly Rule](https://www.mlb.com/glossary/rules/infield-fly) [Official MLB Rules](https://www.mlb.com/official-rules)",
 )
 result = await metric.execute(data_item)
 print(result.pretty())"""
@@ -1670,10 +1670,10 @@ runner = MetricRunner(
 )
 # Execute batch evaluation
 data_item = DatasetItem(
-    query="What is Data Cloud?",
-    actual_output="Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-    expected_output="Data Cloud is a hyperscale data platform built directly into Salesforce.",
-    retrieved_content=["Data Cloud is a hyperscale data platform built directly into Salesforce."],
+    query="What is the infield fly rule in baseball?",
+    actual_output="The infield fly rule prevents the defense from intentionally dropping a fly ball to turn a double play.",
+    expected_output="The infield fly rule protects baserunners by declaring the batter out on certain easy pop-ups.",
+    retrieved_content=["The infield fly rule is designed to prevent unfair advantage by the defense."],
 )
 evaluation_inputs = [data_item]
 results = await runner.execute_batch(evaluation_inputs)

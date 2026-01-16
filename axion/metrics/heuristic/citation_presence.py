@@ -184,8 +184,8 @@ class CitationPresence(BaseMetric):
             if url.startswith('http') or url.startswith('www'):
                 try:
                     request_url = url if url.startswith('http') else f'http://{url}'
-                    # Mocking the request.head logic: Assume URL is valid if it contains 'salesforce' or 'google'
-                    if 'salesforce' in request_url or 'google' in request_url:
+                    # Mocking the request.head logic: Assume URL is valid if it contains common domains
+                    if 'wikipedia' in request_url or 'docs.python' in request_url or 'github' in request_url:
                         valid_urls.append(url)
                 except Exception:
                     continue

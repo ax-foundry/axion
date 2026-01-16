@@ -42,13 +42,13 @@ class Question(LLMHandler[QuestionInput, QuestionOutput]):
         (
             QuestionInput(
                 statements=[
-                    'The Customer 360 Data Model standardizes data across Salesforce applications.',
-                    'Data must be transformed and prepped before mapping it in the Data Cloud.',
-                    'Once data is mapped to the Customer 360 Data Model, it can be manipulated with SQL.',
-                    'The Customer 360 Data Model makes data more usable across the Salesforce ecosystem.',
-                    'A data lake object can be mapped to a Customer 360 Data Model object.',
-                    'The Unified Individual Data Model Object contains demographic data.',
-                    'The Unified Individual Data Model Object enables personalized marketing campaigns.',
+                    'The infield fly rule applies when there are fewer than two outs with runners on first and second or bases loaded.',
+                    'The rule was introduced in 1895 to prevent infielders from deliberately dropping easy catches.',
+                    'When the infield fly rule is invoked, the batter is automatically out.',
+                    'Runners may advance at their own risk when the ball is caught or dropped.',
+                    'The umpire must declare "infield fly" while the ball is in the air.',
+                    'The infield fly rule only applies to fair fly balls that can be caught with ordinary effort.',
+                    'The rule protects baserunners from being subjected to an unfair double play.',
                 ],
                 num_questions=3,
                 question_types=['factual', 'conceptual', 'application'],
@@ -57,22 +57,22 @@ class Question(LLMHandler[QuestionInput, QuestionOutput]):
             QuestionOutput(
                 questions=[
                     {
-                        'text': 'What is the purpose of transforming and prepping data before mapping it in the Data Cloud?',
+                        'text': 'Why was the infield fly rule originally introduced to baseball?',
                         'type': 'conceptual',
                         'difficulty': 'medium',
                         'statement_indices': [1],
                     },
                     {
-                        'text': 'How does the Customer 360 Data Model enhance data usability across Salesforce?',
+                        'text': 'Under what game conditions does the infield fly rule apply?',
                         'type': 'application',
                         'difficulty': 'medium',
-                        'statement_indices': [0, 3],
+                        'statement_indices': [0, 5],
                     },
                     {
-                        'text': 'What role does the Unified Individual Data Model Object play in marketing strategies?',
+                        'text': 'How does the infield fly rule protect baserunners?',
                         'type': 'factual',
                         'difficulty': 'medium',
-                        'statement_indices': [5, 6],
+                        'statement_indices': [6, 3],
                     },
                 ]
             ),

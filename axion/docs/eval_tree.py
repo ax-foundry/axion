@@ -30,10 +30,10 @@ config = {
 }
 
 data_item = DatasetItem(
-    query = "What is Data Cloud?",
-    actual_output = "Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-    expected_output = "Data Cloud is a hyperscale data platform built directly into Salesforce.",
-    retrieved_content = ["built on the Salesforce Platform", "Unlocks Enterprise Value"],
+    query = "What is the infield fly rule in baseball?",
+    actual_output = "The infield fly rule prevents the defense from intentionally dropping a fly ball to turn a double play when runners are on base.",
+    expected_output = "The infield fly rule protects baserunners by declaring the batter out on certain easy pop-ups.",
+    retrieved_content = ["The infield fly rule prevents unfair advantage by the defense.", "Applies with runners on first and second base."],
 )
 
 model = EvalTree(config)
@@ -84,9 +84,9 @@ weights: # Weights for each Component Node
 # from axion.eval_tree import EvalTree
 
 # data_item = DatasetItem(
-#    query = "What is Data Cloud?",
-#    actual_output = "Data Cloud (https://www.salesforce.com/data/) is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-#    retrieved_content = ["built on the Salesforce Platform", "Unlocks Enterprise Value"],
+#    query = "What is the infield fly rule in baseball?",
+#    actual_output = "The infield fly rule (https://www.mlb.com/glossary/rules/infield-fly) prevents the defense from intentionally dropping a fly ball to turn a double play.",
+#    retrieved_content = ["The infield fly rule prevents unfair advantage.", "Applies with runners on first and second."],
 # )
 
 # model = EvalTree("my_tree.yaml")

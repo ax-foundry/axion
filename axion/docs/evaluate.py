@@ -8,9 +8,9 @@ from axion.metrics import AnswerRelevancy
 from axion.dataset import DatasetItem
 
 data_item = DatasetItem(
-    query = "What is Data Cloud?",
-    actual_output = "Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-    expected_output = "Data Cloud is a hyperscale data platform built directly into Salesforce.",
+    query = "What is the infield fly rule in baseball?",
+    actual_output = "The infield fly rule prevents the defense from intentionally dropping a fly ball to turn a double play.",
+    expected_output = "The infield fly rule protects baserunners by declaring the batter out on certain easy pop-ups.",
 )
 
 # Simple evaluation without task function (expects "actual_output" to be provided in Dataset)
@@ -68,9 +68,9 @@ config = {
 }
 
 data_item = DatasetItem(
-    query = "What is Data Cloud?",
-    actual_output = "Data Cloud is a hyperscale data platform to unlock value built on the Salesforce Platform.",
-    expected_output = "Data Cloud is a hyperscale data platform built directly into Salesforce.",
+    query = "What is the infield fly rule in baseball?",
+    actual_output = "The infield fly rule prevents the defense from intentionally dropping a fly ball to turn a double play.",
+    expected_output = "The infield fly rule protects baserunners by declaring the batter out on certain easy pop-ups.",
 )
 
 results = evaluation_runner(
@@ -95,14 +95,14 @@ from axion.dataset import DatasetItem
 
 
 data_item = DatasetItem(
-    query = "What is Data Cloud?",
-    expected_output = "Data Cloud is a platform to build AI agents and unlock your data",
+    query = "What is the infield fly rule in baseball?",
+    expected_output = "The infield fly rule protects baserunners by declaring the batter out on certain easy pop-ups.",
 )
 
 # Task Option 1 - Task returns python dictionary
 def dictionary_task_output(item):
     return {
-        'response': "Data Cloud is a platform to build AI agents and unlock your data",
+        'response': "The infield fly rule prevents the defense from intentionally dropping a fly ball to turn a double play.",
         'latency': 1.3
     }
 
@@ -115,7 +115,7 @@ class Output(BaseModel):
 
 def pydantic_task_output(item):
     return Output(
-        response="Data Cloud is a platform to build AI agents and unlock your data",
+        response="The infield fly rule prevents the defense from intentionally dropping a fly ball to turn a double play.",
         latency=1.3
 )
 
@@ -164,13 +164,13 @@ from deepeval.metrics import AnswerRelevancyMetric
 dataframe = pd.DataFrame([
     {
         'id': '01',
-        'query': "What is Data Cloud?",
-        'expected_output': "Data Cloud is a hyperscale data platform built directly into Salesforce.",
+        'query': "What is the infield fly rule in baseball?",
+        'expected_output': "The infield fly rule protects baserunners by declaring the batter out on certain easy pop-ups.",
     },
     {
         'id': '02',
-        'query': "What is Agentforce?",
-        'expected_output': "Agentforce is a Salesforce platform that enables the creation and deployment of autonomous AI agents",
+        'query': "What is a balk in baseball?",
+        'expected_output': "A balk is an illegal motion by the pitcher that deceives baserunners, resulting in all runners advancing one base.",
     }
 ])
 
