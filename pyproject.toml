@@ -28,7 +28,7 @@ dependencies = [
 "nest-asyncio",
 "numpy",
 "litellm>=1.52.0",
-"openai>=1.0.0",  # Required by litellm, version flexible
+"openai>=1.0.0",
 "pandas",
 "protobuf",
 "psutil",

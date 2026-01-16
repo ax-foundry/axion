@@ -171,6 +171,7 @@ def test_clear_logging_config_allows_reconfiguration():
     Tests that clear_logging_config() allows re-configuration.
     """
     # Initial default configuration
+    configure_logging(level=DEFAULT_LOG_LEVEL)
     _ = get_logger('reconfig_test')
     assert logging.getLogger().level == logging.getLevelName(DEFAULT_LOG_LEVEL)
 
@@ -231,6 +232,7 @@ def test_log_exception_logs_error(capsys):
     """
     Tests that log_exception() correctly logs an exception with a traceback.
     """
+    configure_logging(level='INFO', use_rich=False)
     logger = get_logger('exc_logger')
 
     try:

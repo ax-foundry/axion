@@ -45,9 +45,12 @@ def validate_required_metric_fields(
     missing_fields = []
     available_fields = []
 
+    # Skip pydantic internal attributes that trigger deprecation warnings when accessed
+    _pydantic_skip = {'model_fields', 'model_computed_fields', 'model_config', 'model_extra'}
+
     # Check what fields are available and which are missing
     for field_name in dir(item):
-        if not field_name.startswith('_'):  # Skip private attributes
+        if not field_name.startswith('_') and field_name not in _pydantic_skip:
             value = getattr(item, field_name, None)
             if value is not None:
                 available_fields.append(field_name)

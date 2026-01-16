@@ -124,10 +124,10 @@ class AIOutputParser:
             model_name=self.output_model.__name__,
         ) as span:
             try:
-                validated_output = self.output_model.parse_raw(json_str)
+                validated_output = self.output_model.model_validate_json(json_str)
                 span.set_attribute('validation_success', True)
                 span.set_attribute(
-                    'validated_fields', len(validated_output.model_fields)
+                    'validated_fields', len(self.output_model.model_fields)
                 )
                 return validated_output
 

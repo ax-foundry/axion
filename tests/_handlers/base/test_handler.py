@@ -38,6 +38,11 @@ class MockTraceHandler(BaseTraceHandler):
         self.enable_logfire = kwargs.get('enable_logfire', True)
         self._current_span = None
 
+    @classmethod
+    def create(cls, metadata_type: str = 'default', tool_metadata=None, **kwargs):
+        """Factory method to create tracer instances."""
+        return cls(metadata_type=metadata_type, **kwargs)
+
     def span(self, operation_name: str, **attributes):
         return MagicMock()
 
