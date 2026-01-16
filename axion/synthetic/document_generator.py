@@ -1,17 +1,18 @@
 import asyncio
 from typing import Any, Dict, List, Optional, Union
 
+from llama_index.core import Document
+
 from axion._core.asyncio import SemaphoreExecutor
-from axion._core.logging import configure_logging, get_logger
+from axion._core.logging import get_logger
 from axion._core.metadata.schema import ToolMetadata
 from axion._core.schema import EmbeddingRunnable, LLMRunnable
 from axion._core.tracing import init_tracer, trace
 from axion._core.tracing.handlers import BaseTraceHandler
-from axion.synthetic.schema import GenerationParams
-from axion.synthetic.workflow import QAWorkflowGraph
 from axion._handlers.knowledge.ingestion import Ingestion
 from axion._handlers.knowledge.loaders import DirectoryLoader
-from llama_index.core import Document
+from axion.synthetic.schema import GenerationParams
+from axion.synthetic.workflow import QAWorkflowGraph
 
 logger = get_logger(__name__)
 
@@ -79,7 +80,7 @@ class DocumentQAGenerator:
 
             if final_state.get('processing_errors'):
                 logger.error(
-                    f"Errors occurred while processing {file_name}: {final_state['processing_errors']}"
+                    f'Errors occurred while processing {file_name}: {final_state["processing_errors"]}'
                 )
                 return None
 
@@ -173,8 +174,8 @@ class DocumentQAGenerator:
             List: A list of DatasetItem objects.
         """
 
-        from axion.dataset import DatasetItem
         from axion._core.types import FieldNames
+        from axion.dataset import DatasetItem
 
         items: List[DatasetItem] = []
 

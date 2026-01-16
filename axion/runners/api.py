@@ -5,15 +5,6 @@ from pathlib import PosixPath
 from typing import Any, Callable, ClassVar, Dict, List, Optional, Type, Union
 
 import pandas as pd
-from axion._core.config.config import Config
-from axion._core.asyncio import SemaphoreExecutor
-from axion._core.logging import get_logger
-from axion._core.metadata.schema import ToolMetadata
-from axion._core.schema import RichBaseModel
-from axion._core.tracing import init_tracer, trace
-from axion._core.tracing.handlers import BaseTraceHandler
-from axion.dataset import Dataset, DatasetItem
-from axion.runners.mixin import RunnerMixin
 from pydantic import Field
 from tenacity import (
     Retrying,
@@ -21,6 +12,16 @@ from tenacity import (
     wait_exponential,
     wait_fixed,
 )
+
+from axion._core.asyncio import SemaphoreExecutor
+from axion._core.config.config import Config
+from axion._core.logging import get_logger
+from axion._core.metadata.schema import ToolMetadata
+from axion._core.schema import RichBaseModel
+from axion._core.tracing import init_tracer, trace
+from axion._core.tracing.handlers import BaseTraceHandler
+from axion.dataset import Dataset, DatasetItem
+from axion.runners.mixin import RunnerMixin
 
 logger = get_logger(__name__)
 
@@ -104,7 +105,7 @@ def api_retry(operation_name: str = None):
                         raise
 
             logger.error(
-                f"Unexpected retry state for {operation_name or 'API operation'}"
+                f'Unexpected retry state for {operation_name or "API operation"}'
             )
             if retry_config.return_empty_on_failure:
                 return APIResponseData(

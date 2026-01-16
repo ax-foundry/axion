@@ -1,6 +1,8 @@
 from typing import List, Literal, Optional
 
 import numpy as np
+from pydantic import Field
+
 from axion._core.logging import get_logger
 from axion._core.schema import (
     AIMessage,
@@ -25,7 +27,6 @@ from axion.metrics.internals.conversation_utils import (
     get_or_compute_turn_analysis,
 )
 from axion.metrics.schema import SignalDescriptor
-from pydantic import Field
 
 logger = get_logger(__name__)
 
@@ -643,7 +644,7 @@ class ConversationEfficiency(BaseMetric):
         lines = []
         for msg in item.conversation.messages:
             if isinstance(msg, HumanMessage):
-                lines.append(f"User: {msg.content or ''}")
+                lines.append(f'User: {msg.content or ""}')
             elif isinstance(msg, AIMessage):
                 # Check for tool calls
                 if hasattr(msg, 'tool_calls') and msg.tool_calls:
@@ -655,14 +656,14 @@ class ConversationEfficiency(BaseMetric):
                             else ''
                         )
                         tool_call_strs.append(f'{tc.name}({args_str})')
-                    lines.append(f"Agent: [Tool Calls: {', '.join(tool_call_strs)}]")
+                    lines.append(f'Agent: [Tool Calls: {", ".join(tool_call_strs)}]')
                 # Regular content
                 if msg.content:
                     lines.append(f'Agent: {msg.content}')
             elif isinstance(msg, ToolMessage):
                 # Tool messages are system responses, mark them clearly
                 lines.append(
-                    f"[Tool Response: {msg.content[:100]}{'...' if len(msg.content or '') > 100 else ''}]"
+                    f'[Tool Response: {msg.content[:100]}{"..." if len(msg.content or "") > 100 else ""}]'
                 )
 
         return '\n'.join(lines)

@@ -3,6 +3,6 @@ import warnings
 
 warnings.filterwarnings(
     'ignore',
-    message=".*validate_default.*",
+    message='.*validate_default.*',
     module='pydantic.*',
 )

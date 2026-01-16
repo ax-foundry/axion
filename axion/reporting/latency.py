@@ -318,7 +318,7 @@ class LatencyAnalyzer:
             # Add floating annotation at calculated position
             y_pos = ax.get_ylim()[1] * positions[stat_name]
             ax.annotate(
-                f"{style['label']}\n{value:.2f}s",
+                f'{style["label"]}\n{value:.2f}s',
                 xy=(value, y_pos),
                 xytext=(0, 0),
                 textcoords='offset points',
@@ -340,30 +340,30 @@ class LatencyAnalyzer:
         if show_stats_panel:
             # Create a stunning stats panel with multiple sections
             panel_text = (
-                f"DISTRIBUTION METRICS\n"
-                f"{'─' * 28}\n"
-                f"Samples      {stats['count']:>12,}\n"
-                f"\n"
-                f"CENTRAL TENDENCY\n"
-                f"{'─' * 28}\n"
-                f"Mean         {stats['mean']:>12.2f}s\n"
-                f"Median       {stats['median']:>12.2f}s\n"
-                f"Std Dev      {stats['std']:>12.2f}s\n"
-                f"\n"
-                f"PERCENTILES\n"
-                f"{'─' * 28}\n"
-                f"P25          {stats['p25']:>12.2f}s\n"
-                f"P50          {stats['median']:>12.2f}s\n"
-                f"P75          {stats['p75']:>12.2f}s\n"
-                f"P90          {stats['p90']:>12.2f}s\n"
-                f"P95          {stats['p95']:>12.2f}s\n"
-                f"P99          {stats['p99']:>12.2f}s\n"
-                f"\n"
-                f"RANGE\n"
-                f"{'─' * 28}\n"
-                f"Min          {stats['min']:>12.2f}s\n"
-                f"Max          {stats['max']:>12.2f}s\n"
-                f"Span         {stats['max'] - stats['min']:>12.2f}s"
+                f'DISTRIBUTION METRICS\n'
+                f'{"─" * 28}\n'
+                f'Samples      {stats["count"]:>12,}\n'
+                f'\n'
+                f'CENTRAL TENDENCY\n'
+                f'{"─" * 28}\n'
+                f'Mean         {stats["mean"]:>12.2f}s\n'
+                f'Median       {stats["median"]:>12.2f}s\n'
+                f'Std Dev      {stats["std"]:>12.2f}s\n'
+                f'\n'
+                f'PERCENTILES\n'
+                f'{"─" * 28}\n'
+                f'P25          {stats["p25"]:>12.2f}s\n'
+                f'P50          {stats["median"]:>12.2f}s\n'
+                f'P75          {stats["p75"]:>12.2f}s\n'
+                f'P90          {stats["p90"]:>12.2f}s\n'
+                f'P95          {stats["p95"]:>12.2f}s\n'
+                f'P99          {stats["p99"]:>12.2f}s\n'
+                f'\n'
+                f'RANGE\n'
+                f'{"─" * 28}\n'
+                f'Min          {stats["min"]:>12.2f}s\n'
+                f'Max          {stats["max"]:>12.2f}s\n'
+                f'Span         {stats["max"] - stats["min"]:>12.2f}s'
             )
 
             ax.text(

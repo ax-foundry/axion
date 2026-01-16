@@ -3,10 +3,7 @@ from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
-from axion.dataset import Dataset, DatasetItem
-from axion.metrics.base import BaseMetric, MetricEvaluationResult
-from axion.runners import MetricRunner
-from axion.schema import TestResult
+
 from axion._core.metrics_utils import (
     cohen_kappa_score,
     confusion_matrix_binary,
@@ -14,6 +11,10 @@ from axion._core.metrics_utils import (
     precision_score,
     recall_score,
 )
+from axion.dataset import Dataset, DatasetItem
+from axion.metrics.base import BaseMetric, MetricEvaluationResult
+from axion.runners import MetricRunner
+from axion.schema import TestResult
 
 
 class AlignMetric(BaseMetric):

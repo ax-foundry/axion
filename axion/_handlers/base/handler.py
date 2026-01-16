@@ -118,7 +118,7 @@ class BaseHandler(ABC, Generic[InputModel, OutputModel]):
             field for field in required_fields if not getattr(self, field, None)
         ]
         if missing_fields:
-            raise InvalidConfig(f"Missing required fields: {', '.join(missing_fields)}")
+            raise InvalidConfig(f'Missing required fields: {", ".join(missing_fields)}')
 
     def get_tool_meta(self) -> ToolMetadata:
         """Get tool metadata from object."""

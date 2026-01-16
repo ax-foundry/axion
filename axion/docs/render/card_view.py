@@ -62,7 +62,7 @@ class ModalButtonCard:
         Returns:
             Complete HTML string with card, buttons, styles, and JavaScript
         """
-        card_id = f"card_{key.replace('-', '_').replace('.', '_')}"
+        card_id = f'card_{key.replace("-", "_").replace(".", "_")}'
         title = (
             title_override
             or self.card_title
@@ -387,7 +387,7 @@ class MultiUsageModalButtonCard(ModalButtonCard):
         Returns:
             Complete HTML string with card, buttons, styles, and JavaScript
         """
-        card_id = f"card_{key.replace('-', '_').replace('.', '_')}"
+        card_id = f'card_{key.replace("-", "_").replace(".", "_")}'
         title = (
             title_override
             or self.card_title
@@ -487,7 +487,7 @@ def create_multi_usage_modal_card(
     )
 
     # Build the complete render with both documentation and usage templates
-    card_id = f"card_{key.replace('-', '_').replace('.', '_')}"
+    card_id = f'card_{key.replace("-", "_").replace(".", "_")}'
     display_title = title or key.replace('_', ' ').replace('-', ' ').title()
 
     buttons_html = []

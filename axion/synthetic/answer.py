@@ -1,11 +1,12 @@
 import asyncio
 from typing import Dict, List, Optional
 
+from pydantic import Field
+
 from axion._core.logging import get_logger
 from axion._core.schema import LLMRunnable, RichBaseModel
 from axion._core.tracing.handlers import BaseTraceHandler
 from axion._handlers.llm.handler import LLMHandler
-from pydantic import Field
 
 logger = get_logger(__name__)
 
@@ -98,7 +99,7 @@ class Answer(LLMHandler[AnswerInput, AnswerOutput]):
             'long': 'Create a comprehensive answer with thorough explanations, typically 4-8 sentences.',
         }
 
-        instruction += f"\n\nAnswer Length: {length_guidance.get(input_data.answer_length, length_guidance['medium'])}"
+        instruction += f'\n\nAnswer Length: {length_guidance.get(input_data.answer_length, length_guidance["medium"])}'
 
         # Append custom guidelines if provided
         if input_data.custom_guidelines:

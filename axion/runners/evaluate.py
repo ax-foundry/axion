@@ -517,37 +517,43 @@ class EvaluationRunner(RunnerMixin):
                 if isinstance(metric_dict, dict):
                     metric_names = list(metric_dict.keys())
 
-            span.set_input({
-                'evaluation_name': self.config.evaluation_name,
-                'dataset_name': self.config.dataset_name,
-                'input_count': input_count,
-                'metrics': metric_names,
-                'max_concurrent': self.config.max_concurrent,
-            })
+            span.set_input(
+                {
+                    'evaluation_name': self.config.evaluation_name,
+                    'dataset_name': self.config.dataset_name,
+                    'input_count': input_count,
+                    'metrics': metric_names,
+                    'max_concurrent': self.config.max_concurrent,
+                }
+            )
 
             try:
                 result = await self._execute_impl()
 
                 # Capture output - evaluation results summary
-                span.set_output({
-                    'run_id': result.run_id,
-                    'total_items': len(result.results) if result.results else 0,
-                    'metrics_evaluated': (
-                        [s.name for s in result.results[0].score_results]
-                        if result.results and result.results[0].score_results
-                        else []
-                    ),
-                    'status': 'completed',
-                })
+                span.set_output(
+                    {
+                        'run_id': result.run_id,
+                        'total_items': len(result.results) if result.results else 0,
+                        'metrics_evaluated': (
+                            [s.name for s in result.results[0].score_results]
+                            if result.results and result.results[0].score_results
+                            else []
+                        ),
+                        'status': 'completed',
+                    }
+                )
 
                 return result
 
             except Exception as e:
-                span.set_output({
-                    'status': 'failed',
-                    'error_type': type(e).__name__,
-                    'error_message': str(e)[:500],
-                })
+                span.set_output(
+                    {
+                        'status': 'failed',
+                        'error_type': type(e).__name__,
+                        'error_message': str(e)[:500],
+                    }
+                )
                 raise
 
     async def _execute_impl(self) -> EvaluationResult:
@@ -667,13 +673,15 @@ async def _run_evaluation_async(
             if hasattr(config.evaluation_inputs, '__len__')
             else 0
         )
-        span.set_input({
-            'evaluation_name': config.evaluation_name,
-            'input_count': input_count,
-            'metrics': [type(m).__name__ for m in config.scoring_metrics]
-            if config.scoring_metrics
-            else [],
-        })
+        span.set_input(
+            {
+                'evaluation_name': config.evaluation_name,
+                'input_count': input_count,
+                'metrics': [type(m).__name__ for m in config.scoring_metrics]
+                if config.scoring_metrics
+                else [],
+            }
+        )
 
         span.set_attribute('evaluation_name', config.evaluation_name)
         span.set_attribute('dataset_name', getattr(config, 'dataset_name', 'unknown'))
@@ -720,15 +728,19 @@ async def _run_evaluation_async(
                     span.set_attribute(attr, getattr(result, attr))
 
             # Capture output - evaluation results summary
-            span.set_output({
-                'total_items': len(result.results) if result and result.results else 0,
-                'metrics_evaluated': (
-                    [s.name for s in result.results[0].score_results]
-                    if result and result.results and result.results[0].score_results
-                    else []
-                ),
-                'status': 'completed',
-            })
+            span.set_output(
+                {
+                    'total_items': len(result.results)
+                    if result and result.results
+                    else 0,
+                    'metrics_evaluated': (
+                        [s.name for s in result.results[0].score_results]
+                        if result and result.results and result.results[0].score_results
+                        else []
+                    ),
+                    'status': 'completed',
+                }
+            )
 
             return result
 
@@ -761,7 +773,7 @@ async def _run_evaluation_no_wrapper(
         return result
 
     except Exception as e:
-        logger.error(f"Error running evaluation_runner: {str(e)}")
+        logger.error(f'Error running evaluation_runner: {str(e)}')
         timer.stop()
         return None
 

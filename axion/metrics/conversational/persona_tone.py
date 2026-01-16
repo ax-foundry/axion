@@ -2,6 +2,8 @@ import statistics
 from typing import Any, Dict, List, Literal, Optional, Union
 
 import numpy as np
+from pydantic import Field
+
 from axion._core.logging import get_logger
 from axion._core.schema import HumanMessage, RichBaseModel
 from axion._core.tracing import trace
@@ -18,7 +20,6 @@ from axion.metrics.internals.conversation_utils import (
     get_or_compute_moments,
 )
 from axion.metrics.schema import SignalDescriptor
-from pydantic import Field
 
 logger = get_logger(__name__)
 
@@ -579,7 +580,7 @@ class PersonaToneAdherence(BaseMetric):
             # Build context (all previous turns)
             context = '\n'.join(
                 [
-                    f"{'User' if isinstance(m, HumanMessage) else 'Agent'}: {m.content or ''}"
+                    f'{"User" if isinstance(m, HumanMessage) else "Agent"}: {m.content or ""}'
                     for m in item.conversation.messages[:i]
                 ]
             )
@@ -911,7 +912,7 @@ class PersonaToneAdherence(BaseMetric):
 
         # === PERSONA BREAK DETAILS ===
         for i, pb in enumerate(result.persona_breaks[:5]):  # Show first 5 breaks
-            group = f"persona_break_{i + 1} (turn_{pb['turn_index']})"
+            group = f'persona_break_{i + 1} (turn_{pb["turn_index"]})'
 
             signals.extend(
                 [

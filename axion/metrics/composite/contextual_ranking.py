@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 import numpy as np
+
 from axion._core.schema import RichBaseModel
 from axion._core.tracing import trace
 from axion.dataset import DatasetItem
@@ -159,7 +160,7 @@ class ContextualRanking(BaseMetric):
         ]
 
         for i, chunk in enumerate(result.judged_chunks):
-            group_name = f'chunk_{i+1}: "{chunk.chunk_text[:80]}..."'
+            group_name = f'chunk_{i + 1}: "{chunk.chunk_text[:80]}..."'
 
             signals.extend(
                 [

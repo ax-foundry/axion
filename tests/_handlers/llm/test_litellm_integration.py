@@ -9,7 +9,6 @@ These tests verify that:
 """
 
 import json
-from typing import Any, Dict
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -152,7 +151,9 @@ class TestLiteLLMCostEstimation:
             mock_response = create_mock_response(response_cost=0.0)
             mock_acompletion.return_value = mock_response
 
-            with patch('litellm.completion_cost', return_value=expected_cost) as mock_cost:
+            with patch(
+                'litellm.completion_cost', return_value=expected_cost
+            ) as mock_cost:
                 await handler.execute({'query': 'Test query'})
 
                 # Verify completion_cost was called as fallback
@@ -180,7 +181,9 @@ class TestLiteLLMCostEstimation:
             )
 
             # Make completion_cost raise an exception
-            with patch('litellm.completion_cost', side_effect=Exception('Unknown model')):
+            with patch(
+                'litellm.completion_cost', side_effect=Exception('Unknown model')
+            ):
                 with patch(
                     'axion._handlers.llm.handler.LLMCostEstimator.estimate',
                     return_value=0.0075,
@@ -224,9 +227,9 @@ class TestLiteLLMExceptionMapping:
             with pytest.raises(GenerationError) as exc_info:
                 await handler.execute({'query': 'Test query'})
 
-            assert 'Rate limit' in str(exc_info.value) or 'retry attempts failed' in str(
+            assert 'Rate limit' in str(
                 exc_info.value
-            )
+            ) or 'retry attempts failed' in str(exc_info.value)
 
     @pytest.mark.asyncio
     async def test_authentication_error_mapping(self):
@@ -254,9 +257,9 @@ class TestLiteLLMExceptionMapping:
             with pytest.raises(GenerationError) as exc_info:
                 await handler.execute({'query': 'Test query'})
 
-            assert 'Authentication' in str(exc_info.value) or 'retry attempts failed' in str(
+            assert 'Authentication' in str(
                 exc_info.value
-            )
+            ) or 'retry attempts failed' in str(exc_info.value)
 
 
 class TestLiteLLMStructuredOutput:

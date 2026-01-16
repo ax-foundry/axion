@@ -1,7 +1,8 @@
 from typing import Any, Dict, List, Literal, Optional
 
-from axion._core.schema import RichBaseModel
 from pydantic import Field
+
+from axion._core.schema import RichBaseModel
 
 
 class GenerationParams(RichBaseModel):

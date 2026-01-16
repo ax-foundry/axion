@@ -4,6 +4,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
+from pydantic import Field
+
 from axion._core.schema import (
     AIMessage,
     BaseMessage,
@@ -18,7 +20,6 @@ from axion._core.schema import (
     ToolMessage,
 )
 from axion.dataset import DatasetItem
-from pydantic import Field
 
 __all__ = [
     # Core base classes
@@ -406,6 +407,7 @@ class EvaluationResult:
             pd.DataFrame or Tuple[pd.DataFrame, Figure, Axes]
         """
         import matplotlib.pyplot as plt
+
         from axion.reporting.latency import LatencyAnalyzer
 
         df = self.to_dataframe()

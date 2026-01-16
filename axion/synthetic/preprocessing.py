@@ -1,17 +1,18 @@
 from typing import List, Literal, Optional, Union
 
+from llama_index.core import Document
+from llama_index.core.node_parser import (
+    NodeParser,
+    SemanticSplitterNodeParser,
+    SentenceSplitter,
+)
+
 from axion._core.logging import get_logger
 from axion._core.schema import EmbeddingRunnable
 from axion._core.tracing import init_tracer, trace
 from axion._core.tracing.handlers import BaseTraceHandler
 from axion._handlers.knowledge.processing.transformations import (
     DocumentTextPreprocessor,
-)
-from llama_index.core import Document
-from llama_index.core.node_parser import (
-    NodeParser,
-    SemanticSplitterNodeParser,
-    SentenceSplitter,
 )
 
 logger = get_logger(__name__)

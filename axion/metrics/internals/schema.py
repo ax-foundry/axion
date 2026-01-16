@@ -1,7 +1,8 @@
 from typing import Dict, List, Literal, Optional
 
-from axion._core.schema import RichBaseModel, RichEnum
 from pydantic import Field
+
+from axion._core.schema import RichBaseModel, RichEnum
 
 
 class RAGEvaluationError(Exception):

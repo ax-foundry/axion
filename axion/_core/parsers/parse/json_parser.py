@@ -112,7 +112,7 @@ class ObjectComparer:
     @staticmethod
     def is_same_object(obj1: Any, obj2: Any) -> bool:
         """Compare two objects for structural similarity."""
-        if type(obj1) != type(obj2):
+        if type(obj1) is not type(obj2):
             return False
 
         if isinstance(obj1, dict):

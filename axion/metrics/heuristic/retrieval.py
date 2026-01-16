@@ -1,6 +1,7 @@
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
+
 from axion._core.logging import get_logger
 from axion._core.schema import RichBaseModel
 from axion._core.tracing import trace

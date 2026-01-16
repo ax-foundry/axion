@@ -34,7 +34,9 @@ class LangfuseSpan:
         self._observation_context = None
         self._trace_context = None
         self._span_id = str(uuid7())
-        self._trace_id = tracer._trace_id if hasattr(tracer, '_trace_id') else str(uuid7())
+        self._trace_id = (
+            tracer._trace_id if hasattr(tracer, '_trace_id') else str(uuid7())
+        )
 
     @property
     def span_id(self) -> str:
@@ -77,11 +79,13 @@ class LangfuseSpan:
 
             # Use start_as_current_observation for ALL spans
             # This automatically handles nesting - children nest under the current observation
-            self._observation_context = self.tracer._client.start_as_current_observation(
-                as_type=as_type,
-                name=self.name,
-                metadata=metadata if metadata else None,
-                **langfuse_kwargs,
+            self._observation_context = (
+                self.tracer._client.start_as_current_observation(
+                    as_type=as_type,
+                    name=self.name,
+                    metadata=metadata if metadata else None,
+                    **langfuse_kwargs,
+                )
             )
             self._observation = self._observation_context.__enter__()
             logger.debug(f'Langfuse span created: {self.name} (type={as_type})')

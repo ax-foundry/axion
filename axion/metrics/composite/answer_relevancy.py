@@ -1,6 +1,8 @@
 from typing import List, Literal, Optional
 
 import numpy as np
+from pydantic import Field
+
 from axion._core.logging import get_logger
 from axion._core.schema import AIMessage, HumanMessage, RichBaseModel
 from axion._core.tracing import trace
@@ -15,7 +17,6 @@ from axion.metrics.internals.engine import RAGAnalyzer
 from axion.metrics.internals.judges import RelevancyExplainer
 from axion.metrics.internals.schema import EvaluationMode
 from axion.metrics.schema import SignalDescriptor
-from pydantic import Field
 
 logger = get_logger(__name__)
 
@@ -313,7 +314,7 @@ class AnswerRelevancy(BaseMetric):
 
         # Pass all queries for a holistic explanation.
         all_query_contexts = [
-            f"Turn {turn['turn_index']}: {turn['query']}" for turn in turns_to_eval
+            f'Turn {turn["turn_index"]}: {turn["query"]}' for turn in turns_to_eval
         ]
         holistic_query_context = (
             '\n---\nFull Conversation Query Context:\n' + '\n'.join(all_query_contexts)

@@ -2,6 +2,8 @@ import re
 from typing import Dict, List, Literal, Optional, Set
 
 import numpy as np
+from pydantic import Field, field_validator
+
 from axion._core.logging import get_logger
 from axion._core.schema import AIMessage, HumanMessage, RichBaseModel
 from axion._core.tracing import trace
@@ -12,7 +14,6 @@ from axion.metrics.base import (
     metric,
 )
 from axion.metrics.schema import SignalDescriptor
-from pydantic import Field, field_validator
 
 logger = get_logger(__name__)
 
@@ -819,7 +820,7 @@ class AnswerCriteria(BaseMetric):
                 )
                 if not decomp_result.key_aspects:
                     logger.warning(
-                        f"Could not decompose criteria for turn {turn['turn_index']}. Skipping turn."
+                        f'Could not decompose criteria for turn {turn["turn_index"]}. Skipping turn.'
                     )
                     all_turn_score_data.append(
                         self._compute_criteria_score(

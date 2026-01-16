@@ -517,7 +517,9 @@ class CostProviderMixin:
         usage = getattr(response, 'usage', None)
         if usage:
             self._accumulated_input_tokens += getattr(usage, 'prompt_tokens', 0) or 0
-            self._accumulated_output_tokens += getattr(usage, 'completion_tokens', 0) or 0
+            self._accumulated_output_tokens += (
+                getattr(usage, 'completion_tokens', 0) or 0
+            )
 
     def add_cost(
         self,

@@ -1,8 +1,9 @@
 from typing import Any, Dict, List, Optional
 
+from llama_index.core import Document, SimpleDirectoryReader
+
 from axion._core.logging import get_logger
 from axion._handlers.knowledge.loaders.base import BaseDocumentLoader
-from llama_index.core import Document, SimpleDirectoryReader
 
 logger = get_logger(__name__)
 

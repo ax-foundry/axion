@@ -4,12 +4,13 @@ from typing import Any, Dict
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from pydantic import BaseModel
+
 from axion._core.error import InvalidConfig
 from axion._core.metadata.schema import BaseExecutionMetadata, ToolMetadata
 from axion._core.schema import OutputModel
 from axion._core.tracing.handlers import BaseTraceHandler
 from axion._handlers.base.handler import BaseHandler
-from pydantic import BaseModel
 
 
 class MockInputModel(BaseModel):

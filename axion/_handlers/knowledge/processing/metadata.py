@@ -1,9 +1,10 @@
 from typing import Any, List
 
+from llama_index.core.schema import Node
+
 from axion._handlers.knowledge.processing.transformations import (
     BaseTransformComponent,
 )
-from llama_index.core.schema import Node
 
 
 class MetadataOptimizer(BaseTransformComponent):

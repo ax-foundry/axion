@@ -136,7 +136,7 @@ class RichLogger(logging.Logger):
             return
 
         if not data:
-            self.log(level, f"{title or 'Table'}: No data to display")
+            self.log(level, f'{title or "Table"}: No data to display')
             return
 
         # Capture the Rich table to a string instead of printing directly
@@ -270,7 +270,9 @@ def configure_logging(
     init_logger = logging.getLogger(__name__)
 
     # Check if any explicit parameters were provided
-    has_explicit_params = any(p is not None for p in [level, use_rich, format_string, file_path])
+    has_explicit_params = any(
+        p is not None for p in [level, use_rich, format_string, file_path]
+    )
 
     # Skip only if already configured AND no explicit parameters given
     if _logging_configured and not has_explicit_params:

@@ -1,6 +1,7 @@
 import pandas as pd
-from axion.runners.utils import models_to_dataframe
 from pydantic import BaseModel
+
+from axion.runners.utils import models_to_dataframe
 
 
 class DummyModel(BaseModel):

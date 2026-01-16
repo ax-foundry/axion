@@ -19,13 +19,12 @@ from axion._core.schema import (
     LLMRunnable,
     OutputModel,
 )
-from axion._core.tracing import trace
+from axion._handlers.llm.handler import LLMHandler
 from axion.dataset import DatasetItem
 from axion.error import MetricRegistryError
+from axion.llm_registry import LLMRegistry, MockLLM
 from axion.metrics.schema import MetricConfig, MetricEvaluationResult
 from axion.metrics.utils import validate_required_metric_fields
-from axion._handlers.llm.handler import LLMHandler
-from axion.llm_registry import LLMRegistry, MockLLM
 
 logger = get_logger(__name__)
 

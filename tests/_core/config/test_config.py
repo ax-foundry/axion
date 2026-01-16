@@ -4,6 +4,7 @@ from typing import Any, Dict, Generator
 
 import pytest
 import yaml
+
 from axion._core.config.config import Config, ConfigurationError
 
 

@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Set, Union
 
 import pandas as pd
 import s3fs
+
 from axion._core.logging import get_logger
 
 logger = get_logger(__name__)
@@ -249,13 +250,13 @@ class StorageManager:
             last_col = self.schema[data_type][-1]
             statements = df[last_col].tolist()
             logger.info(
-                f"Loaded {len(statements)} statements from {'S3: ' if self._is_s3_path(path) else ''}{path}"
+                f'Loaded {len(statements)} statements from {"S3: " if self._is_s3_path(path) else ""}{path}'
             )
             return statements
 
         records = df.to_dict(orient='records')
         parsed = self._parse_loaded_data(records)
         logger.info(
-            f"Loaded {len(parsed)} {data_type} records from {'S3: ' if self._is_s3_path(path) else ''}{path}"
+            f'Loaded {len(parsed)} {data_type} records from {"S3: " if self._is_s3_path(path) else ""}{path}'
         )
         return parsed

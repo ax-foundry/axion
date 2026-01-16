@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 import numpy as np
+
 from axion._core.schema import RichBaseModel
 from axion._core.tracing import trace
 from axion.dataset import DatasetItem
@@ -157,7 +158,7 @@ class ContextualPrecision(BaseMetric):
                         ].is_useful_for_expected_output,
                         description='The verdict on whether this chunk was useful for generating the answer.',
                         headline_display=True,
-                        score_mapping={True: 1.0, False: 0.0},
+                        score_mapping={'True': 1.0, 'False': 0.0},
                     ),
                     SignalDescriptor(
                         name='position',

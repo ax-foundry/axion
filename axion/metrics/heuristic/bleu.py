@@ -2,8 +2,8 @@ import math
 from collections import Counter
 from typing import List
 
-from axion.dataset import DatasetItem
 from axion._core.tracing import trace
+from axion.dataset import DatasetItem
 from axion.metrics.base import (
     BaseMetric,
     MetricEvaluationResult,

@@ -1,7 +1,8 @@
 from typing import Any
 
-from axion._core.error import InvalidConfig
 from pydantic import BaseModel
+
+from axion._core.error import InvalidConfig
 
 
 class Validation:
@@ -18,7 +19,7 @@ class Validation:
             field for field in required_fields if not getattr(obj, field, None)
         ]
         if missing_fields:
-            raise InvalidConfig(f"Missing required fields: {', '.join(missing_fields)}")
+            raise InvalidConfig(f'Missing required fields: {", ".join(missing_fields)}')
 
     @staticmethod
     def validate_llm_model(llm):

@@ -81,7 +81,9 @@ class BaseTracer(ABC):
         pass
 
     @abstractmethod
-    def complete(self, output_data: Optional[Dict[str, Any]] = None, **attributes) -> None:
+    def complete(
+        self, output_data: Optional[Dict[str, Any]] = None, **attributes
+    ) -> None:
         """Complete execution tracking."""
         pass
 

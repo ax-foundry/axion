@@ -164,7 +164,7 @@ class ToolCorrectness(BaseMetric):
         explanation_parts = []
         if matched_pairs:
             explanation_parts.append(
-                f"Correctly called: {[p['expected'].name for p in matched_pairs]}"
+                f'Correctly called: {[p["expected"].name for p in matched_pairs]}'
             )
 
         if missing_or_incorrect:
@@ -264,7 +264,7 @@ class ToolCorrectness(BaseMetric):
             return 0.0
 
         # Type mismatch is a total failure
-        if type(val1) != type(val2):
+        if type(val1) is not type(val2):
             return 0.0
 
         if isinstance(val1, str):

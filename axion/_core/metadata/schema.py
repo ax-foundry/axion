@@ -562,20 +562,27 @@ class KnowledgeExecutionMetadata(BaseExecutionMetadata):
 
         if self.retrieved_calls:
             retrieval_latencies = [call.latency for call in self.retrieved_calls]
-            stats.update({
-                'average_retrieval_latency': sum(retrieval_latencies) / len(retrieval_latencies),
-                'total_documents_retrieved': len(self.retrieved_calls),
-                'unique_files': len(set(call.file_name for call in self.retrieved_calls)),
-            })
+            stats.update(
+                {
+                    'average_retrieval_latency': sum(retrieval_latencies)
+                    / len(retrieval_latencies),
+                    'total_documents_retrieved': len(self.retrieved_calls),
+                    'unique_files': len(
+                        set(call.file_name for call in self.retrieved_calls)
+                    ),
+                }
+            )
 
-            scores = [call.score for call in self.retrieved_calls if call.score is not None]
+            scores = [
+                call.score for call in self.retrieved_calls if call.score is not None
+            ]
             if scores:
-                stats.update({
-                    'average_relevance_score': sum(scores) / len(scores),
-                    'max_relevance_score': max(scores),
-                    'min_relevance_score': min(scores),
-                })
+                stats.update(
+                    {
+                        'average_relevance_score': sum(scores) / len(scores),
+                        'max_relevance_score': max(scores),
+                        'min_relevance_score': min(scores),
+                    }
+                )
 
         return stats
-
-

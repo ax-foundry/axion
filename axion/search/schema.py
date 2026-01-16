@@ -1,7 +1,8 @@
 from typing import Any, List, Optional
 
-from axion._core.schema import RichBaseModel
 from pydantic import Field
+
+from axion._core.schema import RichBaseModel
 
 
 class SearchNode(RichBaseModel):

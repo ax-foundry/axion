@@ -13,9 +13,7 @@ configure_tracing('noop')
 
 @pytest.fixture
 def tavily_retriever():
-    with patch(
-        'axion._core.environment.resolve_api_key', return_value='mock-api-key'
-    ):
+    with patch('axion._core.environment.resolve_api_key', return_value='mock-api-key'):
         return TavilyRetriever(api_key='mock-api-key')
 
 

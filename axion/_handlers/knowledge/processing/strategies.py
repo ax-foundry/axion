@@ -1,17 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from axion._core.logging import get_logger
-from axion._handlers.knowledge.processing.transformations import (
-    CodeBlockExtractor,
-    ContentFilter,
-    DocumentTextPreprocessor,
-    DuplicateRemover,
-    HTMLCleaner,
-    MetadataEnricher,
-    WhitespaceNormalizer,
-)
-from axion._handlers.validation import Validation
 from llama_index.core.extractors import (
     KeywordExtractor,
     QuestionsAnsweredExtractor,
@@ -25,6 +14,18 @@ from llama_index.core.node_parser import (
     SentenceSplitter,
 )
 from llama_index.core.schema import MetadataMode, TransformComponent
+
+from axion._core.logging import get_logger
+from axion._handlers.knowledge.processing.transformations import (
+    CodeBlockExtractor,
+    ContentFilter,
+    DocumentTextPreprocessor,
+    DuplicateRemover,
+    HTMLCleaner,
+    MetadataEnricher,
+    WhitespaceNormalizer,
+)
+from axion._handlers.validation import Validation
 
 logger = get_logger(__name__)
 

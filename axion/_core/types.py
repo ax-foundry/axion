@@ -1,10 +1,10 @@
 """
 Shared types, enums, and constants used across the axion package.
 """
+
 from typing import Dict, List, Set
 
 from axion._core.schema import RichEnum
-
 
 # =============================================================================
 # Enums

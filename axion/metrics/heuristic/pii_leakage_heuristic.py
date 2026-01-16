@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import Dict, List
 
 import numpy as np
+
 from axion._core.logging import get_logger
 from axion._core.schema import RichBaseModel
 from axion._core.tracing import trace
@@ -430,7 +431,7 @@ class PIILeakageHeuristic(BaseMetric):
                 reason = f'No PII detected above confidence threshold {self.confidence_threshold:.2f}.'
             else:
                 violation_types = list(set(d.type for d in significant_detections))
-                reason = f"Detected {len(significant_detections)} potential PII instances of types: {', '.join(violation_types)}."
+                reason = f'Detected {len(significant_detections)} potential PII instances of types: {", ".join(violation_types)}.'
 
             # Create structured result for signals
             result_data = PIIHeuristicResult(

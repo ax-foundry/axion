@@ -1,8 +1,9 @@
 from typing import Any, List, Optional
 
 import pandas as pd
-from axion.dataset import Dataset
 from pydantic import BaseModel
+
+from axion.dataset import Dataset
 
 
 def input_to_dataset(evaluation_inputs: Any, name: Optional[str] = None) -> Dataset:

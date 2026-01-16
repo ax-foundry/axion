@@ -6,9 +6,7 @@ if TYPE_CHECKING:
 
 # Unified context variable for any tracer type
 # This is main context for context aware tracing
-_tracer_context: ContextVar[Optional['BaseTracer']] = ContextVar(
-    'tracer', default=None
-)
+_tracer_context: ContextVar[Optional['BaseTracer']] = ContextVar('tracer', default=None)
 
 
 def get_current_tracer() -> 'BaseTracer':

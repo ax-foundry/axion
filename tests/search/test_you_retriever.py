@@ -16,9 +16,7 @@ configure_tracing('noop')
 @pytest.fixture
 def you_retriever():
     """Create a YouRetriever instance with default settings."""
-    with patch(
-        'axion._core.environment.resolve_api_key', return_value='mock-api-key'
-    ):
+    with patch('axion._core.environment.resolve_api_key', return_value='mock-api-key'):
         retriever = YouRetriever(api_key='mock-api-key')
         return retriever
 
@@ -26,9 +24,7 @@ def you_retriever():
 @pytest.fixture
 def you_news_retriever():
     """Create a YouRetriever instance configured for news endpoint."""
-    with patch(
-        'axion._core.environment.resolve_api_key', return_value='mock-api-key'
-    ):
+    with patch('axion._core.environment.resolve_api_key', return_value='mock-api-key'):
         retriever = YouRetriever(
             api_key='mock-api-key',
             endpoint='news',
