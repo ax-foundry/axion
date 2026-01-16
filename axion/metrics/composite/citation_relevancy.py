@@ -73,35 +73,35 @@ class CitationRelevanceJudge(
     examples = [
         (
             CitationRelevanceJudgeInput(
-                original_query='What are the new security features of Hyperforce in Q4?',
+                original_query='What are the new features in Python 3.12?',
                 citations=[
-                    '[Preferred Alternatives to IP Allowlisting on Hyperforce](https://help.salesforce.com/s/articleView?id=000394078&type=1)',
-                    'https://www.salesforce.com/products/hyperforce/',
+                    "[What's New in Python 3.12](https://docs.python.org/3/whatsnew/3.12.html)",
+                    'https://www.python.org/',
                     'Smith et al., 2022',
                 ],
             ),
             CitationRelevanceJudgeOutput(
                 verdicts=[
                     CitationRelevanceVerdict(
-                        citation='[Preferred Alternatives to IP Allowlisting on Hyperforce](https://help.salesforce.com/s/articleView?id=000394078&type=1)',
+                        citation="[What's New in Python 3.12](https://docs.python.org/3/whatsnew/3.12.html)",
                         is_relevant=True,
-                        reason='The citation title directly discusses security practices (IP Allowlisting Alternatives) specifically on Hyperforce.',
+                        reason='The citation title directly discusses new features specifically in Python 3.12.',
                         turn_index=0,
-                        original_query='What are the new security features of Hyperforce in Q4?',
+                        original_query='What are the new features in Python 3.12?',
                     ),
                     CitationRelevanceVerdict(
-                        citation='https://www.salesforce.com/products/hyperforce/',
+                        citation='https://www.python.org/',
                         is_relevant=False,
-                        reason='This is a general product landing page (homepage) for Hyperforce, not a specific article about new Q4 security features.',
+                        reason='This is a general homepage for Python, not a specific article about Python 3.12 features.',
                         turn_index=0,
-                        original_query='What are the new security features of Hyperforce in Q4?',
+                        original_query='What are the new features in Python 3.12?',
                     ),
                     CitationRelevanceVerdict(
                         citation='Smith et al., 2022',
                         is_relevant=False,
-                        reason='The citation is an academic reference from 2022, which is unlikely to contain details about new Q4 Hyperforce features.',
+                        reason='The citation is an academic reference from 2022, which is unlikely to contain details about Python 3.12 features released later.',
                         turn_index=0,
-                        original_query='What are the new security features of Hyperforce in Q4?',
+                        original_query='What are the new features in Python 3.12?',
                     ),
                 ]
             ),

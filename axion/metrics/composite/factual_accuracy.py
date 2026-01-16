@@ -56,26 +56,26 @@ class StatementGenerator(BaseMetric[StatementGeneratorInput, StatementGeneratorO
     examples = [
         (
             StatementGeneratorInput(
-                question='What does Sales Cloud do?',
-                answer="I'm excited to help! Sales Cloud tracks leads. It also manages opportunities.",
+                question='What does the infield fly rule do?',
+                answer="I'm excited to help! The infield fly rule protects baserunners. It also prevents unfair double plays.",
             ),
             StatementGeneratorOutput(
                 statements=[
-                    'Sales Cloud tracks leads.',
-                    'Sales Cloud manages opportunities.',
+                    'The infield fly rule protects baserunners.',
+                    'The infield fly rule prevents unfair double plays.',
                 ]
             ),
         ),
         (
             StatementGeneratorInput(
-                question='What is Einstein Analytics?',
-                answer='Great question! Einstein Analytics provides AI-powered insights. It uses machine learning to analyze data. Einstein Analytics helps users make data-driven decisions.',
+                question='What is a balk in baseball?',
+                answer='Great question! A balk is an illegal pitching motion. It deceives baserunners. A balk results in all runners advancing one base.',
             ),
             StatementGeneratorOutput(
                 statements=[
-                    'Einstein Analytics provides AI-powered insights.',
-                    'Einstein Analytics uses machine learning to analyze data.',
-                    'Einstein Analytics helps users make data-driven decisions.',
+                    'A balk is an illegal pitching motion.',
+                    'A balk deceives baserunners.',
+                    'A balk results in all runners advancing one base.',
                 ]
             ),
         ),
