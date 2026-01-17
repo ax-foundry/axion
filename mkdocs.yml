@@ -20,6 +20,18 @@ nav:
       - Overview: metric-registry/composite/index.md
       - Faithfulness: metric-registry/composite/faithfulness.md
       - Answer Relevancy: metric-registry/composite/answer_relevancy.md
+      - Factual Accuracy: metric-registry/composite/factual_accuracy.md
+      - Answer Completeness: metric-registry/composite/answer_completeness.md
+      - Answer Criteria: metric-registry/composite/answer_criteria.md
+      - Tone & Style Consistency: metric-registry/composite/tone_style_consistency.md
+      - Citation Relevancy: metric-registry/composite/citation_relevancy.md
+      - PII Leakage: metric-registry/composite/pii_leakage.md
+      - Contextual Relevancy: metric-registry/composite/contextual_relevancy.md
+      - Contextual Recall: metric-registry/composite/contextual_recall.md
+      - Contextual Precision: metric-registry/composite/contextual_precision.md
+      - Contextual Ranking: metric-registry/composite/contextual_ranking.md
+      - Contextual Sufficiency: metric-registry/composite/contextual_sufficiency.md
+      - Contextual Utilization: metric-registry/composite/contextual_utilization.md
     - Heuristic:
       - Overview: metric-registry/heuristic/index.md
     - Conversational:
