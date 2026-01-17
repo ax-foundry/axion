@@ -116,9 +116,9 @@ class FactualityJudge(BaseMetric[FactualityJudgeInput, FactualityReport]):
     """
 
     instruction = """
-    You are a strict fact-checker. 
+    You are a strict fact-checker.
     Evaluate each statement provided in the 'statements' list against the 'ground_truth' text.
-    
+
     **Note on Ground Truth:**
     The ground truth may be unstructured text, structured JSON data, or a mix of both. You must parse it accordingly.
 

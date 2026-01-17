@@ -1,5 +1,5 @@
 import asyncio
-from typing import Type, Tuple
+from typing import Tuple, Type
 
 from pydantic import BaseModel, ValidationError
 
@@ -112,7 +112,7 @@ class AIOutputParser:
             validated_output = self.output_model.model_validate_json(json_str)
             return validated_output
 
-        except ValidationError as e:
+        except ValidationError:
             raise
 
     async def parse_output_string(
@@ -145,9 +145,7 @@ class AIOutputParser:
             except (ParsingError, ValidationError) as e:
                 last_error = e
 
-                logger.warning(
-                    f'Parse attempt {attempt} failed: {str(e)[:200]}'
-                )
+                logger.warning(f'Parse attempt {attempt} failed: {str(e)[:200]}')
 
                 if attempt == self.max_retries:
                     break  # Exit loop without fix attempt
@@ -161,9 +159,7 @@ class AIOutputParser:
                     await asyncio.sleep(self.retry_delay)
 
                 except Exception as fix_error:
-                    logger.error(
-                        f'Fix attempt {attempt} failed: {str(fix_error)}'
-                    )
+                    logger.error(f'Fix attempt {attempt} failed: {str(fix_error)}')
                     last_error = fix_error
 
         # All attempts failed

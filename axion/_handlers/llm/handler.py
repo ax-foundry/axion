@@ -130,14 +130,14 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
     def async_span(self, operation_name: str, **attributes):
         """
         Override async_span to use class name for top-level 'litellm_structured' traces.
-        
+
         When 'litellm_structured' is the top-level trace (new trace), replace it with
         the handler's class name (e.g., 'DetailedCriteriaGenerator').
-        
+
         Args:
             operation_name: Name of the operation being tracked.
             **attributes: Additional attributes to attach to the span.
-            
+
         Returns:
             Async span context manager.
         """
@@ -149,7 +149,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         ):
             # Replace with class name
             operation_name = self.name
-        
+
         return super().async_span(operation_name, **attributes)
 
     @staticmethod
@@ -606,7 +606,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
                 # If prompt_value is provided, also parse within this span
                 if prompt_value is not None:
-                    parsed_output, parse_metadata = await self._parse_and_validate_parser(
+                    (
+                        parsed_output,
+                        parse_metadata,
+                    ) = await self._parse_and_validate_parser(
                         response.text, prompt_value, span=span
                     )
                     return parsed_output
@@ -703,7 +706,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                             # Fallback to parser mode
                             prompt = self._build_parser_prompt(processed_data)
                             prompt_value = PromptValue(text=prompt)
-                            result = await self._execute_parser_llm_call(prompt, prompt_value)
+                            result = await self._execute_parser_llm_call(
+                                prompt, prompt_value
+                            )
                         else:
                             raise structured_error
                 else:
