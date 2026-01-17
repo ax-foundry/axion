@@ -26,8 +26,18 @@ class AspectDecomposerInput(RichBaseModel):
     model_config = {'extra': 'forbid'}
 
 
+class AspectDetail(RichBaseModel):
+    """Key concepts for a specific aspect that should be mentioned."""
+
+    aspect_name: str = Field(description='The name of the aspect')
+    concepts: List[str] = Field(
+        description='Key concepts for this aspect that should be mentioned'
+    )
+    model_config = {'extra': 'forbid'}
+
+
 class AspectDecomposerOutput(RichBaseModel):
-    aspects_details: Dict[str, List[str]] = Field(
+    aspects_details: List[AspectDetail] = Field(
         ...,
         description='Key concepts for each expected aspect that should be mentioned',
     )
@@ -55,20 +65,24 @@ class AspectDecomposer(BaseMetric[AspectDecomposerInput, AspectDecomposerOutput]
                 ],
             ),
             AspectDecomposerOutput(
-                aspects_details={
-                    'Virtual Environments': [
-                        'Setup or configuration',
-                    ],
-                    'pip': [
-                        'Package management setup',
-                    ],
-                    'VS Code': [
-                        'Python-VS Code integration',
-                    ],
-                    'Development Team': [
-                        'Workflow improvements for developers',
-                    ],
-                }
+                aspects_details=[
+                    AspectDetail(
+                        aspect_name='Virtual Environments',
+                        concepts=['Setup or configuration'],
+                    ),
+                    AspectDetail(
+                        aspect_name='pip',
+                        concepts=['Package management setup'],
+                    ),
+                    AspectDetail(
+                        aspect_name='VS Code',
+                        concepts=['Python-VS Code integration'],
+                    ),
+                    AspectDetail(
+                        aspect_name='Development Team',
+                        concepts=['Workflow improvements for developers'],
+                    ),
+                ],
             ),
         )
     ]
@@ -80,7 +94,7 @@ class AspectCompletenessCheckerInput(RichBaseModel):
     expected_aspects: List[str] = Field(
         ..., description='List of key aspects that should be addressed'
     )
-    aspect_details: Dict[str, List[str]] = Field(
+    aspect_details: List[AspectDetail] = Field(
         ..., description='Key concepts for each expected aspect'
     )
     expected_output: Optional[str] = Field(
@@ -145,20 +159,24 @@ class AspectCompletenessChecker(
                     'VS Code',
                     'Development Team',
                 ],
-                aspect_details={
-                    'Virtual Environments': [
-                        'Setup or configuration',
-                    ],
-                    'pip': [
-                        'Package management setup',
-                    ],
-                    'VS Code': [
-                        'Python-VS Code integration',
-                    ],
-                    'Development Team': [
-                        'Workflow improvements for developers',
-                    ],
-                },
+                aspect_details=[
+                    AspectDetail(
+                        aspect_name='Virtual Environments',
+                        concepts=['Setup or configuration'],
+                    ),
+                    AspectDetail(
+                        aspect_name='pip',
+                        concepts=['Package management setup'],
+                    ),
+                    AspectDetail(
+                        aspect_name='VS Code',
+                        concepts=['Python-VS Code integration'],
+                    ),
+                    AspectDetail(
+                        aspect_name='Development Team',
+                        concepts=['Workflow improvements for developers'],
+                    ),
+                ],
             ),
             AspectCompletenessCheckerOutput(
                 aspect_results=[
@@ -446,7 +464,7 @@ class AnswerCompleteness(BaseMetric):
     @trace(name='analyze_aspects', capture_args=True, capture_response=True)
     async def _analyze_aspects(
         self, query: str, expected_aspects: List[str]
-    ) -> Dict[str, List[str]]:
+    ) -> List[AspectDetail]:
         """
         Analyze the expected aspects to determine key concepts that should be mentioned.
 
@@ -455,36 +473,44 @@ class AnswerCompleteness(BaseMetric):
             expected_aspects: List of key aspects that should be addressed
 
         Returns:
-            Dict mapping aspects to their key concepts
+            List of AspectDetail with concepts for each aspect
         """
         result = await self.aspect_decomposer.execute(
             AspectDecomposerInput(query=query, expected_aspects=expected_aspects)
         )
+
+        # Build a set of aspect names that have details
+        aspects_with_details = {ad.aspect_name for ad in result.aspects_details}
 
         # Check if aspects_details contains entries for all expected aspects
         if result.aspects_details:
             missing_aspects = [
                 aspect
                 for aspect in expected_aspects
-                if aspect not in result.aspects_details
+                if aspect not in aspects_with_details
             ]
             if missing_aspects:
                 logger.warning(f'Some aspects were not analyzed: {missing_aspects}')
 
                 # Add default concepts for missing aspects
                 for aspect in missing_aspects:
-                    result.aspects_details[aspect] = [
-                        f'{aspect} overview or explanation',
-                    ]
+                    result.aspects_details.append(
+                        AspectDetail(
+                            aspect_name=aspect,
+                            concepts=[f'{aspect} overview or explanation'],
+                        )
+                    )
         else:
             logger.warning(
                 'No aspect details were generated. Creating default concepts.'
             )
-            result.aspects_details = {}
-            for aspect in expected_aspects:
-                result.aspects_details[aspect] = [
-                    f'{aspect} overview or explanation',
-                ]
+            result.aspects_details = [
+                AspectDetail(
+                    aspect_name=aspect,
+                    concepts=[f'{aspect} overview or explanation'],
+                )
+                for aspect in expected_aspects
+            ]
 
         return result.aspects_details
 
@@ -534,7 +560,7 @@ class AnswerCompleteness(BaseMetric):
         self,
         item: DatasetItem,
         expected_aspects: List[str],
-        aspect_details: Dict[str, List[str]],
+        aspect_details: List[AspectDetail],
     ) -> AspectCompletenessCheckerOutput:
         """
         Check aspect coverage in the response.

@@ -101,7 +101,10 @@
 
         subgraph CHECK["⚖️ Step 2: Check Utilization"]
             F[Compare to Answer]
-            G["Utilized / Not Utilized"]
+            G1["Chunk 1: ✓/✗"]
+            G2["Chunk 2: ✓/✗"]
+            G3["Chunk 3: ✓/✗"]
+            GN["..."]
         end
 
         subgraph SCORE["📊 Step 3: Scoring"]
@@ -114,8 +117,8 @@
         D --> E
         E --> F
         C --> F
-        F --> G
-        G --> H
+        F --> G1 & G2 & G3 & GN
+        G1 & G2 & G3 & GN --> H
         H --> I
         I --> J
 

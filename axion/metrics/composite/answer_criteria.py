@@ -25,11 +25,20 @@ class CriteriaDecomposerInput(RichBaseModel):
     )
 
 
+class AspectDetail(RichBaseModel):
+    """Key concepts for a specific aspect that should be mentioned."""
+
+    aspect_name: str = Field(description='The name of the aspect')
+    concepts: List[str] = Field(
+        description='Key concepts for this aspect that should be mentioned'
+    )
+
+
 class CriteriaDecomposerOutput(RichBaseModel):
     key_aspects: List[str] = Field(
         description='The key aspects that should be addressed based on the criteria'
     )
-    aspect_details: Dict[str, List[str]] = Field(
+    aspect_details: List[AspectDetail] = Field(
         description='Key concepts for each aspect that should be mentioned'
     )
 
@@ -67,25 +76,37 @@ class CriteriaDecomposer(BaseMetric[CriteriaDecomposerInput, CriteriaDecomposerO
                     'Purpose of the Rule',
                     'Runner Advancement',
                 ],
-                aspect_details={
-                    'Rule Conditions': [
-                        'Fewer than two outs required',
-                        'Runners on first and second base, or bases loaded',
-                        'Fair fly ball that can be caught with ordinary effort',
-                    ],
-                    'Rule Effect': [
-                        'Batter is automatically out when rule is invoked',
-                        'Umpire must declare infield fly while ball is in the air',
-                    ],
-                    'Purpose of the Rule': [
-                        'Prevents defense from intentionally dropping the ball',
-                        'Protects baserunners from unfair double plays',
-                    ],
-                    'Runner Advancement': [
-                        'Runners may advance at their own risk',
-                        'Applies whether ball is caught or dropped',
-                    ],
-                },
+                aspect_details=[
+                    AspectDetail(
+                        aspect_name='Rule Conditions',
+                        concepts=[
+                            'Fewer than two outs required',
+                            'Runners on first and second base, or bases loaded',
+                            'Fair fly ball that can be caught with ordinary effort',
+                        ],
+                    ),
+                    AspectDetail(
+                        aspect_name='Rule Effect',
+                        concepts=[
+                            'Batter is automatically out when rule is invoked',
+                            'Umpire must declare infield fly while ball is in the air',
+                        ],
+                    ),
+                    AspectDetail(
+                        aspect_name='Purpose of the Rule',
+                        concepts=[
+                            'Prevents defense from intentionally dropping the ball',
+                            'Protects baserunners from unfair double plays',
+                        ],
+                    ),
+                    AspectDetail(
+                        aspect_name='Runner Advancement',
+                        concepts=[
+                            'Runners may advance at their own risk',
+                            'Applies whether ball is caught or dropped',
+                        ],
+                    ),
+                ],
             ),
         ),
         (
@@ -98,16 +119,22 @@ class CriteriaDecomposer(BaseMetric[CriteriaDecomposerInput, CriteriaDecomposerO
                     'Official Rulebook Link',
                     'Resource Description',
                 ],
-                aspect_details={
-                    'Official Rulebook Link': [
-                        'Precise and complete link to official MLB rulebook is provided',
-                        'Link is accessible and functional',
-                    ],
-                    'Resource Description': [
-                        'Indication that the link is the authoritative source for MLB rules',
-                        'Comprehensive information on rule coverage mentioned',
-                    ],
-                },
+                aspect_details=[
+                    AspectDetail(
+                        aspect_name='Official Rulebook Link',
+                        concepts=[
+                            'Precise and complete link to official MLB rulebook is provided',
+                            'Link is accessible and functional',
+                        ],
+                    ),
+                    AspectDetail(
+                        aspect_name='Resource Description',
+                        concepts=[
+                            'Indication that the link is the authoritative source for MLB rules',
+                            'Comprehensive information on rule coverage mentioned',
+                        ],
+                    ),
+                ],
             ),
         ),
     ]
@@ -139,7 +166,7 @@ class CriteriaCheckerInput(RichBaseModel):
     key_aspects: List[str] = Field(
         description='List of key aspects extracted from the criteria'
     )
-    aspect_details: Dict[str, List[str]] = Field(
+    aspect_details: List[AspectDetail] = Field(
         description='Key concepts for each aspect that should be mentioned'
     )
     criteria: str = Field(description='The original criteria text for reference')
@@ -175,12 +202,15 @@ class CriteriaChecker(BaseMetric[CriteriaCheckerInput, CriteriaCheckerOutput]):
                     query='How to delete a sandbox?',
                     response='When you delete a sandbox, it is permanently erased and cannot be recovered.',
                     key_aspects=['Permanence of Deletion'],
-                    aspect_details={
-                        'Permanence of Deletion': [
-                            'Deletes are permanent',
-                            'Cannot be undone',
-                        ]
-                    },
+                    aspect_details=[
+                        AspectDetail(
+                            aspect_name='Permanence of Deletion',
+                            concepts=[
+                                'Deletes are permanent',
+                                'Cannot be undone',
+                            ],
+                        ),
+                    ],
                     criteria='The answer must accurately explain that sandbox deletes are permanent and cannot be undone.',
                 ),
                 CriteriaCheckerOutput(
@@ -204,14 +234,20 @@ class CriteriaChecker(BaseMetric[CriteriaCheckerInput, CriteriaCheckerOutput]):
                     query='What is the infield fly rule?',
                     response='The infield fly rule is a baseball rule that protects baserunners by declaring the batter out on certain easy pop-ups.',
                     key_aspects=['Rule Definition', 'Umpire Declaration'],
-                    aspect_details={
-                        'Rule Definition': [
-                            'Protects baserunners from unfair double plays'
-                        ],
-                        'Umpire Declaration': [
-                            'Umpire must declare infield fly while ball is in the air'
-                        ],
-                    },
+                    aspect_details=[
+                        AspectDetail(
+                            aspect_name='Rule Definition',
+                            concepts=[
+                                'Protects baserunners from unfair double plays',
+                            ],
+                        ),
+                        AspectDetail(
+                            aspect_name='Umpire Declaration',
+                            concepts=[
+                                'Umpire must declare infield fly while ball is in the air',
+                            ],
+                        ),
+                    ],
                     criteria='Correctly identifies that the rule protects baserunners. Mentions that the umpire must declare infield fly.',
                 ),
                 CriteriaCheckerOutput(
@@ -243,12 +279,15 @@ class CriteriaChecker(BaseMetric[CriteriaCheckerInput, CriteriaCheckerOutput]):
                     query='When does the infield fly rule apply?',
                     response='The infield fly rule applies with two outs and a runner on first base only.',
                     key_aspects=['Rule Conditions'],
-                    aspect_details={
-                        'Rule Conditions': [
-                            'Fewer than two outs required',
-                            'Runners on first and second or bases loaded',
-                        ]
-                    },
+                    aspect_details=[
+                        AspectDetail(
+                            aspect_name='Rule Conditions',
+                            concepts=[
+                                'Fewer than two outs required',
+                                'Runners on first and second or bases loaded',
+                            ],
+                        ),
+                    ],
                     criteria='The answer must clearly state that the rule applies with fewer than two outs, and requires runners on first and second base or bases loaded.',
                 ),
                 CriteriaCheckerOutput(
@@ -275,16 +314,22 @@ class CriteriaChecker(BaseMetric[CriteriaCheckerInput, CriteriaCheckerOutput]):
                         'Official MLB Rulebook Link',
                         'Resource Description',
                     ],
-                    aspect_details={
-                        'Official MLB Rulebook Link': [
-                            'Precise and complete link to official MLB rulebook is provided',
-                            'Link is accessible and functional',
-                        ],
-                        'Resource Description': [
-                            'Indication that the link is the authoritative source for MLB rules',
-                            'Comprehensive information on rule coverage mentioned',
-                        ],
-                    },
+                    aspect_details=[
+                        AspectDetail(
+                            aspect_name='Official MLB Rulebook Link',
+                            concepts=[
+                                'Precise and complete link to official MLB rulebook is provided',
+                                'Link is accessible and functional',
+                            ],
+                        ),
+                        AspectDetail(
+                            aspect_name='Resource Description',
+                            concepts=[
+                                'Indication that the link is the authoritative source for MLB rules',
+                                'Comprehensive information on rule coverage mentioned',
+                            ],
+                        ),
+                    ],
                     criteria='The answer must accurately identify the link for the official MLB rulebook. The link provided should lead directly to the official rules page on MLB.com, not Wikipedia or other third-party sites.',
                 ),
                 CriteriaCheckerOutput(
@@ -318,15 +363,18 @@ class CriteriaChecker(BaseMetric[CriteriaCheckerInput, CriteriaCheckerOutput]):
                     query='What are the key conditions for the infield fly rule?',
                     response='The infield fly rule applies when there are fewer than two outs, with runners on first and second base or bases loaded, and a fair fly ball is hit that can be caught with ordinary effort.',
                     key_aspects=['Rule Conditions'],
-                    aspect_details={
-                        'Rule Conditions': [
-                            'Fewer than two outs',
-                            'Runners on first and second or bases loaded',
-                            'Fair fly ball',
-                            'Ordinary effort required',
-                            'Infielder positioning',
-                        ]
-                    },
+                    aspect_details=[
+                        AspectDetail(
+                            aspect_name='Rule Conditions',
+                            concepts=[
+                                'Fewer than two outs',
+                                'Runners on first and second or bases loaded',
+                                'Fair fly ball',
+                                'Ordinary effort required',
+                                'Infielder positioning',
+                            ],
+                        ),
+                    ],
                     criteria='The answer should describe the key conditions for the infield fly rule, including out count, runner positions, ball type, and effort level.',
                 ),
                 CriteriaCheckerOutput(
@@ -576,13 +624,23 @@ class AnswerCriteria(BaseMetric):
         )
         if not result.key_aspects:
             logger.warning('No key aspects were extracted from the criteria.')
-            return CriteriaDecomposerOutput(key_aspects=[], aspect_details={})
+            return CriteriaDecomposerOutput(key_aspects=[], aspect_details=[])
+
+        # Build a set of aspect names that have details
+        aspects_with_details = {ad.aspect_name for ad in result.aspect_details}
+
+        # Add placeholder details for aspects without details
         for aspect in result.key_aspects:
-            if aspect not in result.aspect_details:
+            if aspect not in aspects_with_details:
                 logger.warning(
                     f'No details found for aspect: {aspect}, adding placeholder.'
                 )
-                result.aspect_details[aspect] = [f'{aspect} overview or explanation']
+                result.aspect_details.append(
+                    AspectDetail(
+                        aspect_name=aspect,
+                        concepts=[f'{aspect} overview or explanation'],
+                    )
+                )
         return result
 
     @trace(name='check_criteria', capture_args=True, capture_response=True)
@@ -592,7 +650,7 @@ class AnswerCriteria(BaseMetric):
         actual_output: str,
         expected_output: Optional[str],
         key_aspects: List[str],
-        aspect_details: Dict[str, List[str]],
+        aspect_details: List[AspectDetail],
         criteria: str,
     ) -> CriteriaCheckerOutput:
         """Check criteria-based coverage in the response."""
@@ -951,7 +1009,7 @@ class AnswerCriteria(BaseMetric):
             # Aggregate 'cumulative' results using UNIQUE concepts only
             total_covered_aspects = len(cumulative_covered_aspects)
             total_aspects = len(key_aspects)
-            total_concepts = sum(len(v) for v in aspect_details.values())
+            total_concepts = sum(len(ad.concepts) for ad in aspect_details)
             total_concepts_covered = len(
                 cumulative_covered_concepts
             )  # This is already unique

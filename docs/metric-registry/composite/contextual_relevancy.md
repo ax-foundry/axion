@@ -98,7 +98,10 @@
 
         subgraph EVALUATE["⚖️ Step 1: Relevancy Check"]
             C[RAGAnalyzer Engine]
-            D["Per-Chunk Relevance Verdict"]
+            D1["Chunk 1: ✓/✗"]
+            D2["Chunk 2: ✓/✗"]
+            D3["Chunk 3: ✓/✗"]
+            DN["..."]
         end
 
         subgraph SCORE["📊 Step 2: Scoring"]
@@ -108,8 +111,8 @@
         end
 
         A & B --> C
-        C --> D
-        D --> E
+        C --> D1 & D2 & D3 & DN
+        D1 & D2 & D3 & DN --> E
         E --> F
         F --> G
 

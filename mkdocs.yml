@@ -34,10 +34,19 @@ nav:
       - Contextual Utilization: metric-registry/composite/contextual_utilization.md
     - Heuristic:
       - Overview: metric-registry/heuristic/index.md
+      - Exact String Match: metric-registry/heuristic/exact_string_match.md
+      - Contains Match: metric-registry/heuristic/contains_match.md
+      - Levenshtein Ratio: metric-registry/heuristic/levenshtein_ratio.md
+      - Sentence BLEU: metric-registry/heuristic/sentence_bleu.md
+      - PII Leakage (Heuristic): metric-registry/heuristic/pii_leakage_heuristic.md
+      - Citation Presence: metric-registry/heuristic/citation_presence.md
+      - Latency: metric-registry/heuristic/latency.md
+      - Retrieval Metrics: metric-registry/heuristic/retrieval_metrics.md
     - Conversational:
       - Overview: metric-registry/conversational/index.md
     - Tool:
       - Overview: metric-registry/tool/index.md
+      - Tool Correctness: metric-registry/tool/tool_correctness.md
   - Deep Dives:
     - Metrics:
       - Creating Custom Metrics: deep-dives/metrics/creating-metrics.md

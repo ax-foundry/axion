@@ -127,6 +127,31 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             getattr(self, 'input_model', None), getattr(self, 'output_model', None)
         )
 
+    def async_span(self, operation_name: str, **attributes):
+        """
+        Override async_span to use class name for top-level 'litellm_structured' traces.
+        
+        When 'litellm_structured' is the top-level trace (new trace), replace it with
+        the handler's class name (e.g., 'DetailedCriteriaGenerator').
+        
+        Args:
+            operation_name: Name of the operation being tracked.
+            **attributes: Additional attributes to attach to the span.
+            
+        Returns:
+            Async span context manager.
+        """
+        # Check if this is 'litellm_structured' and will be a new/top-level trace
+        if (
+            operation_name == 'litellm_structured'
+            and hasattr(self.tracer, '_span_stack')
+            and len(self.tracer._span_stack) == 0
+        ):
+            # Replace with class name
+            operation_name = self.name
+        
+        return super().async_span(operation_name, **attributes)
+
     @staticmethod
     def _is_rate_limit_error(error: Exception) -> bool:
         """
@@ -533,8 +558,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         sections.sort(key=lambda x: x.priority)
         return '\n\n'.join(section.content for section in sections)
 
-    async def _execute_parser_llm_call(self, prompt: str) -> str:
-        """Execute LLM call and return raw string output for parser-based approach."""
+    async def _execute_parser_llm_call(
+        self, prompt: str, prompt_value: Optional[PromptValue] = None
+    ) -> Union[str, OutputModel]:
+        """Execute LLM call and optionally parse output for parser-based approach."""
         model_name = getattr(self.llm, 'model', 'unknown')
 
         # Define provider before try block so it's available in exception handler
@@ -576,6 +603,14 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 )
 
                 span.set_output(response.text)  # Capture LLM output
+
+                # If prompt_value is provided, also parse within this span
+                if prompt_value is not None:
+                    parsed_output, parse_metadata = await self._parse_and_validate_parser(
+                        response.text, prompt_value, span=span
+                    )
+                    return parsed_output
+
                 return response.text
 
             except Exception as e:
@@ -595,41 +630,41 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 raise GenerationError(f'LLM call failed: {str(e)}') from e
 
     async def _parse_and_validate_parser(
-        self, output_string: str, prompt_value: PromptValue
-    ) -> OutputModel:
+        self, output_string: str, prompt_value: PromptValue, span=None
+    ) -> Tuple[OutputModel, dict]:
         """Parse and validate LLM output using parser-based approach with unified tracing."""
-        async with self.async_span(
-            'parse_and_validate_parser', output_length=len(output_string)
-        ) as span:
-            # Initialize LLM parser if needed
-            if not self.parser:
-                from axion._core.parsers.parse.parser import AIOutputParser
+        # Initialize LLM parser if needed
+        if not self.parser:
+            from axion._core.parsers.parse.parser import AIOutputParser
 
-                self.parser = AIOutputParser(
-                    llm=self.llm, output_model=self.output_model, tracer=self.tracer
+            self.parser = AIOutputParser(
+                llm=self.llm, output_model=self.output_model, tracer=self.tracer
+            )
+
+        try:
+            with Timer() as parse_timer:
+                parsed_output, parse_metadata = await self.parser.parse_output_string(
+                    output_string=output_string, prompt_value=prompt_value
                 )
 
-            try:
-                with Timer() as parse_timer:
-                    parsed_output = await self.parser.parse_output_string(
-                        output_string=output_string, prompt_value=prompt_value
-                    )
-
+            if span:
                 span.set_attribute('parse_success', True)
                 span.set_attribute('parse_time', parse_timer.elapsed_time)
                 span.set_attribute(
                     'parser_max_retries', getattr(self.parser, 'max_retries', 0)
                 )
-                span.set_attribute('model_name', self.output_model.__name__)
+                span.set_attribute('parser_model_name', self.output_model.__name__)
+                span.set_attribute('parse_attempts', parse_metadata.get('attempts', 1))
 
-                return parsed_output
+            return parsed_output, parse_metadata
 
-            except Exception as e:
+        except Exception as e:
+            if span:
                 span.set_attribute('parse_success', False)
                 span.set_attribute('parse_error', str(e))
                 span.set_attribute('error_type', type(e).__name__)
-                logger.error_highlight(f'Failed to parse/validate output: {str(e)}')
-                raise
+            logger.error_highlight(f'Failed to parse/validate output: {str(e)}')
+            raise
 
     async def _execute_with_retry(self, input_data: InputModel) -> OutputModel:
         """
@@ -668,20 +703,14 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                             # Fallback to parser mode
                             prompt = self._build_parser_prompt(processed_data)
                             prompt_value = PromptValue(text=prompt)
-                            output_string = await self._execute_parser_llm_call(prompt)
-                            result = await self._parse_and_validate_parser(
-                                output_string, prompt_value
-                            )
+                            result = await self._execute_parser_llm_call(prompt, prompt_value)
                         else:
                             raise structured_error
                 else:
                     # Parser fallback for models without structured output
                     prompt = self._build_parser_prompt(processed_data)
                     prompt_value = PromptValue(text=prompt)
-                    output_string = await self._execute_parser_llm_call(prompt)
-                    result = await self._parse_and_validate_parser(
-                        output_string, prompt_value
-                    )
+                    result = await self._execute_parser_llm_call(prompt, prompt_value)
 
                 # Process the output through the base handler
                 return self.process_output(result, input_data)

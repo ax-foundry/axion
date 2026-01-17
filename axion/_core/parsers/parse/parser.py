@@ -1,5 +1,5 @@
 import asyncio
-from typing import Type
+from typing import Type, Tuple
 
 from pydantic import BaseModel, ValidationError
 
@@ -81,33 +81,22 @@ class AIOutputParser:
         Returns:
             Fixed output string
         """
-        async with self.tracer.async_span(
-            'fix_output_format',
-            attempt_number=attempt + 1,
-            output_length=len(output_string),
-        ) as span:
-            logger.debug(
-                f'Attempting to fix output format (attempt {attempt + 1}/{self.max_retries})'
+        logger.debug(
+            f'Attempting to fix output format (attempt {attempt + 1}/{self.max_retries})'
+        )
+
+        try:
+            fixed_output = await self.fix_prompt._execute_parser_llm_call(
+                prompt_value.to_string()
             )
 
-            try:
-                fixed_output = await self.fix_prompt._execute_parser_llm_call(
-                    prompt_value.to_string()
-                )
+            return fixed_output
 
-                span.set_attribute('fix_success', True)
-                span.set_attribute('fixed_output_length', len(fixed_output))
-
-                return fixed_output
-
-            except Exception as e:
-                span.set_attribute('fix_success', False)
-                span.set_attribute('fix_error', str(e))
-
-                logger.error(
-                    f'Error fixing output format on attempt {attempt + 1}: {str(e)}'
-                )
-                raise
+        except Exception as e:
+            logger.error(
+                f'Error fixing output format on attempt {attempt + 1}: {str(e)}'
+            )
+            raise
 
     async def _validate_output(self, json_str: str) -> BaseModel:
         """
@@ -119,30 +108,18 @@ class AIOutputParser:
         Returns:
             Validated Pydantic model instance
         """
-        with self.tracer.span(
-            'validate_output',
-            json_length=len(json_str),
-            model_name=self.output_model.__name__,
-        ) as span:
-            try:
-                validated_output = self.output_model.model_validate_json(json_str)
-                span.set_attribute('validation_success', True)
-                span.set_attribute(
-                    'validated_fields', len(self.output_model.model_fields)
-                )
-                return validated_output
+        try:
+            validated_output = self.output_model.model_validate_json(json_str)
+            return validated_output
 
-            except ValidationError as e:
-                span.set_attribute('validation_success', False)
-                span.set_attribute('validation_errors', len(e.errors()))
-                span.set_attribute('error_details', str(e))
-                raise
+        except ValidationError as e:
+            raise
 
     async def parse_output_string(
         self,
         output_string: str,
         prompt_value: PromptValue,
-    ) -> BaseModel:
+    ) -> Tuple[BaseModel, dict]:
         """
         Parse and validate the output string, with automatic retries and fixes.
 
@@ -151,96 +128,52 @@ class AIOutputParser:
             prompt_value: Original prompt for context
 
         Returns:
-            Validated Pydantic model instance
+            Tuple of (Validated Pydantic model instance, metadata dict with 'attempts' key)
         """
-        async with self.tracer.async_span(
-            'parse_with_retries',
-            max_retries=self.max_retries,
-            output_length=len(output_string),
-            model_name=self.output_model.__name__,
-        ) as main_span:
-            current_output = output_string
-            last_error = None
+        current_output = output_string
+        last_error = None
 
-            for attempt in range(1, self.max_retries + 1):
-                # Create child span for each attempt
-                async with self.tracer.async_span(
-                    f'parse_attempt_{attempt}',
-                    attempt_number=attempt,
-                    current_output_length=len(current_output),
-                ) as attempt_span:
-                    try:
-                        # Use synchronous span for JSON extraction (quick operation)
-                        with self.tracer.span('extract_json') as extract_span:
-                            json_str = extract_json_from_text(current_output)
-                            extract_span.set_attribute(
-                                'extracted_json_length', len(json_str)
-                            )
+        for attempt in range(1, self.max_retries + 1):
+            try:
+                json_str = extract_json_from_text(current_output)
 
-                        result = await self._validate_output(json_str)
+                result = await self._validate_output(json_str)
 
-                        # Log success
-                        attempt_span.set_attribute('parse_success', True)
-                        attempt_span.set_attribute('json_length', len(json_str))
+                logger.debug(f'Successfully parsed output on attempt {attempt}')
+                return result, {'attempts': attempt}
 
-                        main_span.set_attribute('successful_attempt', attempt)
-                        main_span.set_attribute('total_attempts', attempt)
+            except (ParsingError, ValidationError) as e:
+                last_error = e
 
-                        logger.debug(f'Successfully parsed output on attempt {attempt}')
-                        return result
+                logger.warning(
+                    f'Parse attempt {attempt} failed: {str(e)[:200]}'
+                )
 
-                    except (ParsingError, ValidationError) as e:
-                        last_error = e
+                if attempt == self.max_retries:
+                    break  # Exit loop without fix attempt
 
-                        # Log failure
-                        attempt_span.set_attribute('parse_success', False)
-                        attempt_span.set_attribute('error_type', type(e).__name__)
-                        attempt_span.set_attribute('error_message', str(e)[:200])
+                try:
+                    current_output = await self._attempt_fix(
+                        current_output, prompt_value, attempt
+                    )
 
-                        logger.warning(
-                            f'Parse attempt {attempt} failed: {str(e)[:200]}'
-                        )
+                    logger.debug(f'Fix attempt {attempt} completed')
+                    await asyncio.sleep(self.retry_delay)
 
-                        if attempt == self.max_retries:
-                            break  # Exit loop without fix attempt
+                except Exception as fix_error:
+                    logger.error(
+                        f'Fix attempt {attempt} failed: {str(fix_error)}'
+                    )
+                    last_error = fix_error
 
-                        try:
-                            current_output = await self._attempt_fix(
-                                current_output, prompt_value, attempt
-                            )
+        # All attempts failed
+        error_msg = (
+            f'Failed to parse output after {self.max_retries} attempts. '
+            f'Last error: {str(last_error)}'
+        )
 
-                            attempt_span.set_attribute('fix_attempted', True)
-                            attempt_span.set_attribute(
-                                'fixed_output_length', len(current_output)
-                            )
-
-                            logger.debug(f'Fix attempt {attempt} completed')
-                            await asyncio.sleep(self.retry_delay)
-
-                        except Exception as fix_error:
-                            attempt_span.set_attribute('fix_attempted', True)
-                            attempt_span.set_attribute('fix_success', False)
-                            attempt_span.set_attribute(
-                                'fix_error', str(fix_error)[:200]
-                            )
-
-                            logger.error(
-                                f'Fix attempt {attempt} failed: {str(fix_error)}'
-                            )
-                            last_error = fix_error
-
-            # All attempts failed
-            error_msg = (
-                f'Failed to parse output after {self.max_retries} attempts. '
-                f'Last error: {str(last_error)}'
-            )
-
-            main_span.set_attribute('all_attempts_failed', True)
-            main_span.set_attribute('total_attempts', self.max_retries)
-            main_span.set_attribute('final_error_type', type(last_error).__name__)
-
-            logger.error(error_msg)
-            raise ParsingError(error_msg)
+        logger.error(error_msg)
+        raise ParsingError(error_msg)
 
     def get_parsing_statistics(self) -> dict:
         """Return parsing statistics from the tracer, if available."""

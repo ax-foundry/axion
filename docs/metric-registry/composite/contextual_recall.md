@@ -102,8 +102,11 @@
         end
 
         subgraph CHECK["⚖️ Step 2: Support Check"]
-            E[Check Each Statement]
-            F["Supported / Not Supported"]
+            E[Check Against Context]
+            F1["Stmt 1: ✓/✗"]
+            F2["Stmt 2: ✓/✗"]
+            F3["Stmt 3: ✓/✗"]
+            FN["..."]
         end
 
         subgraph SCORE["📊 Step 3: Scoring"]
@@ -116,8 +119,8 @@
         C --> D
         D --> E
         B --> E
-        E --> F
-        F --> G
+        E --> F1 & F2 & F3 & FN
+        F1 & F2 & F3 & FN --> G
         G --> H
         H --> I
 

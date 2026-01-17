@@ -99,7 +99,10 @@
 
         subgraph EVALUATE["⚖️ Step 1: Usefulness Check"]
             D[RAGAnalyzer Engine]
-            E["Useful / Not Useful per Chunk"]
+            E1["Chunk 1: U/✗"]
+            E2["Chunk 2: U/✗"]
+            E3["Chunk 3: U/✗"]
+            EN["..."]
         end
 
         subgraph MAP["📊 Step 2: Calculate MAP"]
@@ -110,8 +113,8 @@
         end
 
         A & B & C --> D
-        D --> E
-        E --> F
+        D --> E1 & E2 & E3 & EN
+        E1 & E2 & E3 & EN --> F
         F --> G
         G --> H
         H --> I
