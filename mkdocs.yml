@@ -15,6 +15,38 @@ nav:
     - LLM Providers: guides/llm-providers.md
     - Synthetic Data: guides/synthetic.md
     - Search Integrations: guides/search.md
+  - Metric Registry:
+    - Composite:
+      - Overview: metric-registry/composite/index.md
+      - Faithfulness: metric-registry/composite/faithfulness.md
+      - Answer Relevancy: metric-registry/composite/answer_relevancy.md
+      - Factual Accuracy: metric-registry/composite/factual_accuracy.md
+      - Answer Completeness: metric-registry/composite/answer_completeness.md
+      - Answer Criteria: metric-registry/composite/answer_criteria.md
+      - Tone & Style Consistency: metric-registry/composite/tone_style_consistency.md
+      - Citation Relevancy: metric-registry/composite/citation_relevancy.md
+      - PII Leakage: metric-registry/composite/pii_leakage.md
+      - Contextual Relevancy: metric-registry/composite/contextual_relevancy.md
+      - Contextual Recall: metric-registry/composite/contextual_recall.md
+      - Contextual Precision: metric-registry/composite/contextual_precision.md
+      - Contextual Ranking: metric-registry/composite/contextual_ranking.md
+      - Contextual Sufficiency: metric-registry/composite/contextual_sufficiency.md
+      - Contextual Utilization: metric-registry/composite/contextual_utilization.md
+    - Heuristic:
+      - Overview: metric-registry/heuristic/index.md
+      - Exact String Match: metric-registry/heuristic/exact_string_match.md
+      - Contains Match: metric-registry/heuristic/contains_match.md
+      - Levenshtein Ratio: metric-registry/heuristic/levenshtein_ratio.md
+      - Sentence BLEU: metric-registry/heuristic/sentence_bleu.md
+      - PII Leakage (Heuristic): metric-registry/heuristic/pii_leakage_heuristic.md
+      - Citation Presence: metric-registry/heuristic/citation_presence.md
+      - Latency: metric-registry/heuristic/latency.md
+      - Retrieval Metrics: metric-registry/heuristic/retrieval_metrics.md
+    - Conversational:
+      - Overview: metric-registry/conversational/index.md
+    - Tool:
+      - Overview: metric-registry/tool/index.md
+      - Tool Correctness: metric-registry/tool/tool_correctness.md
   - Deep Dives:
     - Metrics:
       - Creating Custom Metrics: deep-dives/metrics/creating-metrics.md

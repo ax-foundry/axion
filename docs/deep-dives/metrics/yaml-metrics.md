@@ -114,7 +114,6 @@ result = await metric.execute(data_item)
 ```
 
 
-
 ## API Reference
 
 ::: axion.metrics.base

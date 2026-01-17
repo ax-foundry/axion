@@ -119,11 +119,20 @@ class FactualityJudge(BaseMetric[FactualityJudgeInput, FactualityReport]):
     You are a strict fact-checker.
     Evaluate each statement provided in the 'statements' list against the 'ground_truth' text.
 
-    For each statement:
-    - Return **1** if the statement is FACTUALLY SUPPORTED by the ground truth.
-    - Return **0** if the statement is UNSUPPORTED, CONTRADICTORY, or HALLUCINATED.
+    **Note on Ground Truth:**
+    The ground truth may be unstructured text, structured JSON data, or a mix of both. You must parse it accordingly.
 
-    Ignore minor phrasing differences. Focus strictly on whether the fact exists in the ground truth.
+    **Evaluation Protocol:**
+    1. **Search:** Locate the specific fact or data point in the ground truth.
+    2. **Verify:** - **Supported (1):** The fact is explicitly present.
+         - If checking text: The meaning must match.
+         - If checking data/JSON: The values must be mathematically equivalent (e.g., "$2.5M" matches `2500000` or `2.5e6`).
+    3. **Reject:**
+       - **Unsupported (0):** The fact is missing, contradictory, or hallucinates a value not found in the source.
+
+    **Guidelines:**
+    - Ignore minor formatting differences (e.g., casing, punctuation, currency symbols).
+    - Be strict on numbers: "5 employees" does NOT support "10 employees".
     """
 
     input_model = FactualityJudgeInput

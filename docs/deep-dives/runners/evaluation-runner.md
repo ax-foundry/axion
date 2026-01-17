@@ -131,8 +131,7 @@ def pydantic_task_output(item):
 )
 
 # Task Option 3 - Task can be API runners
-from axion.runners.api import PromptTemplateAPIRunner
-api_runner = PromptTemplateAPIRunner(config={'...'})
+api_runner = ExampleAPIRunner(config={'...'})
 
 results = evaluation_runner(
     evaluation_inputs=[data_item],
@@ -166,7 +165,6 @@ from axion.runners import (
 )
 from axion.metrics import AnswerCompleteness, Latency
 from axion.integrations.models import LiteLLMRagas, LiteLLMDeepEval
-from axion.runners.api import PromptTemplateAPIRunner
 
 import pandas as pd
 from ragas.metrics import Faithfulness
@@ -191,7 +189,7 @@ deepeval_model = LiteLLMDeepEval(model='gpt-4') # Optional
 ragas_model = LiteLLMRagas(model='gpt-4') # Optional
 
 # Configure the task to evaluate
-api_runner = PromptTemplateAPIRunner(config='...')
+api_runner = ExampleAPIRunner(config='...')
 
 # Define evaluation metrics
 metrics = [
