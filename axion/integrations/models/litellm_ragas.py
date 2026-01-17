@@ -64,7 +64,7 @@ class LiteLLMRagas(BaseRagasLLM):
 
     Example:
         >>> from axion.integrations.models.litellm_ragas import LiteLLMRagas
-        >>> from ragas.metrics import Faithfulness
+        >>> from ragas.metrics.collections import Faithfulness
         >>>
         >>> llm = LiteLLMRagas(model='gpt-4o')
         >>> metric = Faithfulness(llm=llm)

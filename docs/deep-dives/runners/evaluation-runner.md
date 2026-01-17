@@ -169,7 +169,7 @@ from axion.integrations.models import LiteLLMRagas, LiteLLMDeepEval
 from axion.runners.api import PromptTemplateAPIRunner
 
 import pandas as pd
-from ragas.metrics import Faithfulness
+from ragas.metrics.collections import Faithfulness
 from deepeval.metrics import AnswerRelevancyMetric
 
 # Create evaluation dataset

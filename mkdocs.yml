@@ -15,6 +15,16 @@ nav:
     - LLM Providers: guides/llm-providers.md
     - Synthetic Data: guides/synthetic.md
     - Search Integrations: guides/search.md
+  - Metric Registry:
+    - Composite:
+      - Overview: metric-registry/composite/index.md
+      - Faithfulness: metric-registry/composite/faithfulness.md
+    - Heuristic:
+      - Overview: metric-registry/heuristic/index.md
+    - Conversational:
+      - Overview: metric-registry/conversational/index.md
+    - Tool:
+      - Overview: metric-registry/tool/index.md
   - Deep Dives:
     - Metrics:
       - Creating Custom Metrics: deep-dives/metrics/creating-metrics.md

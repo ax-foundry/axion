@@ -160,7 +160,7 @@ runner = MetricRunner(metrics=[metric])
 
 **Usage Example:**
 ```python
-from ragas.metrics import Faithfulness
+from ragas.metrics.collections import Faithfulness
 from axion.integrations.models import LiteLLMRagas
 # Ragas metrics are automatically detected and executed with RagasRunner
 metrics = [Faithfulness(llm=LiteLLMRagas())] # LiteLLMRagas() is optional
