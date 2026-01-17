@@ -4,7 +4,7 @@ from typing import Any
 def python_template(key: str, item: Any) -> str:
     return """# Python Usage
 from axion.metrics import AnswerRelevancy
-from ragas.metrics.collections import Faithfulness
+from ragas.metrics import Faithfulness
 from deepeval.metrics import ContextualRecallMetric
 from axion.integrations.models import LiteLLMRagas, LiteLLMDeepEval
 

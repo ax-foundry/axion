@@ -19,6 +19,7 @@ nav:
     - Composite:
       - Overview: metric-registry/composite/index.md
       - Faithfulness: metric-registry/composite/faithfulness.md
+      - Answer Relevancy: metric-registry/composite/answer_relevancy.md
     - Heuristic:
       - Overview: metric-registry/heuristic/index.md
     - Conversational:

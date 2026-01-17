@@ -1650,7 +1650,7 @@ class MetricRunnerRegistryExtractor(BaseRegistryExtractor):
                 'from axion.metrics import AnswerRelevancy\nmetric = AnswerRelevancy()'
             )
         elif framework_name == 'ragas':
-            metric_example = 'from ragas.metrics.collections import Faithfulness\nfrom axion.integrations.models import LiteLLMRagas\nmetric = Faithfulness(llm=LiteLLMRagas()) # optional: LiteLLMRagas()'
+            metric_example = 'from ragas.metrics import Faithfulness\nfrom axion.integrations.models import LiteLLMRagas\nmetric = Faithfulness(llm=LiteLLMRagas()) # optional: LiteLLMRagas()'
         elif framework_name == 'deepeval':
             metric_example = 'from deepeval.metrics import AnswerRelevancyMetric\nfrom axion.integrations.models import LiteLLMDeepEval\nmetric = AnswerRelevancyMetric(model=LiteLLMDeepEval()) # optional: LiteLLMDeepEval()'
         else:
