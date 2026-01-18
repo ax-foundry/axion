@@ -148,13 +148,13 @@ class LangfuseTracer(BaseTracer):
                 'secret_key': self._secret_key,
                 'host': self._base_url,
             }
-            
+
             # Set environment if provided (Langfuse SDK supports this at client init)
             # Also check LANGFUSE_TRACING_ENVIRONMENT env var (Langfuse SDK standard)
             env = self.environment or os.environ.get('LANGFUSE_TRACING_ENVIRONMENT')
             if env:
                 client_kwargs['environment'] = env
-            
+
             self._client = Langfuse(**client_kwargs)
             logger.debug(
                 f'Langfuse client initialized successfully (endpoint: {self._base_url}, '

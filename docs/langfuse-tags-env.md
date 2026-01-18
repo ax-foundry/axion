@@ -80,7 +80,7 @@ stats = loader.push_scores_to_langfuse(result)  # Uses LANGFUSE_TAGS env var aut
 
 #### Important Note About Environment
 
-**Environment cannot be set when pushing scores to existing traces.** Langfuse SDK v3 doesn't support updating trace environment after creation. 
+**Environment cannot be set when pushing scores to existing traces.** Langfuse SDK v3 doesn't support updating trace environment after creation.
 
 Environment must be set at **client initialization** when creating traces:
 - Via `LANGFUSE_ENVIRONMENT` or `LANGFUSE_TRACING_ENVIRONMENT` environment variables
@@ -208,7 +208,7 @@ tracer = Tracer('my-service')
 with tracer.span('llm-call', tags=['custom-operation'], model='gpt-4'):
     # Your LLM call here
     response = llm.generate("Hello")
-    
+
 # Later, fetch traces and push scores
 loader = LangfuseTraceLoader()
 
