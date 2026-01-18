@@ -18,6 +18,7 @@ def trace(
     capture_args: bool = False,
     capture_result: bool = False,
     capture_response: bool = False,
+    span_type: Optional[str] = None,
 ):
     """
     A unified decorator that instruments a method for tracing.
@@ -32,6 +33,8 @@ def trace(
         capture_args: Whether to capture and log function arguments
         capture_result: Whether to capture and log function result
         capture_response: Alias for capture_result
+        span_type: Explicit span type override (e.g., 'tool', 'evaluator', 'retriever').
+            If not specified, type is auto-inferred from span name and attributes.
 
     Usage:
         ```python
@@ -165,6 +168,8 @@ def trace(
             # This ensures the input is captured before any child spans can interfere
             if capture_args:
                 attributes['input'] = _build_input_data((self,) + args, kwargs)
+            if span_type:
+                attributes['span_type'] = span_type
 
             with self.tracer.span(span_name, **attributes) as span:
                 try:
@@ -192,6 +197,8 @@ def trace(
             # This ensures the input is captured before any child spans can interfere
             if capture_args:
                 attributes['input'] = _build_input_data((self,) + args, kwargs)
+            if span_type:
+                attributes['span_type'] = span_type
 
             async with self.tracer.async_span(span_name, **attributes) as span:
                 try:
@@ -229,6 +236,7 @@ def trace_method(
     capture_args: bool = False,
     capture_result: bool = False,
     auto_start: bool = True,
+    span_type: Optional[str] = None,
 ):
     """
     Method-specific tracing decorator with additional features.
@@ -241,6 +249,8 @@ def trace_method(
         capture_args: Whether to capture method arguments
         capture_result: Whether to capture method result
         auto_start: Whether to automatically call tracer.start()
+        span_type: Explicit span type override (e.g., 'tool', 'evaluator', 'retriever').
+            If not specified, type is auto-inferred from span name and attributes.
 
     Example:
         ```python
@@ -287,6 +297,8 @@ def trace_method(
                     )
                     for k, v in kwargs.items()
                 }
+            if span_type:
+                attributes['span_type'] = span_type
 
             async with self.tracer.async_span(span_name, **attributes) as span:
                 try:
@@ -343,6 +355,8 @@ def trace_method(
                     )
                     for k, v in kwargs.items()
                 }
+            if span_type:
+                attributes['span_type'] = span_type
 
             with self.tracer.span(span_name, **attributes) as span:
                 try:
@@ -379,7 +393,10 @@ def trace_method(
 
 
 def trace_function(
-    name: Optional[str] = None, capture_args: bool = False, capture_result: bool = False
+    name: Optional[str] = None,
+    capture_args: bool = False,
+    capture_result: bool = False,
+    span_type: Optional[str] = None,
 ):
     """
     Function-level tracing decorator for standalone functions.
@@ -391,6 +408,8 @@ def trace_function(
         name: Custom span name
         capture_args: Whether to capture function arguments
         capture_result: Whether to capture function result
+        span_type: Explicit span type override (e.g., 'tool', 'evaluator', 'retriever').
+            If not specified, type is auto-inferred from span name and attributes.
 
     Example:
         ```python
@@ -441,6 +460,8 @@ def trace_function(
                     )
                     for k, v in kwargs.items()
                 }
+            if span_type:
+                attributes['span_type'] = span_type
 
             async with tracer.async_span(span_name, **attributes) as span:
                 try:
@@ -491,6 +512,8 @@ def trace_function(
                     )
                     for k, v in kwargs.items()
                 }
+            if span_type:
+                attributes['span_type'] = span_type
 
             with tracer.span(span_name, **attributes) as span:
                 try:
