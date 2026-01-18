@@ -569,6 +569,58 @@ class EvaluationResult:
 
         return None
 
+    def push_scores(
+        self,
+        loader: Optional[Any] = None,
+        observation_id_field: Optional[str] = 'observation_id',
+        flush: bool = True,
+        tags: Optional[List[str]] = None,
+    ) -> Dict[str, int]:
+        """
+        Push evaluation scores back to an observability platform.
+
+        Uses a trace loader to push scores. By default, uses LangfuseTraceLoader.
+
+        Args:
+            loader: A trace loader instance (e.g., LangfuseTraceLoader, OpikTraceLoader).
+                If None, creates a new LangfuseTraceLoader using environment variables.
+            observation_id_field: Field name on DatasetItem containing the
+                observation/span ID. If provided, scores attach to that specific
+                observation within the trace. If None, scores attach to the trace itself.
+                Default: 'observation_id'.
+            flush: Whether to flush the client after uploading. Defaults to True.
+            tags: Optional list of tags to attach to all scores as metadata
+
+        Returns:
+            Dict with counts: {'uploaded': N, 'skipped': M}
+                - uploaded: Number of scores successfully pushed
+                - skipped: Number of scores skipped (missing trace_id or invalid score)
+
+        Example:
+            >>> from axion._core.tracing.loaders import LangfuseTraceLoader
+            >>>
+            >>> # Using default Langfuse loader
+            >>> stats = result.push_scores()
+            >>>
+            >>> # Using explicit loader
+            >>> loader = LangfuseTraceLoader()
+            >>> stats = result.push_scores(loader=loader)
+            >>>
+            >>> # Attach scores to traces only (no observation)
+            >>> stats = result.push_scores(observation_id_field=None)
+        """
+        if loader is None:
+            from axion._core.tracing.loaders import LangfuseTraceLoader
+
+            loader = LangfuseTraceLoader()
+
+        return loader.push_scores(
+            evaluation_result=self,
+            observation_id_field=observation_id_field,
+            flush=flush,
+            tags=tags,
+        )
+
 
 @dataclass
 class ErrorConfig:
