@@ -53,7 +53,7 @@ class EvalTree(TreeMixin):
         max_concurrent: int = 5,
         summary_generator: Optional[BaseSummary] = None,
         enable_internal_caching: bool = True,
-        trace_granularity: TraceGranularity = TraceGranularity.SINGLE_TRACE,
+        trace_granularity: TraceGranularity = TraceGranularity.SEPARATE,
     ):
         self.config: Config = config if isinstance(config, Config) else Config(config)
         self.max_concurrent = max_concurrent

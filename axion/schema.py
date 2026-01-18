@@ -589,7 +589,14 @@ class EvaluationResult:
                 observation within the trace. If None, scores attach to the trace itself.
                 Default: 'observation_id'.
             flush: Whether to flush the client after uploading. Defaults to True.
-            tags: Optional list of tags to attach to all scores as metadata
+            tags: Optional list of tags to attach to all scores as metadata.
+                Falls back to LANGFUSE_TAGS env var if not provided.
+
+        Note:
+            Environment cannot be set when pushing scores to existing traces.
+            To set environment, configure it at client initialization when creating
+            traces (via LANGFUSE_ENVIRONMENT or LANGFUSE_TRACING_ENVIRONMENT env vars
+            or the environment parameter in LangfuseTracer).
 
         Returns:
             Dict with counts: {'uploaded': N, 'skipped': M}
@@ -602,9 +609,12 @@ class EvaluationResult:
             >>> # Using default Langfuse loader
             >>> stats = result.push_scores()
             >>>
-            >>> # Using explicit loader
+            >>> # Using explicit loader with tags
             >>> loader = LangfuseTraceLoader()
-            >>> stats = result.push_scores(loader=loader)
+            >>> stats = result.push_scores(
+            ...     loader=loader,
+            ...     tags=['prod', 'v1.0']
+            ... )
             >>>
             >>> # Attach scores to traces only (no observation)
             >>> stats = result.push_scores(observation_id_field=None)

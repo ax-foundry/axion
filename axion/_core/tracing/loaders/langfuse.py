@@ -75,6 +75,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
         base_delay: float = 0.75,
         max_delay: float = 60.0,
         request_pacing: float = 0.03,
+        default_tags: Optional[List[str]] = None,
     ):
         """
         Initialize Langfuse client.
@@ -87,11 +88,25 @@ class LangfuseTraceLoader(BaseTraceLoader):
             base_delay: Base delay in seconds for exponential backoff (default: 0.75)
             max_delay: Maximum delay in seconds between retries (default: 60.0)
             request_pacing: Delay between API requests to avoid rate limits (default: 0.03)
+            default_tags: Default tags to apply to all scores (falls back to
+                LANGFUSE_DEFAULT_TAGS env var, comma-separated)
         """
         self.max_retries = max_retries
         self.base_delay = base_delay
         self.max_delay = max_delay
         self.request_pacing = request_pacing
+
+        # Support LANGFUSE_DEFAULT_TAGS env var (comma-separated)
+        if default_tags is None:
+            env_tags = os.environ.get('LANGFUSE_DEFAULT_TAGS')
+            if env_tags:
+                self.default_tags = [
+                    t.strip() for t in env_tags.split(',') if t.strip()
+                ]
+            else:
+                self.default_tags = []
+        else:
+            self.default_tags = default_tags
 
         try:
             from langfuse import Langfuse
@@ -343,7 +358,14 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 attach to that specific observation. If None or field is empty,
                 scores attach to the trace. Default: 'observation_id'
             flush: Whether to flush the client after uploading
-            tags: Optional list of tags to attach to all scores as metadata
+            tags: Optional list of tags to attach to all scores as metadata.
+                Falls back to LANGFUSE_TAGS env var if not provided.
+
+        Note:
+            Environment cannot be set when pushing scores to existing traces.
+            To set environment, configure it at client initialization when creating
+            traces (via LANGFUSE_ENVIRONMENT or LANGFUSE_TRACING_ENVIRONMENT env vars
+            or the environment parameter in LangfuseTracer).
 
         Returns:
             Dict with counts: {'uploaded': N, 'skipped': M}
@@ -357,7 +379,10 @@ class LangfuseTraceLoader(BaseTraceLoader):
             )
 
             # Attach scores with tags
-            stats = loader.push_scores_to_langfuse(result, tags=['prod', 'v1.0'])
+            stats = loader.push_scores_to_langfuse(
+                result,
+                tags=['prod', 'v1.0']
+            )
 
             # Or attach scores to traces only
             stats = loader.push_scores_to_langfuse(result, observation_id_field=None)
@@ -365,6 +390,12 @@ class LangfuseTraceLoader(BaseTraceLoader):
         if not self._client_initialized:
             logger.error('Langfuse client not initialized, cannot push scores')
             return {'uploaded': 0, 'skipped': 0}
+
+        # Fallback to environment variables if not provided
+        if tags is None:
+            env_tags = os.environ.get('LANGFUSE_TAGS')
+            if env_tags:
+                tags = [t.strip() for t in env_tags.split(',') if t.strip()]
 
         stats = {'uploaded': 0, 'skipped': 0}
 
@@ -400,8 +431,12 @@ class LangfuseTraceLoader(BaseTraceLoader):
                     if obs_id:
                         score_kwargs['observation_id'] = obs_id
 
+                    # Merge default_tags with per-call tags
+                    effective_tags = list(self.default_tags)
                     if tags:
-                        score_kwargs['metadata'] = {'tags': tags}
+                        effective_tags.extend(tags)
+                    if effective_tags:
+                        score_kwargs['metadata'] = {'tags': effective_tags}
 
                     # Upload score with retry
                     self._execute_with_retry(
@@ -434,96 +469,4 @@ class LangfuseTraceLoader(BaseTraceLoader):
             f'Langfuse score upload: {stats["uploaded"]} uploaded, '
             f'{stats["skipped"]} skipped'
         )
-        return stats
-
-    def push_scores_to_retrieval_spans(
-        self,
-        evaluation_result: 'EvaluationResult',
-        flush: bool = True,
-        tags: Optional[List[str]] = None,
-    ) -> Dict[str, int]:
-        """
-        Push scores specifically to retrieval spans.
-
-        Uses the 'retrieval_span_id' from additional_metadata if available.
-
-        Args:
-            evaluation_result: The EvaluationResult from evaluation_runner
-            flush: Whether to flush the client after uploading
-            tags: Optional list of tags to attach to all scores as metadata
-
-        Returns:
-            Dict with counts: {'uploaded': N, 'skipped': M}
-        """
-        if not self._client_initialized:
-            logger.error('Langfuse client not initialized')
-            return {'uploaded': 0, 'skipped': 0}
-
-        stats = {'uploaded': 0, 'skipped': 0}
-
-        for test_result in evaluation_result.results:
-            if not test_result.test_case:
-                continue
-
-            trace_id = test_result.test_case.trace_id
-            if not trace_id:
-                stats['skipped'] += len(test_result.score_results)
-                continue
-
-            # Try to get retrieval_span_id from metadata
-            metadata_str = test_result.test_case.metadata
-            obs_id = None
-            if metadata_str:
-                try:
-                    metadata = self._safe_json_load(metadata_str)
-                    if isinstance(metadata, dict):
-                        obs_id = metadata.get('retrieval_span_id')
-                except Exception:
-                    pass
-
-            for metric_score in test_result.score_results:
-                if metric_score.score is None or np.isnan(metric_score.score):
-                    stats['skipped'] += 1
-                    continue
-
-                try:
-                    score_kwargs = {
-                        'trace_id': trace_id,
-                        'name': metric_score.name,
-                        'value': float(metric_score.score),
-                        'comment': self._format_comment(
-                            metric_score.explanation, metric_score.signals
-                        ),
-                    }
-
-                    if obs_id:
-                        score_kwargs['observation_id'] = obs_id
-
-                    if tags:
-                        score_kwargs['metadata'] = {'tags': tags}
-
-                    # Upload score with retry
-                    self._execute_with_retry(
-                        lambda kwargs=score_kwargs: self.client.create_score(**kwargs),
-                        description=f'upload score {metric_score.name} for trace {trace_id}',
-                    )
-                    stats['uploaded'] += 1
-
-                    # Pacing to avoid rate limits
-                    if self.request_pacing > 0:
-                        time.sleep(self.request_pacing)
-
-                except Exception as e:
-                    logger.warning(f'Failed to upload score: {e}')
-                    stats['skipped'] += 1
-
-        if flush:
-            try:
-                self._execute_with_retry(
-                    lambda: self.client.flush(),
-                    description='flush Langfuse client',
-                )
-            except Exception as e:
-                logger.warning(f'Failed to flush: {e}')
-
         return stats

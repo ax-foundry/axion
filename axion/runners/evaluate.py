@@ -137,7 +137,7 @@ class EvaluationConfig:
     dataset_name: Optional[str] = None
     run_id: Optional[str] = None
     enable_internal_caching: bool = True
-    trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SINGLE_TRACE
+    trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SEPARATE
 
     def __post_init__(self):
         """Validate and finalize scoring configuration."""
@@ -800,7 +800,7 @@ def evaluation_runner(
     show_progress: bool = True,
     dataset_name: Optional[str] = None,
     run_id: Optional[str] = None,
-    trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SINGLE_TRACE,
+    trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SEPARATE,
 ) -> EvaluationResult:
     """
     Synchronously runs an evaluation experiment to evaluate metrics over a given dataset,

@@ -39,8 +39,8 @@ class TraceGranularity(RichEnum):
         - TraceGranularity.SEPARATE or 'separate'
 
     Attributes:
-        SINGLE_TRACE: All evaluations under one parent trace (default)
-        SEPARATE: Each metric execution gets its own independent trace
+        SINGLE_TRACE: All evaluations under one parent trace
+        SEPARATE: Each metric execution gets its own independent trace (default)
     """
 
     SINGLE_TRACE = 'single'

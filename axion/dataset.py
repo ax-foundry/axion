@@ -790,12 +790,12 @@ class Dataset(RichSerializer):
         ignore_extra_keys: bool = False,
     ) -> DatasetItem:
         """Add an item to the dataset, handling both single-turn and multi-turn items.
-        
+
         Args:
             item: Either a DatasetItem instance or a dictionary containing item data
             ignore_extra_keys: If True, only use keys that match DatasetItem fields,
                 ignoring any extra keys in the dictionary. Defaults to False.
-        
+
         Returns:
             The DatasetItem instance that was added to the dataset
         """
@@ -809,11 +809,13 @@ class Dataset(RichSerializer):
                 # Remove internal aliased fields (they're handled via convenience fields)
                 valid_fields -= FieldNames.get_aliased_model_field_keys()
                 # Add public-facing convenience fields that are handled by model_validator
-                valid_fields.update([
-                    FieldNames.QUERY,
-                    FieldNames.EXPECTED_OUTPUT,
-                    FieldNames.CONVERSATION,
-                ])
+                valid_fields.update(
+                    [
+                        FieldNames.QUERY,
+                        FieldNames.EXPECTED_OUTPUT,
+                        FieldNames.CONVERSATION,
+                    ]
+                )
                 # Also include the alias for metadata field
                 valid_fields.add('data_metadata')
                 filtered_item = {k: v for k, v in item.items() if k in valid_fields}
@@ -1055,7 +1057,7 @@ class Dataset(RichSerializer):
         **kwargs,
     ) -> 'Dataset':
         """Creates a new dataset with initial items.
-        
+
         Args:
             name: Optional dataset name
             items: Optional list of items (dicts or strings)
@@ -1066,7 +1068,9 @@ class Dataset(RichSerializer):
         dataset = cls(name=name, **kwargs)
         for item in items or []:
             if isinstance(item, str):
-                dataset.add_item({FieldNames.QUERY: item}, ignore_extra_keys=ignore_extra_keys)
+                dataset.add_item(
+                    {FieldNames.QUERY: item}, ignore_extra_keys=ignore_extra_keys
+                )
             else:
                 dataset.add_item(item, ignore_extra_keys=ignore_extra_keys)
         return dataset
@@ -1199,7 +1203,8 @@ class Dataset(RichSerializer):
 
         # Drop optional columns if they exist
         dataframe = dataframe.drop(
-            columns=list[Hashable](FieldNames.get_aliased_model_field_keys()), errors='ignore'
+            columns=list[Hashable](FieldNames.get_aliased_model_field_keys()),
+            errors='ignore',
         )
 
         # Clean and normalize DataFrame
@@ -1260,7 +1265,7 @@ class Dataset(RichSerializer):
         ignore_extra_keys: bool = False,
     ) -> 'Dataset':
         """Creates a dataset from a JSON file, correctly parsing multi-turn conversations.
-        
+
         Args:
             file_path: Path to the JSON file
             name: Optional dataset name
@@ -1318,7 +1323,7 @@ class Dataset(RichSerializer):
         **kwargs,
     ) -> 'Dataset':
         """Creates a dataset from a CSV file.
-        
+
         Args:
             file_path: Path to the CSV file
             name: Optional dataset name

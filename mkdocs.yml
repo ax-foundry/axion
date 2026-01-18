@@ -15,6 +15,7 @@ nav:
     - LLM Providers: guides/llm-providers.md
     - Synthetic Data: guides/synthetic.md
     - Search Integrations: guides/search.md
+    - Langfuse Tags & Environment: langfuse-tags-env.md
   - Metric Registry:
     - Composite:
       - Overview: metric-registry/composite/index.md

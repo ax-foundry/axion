@@ -208,7 +208,7 @@ class MetricRunner(RunnerMixin):
         },
     )
     trace_granularity: TraceGranularity = field(
-        default=TraceGranularity.SINGLE_TRACE,
+        default=TraceGranularity.SEPARATE,
         repr=True,
         metadata={
             'description': 'Controls trace granularity: single (all under one trace) or separate (trace per metric execution).'
