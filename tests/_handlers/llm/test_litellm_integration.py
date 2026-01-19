@@ -352,3 +352,34 @@ class TestProviderDetection:
 
         assert metadata['provider'] == 'openai'
         assert metadata['model_name'] == 'gpt-4o'
+
+
+class TestSystemInstructionIdempotency:
+    """Ensure JSON rules suffix is not duplicated."""
+
+    def test_system_instruction_appends_marker_once(self):
+        class TestHandler(LLMHandler):
+            instruction = 'Answer the question.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = MockLLM(model='gpt-4o')
+
+        handler = TestHandler()
+
+        s1 = handler._system_instruction()
+        s2 = handler._system_instruction()
+
+        assert s1.count('[JSON_RULES]') == 1
+        assert s2.count('[JSON_RULES]') == 1
+
+    def test_system_instruction_does_not_duplicate_if_marker_present(self):
+        class TestHandler(LLMHandler):
+            instruction = 'Do the thing.\n\n[JSON_RULES]\nReturn JSON only.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = MockLLM(model='gpt-4o')
+
+        handler = TestHandler()
+        s = handler._system_instruction()
+
+        assert s.count('[JSON_RULES]') == 1
