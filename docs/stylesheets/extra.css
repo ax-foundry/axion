@@ -467,6 +467,20 @@ h2.doc.doc-heading {
   border-bottom: 1px solid var(--md-border-green);
 }
 
+/* ==================== Header Logo Sizing ==================== */
+/* Make the top-left logo larger (Material for MkDocs) */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 44px; /* tweak: 36–56px */
+  width: auto;
+}
+
+/* Keep header compact (avoid extra padding) */
+.md-header,
+.md-header__inner {
+  min-height: 60px;
+}
+
 /* ==================== Search ==================== */
 .md-search__form {
   border-radius: var(--md-radius-md);

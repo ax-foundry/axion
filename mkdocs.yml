@@ -12,10 +12,14 @@ nav:
     - Working with Datasets: guides/datasets.md
     - Metrics & Evaluation: guides/metrics.md
     - Running Evaluations: guides/evaluation.md
+    - Langfuse:
+      - Overview: guides/langfuse/overview.md
+      - Configuration: guides/langfuse/configuration.md
+      - Tracing: guides/langfuse/tracing.md
+      - Publishing: guides/langfuse/publishing.md
     - LLM Providers: guides/llm-providers.md
     - Synthetic Data: guides/synthetic.md
     - Search Integrations: guides/search.md
-    - Langfuse Tags & Environment: langfuse-tags-env.md
   - Metric Registry:
     - Composite:
       - Overview: metric-registry/composite/index.md
@@ -80,8 +84,8 @@ nav:
 
 theme:
   name: material
-  logo: assets/dark_icon.png
-  favicon: assets/axion_icon.png
+  logo: assets/ax_icon.png
+  favicon: assets/ax_icon.png
   custom_dir: docs/overrides
   font:
     text: Inter
