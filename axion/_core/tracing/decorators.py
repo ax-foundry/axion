@@ -63,7 +63,19 @@ def trace(
     capture_result = capture_result or capture_response
 
     def decorator(func: Callable):
-        span_name = name or func.__name__
+        # Static fallback name (used if self.name is not available)
+        static_span_name = name or func.__name__
+
+        def _get_span_name(instance) -> str:
+            """Get span name, preferring instance.name if available."""
+            if instance is not None and hasattr(instance, 'name'):
+                try:
+                    instance_name = instance.name
+                    if instance_name:
+                        return instance_name
+                except Exception:
+                    pass
+            return static_span_name
 
         def _build_attributes(args, kwargs) -> Dict[str, Any]:
             """Build span attributes from function arguments."""
@@ -163,6 +175,9 @@ def trace(
                 # If no tracer available, execute function normally
                 return func(self, *args, **kwargs)
 
+            # Get span name dynamically (prefers self.name if available)
+            effective_span_name = _get_span_name(self)
+
             attributes = _build_attributes((self,) + args, kwargs)
             # Pass input directly in attributes so it's set at span creation time
             # This ensures the input is captured before any child spans can interfere
@@ -171,7 +186,7 @@ def trace(
             if span_type:
                 attributes['span_type'] = span_type
 
-            with self.tracer.span(span_name, **attributes) as span:
+            with self.tracer.span(effective_span_name, **attributes) as span:
                 try:
                     result = func(self, *args, **kwargs)
                     _capture_result_attributes(span, result)
@@ -192,6 +207,9 @@ def trace(
                 # If no tracer available, execute function normally
                 return await func(self, *args, **kwargs)
 
+            # Get span name dynamically (prefers self.name if available)
+            effective_span_name = _get_span_name(self)
+
             attributes = _build_attributes((self,) + args, kwargs)
             # Pass input directly in attributes so it's set at span creation time
             # This ensures the input is captured before any child spans can interfere
@@ -200,7 +218,9 @@ def trace(
             if span_type:
                 attributes['span_type'] = span_type
 
-            async with self.tracer.async_span(span_name, **attributes) as span:
+            async with self.tracer.async_span(
+                effective_span_name, **attributes
+            ) as span:
                 try:
                     result = await func(self, *args, **kwargs)
                     _capture_result_attributes(span, result)

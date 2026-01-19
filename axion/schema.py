@@ -569,7 +569,7 @@ class EvaluationResult:
 
         return None
 
-    def push_scores(
+    def publish_to_observability(
         self,
         loader: Optional[Any] = None,
         observation_id_field: Optional[str] = 'observation_id',
@@ -577,9 +577,9 @@ class EvaluationResult:
         tags: Optional[List[str]] = None,
     ) -> Dict[str, int]:
         """
-        Push evaluation scores back to an observability platform.
+        Publish evaluation scores to an observability platform.
 
-        Uses a trace loader to push scores. By default, uses LangfuseTraceLoader.
+        Uses a trace loader to publish scores. By default, uses LangfuseTraceLoader.
 
         Args:
             loader: A trace loader instance (e.g., LangfuseTraceLoader, OpikTraceLoader).
@@ -607,17 +607,17 @@ class EvaluationResult:
             >>> from axion._core.tracing.loaders import LangfuseTraceLoader
             >>>
             >>> # Using default Langfuse loader
-            >>> stats = result.push_scores()
+            >>> stats = result.publish_to_observability()
             >>>
             >>> # Using explicit loader with tags
             >>> loader = LangfuseTraceLoader()
-            >>> stats = result.push_scores(
+            >>> stats = result.publish_to_observability(
             ...     loader=loader,
             ...     tags=['prod', 'v1.0']
             ... )
             >>>
             >>> # Attach scores to traces only (no observation)
-            >>> stats = result.push_scores(observation_id_field=None)
+            >>> stats = result.publish_to_observability(observation_id_field=None)
         """
         if loader is None:
             from axion._core.tracing.loaders import LangfuseTraceLoader

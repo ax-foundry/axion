@@ -63,6 +63,7 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         optional_fields: Optional[List[str]] = None,
         metric_name: Optional[str] = None,
         metric_description: Optional[str] = None,
+        name: Optional[str] = None,
         **kwargs: Any,
     ):
         """
@@ -77,8 +78,9 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
             llm_provider: The LLM provider to use
             required_fields: List of required field names for evaluation
             optional_fields: List of optional field names for evaluation
-            metric_name: Optional name for the metric instance
+            metric_name: Optional name for the metric instance (alias: name)
             metric_description: Optional description for the metric instance
+            name: Alias for metric_name (for convenience)
             **kwargs: Additional keyword arguments passed to the parent LLMHandler (e.g., logger config).
         """
         self._set_llm(llm, model_name, llm_provider)
@@ -86,7 +88,8 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         self._threshold = threshold
         self._required_fields = required_fields
         self._optional_fields = optional_fields
-        self._metric_name = metric_name
+        # Support both 'name' and 'metric_name' parameters (name takes precedence)
+        self._metric_name = name or metric_name
         self._metric_description = metric_description
 
         super().__init__(**kwargs)
