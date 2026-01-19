@@ -1,4 +1,5 @@
 import logging
+import os
 from contextlib import asynccontextmanager, contextmanager
 from typing import Any, Dict, List, Optional, Union
 
@@ -37,6 +38,8 @@ class LangfuseTracer(BaseTracer):
         - LANGFUSE_PUBLIC_KEY: Your Langfuse public key
         - LANGFUSE_SECRET_KEY: Your Langfuse secret key
         - LANGFUSE_BASE_URL: API endpoint (default: https://cloud.langfuse.com)
+        - LANGFUSE_TAGS: Comma-separated list of tags (e.g., "prod,v1.0")
+        - LANGFUSE_ENVIRONMENT: Environment name (e.g., "production", "staging")
 
     Example:
         from axion._core.tracing import Tracer, configure_tracing
@@ -45,12 +48,19 @@ class LangfuseTracer(BaseTracer):
         os.environ['TRACING_MODE'] = 'langfuse'
         os.environ['LANGFUSE_PUBLIC_KEY'] = 'pk-lf-...'
         os.environ['LANGFUSE_SECRET_KEY'] = 'sk-lf-...'
+        os.environ['LANGFUSE_TAGS'] = 'prod,v1.0'
+        os.environ['LANGFUSE_ENVIRONMENT'] = 'production'
 
         configure_tracing()
         tracer = Tracer('llm')
-        with tracer.span('my-operation'):
+        with tracer.span('my-operation', tags=['custom-tag']):
             # ... your code
         tracer.flush()
+
+        # Or pass tags/environment directly:
+        tracer = LangfuseTracer(tags=['prod', 'v1.0'], environment='production')
+        with tracer.span('my-operation'):
+            # ... your code
     """
 
     def __init__(
@@ -61,6 +71,8 @@ class LangfuseTracer(BaseTracer):
         secret_key: Optional[str] = None,
         base_url: Optional[str] = None,
         trace_id: Optional[str] = None,
+        tags: Optional[List[str]] = None,
+        environment: Optional[str] = None,
         **kwargs,
     ):
         self.metadata_type = metadata_type
@@ -83,6 +95,18 @@ class LangfuseTracer(BaseTracer):
         self._public_key = public_key or settings.langfuse_public_key
         self._secret_key = secret_key or settings.langfuse_secret_key
         self._base_url = base_url or settings.langfuse_base_url
+
+        # Tags and environment (support env vars)
+        if tags is None:
+            env_tags = os.environ.get('LANGFUSE_TAGS')
+            if env_tags:
+                self.tags = [t.strip() for t in env_tags.split(',') if t.strip()]
+            else:
+                self.tags = []
+        else:
+            self.tags = tags
+
+        self.environment = environment or os.environ.get('LANGFUSE_ENVIRONMENT')
 
         # Initialize client
         self._client: Optional[Langfuse] = None
@@ -118,13 +142,23 @@ class LangfuseTracer(BaseTracer):
             return
 
         try:
-            self._client = Langfuse(
-                public_key=self._public_key,
-                secret_key=self._secret_key,
-                host=self._base_url,
-            )
+            # Build client kwargs
+            client_kwargs = {
+                'public_key': self._public_key,
+                'secret_key': self._secret_key,
+                'host': self._base_url,
+            }
+
+            # Set environment if provided (Langfuse SDK supports this at client init)
+            # Also check LANGFUSE_TRACING_ENVIRONMENT env var (Langfuse SDK standard)
+            env = self.environment or os.environ.get('LANGFUSE_TRACING_ENVIRONMENT')
+            if env:
+                client_kwargs['environment'] = env
+
+            self._client = Langfuse(**client_kwargs)
             logger.debug(
-                f'Langfuse client initialized successfully (endpoint: {self._base_url})'
+                f'Langfuse client initialized successfully (endpoint: {self._base_url}, '
+                f'environment: {env or "default"})'
             )
         except Exception as e:
             logger.warning(f'Failed to initialize Langfuse client: {e}')

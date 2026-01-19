@@ -10,6 +10,59 @@ logger = get_logger(__name__)
 
 __all__ = ['LangfuseSpan']
 
+# Patterns for auto-inferring span type from name
+_SPAN_TYPE_PATTERNS = {
+    'retriev': 'retriever',  # retrieve, retrieval, retriever
+    'embed': 'embedding',  # embed, embedding
+    'eval': 'evaluator',  # evaluate, evaluation, evaluator
+    'metric': 'evaluator',  # metric, metrics
+    'score': 'evaluator',  # score, scoring
+    'faithful': 'evaluator',  # faithfulness
+    'relevancy': 'evaluator',  # relevancy, relevance
+    'tool': 'tool',
+    'agent': 'agent',
+    'chain': 'chain',
+    'guard': 'guardrail',  # guard, guardrail
+}
+
+
+def _infer_span_type(name: str, attributes: Dict[str, Any]) -> str:
+    """
+    Infer Langfuse span type from name and attributes.
+
+    Priority:
+    1. Explicit span_type in attributes (user override)
+    2. Attribute-based detection (model, embedding_model)
+    3. Name-based pattern matching
+    4. Default to 'span'
+
+    Args:
+        name: The span name
+        attributes: Span attributes dict
+
+    Returns:
+        One of: 'generation', 'embedding', 'span', 'retriever',
+        'evaluator', 'tool', 'agent', 'chain', 'guardrail'
+    """
+    # 1. Explicit override
+    if 'span_type' in attributes:
+        return attributes['span_type']
+
+    # 2. Attribute-based
+    if 'model' in attributes:
+        return 'generation'
+    if 'embedding_model' in attributes or 'embeddings' in attributes:
+        return 'embedding'
+
+    # 3. Name-based patterns (case-insensitive)
+    name_lower = name.lower()
+    for pattern, span_type in _SPAN_TYPE_PATTERNS.items():
+        if pattern in name_lower:
+            return span_type
+
+    # 4. Default
+    return 'span'
+
 
 class LangfuseSpan:
     """
@@ -55,18 +108,34 @@ class LangfuseSpan:
             return self
 
         try:
-            # Determine observation type based on attributes
-            # Use 'generation' for LLM calls (when model is present), 'span' otherwise
-            as_type = 'generation' if 'model' in self.attributes else 'span'
+            # Infer observation type from name and attributes
+            as_type = _infer_span_type(self.name, self.attributes)
 
             # Langfuse only accepts specific kwargs for start_as_current_observation
             # Known params: as_type, name, model (for generation), input, output
+            # Tags and environment are set via update_current_trace(), not as kwargs
             # Everything else goes into metadata
             known_params = {'model', 'input', 'output'}
-            internal_params = {'auto_trace', 'new_trace'}
+            internal_params = {
+                'auto_trace',
+                'new_trace',
+                'environment',
+                'tags',
+                'span_type',
+            }
 
             langfuse_kwargs = {}
             metadata = {}
+
+            # Extract tags from attributes or use tracer-level tags
+            tags = self.attributes.get('tags')
+            if tags is None and self.tracer.tags:
+                tags = self.tracer.tags
+
+            # Extract environment from attributes or use tracer-level environment
+            environment = self.attributes.get('environment')
+            if environment is None and self.tracer.environment:
+                environment = self.tracer.environment
 
             for k, v in self.attributes.items():
                 if k in internal_params:
@@ -88,6 +157,19 @@ class LangfuseSpan:
                 )
             )
             self._observation = self._observation_context.__enter__()
+
+            # For the root span, set tags on the trace
+            # Note: environment is set at client initialization, not via update_current_trace()
+            # Check if this is the root span (only one span in stack, which is this one)
+            if len(self.tracer._span_stack) == 1:
+                try:
+                    # Update trace with tags (environment is set at client init)
+                    if tags:
+                        self.tracer._client.update_current_trace(tags=tags)
+                        logger.debug(f'Langfuse trace updated with tags: {tags}')
+                except Exception as e:
+                    logger.debug(f'Failed to update trace with tags: {e}')
+
             logger.debug(f'Langfuse span created: {self.name} (type={as_type})')
         except Exception as e:
             logger.info(f'Failed to create Langfuse span "{self.name}": {e}')

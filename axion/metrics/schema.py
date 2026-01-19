@@ -8,6 +8,8 @@ from axion._core.schema import RichBaseModel
 
 T = TypeVar('T', bound=BaseModel)
 
+DEFAULT_EXPLANATION = 'Check signals for additional details'
+
 
 class MetricConfig(RichBaseModel):
     """
@@ -68,7 +70,7 @@ class MetricEvaluationResult(RichBaseModel):
     )
 
     explanation: Optional[str] = Field(
-        default='Check signals for additional details',
+        default=DEFAULT_EXPLANATION,
         description='Explanation of how the score was derived. May be plain text, dict, or another model.',
     )
 
