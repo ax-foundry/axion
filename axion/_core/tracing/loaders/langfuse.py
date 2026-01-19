@@ -470,3 +470,338 @@ class LangfuseTraceLoader(BaseTraceLoader):
             f'{stats["skipped"]} skipped'
         )
         return stats
+
+    def _serialize_dataset_item_input(self, item: Any) -> Dict[str, Any]:
+        """
+        Serialize a DatasetItem into the input format for Langfuse dataset items.
+
+        Args:
+            item: The DatasetItem to serialize
+
+        Returns:
+            Dict containing the input fields for a Langfuse dataset item
+        """
+        input_data: Dict[str, Any] = {}
+
+        # Core input fields
+        if hasattr(item, 'query') and item.query:
+            input_data['query'] = item.query
+
+        if hasattr(item, 'retrieved_content') and item.retrieved_content:
+            input_data['retrieved_content'] = item.retrieved_content
+
+        if hasattr(item, 'additional_input') and item.additional_input:
+            input_data['additional_input'] = item.additional_input
+
+        if hasattr(item, 'acceptance_criteria') and item.acceptance_criteria:
+            input_data['acceptance_criteria'] = item.acceptance_criteria
+
+        # Handle multi-turn conversations
+        if hasattr(item, 'conversation') and item.conversation:
+            try:
+                if hasattr(item.conversation, 'model_dump'):
+                    input_data['conversation'] = item.conversation.model_dump()
+                else:
+                    input_data['conversation'] = str(item.conversation)
+            except Exception:
+                input_data['conversation'] = str(item.conversation)
+
+        return input_data
+
+    def _serialize_expected_output(self, item: Any) -> Optional[Dict[str, Any]]:
+        """
+        Serialize the expected output from a DatasetItem.
+
+        Args:
+            item: The DatasetItem to extract expected output from
+
+        Returns:
+            Dict containing expected output, or None if not present
+        """
+        if hasattr(item, 'expected_output') and item.expected_output:
+            return {'expected_output': item.expected_output}
+        return None
+
+    def upload_experiment(
+        self,
+        evaluation_result: 'EvaluationResult',
+        dataset_name: Optional[str] = None,
+        run_name: Optional[str] = None,
+        run_metadata: Optional[Dict[str, Any]] = None,
+        flush: bool = True,
+        tags: Optional[List[str]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Upload evaluation results to Langfuse as a dataset experiment.
+
+        This creates a dataset (if it doesn't exist), dataset items for each test case,
+        and an experiment run with scores attached. Unlike `push_scores_to_langfuse()`,
+        this method does not require existing traces - it creates everything from scratch.
+
+        Args:
+            evaluation_result: The EvaluationResult from evaluation_runner
+            dataset_name: Name for the Langfuse dataset. Defaults to
+                evaluation_result.evaluation_name or generates one.
+            run_name: Name for the experiment run. Defaults to
+                "{dataset_name}-{run_id}" pattern.
+            run_metadata: Optional metadata to attach to the experiment run.
+            flush: Whether to flush the client after uploading. Defaults to True.
+            tags: Optional list of tags to attach to all scores as metadata.
+
+        Returns:
+            Dict with statistics:
+                - dataset_name: Name of the created/used dataset
+                - run_name: Name of the experiment run
+                - items_created: Number of dataset items created
+                - runs_created: Number of experiment runs created
+                - scores_uploaded: Number of scores attached
+                - scores_skipped: Number of scores skipped (None/NaN values)
+                - errors: List of error messages encountered
+
+        Example:
+            loader = LangfuseTraceLoader()
+
+            result = evaluation_runner(
+                evaluation_inputs=dataset,
+                scoring_metrics=[Faithfulness(), AnswerRelevancy()]
+            )
+
+            # Upload as experiment
+            stats = loader.upload_experiment(
+                result,
+                dataset_name="my-rag-eval",
+                run_name="experiment-v1",
+                tags=['production']
+            )
+            print(f"Uploaded {stats['scores_uploaded']} scores to {stats['dataset_name']}")
+        """
+        if not self._client_initialized:
+            logger.error('Langfuse client not initialized, cannot upload experiment')
+            return {
+                'dataset_name': None,
+                'run_name': None,
+                'items_created': 0,
+                'runs_created': 0,
+                'scores_uploaded': 0,
+                'scores_skipped': 0,
+                'errors': ['Langfuse client not initialized'],
+            }
+
+        stats: Dict[str, Any] = {
+            'dataset_name': None,
+            'run_name': None,
+            'items_created': 0,
+            'runs_created': 0,
+            'scores_uploaded': 0,
+            'scores_skipped': 0,
+            'errors': [],
+        }
+
+        # Determine dataset name
+        if dataset_name is None:
+            if evaluation_result.evaluation_name:
+                dataset_name = evaluation_result.evaluation_name
+            else:
+                dataset_name = f'axion-eval-{evaluation_result.run_id[:8]}'
+
+        # Determine run name
+        if run_name is None:
+            run_name = f'{dataset_name}-{evaluation_result.run_id[:8]}'
+
+        stats['dataset_name'] = dataset_name
+        stats['run_name'] = run_name
+
+        # Merge default_tags with per-call tags
+        effective_tags = list(self.default_tags)
+        if tags:
+            effective_tags.extend(tags)
+
+        # Create or get dataset (create_dataset upserts if exists)
+        try:
+            self._execute_with_retry(
+                lambda: self.client.create_dataset(name=dataset_name),
+                description=f'create dataset {dataset_name}',
+            )
+            logger.info(f'Created/retrieved dataset: {dataset_name}')
+        except Exception as e:
+            error_msg = f'Failed to create dataset {dataset_name}: {e}'
+            logger.error(error_msg)
+            stats['errors'].append(error_msg)
+            return stats
+
+        # Build a map of item_id -> (test_result, input_data, actual_output)
+        # for lookup when iterating over dataset items
+        test_result_map: Dict[str, Any] = {}
+
+        # Phase 1: Create all dataset items
+        for test_result in evaluation_result.results:
+            if not test_result.test_case:
+                continue
+
+            item = test_result.test_case
+            item_id = getattr(item, 'id', None)
+            if not item_id:
+                continue
+
+            # Serialize input and expected output
+            input_data = self._serialize_dataset_item_input(item)
+            expected_output = self._serialize_expected_output(item)
+
+            # Get actual output
+            actual_output = (
+                getattr(item, 'actual_output', None)
+                if hasattr(item, 'actual_output')
+                else None
+            )
+
+            # Store for later lookup
+            test_result_map[item_id] = {
+                'test_result': test_result,
+                'input_data': input_data,
+                'actual_output': actual_output,
+            }
+
+            # Build metadata for the dataset item
+            item_metadata: Dict[str, Any] = {}
+            if hasattr(item, 'trace_id') and item.trace_id:
+                item_metadata['trace_id'] = item.trace_id
+            if hasattr(item, 'observation_id') and item.observation_id:
+                item_metadata['observation_id'] = item.observation_id
+            if hasattr(item, 'metadata') and item.metadata:
+                item_metadata['original_metadata'] = item.metadata
+
+            # Create dataset item
+            try:
+                self._execute_with_retry(
+                    lambda item_id=item_id,
+                    input_data=input_data,
+                    expected_output=expected_output,
+                    item_metadata=item_metadata: self.client.create_dataset_item(
+                        dataset_name=dataset_name,
+                        id=item_id,
+                        input=input_data,
+                        expected_output=expected_output,
+                        metadata=item_metadata if item_metadata else None,
+                    ),
+                    description=f'create dataset item {item_id}',
+                )
+                stats['items_created'] += 1
+
+                if self.request_pacing > 0:
+                    time.sleep(self.request_pacing)
+
+            except Exception as e:
+                error_str = str(e).lower()
+                # Handle "already exists" gracefully - item will be reused
+                if 'already exists' in error_str or 'duplicate' in error_str:
+                    logger.debug(f'Dataset item {item_id} already exists, reusing')
+                else:
+                    error_msg = f'Failed to create dataset item {item_id}: {e}'
+                    logger.warning(error_msg)
+                    stats['errors'].append(error_msg)
+                    # Remove from map so we don't try to create a run for it
+                    test_result_map.pop(item_id, None)
+
+        # Flush to ensure all items are created before fetching
+        try:
+            self._execute_with_retry(
+                lambda: self.client.flush(),
+                description='flush after creating dataset items',
+            )
+        except Exception as e:
+            logger.warning(f'Failed to flush after creating items: {e}')
+
+        # Phase 2: Get dataset and create runs using item.run() context manager
+        try:
+            dataset = self._execute_with_retry(
+                lambda: self.client.get_dataset(name=dataset_name),
+                description=f'get dataset {dataset_name}',
+            )
+        except Exception as e:
+            error_msg = f'Failed to get dataset {dataset_name}: {e}'
+            logger.error(error_msg)
+            stats['errors'].append(error_msg)
+            return stats
+
+        # Build run metadata
+        full_run_metadata = {
+            'axion_run_id': evaluation_result.run_id,
+            **(run_metadata or {}),
+        }
+        if effective_tags:
+            full_run_metadata['tags'] = effective_tags
+
+        # Iterate over dataset items and create runs
+        for dataset_item in dataset.items:
+            item_id = dataset_item.id
+            if item_id not in test_result_map:
+                # This item wasn't part of our evaluation
+                continue
+
+            cached = test_result_map[item_id]
+            test_result = cached['test_result']
+            actual_output = cached['actual_output']
+
+            try:
+                # Use item.run() context manager to create the experiment run
+                with dataset_item.run(
+                    run_name=run_name,
+                    run_metadata=full_run_metadata,
+                ) as root_span:
+                    # Update trace with output
+                    if actual_output is not None:
+                        root_span.update_trace(output=actual_output)
+
+                    stats['runs_created'] += 1
+
+                    # Add scores using score_trace
+                    for metric_score in test_result.score_results:
+                        if metric_score.score is None or np.isnan(metric_score.score):
+                            stats['scores_skipped'] += 1
+                            continue
+
+                        try:
+                            root_span.score_trace(
+                                name=metric_score.name,
+                                value=float(metric_score.score),
+                                comment=self._format_comment(
+                                    metric_score.explanation, metric_score.signals
+                                ),
+                            )
+                            stats['scores_uploaded'] += 1
+
+                        except Exception as e:
+                            error_msg = (
+                                f'Failed to upload score {metric_score.name} '
+                                f'for item {item_id}: {e}'
+                            )
+                            logger.warning(error_msg)
+                            stats['errors'].append(error_msg)
+                            stats['scores_skipped'] += 1
+
+                if self.request_pacing > 0:
+                    time.sleep(self.request_pacing)
+
+            except Exception as e:
+                error_msg = f'Failed to create experiment run for item {item_id}: {e}'
+                logger.warning(error_msg)
+                stats['errors'].append(error_msg)
+
+        # Flush client
+        if flush:
+            try:
+                self._execute_with_retry(
+                    lambda: self.client.flush(),
+                    description='flush Langfuse client',
+                )
+            except Exception as e:
+                logger.warning(f'Failed to flush Langfuse client: {e}')
+
+        logger.info(
+            f'Langfuse experiment upload complete: dataset={dataset_name}, '
+            f'run={run_name}, items={stats["items_created"]}, '
+            f'runs={stats["runs_created"]}, scores={stats["scores_uploaded"]} uploaded, '
+            f'{stats["scores_skipped"]} skipped'
+        )
+
+        return stats

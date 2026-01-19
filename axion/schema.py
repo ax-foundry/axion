@@ -631,6 +631,77 @@ class EvaluationResult:
             tags=tags,
         )
 
+    def publish_as_experiment(
+        self,
+        loader: Optional[Any] = None,
+        dataset_name: Optional[str] = None,
+        run_name: Optional[str] = None,
+        run_metadata: Optional[Dict[str, Any]] = None,
+        flush: bool = True,
+        tags: Optional[List[str]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Publish evaluation results to Langfuse as a dataset experiment.
+
+        This method creates a complete experiment in Langfuse with a dataset,
+        dataset items, experiment runs, and scores. Unlike `publish_to_observability()`,
+        it does not require existing traces - it creates everything from scratch.
+
+        Args:
+            loader: A LangfuseTraceLoader instance. If None, creates a new one
+                using environment variables.
+            dataset_name: Name for the Langfuse dataset. Defaults to
+                evaluation_name or generates one based on run_id.
+            run_name: Name for the experiment run. Defaults to
+                "{dataset_name}-{run_id}" pattern.
+            run_metadata: Optional metadata to attach to the experiment run.
+            flush: Whether to flush the client after uploading. Defaults to True.
+            tags: Optional list of tags to attach to all scores as metadata.
+
+        Returns:
+            Dict with statistics:
+                - dataset_name: Name of the created/used dataset
+                - run_name: Name of the experiment run
+                - items_created: Number of dataset items created
+                - runs_created: Number of experiment runs created
+                - scores_uploaded: Number of scores attached
+                - scores_skipped: Number of scores skipped (None/NaN values)
+                - errors: List of error messages encountered
+
+        Example:
+            >>> from axion import evaluation_runner
+            >>> from axion.metrics import Faithfulness, AnswerRelevancy
+            >>>
+            >>> # Run evaluation
+            >>> results = evaluation_runner(
+            ...     evaluation_inputs=dataset,
+            ...     scoring_config=config,
+            ...     evaluation_name="RAG Evaluation",
+            ... )
+            >>>
+            >>> # Upload to Langfuse as experiment
+            >>> stats = results.publish_as_experiment(
+            ...     dataset_name="my-rag-dataset",
+            ...     run_name="experiment-v1",
+            ...     tags=["production"]
+            ... )
+            >>>
+            >>> print(f"Uploaded {stats['scores_uploaded']} scores to {stats['dataset_name']}")
+        """
+        if loader is None:
+            from axion._core.tracing.loaders import LangfuseTraceLoader
+
+            loader = LangfuseTraceLoader()
+
+        return loader.upload_experiment(
+            evaluation_result=self,
+            dataset_name=dataset_name,
+            run_name=run_name,
+            run_metadata=run_metadata,
+            flush=flush,
+            tags=tags,
+        )
+
 
 @dataclass
 class ErrorConfig:
