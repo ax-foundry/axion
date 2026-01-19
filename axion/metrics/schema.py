@@ -8,7 +8,6 @@ from axion._core.schema import RichBaseModel
 
 T = TypeVar('T', bound=BaseModel)
 
-# Default explanation value used in MetricEvaluationResult
 DEFAULT_EXPLANATION = 'Check signals for additional details'
 
 

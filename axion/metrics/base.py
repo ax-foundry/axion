@@ -88,7 +88,7 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         self._threshold = threshold
         self._required_fields = required_fields
         self._optional_fields = optional_fields
-        # Support both 'name' and 'metric_name' parameters (name takes precedence)
+        # Name takes precedence
         self._metric_name = name or metric_name
         self._metric_description = metric_description
 
