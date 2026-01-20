@@ -402,68 +402,61 @@ class MetricRunner(RunnerMixin):
             auto_flush=flush_per_metric,
         )
 
-        # Temporarily replace the executor's tracer
-        # Note: This has a race condition caveat with shared executors under heavy load,
-        # but is the working solution until metrics support tracer injection properly.
-        original_tracer = executor.tracer
-        executor.tracer = metric_tracer
+        # Use async_span which sets the tracer in context via set_current_tracer().
+        # The @trace decorator and runner execute() methods will pick up
+        # the context tracer, avoiding race conditions with shared executors.
+        async with metric_tracer.async_span(
+            f'metric_{executor.metric_name}_item_{item.id}'
+        ) as span:
+            span.set_input(
+                {
+                    'item_id': item.id,
+                    'metric_name': executor.metric_name,
+                }
+            )
 
-        try:
-            async with metric_tracer.async_span(
-                f'metric_{executor.metric_name}_item_{item.id}'
-            ) as span:
-                span.set_input(
-                    {
-                        'item_id': item.id,
-                        'metric_name': executor.metric_name,
-                    }
-                )
+            result = await self._safe_execute(
+                self.semaphore.run(
+                    self._process_single_metric,
+                    executor,
+                    item,
+                    cache=cache_to_pass,
+                ),
+                ignore_errors=self.error_config.ignore_errors,
+            )
 
-                result = await self._safe_execute(
-                    self.semaphore.run(
-                        self._process_single_metric,
-                        executor,
-                        item,
-                        cache=cache_to_pass,
-                    ),
-                    ignore_errors=self.error_config.ignore_errors,
-                )
-
-                if isinstance(result, MetricScore):
-                    # Attach trace identifiers for downstream publishing.
-                    # This enables publishing scores directly onto the metric's own
-                    # runtime trace/span (e.g., publish_as_experiment(score_on_runtime_traces=True)).
-                    try:
-                        result.metadata = result.metadata or {}
-                        result.metadata.update(
-                            {
-                                'trace_id': getattr(metric_tracer, 'trace_id', None),
-                                'observation_id': getattr(span, 'span_id', None),
-                                'metric_name': executor.metric_name,
-                            }
-                        )
-                    except Exception:
-                        pass
-                    span.set_output(
+            if isinstance(result, MetricScore):
+                # Attach trace identifiers for downstream publishing.
+                # This enables publishing scores directly onto the metric's own
+                # runtime trace/span (e.g., publish_as_experiment(score_on_runtime_traces=True)).
+                try:
+                    result.metadata = result.metadata or {}
+                    result.metadata.update(
                         {
-                            'score': float(result.score)
-                            if result.score is not None
-                            else None,
-                            'passed': result.passed,
+                            'trace_id': getattr(metric_tracer, 'trace_id', None),
+                            'observation_id': getattr(span, 'span_id', None),
+                            'metric_name': executor.metric_name,
                         }
                     )
-                elif isinstance(result, Exception):
-                    logger.error(f'Metric execution failed: {result}', exc_info=False)
-                    span.set_attribute('error', str(result))
+                except Exception:
+                    pass
+                span.set_output(
+                    {
+                        'score': float(result.score)
+                        if result.score is not None
+                        else None,
+                        'passed': result.passed,
+                    }
+                )
+            elif isinstance(result, Exception):
+                logger.error(f'Metric execution failed: {result}', exc_info=False)
+                span.set_attribute('error', str(result))
 
-                # Flush the tracer after each metric execution if requested
-                if flush_per_metric and hasattr(metric_tracer, 'flush'):
-                    metric_tracer.flush()
+            # Flush the tracer after each metric execution if requested
+            if flush_per_metric and hasattr(metric_tracer, 'flush'):
+                metric_tracer.flush()
 
-                return (item.id, result)
-        finally:
-            # Restore original tracer
-            executor.tracer = original_tracer
+            return (item.id, result)
 
     async def _execute_batch_separate(
         self,
@@ -671,9 +664,12 @@ class AxionRunner(BaseMetricRunner):
         input_data: Union[DatasetItem, Dict[str, Any]],
         cache: Optional[AnalysisCache] = None,
     ) -> MetricScore:
-        async with self.tracer.async_span(
-            f'(Axion) {self.metric_name.title()}'
-        ) as span:
+        from axion._core.tracing.context import get_current_tracer_safe
+
+        # Use context tracer first (for async-safe tracing), fall back to self.tracer
+        tracer = get_current_tracer_safe() or self.tracer
+
+        async with tracer.async_span(f'(Axion) {self.metric_name.title()}') as span:
             span.set_attribute('metric_name', self.metric_name)
             span.set_attribute('data_id', getattr(input_data, 'id', 'unknown'))
 
@@ -741,9 +737,12 @@ class RagasRunner(BaseMetricRunner):
     ) -> MetricScore:
         from ragas import SingleTurnSample
 
-        async with self.tracer.async_span(
-            f'(Ragas) {self.metric.name.title()}'
-        ) as span:
+        from axion._core.tracing.context import get_current_tracer_safe
+
+        # Use context tracer first (for async-safe tracing), fall back to self.tracer
+        tracer = get_current_tracer_safe() or self.tracer
+
+        async with tracer.async_span(f'(Ragas) {self.metric.name.title()}') as span:
             span.set_attribute('metric_name', self.metric_name)
             span.set_attribute('data_id', getattr(input_data, 'id', 'unknown'))
 
@@ -765,7 +764,7 @@ class RagasRunner(BaseMetricRunner):
             )
 
             try:
-                async with self.tracer.async_span('create_sample') as sample_span:
+                async with tracer.async_span('create_sample') as sample_span:
                     sample_span.add_trace(
                         'info', 'Creating SingleTurnSample for evaluation'
                     )
@@ -848,7 +847,12 @@ class DeepEvalRunner(BaseMetricRunner):
     ) -> MetricScore:
         from deepeval.test_case import LLMTestCase
 
-        async with self.tracer.async_span(
+        from axion._core.tracing.context import get_current_tracer_safe
+
+        # Use context tracer first (for async-safe tracing), fall back to self.tracer
+        tracer = get_current_tracer_safe() or self.tracer
+
+        async with tracer.async_span(
             f'(DeepEval) {self.metric.__class__.__name__}'
         ) as span:
             span.set_attribute('metric_name', self.metric_name)
@@ -872,7 +876,7 @@ class DeepEvalRunner(BaseMetricRunner):
             )
 
             try:
-                async with self.tracer.async_span('create_test_case') as test_case_span:
+                async with tracer.async_span('create_test_case') as test_case_span:
                     test_case_span.add_trace(
                         'info', 'Creating LLMTestCase for evaluation'
                     )

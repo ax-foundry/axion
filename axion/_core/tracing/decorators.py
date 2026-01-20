@@ -182,7 +182,12 @@ def trace(
         @functools.wraps(func)
         def sync_wrapper(self, *args, **kwargs):
             """Synchronous function wrapper."""
-            if not hasattr(self, 'tracer'):
+            from axion._core.tracing.context import get_current_tracer_safe
+
+            # Use context tracer first (for async-safe tracing), fall back to self.tracer
+            tracer = get_current_tracer_safe() or getattr(self, 'tracer', None)
+
+            if not tracer:
                 # If no tracer available, execute function normally
                 return func(self, *args, **kwargs)
 
@@ -197,7 +202,7 @@ def trace(
             if span_type:
                 attributes['span_type'] = span_type
 
-            with self.tracer.span(effective_span_name, **attributes) as span:
+            with tracer.span(effective_span_name, **attributes) as span:
                 try:
                     result = func(self, *args, **kwargs)
                     _capture_result_attributes(span, result)
@@ -214,7 +219,12 @@ def trace(
         @functools.wraps(func)
         async def async_wrapper(self, *args, **kwargs):
             """Asynchronous function wrapper."""
-            if not hasattr(self, 'tracer'):
+            from axion._core.tracing.context import get_current_tracer_safe
+
+            # Use context tracer first (for async-safe tracing), fall back to self.tracer
+            tracer = get_current_tracer_safe() or getattr(self, 'tracer', None)
+
+            if not tracer:
                 # If no tracer available, execute function normally
                 return await func(self, *args, **kwargs)
 
@@ -229,9 +239,7 @@ def trace(
             if span_type:
                 attributes['span_type'] = span_type
 
-            async with self.tracer.async_span(
-                effective_span_name, **attributes
-            ) as span:
+            async with tracer.async_span(effective_span_name, **attributes) as span:
                 try:
                     result = await func(self, *args, **kwargs)
                     _capture_result_attributes(span, result)
