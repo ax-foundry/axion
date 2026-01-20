@@ -13,6 +13,7 @@ __all__ = ['LangfuseSpan']
 # Patterns for auto-inferring span type from name
 _SPAN_TYPE_PATTERNS = {
     'retriev': 'retriever',  # retrieve, retrieval, retriever
+    'knowledge': 'retriever',  # knowledge, knowledge_retrieval, knowledge_retriever
     'embed': 'embedding',  # embed, embedding
     'eval': 'evaluator',  # evaluate, evaluation, evaluator
     'metric': 'evaluator',  # metric, metrics

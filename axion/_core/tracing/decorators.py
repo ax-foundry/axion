@@ -111,32 +111,43 @@ def trace(
             }
             return {'function.args': safe_args, 'function.kwargs': safe_kwargs}
 
-        def _build_input_data(args, kwargs) -> Dict[str, Any]:
-            """Build input data for span.set_input()."""
+        def _filter_non_null(data: Any) -> Any:
+            """Recursively filter out null values from dicts/lists."""
+            if isinstance(data, dict):
+                return {
+                    k: _filter_non_null(v) for k, v in data.items() if v is not None
+                }
+            elif isinstance(data, list):
+                return [_filter_non_null(item) for item in data if item is not None]
+            return data
+
+        def _build_input_data(args, kwargs) -> Any:
+            """Build input data for span.set_input().
+
+            Only captures the first positional argument (typically data_item)
+            and filters out null values for cleaner observability.
+            """
             # Exclude 'self' from the captured positional arguments
             args_to_capture = (
                 args[1:] if args and hasattr(args[0], '__class__') else args
             )
 
-            safe_args = []
-            for arg in args_to_capture:
-                if isinstance(arg, BaseModel):
-                    safe_args.append(arg.model_dump())
-                elif isinstance(arg, (str, int, float, bool, dict, list)):
-                    safe_args.append(arg)
-                else:
-                    safe_args.append(f'<{type(arg).__name__}>')
+            # Only capture the first argument (the data_item)
+            if not args_to_capture:
+                return None
 
-            safe_kwargs = {}
-            for k, v in kwargs.items():
-                if isinstance(v, BaseModel):
-                    safe_kwargs[k] = v.model_dump()
-                elif isinstance(v, (str, int, float, bool, dict, list)):
-                    safe_kwargs[k] = v
-                else:
-                    safe_kwargs[k] = f'<{type(v).__name__}>'
+            first_arg = args_to_capture[0]
+            if isinstance(first_arg, BaseModel):
+                data = first_arg.model_dump()
+            elif isinstance(first_arg, (dict, list)):
+                data = first_arg
+            elif isinstance(first_arg, (str, int, float, bool)):
+                return first_arg  # Primitives don't need null filtering
+            else:
+                return f'<{type(first_arg).__name__}>'
 
-            return {'args': safe_args, 'kwargs': safe_kwargs}
+            # Filter out null values
+            return _filter_non_null(data)
 
         def _serialize_output(result: Any) -> Any:
             """Serialize result for span.set_output()."""

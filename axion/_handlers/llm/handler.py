@@ -141,14 +141,17 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         Returns:
             Async span context manager.
         """
-        # Check if this is 'litellm_structured' and will be a new/top-level trace
-        if (
-            operation_name == 'litellm_structured'
-            and hasattr(self.tracer, '_span_stack')
-            and len(self.tracer._span_stack) == 0
+        # NOTE: Most executions are now wrapped in a root span by BaseHandler, so
+        # nested LLM spans should retain their real operation names. We only rename
+        # if this handler is used standalone and there is no active span context.
+        if operation_name == 'litellm_structured' and hasattr(
+            self.tracer, '_span_stack'
         ):
-            # Replace with class name
-            operation_name = self.name
+            try:
+                if len(self.tracer._span_stack) == 0:
+                    operation_name = self.name
+            except Exception:
+                pass
 
         return super().async_span(operation_name, **attributes)
 
@@ -256,6 +259,35 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         """
         return f'Input:\n{json_str}'
 
+    @staticmethod
+    def _strip_markdown_code_fences(text: Optional[str]) -> Optional[str]:
+        """
+        Strip surrounding markdown code fences from model output.
+
+        Common model behavior in parser mode is returning:
+          ```json
+          { ... }
+          ```
+
+        We remove the outer fence (``` or ~~~) and any language tag, returning the
+        inner content. If no outer fence is present, return a trimmed string.
+        """
+        if text is None:
+            return None
+
+        s = text.strip()
+        for fence in ('```', '~~~'):
+            if s.startswith(fence):
+                first_nl = s.find('\n')
+                if first_nl == -1:
+                    return ''
+                inner = s[first_nl + 1 :]
+                end = inner.rfind(fence)
+                if end != -1:
+                    inner = inner[:end]
+                return inner.strip()
+        return s
+
     def _build_openai_messages(
         self, data: Optional[InputModel] = None
     ) -> List[Dict[str, str]]:
@@ -333,7 +365,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     # Fall back to the string form if parsing fails for any reason.
                     input_dump = base_model_dump_json(input_data)
 
-            span.set_input({'messages': messages, 'input': input_dump, 'model': model_name})
+            span.set_input(input_dump)  # User input only
             try:
                 schema = self.output_model.model_json_schema(mode='serialization')
                 response_format = {
@@ -397,8 +429,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 try:
                     # Log the call to tracer
                     self.tracer.log_llm_call(
+                        name='litellm_call',
                         model=model_name,
-                        prompt=json.dumps(messages),
+                        prompt=json.dumps(messages),  # Full messages for observability
                         response=response_text,
                         prompt_tokens=prompt_tokens,
                         completion_tokens=completion_tokens,
@@ -526,6 +559,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 # Log the call to tracer
                 prompt_str = messages_to_prompt(messages)
                 self.tracer.log_llm_call(
+                    name='structured_llm_call',
                     model=model_name,
                     prompt=prompt_str,
                     response=str(response),
@@ -597,7 +631,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         return '\n\n'.join(section.content for section in sections)
 
     async def _execute_parser_llm_call(
-        self, prompt: str, prompt_value: Optional[PromptValue] = None
+        self,
+        prompt: str,
+        prompt_value: Optional[PromptValue] = None,
+        input_data: Optional[InputModel] = None,
     ) -> Union[str, OutputModel]:
         """Execute LLM call and optionally parse output for parser-based approach."""
         model_name = getattr(self.llm, 'model', 'unknown')
@@ -608,13 +645,25 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         async with self.async_span(
             'parser_llm_execution', model=model_name, mode='parser_based'
         ) as span:
-            span.set_input({'prompt': prompt, 'model': model_name})
+            input_dump = None
+            if input_data is not None:
+                try:
+                    input_dump = json.loads(base_model_dump_json(input_data))
+                except Exception:
+                    input_dump = base_model_dump_json(input_data)
+
+            # User input only (mirrors structured span behavior)
+            span.set_input(input_dump)
             try:
                 with Timer() as timer:
                     response = await self.llm.acomplete(prompt)
 
+                response_text = self._strip_markdown_code_fences(
+                    getattr(response, 'text', None)
+                )
+
                 prompt_tokens = len(prompt.split())
-                completion_tokens = len(response.text.split())
+                completion_tokens = len((response_text or '').split())
 
                 # Estimate cost
                 self.cost_estimate = LLMCostEstimator.estimate(
@@ -630,9 +679,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
                 # Log the call to tracer
                 self.tracer.log_llm_call(
+                    name='parser_llm_call',
                     model=model_name,
                     prompt=prompt,
-                    response=response.text,
+                    response=response_text,
                     prompt_tokens=prompt_tokens,
                     completion_tokens=completion_tokens,
                     latency=timer.elapsed_time,
@@ -640,7 +690,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     provider=provider,
                 )
 
-                span.set_output(response.text)  # Capture LLM output
+                span.set_output(response_text)  # Capture sanitized LLM output
 
                 # If prompt_value is provided, also parse within this span
                 if prompt_value is not None:
@@ -648,17 +698,18 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                         parsed_output,
                         parse_metadata,
                     ) = await self._parse_and_validate_parser(
-                        response.text, prompt_value, span=span
+                        response_text, prompt_value, span=span
                     )
                     return parsed_output
 
-                return response.text
+                return response_text
 
             except Exception as e:
                 span.set_attribute('error', str(e))
                 span.set_attribute('error_type', type(e).__name__)
 
                 self.tracer.log_llm_call(
+                    name='parser_llm_call_error',
                     model=model_name,
                     prompt=prompt,
                     response='',
@@ -745,7 +796,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                             prompt = self._build_parser_prompt(processed_data)
                             prompt_value = PromptValue(text=prompt)
                             result = await self._execute_parser_llm_call(
-                                prompt, prompt_value
+                                prompt, prompt_value, input_data=processed_data
                             )
                         else:
                             raise structured_error
@@ -753,7 +804,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     # Parser fallback for models without structured output
                     prompt = self._build_parser_prompt(processed_data)
                     prompt_value = PromptValue(text=prompt)
-                    result = await self._execute_parser_llm_call(prompt, prompt_value)
+                    result = await self._execute_parser_llm_call(
+                        prompt, prompt_value, input_data=processed_data
+                    )
 
                 # Process the output through the base handler
                 return self.process_output(result, input_data)
