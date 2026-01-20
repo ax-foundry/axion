@@ -226,11 +226,21 @@ class LangfuseSpan:
         return False
 
     async def __aenter__(self) -> 'LangfuseSpan':
-        """Async enter - delegates to sync implementation."""
+        """Async enter - delegates to sync implementation.
+
+        Note: We deliberately use sync delegation here rather than asyncio.to_thread()
+        because Langfuse/OpenTelemetry context management uses contextvars that must
+        remain in the same context. The Langfuse SDK internally batches events and
+        sends them asynchronously, so these calls are typically fast. The main
+        blocking point (flush) is handled separately via async_flush().
+        """
         return self.__enter__()
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> bool:
-        """Async exit - delegates to sync implementation."""
+        """Async exit - delegates to sync implementation.
+
+        See __aenter__ for explanation of why we use sync delegation.
+        """
         return self.__exit__(exc_type, exc_val, exc_tb)
 
     def set_attribute(self, key: str, value: Any) -> None:

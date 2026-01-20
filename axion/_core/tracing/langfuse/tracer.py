@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 from contextlib import asynccontextmanager, contextmanager
@@ -332,6 +333,15 @@ class LangfuseTracer(BaseTracer):
             try:
                 self._client.flush()
                 logger.info('Langfuse traces flushed successfully')
+            except Exception as e:
+                logger.warning(f'Failed to flush Langfuse traces: {e}')
+
+    async def async_flush(self) -> None:
+        """Non-blocking flush for async contexts."""
+        if self._client:
+            try:
+                await asyncio.to_thread(self._client.flush)
+                logger.info('Langfuse traces flushed asynchronously')
             except Exception as e:
                 logger.warning(f'Failed to flush Langfuse traces: {e}')
 

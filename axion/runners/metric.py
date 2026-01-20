@@ -381,11 +381,19 @@ class MetricRunner(RunnerMixin):
         dataset: Dataset,
         show_progress: bool,
     ) -> List[TestResult]:
-        """Execute batch with a separate trace per metric execution."""
-        results_map = defaultdict[Any, list](list)
+        """Execute batch with a separate trace per metric execution.
+
+        Uses gather_with_progress for true concurrency and tqdm progress bars.
+        """
         single_executors = [
             exc for exc in self.executors if not isinstance(exc, BaseBatchRunner)
         ]
+
+        # Pre-create per-item caches before building task list (preserves cache sharing)
+        item_caches: Dict[str, AnalysisCache] = {}
+        if self.enable_internal_caching:
+            for item in dataset:
+                item_caches[item.id] = AnalysisCache()
 
         # For performance, avoid forcing a network flush for every metric trace.
         # We disable auto_flush on each per-metric tracer and flush once at the end.
@@ -395,94 +403,120 @@ class MetricRunner(RunnerMixin):
             except Exception:
                 pass
 
-        for item in dataset:
-            item_specific_cache = (
-                AnalysisCache() if self.enable_internal_caching else None
+        async def _execute_single_metric_task(
+            item: DatasetItem, executor: BaseMetricRunner
+        ) -> tuple:
+            """Inner helper for one (item, metric) execution.
+
+            Returns:
+                Tuple of (item_id, metric_name, result_or_exception)
+            """
+            # Create a fresh tracer for this metric execution (new trace_id)
+            metric_tracer = Tracer().create(
+                metadata_type='llm',
+                tool_metadata=executor.get_tool_metadata(),
             )
+            # Disable auto-flush on the per-metric tracer unless explicitly requested.
+            try:
+                metric_tracer.auto_flush = self.flush_per_metric  # type: ignore[attr-defined]
+            except Exception:
+                pass
 
-            for executor in single_executors:
-                # Create a fresh tracer for this metric execution (new trace_id)
-                metric_tracer = Tracer().create(
-                    metadata_type='llm',
-                    tool_metadata=executor.get_tool_metadata(),
+            # Determine cache to pass
+            cache_to_pass = None
+            if self.enable_internal_caching and getattr(
+                executor.metric, 'shares_internal_cache', False
+            ):
+                cache_to_pass = item_caches.get(item.id)
+
+            # Create a local copy of executor's tracer to avoid race conditions
+            original_tracer = executor.tracer
+            result = None
+
+            async with metric_tracer.async_span(
+                f'metric_{executor.metric_name}_item_{item.id}'
+            ) as span:
+                span.set_input(
+                    {
+                        'item_id': item.id,
+                        'metric_name': executor.metric_name,
+                    }
                 )
-                # Disable auto-flush on the per-metric tracer unless explicitly requested.
+
                 try:
-                    metric_tracer.auto_flush = self.flush_per_metric  # type: ignore[attr-defined]
-                except Exception:
-                    pass
+                    # Temporarily replace the executor's tracer for this execution
+                    executor.tracer = metric_tracer
 
-                # Temporarily replace the executor's tracer
-                original_tracer = executor.tracer
-                executor.tracer = metric_tracer
-
-                async with metric_tracer.async_span(
-                    f'metric_{executor.metric_name}_item_{item.id}'
-                ) as span:
-                    span.set_input(
-                        {
-                            'item_id': item.id,
-                            'metric_name': executor.metric_name,
-                        }
+                    result = await self._safe_execute(
+                        self.semaphore.run(
+                            self._process_single_metric,
+                            executor,
+                            item,
+                            cache=cache_to_pass,
+                        ),
+                        ignore_errors=self.error_config.ignore_errors,
                     )
 
-                    cache_to_pass = None
-                    if self.enable_internal_caching and getattr(
-                        executor.metric, 'shares_internal_cache', False
-                    ):
-                        cache_to_pass = item_specific_cache
-
-                    try:
-                        result = await self._safe_execute(
-                            self.semaphore.run(
-                                self._process_single_metric,
-                                executor,
-                                item,
-                                cache=cache_to_pass,
-                            ),
-                            ignore_errors=self.error_config.ignore_errors,
-                        )
-
-                        if isinstance(result, MetricScore):
-                            # Attach trace identifiers for downstream publishing.
-                            # This enables publishing scores directly onto the metric's own
-                            # runtime trace/span (e.g., publish_as_experiment(score_on_runtime_traces=True)).
-                            try:
-                                result.metadata = result.metadata or {}
-                                result.metadata.update(
-                                    {
-                                        'trace_id': getattr(
-                                            metric_tracer, 'trace_id', None
-                                        ),
-                                        'observation_id': getattr(
-                                            span, 'span_id', None
-                                        ),
-                                        'metric_name': executor.metric_name,
-                                    }
-                                )
-                            except Exception:
-                                pass
-                            results_map[result.id].append(result)
-                            span.set_output(
+                    if isinstance(result, MetricScore):
+                        # Attach trace identifiers for downstream publishing.
+                        # This enables publishing scores directly onto the metric's own
+                        # runtime trace/span (e.g., publish_as_experiment(score_on_runtime_traces=True)).
+                        try:
+                            result.metadata = result.metadata or {}
+                            result.metadata.update(
                                 {
-                                    'score': float(result.score)
-                                    if result.score is not None
-                                    else None,
-                                    'passed': result.passed,
+                                    'trace_id': getattr(
+                                        metric_tracer, 'trace_id', None
+                                    ),
+                                    'observation_id': getattr(span, 'span_id', None),
+                                    'metric_name': executor.metric_name,
                                 }
                             )
-                        elif isinstance(result, Exception):
-                            logger.error(
-                                f'Metric execution failed: {result}', exc_info=False
-                            )
-                            span.set_attribute('error', str(result))
-                    finally:
-                        # Restore original tracer
-                        executor.tracer = original_tracer
+                        except Exception:
+                            pass
+                        span.set_output(
+                            {
+                                'score': float(result.score)
+                                if result.score is not None
+                                else None,
+                                'passed': result.passed,
+                            }
+                        )
+                    elif isinstance(result, Exception):
+                        logger.error(
+                            f'Metric execution failed: {result}', exc_info=False
+                        )
+                        span.set_attribute('error', str(result))
+                finally:
+                    # Restore original tracer
+                    executor.tracer = original_tracer
 
-                # Flush the tracer after each metric execution
-                if self.flush_per_metric and hasattr(metric_tracer, 'flush'):
+            # Flush the tracer after each metric execution if requested (after span closes)
+            if self.flush_per_metric:
+                if hasattr(metric_tracer, 'async_flush'):
+                    await metric_tracer.async_flush()
+                elif hasattr(metric_tracer, 'flush'):
                     metric_tracer.flush()
+
+            return (item.id, executor.metric_name, result)
+
+        # Build all tasks for concurrent execution
+        tasks = [
+            _execute_single_metric_task(item, executor)
+            for item in dataset
+            for executor in single_executors
+        ]
+
+        # Run concurrently with progress bar
+        task_results = await gather_with_progress(
+            tasks, '📊 Evaluating metrics', show_progress
+        )
+
+        # Aggregate results into results_map
+        results_map: Dict[str, List[MetricScore]] = defaultdict(list)
+        for item_id, metric_name, result in task_results:
+            if isinstance(result, MetricScore):
+                results_map[item_id].append(result)
 
         final_results = [
             TestResult(test_case=item, score_results=results_map.get(item.id, []))
@@ -493,11 +527,18 @@ class MetricRunner(RunnerMixin):
 
         # Batch flush once at the end (fast path) so traces appear in the UI without
         # paying a per-metric flush penalty.
-        if not self.flush_per_metric and hasattr(self.tracer, 'flush'):
-            try:
-                self.tracer.flush()
-            except Exception:
-                pass
+        if not self.flush_per_metric:
+            if hasattr(self.tracer, 'async_flush'):
+                try:
+                    await self.tracer.async_flush()
+                except Exception:
+                    pass
+            elif hasattr(self.tracer, 'flush'):
+                try:
+                    self.tracer.flush()
+                except Exception:
+                    pass
+
         return final_results
 
     async def _execute_metrics_for_dataset(
