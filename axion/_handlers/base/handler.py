@@ -209,12 +209,26 @@ class BaseHandler(ABC, Generic[InputModel, OutputModel]):
         try:
             self.tracer.start(handler_type=self.__class__.__name__)
 
-            # Execute callback hooks
-            for cb in callbacks:
-                if hasattr(cb, 'on_generation_start'):
-                    await cb.on_generation_start()
+            # Create a single root span for the whole execution so that downstream
+            # spans (LLM calls, parsing, etc.) are properly nested.
+            async with self.async_span(self.name) as _root_span:
+                try:
+                    # Execute callback hooks
+                    for cb in callbacks:
+                        if hasattr(cb, 'on_generation_start'):
+                            await cb.on_generation_start()
 
-            yield
+                    yield
+                finally:
+                    # Populate the root span's input/output for better observability.
+                    # Many UIs show "Input" / "Output" on top-level spans; without this,
+                    # they appear as undefined even when child spans have details.
+                    meta = getattr(self.tracer, 'metadata', None)
+                    if meta is not None:
+                        if hasattr(meta, 'input_data'):
+                            _root_span.set_input(getattr(meta, 'input_data', None))
+                        if hasattr(meta, 'output_data'):
+                            _root_span.set_output(getattr(meta, 'output_data', None))
 
         except Exception as e:
             self.tracer.fail(str(e))

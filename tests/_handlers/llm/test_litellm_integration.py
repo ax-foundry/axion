@@ -352,3 +352,74 @@ class TestProviderDetection:
 
         assert metadata['provider'] == 'openai'
         assert metadata['model_name'] == 'gpt-4o'
+
+
+class TestSystemInstructionIdempotency:
+    """Ensure JSON rules suffix is not duplicated."""
+
+    def test_system_instruction_appends_marker_once(self):
+        class TestHandler(LLMHandler):
+            instruction = 'Answer the question.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = MockLLM(model='gpt-4o')
+
+        handler = TestHandler()
+
+        s1 = handler._system_instruction()
+        s2 = handler._system_instruction()
+
+        assert s1.count('[JSON_RULES]') == 1
+        assert s2.count('[JSON_RULES]') == 1
+
+    def test_system_instruction_does_not_duplicate_if_marker_present(self):
+        class TestHandler(LLMHandler):
+            instruction = 'Do the thing.\n\n[JSON_RULES]\nReturn JSON only.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = MockLLM(model='gpt-4o')
+
+        handler = TestHandler()
+        s = handler._system_instruction()
+
+        assert s.count('[JSON_RULES]') == 1
+
+
+class TestParserModeOutputSanitization:
+    """Ensure parser mode strips markdown code fences from outputs."""
+
+    @pytest.mark.asyncio
+    async def test_parser_mode_strips_json_code_fences_from_logged_response(self):
+        class ParserMockLLM:
+            def __init__(self, model: str = 'gpt-4o', temperature: float = 0.0):
+                self.model = model
+                self.temperature = temperature
+
+            def complete(self, **kwargs):
+                pass
+
+            async def acomplete(self, *args, **kwargs):
+                # handler calls acomplete(prompt) positionally in parser mode
+                return MagicMock(
+                    text=('```json\n{\n  "answer": "ok",\n  "confidence": 0.5\n}\n```')
+                )
+
+        class TestHandler(LLMHandler):
+            instruction = 'Answer the question.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = ParserMockLLM(model='gpt-4o')
+            as_structured_llm = False
+
+        handler = TestHandler()
+        # Intercept logged response string for assertion
+        handler.tracer.log_llm_call = MagicMock()
+
+        result = await handler.execute({'query': 'hi'})
+        assert isinstance(result, SimpleOutput)
+
+        handler.tracer.log_llm_call.assert_called()
+        logged_response = handler.tracer.log_llm_call.call_args.kwargs['response']
+        assert logged_response.strip().startswith('{')
+        assert logged_response.strip().endswith('}')
+        assert '```' not in logged_response

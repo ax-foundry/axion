@@ -63,6 +63,11 @@ class LangfuseTracer(BaseTracer):
             # ... your code
     """
 
+    # Share a single Langfuse client across tracer instances to avoid repeated
+    # initialization and to allow batching/one-flush behavior across many traces.
+    _shared_client: Optional[Langfuse] = None
+    _shared_client_key: Optional[tuple] = None
+
     def __init__(
         self,
         metadata_type: str = 'default',
@@ -77,6 +82,9 @@ class LangfuseTracer(BaseTracer):
     ):
         self.metadata_type = metadata_type
         self.tool_metadata = tool_metadata or self._create_default_tool_meta()
+        # Controls whether spans auto-flush when the outermost span closes.
+        # Default True for interactive use; can be disabled for performance.
+        self.auto_flush: bool = kwargs.pop('auto_flush', True)
         self.kwargs = kwargs
         self.logger = get_logger(
             f'axion.tracing.{self.tool_metadata.name}_{metadata_type}'
@@ -155,7 +163,21 @@ class LangfuseTracer(BaseTracer):
             if env:
                 client_kwargs['environment'] = env
 
-            self._client = Langfuse(**client_kwargs)
+            shared_key = (
+                self._public_key,
+                self._secret_key,
+                self._base_url,
+                env or None,
+            )
+            if (
+                LangfuseTracer._shared_client is not None
+                and LangfuseTracer._shared_client_key == shared_key
+            ):
+                self._client = LangfuseTracer._shared_client
+            else:
+                self._client = Langfuse(**client_kwargs)
+                LangfuseTracer._shared_client = self._client
+                LangfuseTracer._shared_client_key = shared_key
             logger.debug(
                 f'Langfuse client initialized successfully (endpoint: {self._base_url}, '
                 f'environment: {env or "default"})'
@@ -342,7 +364,12 @@ class LangfuseTracer(BaseTracer):
         self.logger.log_table(data, title, columns, level)
 
     def log_llm_call(self, *args, **kwargs) -> None:
-        """Log an LLM call to Langfuse as a generation."""
+        """
+        Log an LLM call to Langfuse.
+
+        Prefer attaching prompt/response/usage to the *current span* rather than creating a
+        separate generation observation, to avoid duplicates in the Langfuse UI.
+        """
         if not self._client:
             return
 
@@ -358,31 +385,54 @@ class LangfuseTracer(BaseTracer):
             latency = kwargs.get('latency')
             cost = kwargs.get('cost_estimate')
 
-            # Use parent span name if available, otherwise default to 'llm_call'
-            default_name = self._current_span.name if self._current_span else 'llm_call'
-            name = kwargs.get('name', default_name)
+            name = kwargs.get('name', 'llm_call')
 
-            # Create a generation observation and update with usage
-            with self._client.start_as_current_observation(
-                as_type='generation',
-                name=name,
-                model=model,
-                input=prompt,
-                output=response,
-            ) as observation:
-                # Update with usage data
-                observation.update(
+            # If we are inside a span, attach to that observation to avoid duplicating entries.
+            current_obs = (
+                getattr(self._current_span, '_observation', None)
+                if self._current_span
+                else None
+            )
+            if current_obs is not None:
+                current_obs.update(
+                    input=prompt,
+                    output=response,
                     usage={
                         'input': prompt_tokens,
                         'output': completion_tokens,
                         'total': prompt_tokens + completion_tokens,
                     },
                     metadata={
-                        'latency': latency,
-                        'cost_estimate': cost,
-                        'provider': kwargs.get('provider', 'unknown'),
+                        'llm_call': {
+                            'name': name,
+                            'latency': latency,
+                            'cost_estimate': cost,
+                            'provider': kwargs.get('provider', 'unknown'),
+                            'model': model,
+                        }
                     },
                 )
+                return
+
+            # Fallback: create a span-type observation (not a generation) when no span context exists.
+            with self._client.start_as_current_observation(
+                as_type='span',
+                name=name,
+                input=prompt,
+                output=response,
+                metadata={
+                    'latency': latency,
+                    'cost_estimate': cost,
+                    'provider': kwargs.get('provider', 'unknown'),
+                    'model': model,
+                    'usage': {
+                        'input': prompt_tokens,
+                        'output': completion_tokens,
+                        'total': prompt_tokens + completion_tokens,
+                    },
+                },
+            ):
+                pass
         except Exception as e:
             logger.info(f'Failed to log LLM call to Langfuse: {e}')
 

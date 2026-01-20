@@ -141,14 +141,17 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         Returns:
             Async span context manager.
         """
-        # Check if this is 'litellm_structured' and will be a new/top-level trace
-        if (
-            operation_name == 'litellm_structured'
-            and hasattr(self.tracer, '_span_stack')
-            and len(self.tracer._span_stack) == 0
+        # NOTE: Most executions are now wrapped in a root span by BaseHandler, so
+        # nested LLM spans should retain their real operation names. We only rename
+        # if this handler is used standalone and there is no active span context.
+        if operation_name == 'litellm_structured' and hasattr(
+            self.tracer, '_span_stack'
         ):
-            # Replace with class name
-            operation_name = self.name
+            try:
+                if len(self.tracer._span_stack) == 0:
+                    operation_name = self.name
+            except Exception:
+                pass
 
         return super().async_span(operation_name, **attributes)
 
@@ -221,11 +224,75 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
         return delay
 
+    def _system_instruction(self) -> str:
+        """
+        Return a model-agnostic system instruction that is compatible with JSON-only
+        user inputs (optionally prefixed with a small 'Input:' anchor) and JSON-only
+        assistant outputs.
+        """
+        instruction = (self.instruction or '').strip()
+
+        # Keep this short and provider-agnostic; rely on response_format/schema where supported.
+        suffix = (
+            '\n\n'
+            '[JSON_RULES]\n'
+            'You will receive JSON inputs as the user message content.\n'
+            'Return ONLY a JSON object matching the required output schema.\n'
+            'Do not include any additional keys, commentary, or markdown formatting.\n'
+            'Examples may be synthetic; treat them only as demonstrations of structure.'
+        )
+
+        if not instruction:
+            return suffix.strip()
+
+        # Idempotency: if our rules (or equivalent) are already present, don't append.
+        if '[json_rules]' in instruction.lower():
+            return instruction
+
+        return f'{instruction}{suffix}'
+
+    @staticmethod
+    def _input_anchor(json_str: str) -> str:
+        """
+        Add a tiny 'execute' anchor that helps weaker models interpret the JSON
+        as the input to process, without adding verbose instruction text.
+        """
+        return f'Input:\n{json_str}'
+
+    @staticmethod
+    def _strip_markdown_code_fences(text: Optional[str]) -> Optional[str]:
+        """
+        Strip surrounding markdown code fences from model output.
+
+        Common model behavior in parser mode is returning:
+          ```json
+          { ... }
+          ```
+
+        We remove the outer fence (``` or ~~~) and any language tag, returning the
+        inner content. If no outer fence is present, return a trimmed string.
+        """
+        if text is None:
+            return None
+
+        s = text.strip()
+        for fence in ('```', '~~~'):
+            if s.startswith(fence):
+                first_nl = s.find('\n')
+                if first_nl == -1:
+                    return ''
+                inner = s[first_nl + 1 :]
+                end = inner.rfind(fence)
+                if end != -1:
+                    inner = inner[:end]
+                return inner.strip()
+        return s
+
     def _build_openai_messages(
         self, data: Optional[InputModel] = None
     ) -> List[Dict[str, str]]:
         """Build messages in OpenAI format for raw API calls."""
-        messages = [{'role': 'system', 'content': self.instruction}]
+        messages = [{'role': 'system', 'content': self._system_instruction()}]
         # Add examples as conversation pairs
         for idx, (input_example, output_example) in enumerate[
             Tuple[InputModel, OutputModel]
@@ -233,7 +300,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             messages.append(
                 {
                     'role': 'user',
-                    'content': f'Example input:\n{base_model_dump_json(input_example)}',
+                    'content': self._input_anchor(base_model_dump_json(input_example)),
                 }
             )
             messages.append(
@@ -247,7 +314,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             messages.append(
                 {
                     'role': 'user',
-                    'content': f'FAKE example for structure only:\n{base_model_dump_json(fake_input)}',
+                    'content': self._input_anchor(base_model_dump_json(fake_input)),
                 }
             )
             messages.append(
@@ -256,16 +323,11 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
         # Add actual input
         if data:
-            content = (
-                'Process the following input and provide the output in the required structured format. '
-                'Do not include any other text or explanations.\n\n'
-                f'Input:\n{base_model_dump_json(data)}'
-            )
+            content = self._input_anchor(base_model_dump_json(data))
         else:
-            content = (
-                'Process the following input and provide the output in the required structured format. '
-                'Do not include any other text or explanations.\n\n'
-                'Input:\n<INPUT_DATA_WILL_GO_HERE>'
+            # Use a JSON-shaped placeholder to keep message format consistent for debugging.
+            content = self._input_anchor(
+                base_model_dump_json(self.input_model.model_construct())
             )
 
         messages.append({'role': 'user', 'content': content})
@@ -273,7 +335,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         return messages
 
     async def _execute_structured_call(
-        self, messages: List[Dict[str, str]], attempt: int = 1
+        self,
+        messages: List[Dict[str, str]],
+        attempt: int = 1,
+        input_data: Optional[InputModel] = None,
     ) -> OutputModel:
         """Execute structured output call using LiteLLM (supports OpenAI, Claude, Gemini, etc.)."""
         model_name = getattr(self.llm, 'model', 'gpt-4o')
@@ -291,7 +356,16 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             provider=provider,
             attempt=attempt,
         ) as span:
-            span.set_input({'messages': messages, 'model': model_name})
+            input_dump = None
+            if input_data is not None:
+                try:
+                    # Store as a dict for easy downstream consumption.
+                    input_dump = json.loads(base_model_dump_json(input_data))
+                except Exception:
+                    # Fall back to the string form if parsing fails for any reason.
+                    input_dump = base_model_dump_json(input_data)
+
+            span.set_input(input_dump)  # User input only
             try:
                 schema = self.output_model.model_json_schema(mode='serialization')
                 response_format = {
@@ -355,8 +429,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 try:
                     # Log the call to tracer
                     self.tracer.log_llm_call(
+                        name='litellm_call',
                         model=model_name,
-                        prompt=json.dumps(messages),
+                        prompt=json.dumps(messages),  # Full messages for observability
                         response=response_text,
                         prompt_tokens=prompt_tokens,
                         completion_tokens=completion_tokens,
@@ -393,14 +468,16 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         self, data: Optional[InputModel] = None
     ) -> List[ChatMessage]:
         """Build messages for LlamaIndex chat interface."""
-        messages = [ChatMessage(role=MessageRole.SYSTEM, content=self.instruction)]
+        messages = [
+            ChatMessage(role=MessageRole.SYSTEM, content=self._system_instruction())
+        ]
 
         # Add examples as conversation pairs
         for input_example, output_example in self.examples:
             messages.append(
                 ChatMessage(
                     role=MessageRole.USER,
-                    content=f'Example input:\n{base_model_dump_json(input_example)}',
+                    content=self._input_anchor(base_model_dump_json(input_example)),
                 )
             )
             messages.append(
@@ -417,7 +494,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             messages.append(
                 ChatMessage(
                     role=MessageRole.USER,
-                    content=f'FAKE example for structure only:\n{base_model_dump_json(fake_input)}',
+                    content=self._input_anchor(base_model_dump_json(fake_input)),
                 )
             )
             messages.append(
@@ -429,16 +506,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
         # Add actual input
         if data:
-            content = (
-                'Process the following input and provide the output in the required structured format. '
-                'Do not include any other text or explanations.\n\n'
-                f'Input:\n{base_model_dump_json(data)}'
-            )
+            content = self._input_anchor(base_model_dump_json(data))
         else:
-            content = (
-                'Process the following input and provide the output in the required structured format. '
-                'Do not include any other text or explanations.\n\n'
-                'Input:\n<INPUT_DATA_WILL_GO_HERE>'
+            content = self._input_anchor(
+                base_model_dump_json(self.input_model.model_construct())
             )
 
         messages.append(ChatMessage(role=MessageRole.USER, content=content))
@@ -488,6 +559,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 # Log the call to tracer
                 prompt_str = messages_to_prompt(messages)
                 self.tracer.log_llm_call(
+                    name='structured_llm_call',
                     model=model_name,
                     prompt=prompt_str,
                     response=str(response),
@@ -559,7 +631,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         return '\n\n'.join(section.content for section in sections)
 
     async def _execute_parser_llm_call(
-        self, prompt: str, prompt_value: Optional[PromptValue] = None
+        self,
+        prompt: str,
+        prompt_value: Optional[PromptValue] = None,
+        input_data: Optional[InputModel] = None,
     ) -> Union[str, OutputModel]:
         """Execute LLM call and optionally parse output for parser-based approach."""
         model_name = getattr(self.llm, 'model', 'unknown')
@@ -570,13 +645,25 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         async with self.async_span(
             'parser_llm_execution', model=model_name, mode='parser_based'
         ) as span:
-            span.set_input({'prompt': prompt, 'model': model_name})
+            input_dump = None
+            if input_data is not None:
+                try:
+                    input_dump = json.loads(base_model_dump_json(input_data))
+                except Exception:
+                    input_dump = base_model_dump_json(input_data)
+
+            # User input only (mirrors structured span behavior)
+            span.set_input(input_dump)
             try:
                 with Timer() as timer:
                     response = await self.llm.acomplete(prompt)
 
+                response_text = self._strip_markdown_code_fences(
+                    getattr(response, 'text', None)
+                )
+
                 prompt_tokens = len(prompt.split())
-                completion_tokens = len(response.text.split())
+                completion_tokens = len((response_text or '').split())
 
                 # Estimate cost
                 self.cost_estimate = LLMCostEstimator.estimate(
@@ -592,9 +679,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
                 # Log the call to tracer
                 self.tracer.log_llm_call(
+                    name='parser_llm_call',
                     model=model_name,
                     prompt=prompt,
-                    response=response.text,
+                    response=response_text,
                     prompt_tokens=prompt_tokens,
                     completion_tokens=completion_tokens,
                     latency=timer.elapsed_time,
@@ -602,7 +690,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     provider=provider,
                 )
 
-                span.set_output(response.text)  # Capture LLM output
+                span.set_output(response_text)  # Capture sanitized LLM output
 
                 # If prompt_value is provided, also parse within this span
                 if prompt_value is not None:
@@ -610,17 +698,18 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                         parsed_output,
                         parse_metadata,
                     ) = await self._parse_and_validate_parser(
-                        response.text, prompt_value, span=span
+                        response_text, prompt_value, span=span
                     )
                     return parsed_output
 
-                return response.text
+                return response_text
 
             except Exception as e:
                 span.set_attribute('error', str(e))
                 span.set_attribute('error_type', type(e).__name__)
 
                 self.tracer.log_llm_call(
+                    name='parser_llm_call_error',
                     model=model_name,
                     prompt=prompt,
                     response='',
@@ -694,7 +783,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     messages = self._build_openai_messages(processed_data)
                     try:
                         result = await self._execute_structured_call(
-                            messages, attempt=attempt + 1
+                            messages, attempt=attempt + 1, input_data=processed_data
                         )
                     except Exception as structured_error:
                         if self.fallback_to_parser:
@@ -707,7 +796,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                             prompt = self._build_parser_prompt(processed_data)
                             prompt_value = PromptValue(text=prompt)
                             result = await self._execute_parser_llm_call(
-                                prompt, prompt_value
+                                prompt, prompt_value, input_data=processed_data
                             )
                         else:
                             raise structured_error
@@ -715,7 +804,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     # Parser fallback for models without structured output
                     prompt = self._build_parser_prompt(processed_data)
                     prompt_value = PromptValue(text=prompt)
-                    result = await self._execute_parser_llm_call(prompt, prompt_value)
+                    result = await self._execute_parser_llm_call(
+                        prompt, prompt_value, input_data=processed_data
+                    )
 
                 # Process the output through the base handler
                 return self.process_output(result, input_data)

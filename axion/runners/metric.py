@@ -214,6 +214,13 @@ class MetricRunner(RunnerMixin):
             'description': 'Controls trace granularity: single (all under one trace) or separate (trace per metric execution).'
         },
     )
+    flush_per_metric: bool = field(
+        default=False,
+        repr=True,
+        metadata={
+            'description': "When trace_granularity='separate', flush each metric trace immediately (slower) vs batch flush at end (faster)."
+        },
+    )
 
     _elapsed_time: Optional[float] = field(default=None, init=False, repr=False)
     _summary: Optional[Dict] = field(default_factory=dict, init=False, repr=False)
@@ -375,10 +382,18 @@ class MetricRunner(RunnerMixin):
         show_progress: bool,
     ) -> List[TestResult]:
         """Execute batch with a separate trace per metric execution."""
-        results_map = defaultdict(list)
+        results_map = defaultdict[Any, list](list)
         single_executors = [
             exc for exc in self.executors if not isinstance(exc, BaseBatchRunner)
         ]
+
+        # For performance, avoid forcing a network flush for every metric trace.
+        # We disable auto_flush on each per-metric tracer and flush once at the end.
+        if not self.flush_per_metric:
+            try:
+                self.tracer.auto_flush = False  # type: ignore[attr-defined]
+            except Exception:
+                pass
 
         for item in dataset:
             item_specific_cache = (
@@ -391,6 +406,11 @@ class MetricRunner(RunnerMixin):
                     metadata_type='llm',
                     tool_metadata=executor.get_tool_metadata(),
                 )
+                # Disable auto-flush on the per-metric tracer unless explicitly requested.
+                try:
+                    metric_tracer.auto_flush = self.flush_per_metric  # type: ignore[attr-defined]
+                except Exception:
+                    pass
 
                 # Temporarily replace the executor's tracer
                 original_tracer = executor.tracer
@@ -424,6 +444,24 @@ class MetricRunner(RunnerMixin):
                         )
 
                         if isinstance(result, MetricScore):
+                            # Attach trace identifiers for downstream publishing.
+                            # This enables publishing scores directly onto the metric's own
+                            # runtime trace/span (e.g., publish_as_experiment(score_on_runtime_traces=True)).
+                            try:
+                                result.metadata = result.metadata or {}
+                                result.metadata.update(
+                                    {
+                                        'trace_id': getattr(
+                                            metric_tracer, 'trace_id', None
+                                        ),
+                                        'observation_id': getattr(
+                                            span, 'span_id', None
+                                        ),
+                                        'metric_name': executor.metric_name,
+                                    }
+                                )
+                            except Exception:
+                                pass
                             results_map[result.id].append(result)
                             span.set_output(
                                 {
@@ -443,7 +481,7 @@ class MetricRunner(RunnerMixin):
                         executor.tracer = original_tracer
 
                 # Flush the tracer after each metric execution
-                if hasattr(metric_tracer, 'flush'):
+                if self.flush_per_metric and hasattr(metric_tracer, 'flush'):
                     metric_tracer.flush()
 
         final_results = [
@@ -452,6 +490,14 @@ class MetricRunner(RunnerMixin):
         ]
 
         self._finalize_results(final_results)
+
+        # Batch flush once at the end (fast path) so traces appear in the UI without
+        # paying a per-metric flush penalty.
+        if not self.flush_per_metric and hasattr(self.tracer, 'flush'):
+            try:
+                self.tracer.flush()
+            except Exception:
+                pass
         return final_results
 
     async def _execute_metrics_for_dataset(
@@ -553,7 +599,7 @@ class MetricRunner(RunnerMixin):
     @property
     def available_types(self) -> List[str]:
         """Returns a list of available (registered) metric runner types."""
-        return list(MetricRunnerFactory._registry.keys())
+        return list[str](MetricRunnerFactory._registry.keys())
 
     @property
     def elapsed_time(self) -> Union[float, None]:

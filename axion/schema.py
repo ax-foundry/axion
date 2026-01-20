@@ -639,6 +639,8 @@ class EvaluationResult:
         run_metadata: Optional[Dict[str, Any]] = None,
         flush: bool = True,
         tags: Optional[List[str]] = None,
+        score_on_runtime_traces: bool = False,
+        link_to_traces: bool = False,
     ) -> Dict[str, Any]:
         """
         Publish evaluation results to Langfuse as a dataset experiment.
@@ -657,6 +659,14 @@ class EvaluationResult:
             run_metadata: Optional metadata to attach to the experiment run.
             flush: Whether to flush the client after uploading. Defaults to True.
             tags: Optional list of tags to attach to all scores as metadata.
+            score_on_runtime_traces: If True, skip creating per-item \"Dataset run\" traces and
+                instead attach scores to existing runtime traces via `trace_id`/`observation_id`.
+                Takes precedence over link_to_traces if both are True.
+            link_to_traces: If True, link experiment runs to existing traces via the
+                low-level API instead of creating new \"Dataset run\" traces. This allows
+                experiment runs to appear linked to the original evaluation traces in
+                Langfuse UI. Falls back to creating new traces if trace_id is not available.
+                Ignored if score_on_runtime_traces is True.
 
         Returns:
             Dict with statistics:
@@ -700,6 +710,8 @@ class EvaluationResult:
             run_metadata=run_metadata,
             flush=flush,
             tags=tags,
+            score_on_runtime_traces=score_on_runtime_traces,
+            link_to_traces=link_to_traces,
         )
 
 

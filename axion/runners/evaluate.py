@@ -138,6 +138,7 @@ class EvaluationConfig:
     run_id: Optional[str] = None
     enable_internal_caching: bool = True
     trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SEPARATE
+    flush_per_metric: bool = False
 
     def __post_init__(self):
         """Validate and finalize scoring configuration."""
@@ -389,6 +390,7 @@ class EvaluationRunner(RunnerMixin):
                 tracer=self.tracer,
                 enable_internal_caching=config.enable_internal_caching,
                 trace_granularity=config.trace_granularity,
+                flush_per_metric=config.flush_per_metric,
             )
 
         # Hierarchical strategy
@@ -801,6 +803,7 @@ def evaluation_runner(
     dataset_name: Optional[str] = None,
     run_id: Optional[str] = None,
     trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SEPARATE,
+    flush_per_metric: bool = False,
 ) -> EvaluationResult:
     """
     Synchronously runs an evaluation experiment to evaluate metrics over a given dataset,
@@ -858,6 +861,9 @@ def evaluation_runner(
             Controls trace granularity during evaluation. Accepts enum or string values:
             - 'single_trace' / 'single' / SINGLE_TRACE (default): All evaluations under one parent trace
             - 'separate' / SEPARATE: Each metric execution gets its own independent trace
+        flush_per_metric (bool, optional):
+            When trace_granularity='separate', controls whether each metric trace is flushed
+            immediately (slower, but more \"live\" in the UI) vs batched (faster). Defaults to False.
 
     Returns:
         EvaluationResult:
@@ -894,5 +900,6 @@ def evaluation_runner(
         dataset_name=dataset_name,
         run_id=run_id,
         trace_granularity=trace_granularity,
+        flush_per_metric=flush_per_metric,
     )
     return run_async_function(_run_evaluation_async, config, tracer)

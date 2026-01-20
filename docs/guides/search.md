@@ -1,6 +1,6 @@
 # Search Integrations
 
-Axion provides retriever implementations for popular search APIs to power RAG evaluation pipelines.
+Axion provides retriever implementations for popular search APIs to integrate into evaluation pipelines.
 
 ## Available Retrievers
 
