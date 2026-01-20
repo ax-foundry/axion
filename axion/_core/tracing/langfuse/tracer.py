@@ -63,6 +63,11 @@ class LangfuseTracer(BaseTracer):
             # ... your code
     """
 
+    # Share a single Langfuse client across tracer instances to avoid repeated
+    # initialization and to allow batching/one-flush behavior across many traces.
+    _shared_client: Optional[Langfuse] = None
+    _shared_client_key: Optional[tuple] = None
+
     def __init__(
         self,
         metadata_type: str = 'default',
@@ -77,6 +82,9 @@ class LangfuseTracer(BaseTracer):
     ):
         self.metadata_type = metadata_type
         self.tool_metadata = tool_metadata or self._create_default_tool_meta()
+        # Controls whether spans auto-flush when the outermost span closes.
+        # Default True for interactive use; can be disabled for performance.
+        self.auto_flush: bool = kwargs.pop('auto_flush', True)
         self.kwargs = kwargs
         self.logger = get_logger(
             f'axion.tracing.{self.tool_metadata.name}_{metadata_type}'
@@ -155,7 +163,21 @@ class LangfuseTracer(BaseTracer):
             if env:
                 client_kwargs['environment'] = env
 
-            self._client = Langfuse(**client_kwargs)
+            shared_key = (
+                self._public_key,
+                self._secret_key,
+                self._base_url,
+                env or None,
+            )
+            if (
+                LangfuseTracer._shared_client is not None
+                and LangfuseTracer._shared_client_key == shared_key
+            ):
+                self._client = LangfuseTracer._shared_client
+            else:
+                self._client = Langfuse(**client_kwargs)
+                LangfuseTracer._shared_client = self._client
+                LangfuseTracer._shared_client_key = shared_key
             logger.debug(
                 f'Langfuse client initialized successfully (endpoint: {self._base_url}, '
                 f'environment: {env or "default"})'

@@ -163,6 +163,80 @@ print(f"Scores uploaded: {stats['scores_uploaded']}")
 | `run_metadata` | `dict` | `None` | Metadata for the experiment run |
 | `flush` | `bool` | `True` | Flush client after uploading |
 | `tags` | `list[str]` | `None` | Tags to attach to scores |
+| `score_on_runtime_traces` | `bool` | `False` | Skip creating runs, just add scores to existing traces |
+| `link_to_traces` | `bool` | `False` | Link experiment runs to existing traces instead of creating new ones |
+
+### Experiment Modes
+
+`publish_as_experiment()` supports three modes for different use cases:
+
+| Mode | Creates Runs | Links to Traces | Use Case |
+|------|-------------|-----------------|----------|
+| **Default** (both `False`) | :white_check_mark: new traces | :x: | Standard experiment - creates fresh traces for each run |
+| `score_on_runtime_traces=True` | :x: | N/A (scores only) | Just add scores to existing traces without creating experiment runs |
+| `link_to_traces=True` | :white_check_mark: linked | :white_check_mark: | Experiment UI linked to original evaluation traces |
+
+!!! tip "When to use each mode"
+    - **Default**: Use when you don't have existing traces and want a self-contained experiment
+    - **score_on_runtime_traces**: Use when you only care about scores on existing traces, not the experiment UI
+    - **link_to_traces**: Use when you ran evaluations with tracing enabled and want experiment runs to link back to those original traces
+
+#### Default Mode
+
+Creates new traces for each dataset item run:
+
+```python
+stats = result.publish_as_experiment(
+    dataset_name='my-dataset',
+    run_name='experiment-v1',
+)
+# Creates: dataset items + new "Dataset run" traces + scores
+```
+
+#### Score on Runtime Traces
+
+Attaches scores directly to existing traces without creating experiment runs:
+
+```python
+stats = result.publish_as_experiment(
+    dataset_name='my-dataset',
+    run_name='experiment-v1',
+    score_on_runtime_traces=True,
+)
+# Creates: dataset items + scores on existing traces
+# Does NOT create: experiment runs
+```
+
+This is useful when:
+
+- You only need scores visible on your production traces
+- You don't need the experiment comparison UI
+- Your `DatasetItem` objects have `trace_id` set from prior tracing
+
+#### Link to Traces
+
+Creates experiment runs that link to your existing evaluation traces:
+
+```python
+stats = result.publish_as_experiment(
+    dataset_name='my-dataset',
+    run_name='experiment-v1',
+    link_to_traces=True,
+)
+# Creates: dataset items + experiment runs linked to existing traces + scores
+```
+
+This is useful when:
+
+- You ran `evaluation_runner` with Langfuse tracing enabled
+- You want experiment runs in the Langfuse UI to link back to those original traces
+- You need both the experiment comparison view AND visibility into the original trace details
+
+!!! note "Fallback behavior"
+    When `link_to_traces=True` but a `DatasetItem` doesn't have a `trace_id`, that item falls back to default mode (creates a new trace).
+
+!!! warning "Precedence"
+    If both `score_on_runtime_traces=True` and `link_to_traces=True` are set, `score_on_runtime_traces` takes precedence.
 
 ### Return Statistics
 
@@ -246,6 +320,8 @@ Understanding how the method handles existing datasets and runs:
 | Comparing model versions | `publish_as_experiment()` |
 | Creating baseline datasets | `publish_as_experiment()` |
 | Continuous monitoring | `publish_to_observability()` |
+| Experiment UI + link to evaluation traces | `publish_as_experiment(link_to_traces=True)` |
+| Scores on traces + no experiment runs | `publish_as_experiment(score_on_runtime_traces=True)` |
 
 ```python
 # For existing traces (from production):
@@ -253,6 +329,12 @@ result.publish_to_observability()  # Attaches scores to existing traces
 
 # For new experiments (no existing traces):
 result.publish_as_experiment()  # Creates everything from scratch
+
+# For experiments linked to evaluation traces:
+result.publish_as_experiment(link_to_traces=True)  # Links runs to existing traces
+
+# For scores only (no experiment runs):
+result.publish_as_experiment(score_on_runtime_traces=True)  # Scores only
 ```
 
 ---

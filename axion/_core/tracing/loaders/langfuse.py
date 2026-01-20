@@ -530,6 +530,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
         run_metadata: Optional[Dict[str, Any]] = None,
         flush: bool = True,
         tags: Optional[List[str]] = None,
+        score_on_runtime_traces: bool = False,
+        link_to_traces: bool = False,
     ) -> Dict[str, Any]:
         """
         Upload evaluation results to Langfuse as a dataset experiment.
@@ -547,6 +549,16 @@ class LangfuseTraceLoader(BaseTraceLoader):
             run_metadata: Optional metadata to attach to the experiment run.
             flush: Whether to flush the client after uploading. Defaults to True.
             tags: Optional list of tags to attach to all scores as metadata.
+            score_on_runtime_traces: If True, do NOT create per-dataset-item \"Dataset run\" traces.
+                Instead, attach scores directly to existing runtime traces (via DatasetItem.trace_id
+                and optional observation_id). This requires existing traces. Takes precedence over
+                link_to_traces if both are True.
+            link_to_traces: If True, link experiment runs to existing traces via the
+                low-level API (client.api.dataset_run_items.create()) instead of creating
+                new \"Dataset run\" traces. This allows experiment runs to appear linked
+                to the original evaluation traces in Langfuse UI. Falls back to creating
+                new traces if trace_id is not available on the test case. Ignored if
+                score_on_runtime_traces is True.
 
         Returns:
             Dict with statistics:
@@ -723,6 +735,85 @@ class LangfuseTraceLoader(BaseTraceLoader):
             stats['errors'].append(error_msg)
             return stats
 
+        # Mode B: score existing runtime traces, do not create new \"Dataset run\" traces.
+        if score_on_runtime_traces:
+            # Upload scores onto the original runtime trace/span IDs.
+            # This skips dataset_item.run(...) entirely.
+            for test_result in evaluation_result.results:
+                if not test_result.test_case:
+                    continue
+
+                trace_id = getattr(test_result.test_case, 'trace_id', None)
+                obs_id = getattr(test_result.test_case, 'observation_id', None)
+                if not trace_id:
+                    stats['scores_skipped'] += len(test_result.score_results)
+                    continue
+
+                for metric_score in test_result.score_results:
+                    if metric_score.score is None or np.isnan(metric_score.score):
+                        stats['scores_skipped'] += 1
+                        continue
+
+                    try:
+                        # Prefer per-metric trace/span IDs when available.
+                        # This enables attaching the score to the metric's own runtime trace
+                        # (e.g., MetricRunner trace_granularity=SEPARATE).
+                        metric_meta = getattr(metric_score, 'metadata', None) or {}
+                        target_trace_id = metric_meta.get('trace_id') or trace_id
+                        target_observation_id = (
+                            metric_meta.get('observation_id') or obs_id
+                        )
+
+                        score_kwargs: Dict[str, Any] = {
+                            'trace_id': target_trace_id,
+                            'name': metric_score.name,
+                            'value': float(metric_score.score),
+                            'comment': self._format_comment(
+                                metric_score.explanation, metric_score.signals
+                            ),
+                            'metadata': {
+                                'dataset_name': dataset_name,
+                                'run_name': run_name,
+                                'axion_run_id': evaluation_result.run_id,
+                                'tags': effective_tags,
+                                # Keep both IDs for debugging / linking
+                                'test_case_trace_id': trace_id,
+                                'metric_trace_id': metric_meta.get('trace_id'),
+                            },
+                        }
+                        if target_observation_id:
+                            score_kwargs['observation_id'] = target_observation_id
+
+                        self._execute_with_retry(
+                            lambda kwargs=score_kwargs: self.client.create_score(
+                                **kwargs
+                            ),
+                            description=f'upload score {metric_score.name} for trace {target_trace_id}',
+                        )
+                        stats['scores_uploaded'] += 1
+
+                        if self.request_pacing > 0:
+                            time.sleep(self.request_pacing)
+                    except Exception as e:
+                        error_msg = (
+                            f'Failed to upload score {metric_score.name} '
+                            f'for trace {trace_id}: {e}'
+                        )
+                        logger.warning(error_msg)
+                        stats['errors'].append(error_msg)
+                        stats['scores_skipped'] += 1
+
+            if flush:
+                try:
+                    self._execute_with_retry(
+                        lambda: self.client.flush(),
+                        description='flush Langfuse client',
+                    )
+                except Exception as e:
+                    logger.warning(f'Failed to flush Langfuse client: {e}')
+
+            return stats
+
         # Build run metadata
         full_run_metadata = {
             'axion_run_id': evaluation_result.run_id,
@@ -740,33 +831,71 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
             cached = test_result_map[item_id]
             test_result = cached['test_result']
+            input_data = cached.get('input_data')
             actual_output = cached['actual_output']
 
             try:
-                # Use item.run() context manager to create the experiment run
-                with dataset_item.run(
-                    run_name=run_name,
-                    run_metadata=full_run_metadata,
-                ) as root_span:
-                    # Update trace with output
-                    if actual_output is not None:
-                        root_span.update_trace(output=actual_output)
+                # Include per-item linking metadata so the experiment trace can point
+                # back to a runtime trace/span when available.
+                item_trace_id = getattr(test_result.test_case, 'trace_id', None)
+                item_observation_id = getattr(
+                    test_result.test_case, 'observation_id', None
+                )
+                per_item_run_metadata = {
+                    **full_run_metadata,
+                    'dataset_item_id': item_id,
+                    **({'trace_id': item_trace_id} if item_trace_id else {}),
+                    **(
+                        {'observation_id': item_observation_id}
+                        if item_observation_id
+                        else {}
+                    ),
+                }
 
+                # Mode: link_to_traces - link experiment run to existing trace via low-level API
+                if link_to_traces and item_trace_id:
+                    # Use low-level API to create dataset run item linked to existing trace
+                    # Import the request type from langfuse SDK
+                    from langfuse.api import CreateDatasetRunItemRequest
+
+                    run_item_request = CreateDatasetRunItemRequest(
+                        runName=run_name,
+                        datasetItemId=item_id,
+                        traceId=item_trace_id,
+                        observationId=item_observation_id,
+                        metadata=per_item_run_metadata,
+                    )
+                    self._execute_with_retry(
+                        lambda req=run_item_request: (
+                            self.client.api.dataset_run_items.create(request=req)
+                        ),
+                        description=f'create linked dataset run for item {item_id}',
+                    )
                     stats['runs_created'] += 1
 
-                    # Add scores using score_trace
+                    # Attach scores to existing trace
                     for metric_score in test_result.score_results:
                         if metric_score.score is None or np.isnan(metric_score.score):
                             stats['scores_skipped'] += 1
                             continue
 
                         try:
-                            root_span.score_trace(
-                                name=metric_score.name,
-                                value=float(metric_score.score),
-                                comment=self._format_comment(
+                            score_kwargs: Dict[str, Any] = {
+                                'trace_id': item_trace_id,
+                                'name': metric_score.name,
+                                'value': float(metric_score.score),
+                                'comment': self._format_comment(
                                     metric_score.explanation, metric_score.signals
                                 ),
+                            }
+                            if item_observation_id:
+                                score_kwargs['observation_id'] = item_observation_id
+
+                            self._execute_with_retry(
+                                lambda kwargs=score_kwargs: self.client.create_score(
+                                    **kwargs
+                                ),
+                                description=f'upload score {metric_score.name}',
                             )
                             stats['scores_uploaded'] += 1
 
@@ -778,6 +907,47 @@ class LangfuseTraceLoader(BaseTraceLoader):
                             logger.warning(error_msg)
                             stats['errors'].append(error_msg)
                             stats['scores_skipped'] += 1
+                else:
+                    # Default mode: use item.run() context manager to create new trace
+                    with dataset_item.run(
+                        run_name=run_name,
+                        run_metadata=per_item_run_metadata,
+                    ) as root_span:
+                        # Make the experiment trace itself useful in the UI
+                        # (input/output visible without digging into metadata).
+                        root_span.update_trace(
+                            input=input_data,
+                            output=actual_output,
+                        )
+
+                        stats['runs_created'] += 1
+
+                        # Add scores using score_trace
+                        for metric_score in test_result.score_results:
+                            if metric_score.score is None or np.isnan(
+                                metric_score.score
+                            ):
+                                stats['scores_skipped'] += 1
+                                continue
+
+                            try:
+                                root_span.score_trace(
+                                    name=metric_score.name,
+                                    value=float(metric_score.score),
+                                    comment=self._format_comment(
+                                        metric_score.explanation, metric_score.signals
+                                    ),
+                                )
+                                stats['scores_uploaded'] += 1
+
+                            except Exception as e:
+                                error_msg = (
+                                    f'Failed to upload score {metric_score.name} '
+                                    f'for item {item_id}: {e}'
+                                )
+                                logger.warning(error_msg)
+                                stats['errors'].append(error_msg)
+                                stats['scores_skipped'] += 1
 
                 if self.request_pacing > 0:
                     time.sleep(self.request_pacing)

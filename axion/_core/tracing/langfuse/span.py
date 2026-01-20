@@ -159,6 +159,26 @@ class LangfuseSpan:
             )
             self._observation = self._observation_context.__enter__()
 
+            # Sync local IDs with Langfuse server IDs when available.
+            # These IDs are required when attaching scores via the Langfuse API
+            # (e.g., create_score(trace_id=..., observation_id=...)).
+            try:
+                obs_id = getattr(self._observation, 'id', None) or getattr(
+                    self._observation, 'observation_id', None
+                )
+                trace_id = getattr(self._observation, 'trace_id', None)
+
+                if obs_id:
+                    self._span_id = str(obs_id)
+                if trace_id:
+                    self._trace_id = str(trace_id)
+                    # Also update tracer-level trace_id so callers (metric_tracer.trace_id)
+                    # return the real server trace id.
+                    if hasattr(self.tracer, '_trace_id'):
+                        self.tracer._trace_id = str(trace_id)
+            except Exception as e:
+                logger.debug(f'Failed to sync Langfuse IDs: {e}')
+
             # For the root span, set tags on the trace
             # Note: environment is set at client initialization, not via update_current_trace()
             # Check if this is the root span (only one span in stack, which is this one)
@@ -192,7 +212,11 @@ class LangfuseSpan:
 
         # Auto-flush when exiting the outermost span
         # (span_stack length is 1 means this is the last span, about to be popped)
-        if len(self.tracer._span_stack) == 1 and self.tracer._client:
+        if (
+            getattr(self.tracer, 'auto_flush', True)
+            and len(self.tracer._span_stack) == 1
+            and self.tracer._client
+        ):
             try:
                 self.tracer._client.flush()
                 logger.debug('Langfuse traces auto-flushed (outermost span closed)')
