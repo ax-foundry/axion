@@ -1,0 +1,4651 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A modular evaluation framework for AI agents">
+      
+      
+      
+      
+        <link rel="prev" href="../getting-started/installation/">
+      
+      
+        <link rel="next" href="../guides/hierarchical-scoring/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/ax_icon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Agent Evaluation Playbook - Axion</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#agent-evaluation-playbook" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+        <aside class="md-banner">
+          <div class="md-banner__inner md-grid md-typeset">
+            
+            
+<div class="announcement-banner" id="announcement-banner">
+  <span>Axion is beta. Under active development!</span>
+  <a href="https://github.com/ax-foundry/axion">View on GitHub &rarr;</a>
+  <button class="close-btn" onclick="dismissBanner()" aria-label="Dismiss">&times;</button>
+</div>
+<script>
+  // Check if banner was previously dismissed
+  if (localStorage.getItem('axion-banner-dismissed') === 'true') {
+    document.getElementById('announcement-banner').classList.add('hidden');
+  }
+
+  function dismissBanner() {
+    document.getElementById('announcement-banner').classList.add('hidden');
+    localStorage.setItem('axion-banner-dismissed', 'true');
+  }
+</script>
+
+          </div>
+          
+        </aside>
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+          <aside class="md-banner md-banner--warning">
+            <div class="md-banner__inner md-grid md-typeset">
+              
+  You're not viewing the latest version.
+  <a href="../..">
+    <strong>Click here to go to latest.</strong>
+  </a>
+
+            </div>
+            <script>var el=document.querySelector("[data-md-component=outdated]"),base=new URL(".."),outdated=__md_get("__outdated",sessionStorage,base);!0===outdated&&el&&(el.hidden=!1)</script>
+          </aside>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Axion" class="md-header__button md-logo" aria-label="Axion" data-md-component="logo">
+      
+  <img src="../assets/ax_icon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Axion
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Agent Evaluation Playbook
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ax-foundry/axion" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../guides/hierarchical-scoring/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../metric-registry/composite/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Metric Registry
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../deep-dives/metrics/creating-metrics/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Deep Dives
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../reference/dataset/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Axion" class="md-nav__button md-logo" aria-label="Axion" data-md-component="logo">
+      
+  <img src="../assets/ax_icon.png" alt="logo">
+
+    </a>
+    Axion
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ax-foundry/axion" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Evaluation Playbook
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Evaluation Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-with-generic-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem with Generic Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#four-common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Four Common Mistakes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Four Common Mistakes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-not-looking-at-your-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Not Looking at Your Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-frameworks-before-fundamentals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Frameworks Before Fundamentals
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-overreliance-on-generic-evaluations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Overreliance on Generic Evaluations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-misusing-llm-as-a-judge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Misusing LLM-as-a-Judge
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-analyze-measure-improve-methodology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Analyze-Measure-Improve Methodology
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Analyze-Measure-Improve Methodology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-analyze" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: ANALYZE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-measure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: MEASURE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-improve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: IMPROVE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dataset-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataset Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dataset Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diversity-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diversity Matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-examples-do-you-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Many Examples Do You Need?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage-dimensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Dimensions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dataset-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataset Lifecycle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-evaluation-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defining Evaluation Criteria
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defining Evaluation Criteria">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-critiques-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Critiques Matter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-help-agent-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Help Agent Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Classification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Classification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Classification
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics-philosophy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics Philosophy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metrics Philosophy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metrics-without-actionable-meaning-are-worthless" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics Without Actionable Meaning are Worthless
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-likert-scales-fail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Likert Scales Fail
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-better-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Better Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metric-selection-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metric Selection Guide
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metric Selection Guide">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selection-by-dimension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selection by Dimension
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#llm-as-a-judge-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLM-as-a-Judge Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="LLM-as-a-Judge Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-anti-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Anti-Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-better-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Better Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#judge-model-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Judge Model Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/hierarchical-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hierarchical Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/datasets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Working with Datasets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics & Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running Evaluations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_5" id="__nav_3_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Langfuse
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Langfuse
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/langfuse/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/langfuse/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/langfuse/tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tracing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/langfuse/publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/llm-providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/synthetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guides/search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search Integrations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metric Registry
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Metric Registry
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../metric-registry/composite/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Composite
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Composite
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/faithfulness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Faithfulness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/answer_relevancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Answer Relevancy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/factual_accuracy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Factual Accuracy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/answer_completeness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Answer Completeness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/answer_criteria/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Answer Criteria
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/tone_style_consistency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tone & Style Consistency
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/citation_relevancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citation Relevancy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/pii_leakage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PII Leakage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/contextual_relevancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Relevancy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/contextual_recall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Recall
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/contextual_precision/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Precision
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/contextual_ranking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Ranking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/contextual_sufficiency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Sufficiency
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/composite/contextual_utilization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Utilization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../metric-registry/heuristic/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Heuristic
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Heuristic
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/heuristic/exact_string_match/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exact String Match
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/heuristic/contains_match/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contains Match
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/heuristic/levenshtein_ratio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Levenshtein Ratio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sentence BLEU
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/heuristic/pii_leakage_heuristic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PII Leakage (Heuristic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/heuristic/citation_presence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citation Presence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/heuristic/latency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Latency
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Retrieval Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../metric-registry/conversational/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conversational
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Conversational
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../metric-registry/tool/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tool
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-registry/tool/tool_correctness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Correctness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dives
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deep Dives
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Metrics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/metrics/creating-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Custom Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/metrics/yaml-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YAML-Based Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/metrics/composite-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Composite Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runners
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runners
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/runners/metric-runner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metric Runner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/runners/evaluation-runner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation Runner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/runners/api-runner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Runner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Synthetic
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/synthetic/document-qa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Document QA Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Search
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/search/google/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Google Search
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/search/tavily/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tavily Search
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/search/you/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    You.com Search
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Internals
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Internals
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/internals/tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tracing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/internals/environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-dives/internals/logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/dataset/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/runners/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runners
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/eval-tree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eval Tree
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/synthetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/llm-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/tracer-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tracer Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem-with-generic-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem with Generic Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#four-common-mistakes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Four Common Mistakes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Four Common Mistakes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-not-looking-at-your-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Not Looking at Your Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-frameworks-before-fundamentals" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Frameworks Before Fundamentals
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-overreliance-on-generic-evaluations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Overreliance on Generic Evaluations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-misusing-llm-as-a-judge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Misusing LLM-as-a-Judge
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-analyze-measure-improve-methodology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Analyze-Measure-Improve Methodology
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Analyze-Measure-Improve Methodology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#phase-1-analyze" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 1: ANALYZE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-2-measure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 2: MEASURE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#phase-3-improve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Phase 3: IMPROVE
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dataset-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataset Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dataset Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#diversity-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Diversity Matters
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-many-examples-do-you-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How Many Examples Do You Need?
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coverage-dimensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Dimensions
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dataset-lifecycle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dataset Lifecycle
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-evaluation-criteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defining Evaluation Criteria
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Defining Evaluation Criteria">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#why-critiques-matter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Critiques Matter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-help-agent-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example: Help Agent Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#error-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Classification
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Error Classification">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Classification
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metrics-philosophy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics Philosophy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metrics Philosophy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metrics-without-actionable-meaning-are-worthless" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metrics Without Actionable Meaning are Worthless
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-likert-scales-fail" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Likert Scales Fail
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-better-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Better Approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metric-selection-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metric Selection Guide
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metric Selection Guide">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selection-by-dimension" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selection by Dimension
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#llm-as-a-judge-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLM-as-a-Judge Best Practices
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="LLM-as-a-Judge Best Practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-anti-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Anti-Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-better-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Better Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#judge-model-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Judge Model Selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="agent-evaluation-playbook">Agent Evaluation Playbook<a class="headerlink" href="#agent-evaluation-playbook" title="Permanent link">&para;</a></h1>
+<p>This playbook outlines the core principles and strategy for effective AI agent evaluation—going beyond surface-level metrics and dashboards to focus on what truly matters: continuously improving agents to perform in the real world.</p>
+<hr />
+<h2 id="the-problem-with-generic-evaluation">The Problem with Generic Evaluation<a class="headerlink" href="#the-problem-with-generic-evaluation" title="Permanent link">&para;</a></h2>
+<p>Evaluating AI agents isn't a traditional machine learning task. It's a context-driven problem—requiring more than generic metrics or off-the-shelf tools. Generative agents are unpredictable and can be highly domain-specific, so success demands a tailored approach rooted in:</p>
+<ul>
+<li><strong>Deep domain expertise</strong></li>
+<li><strong>Context-aware error analysis</strong></li>
+<li><strong>Metrics tied to real business outcomes</strong></li>
+</ul>
+<p><strong>There's no silver bullet.</strong> One-size-fits-all evaluation leads to mediocrity. The real question is: <em>Is this agent improving at the job it was designed to do?</em></p>
+<p>A customer support agent and an onboarding agent may share similarities, but grading them with the same rubric is like judging a painter and a sculptor by identical standards.</p>
+<hr />
+<h2 id="four-common-mistakes">Four Common Mistakes<a class="headerlink" href="#four-common-mistakes" title="Permanent link">&para;</a></h2>
+<p>Before diving into the process, avoid these common pitfalls:</p>
+<h3 id="1-not-looking-at-your-data">1. Not Looking at Your Data<a class="headerlink" href="#1-not-looking-at-your-data" title="Permanent link">&para;</a></h3>
+<p>The most common—and most damaging—mistake is neglecting to examine your data. Despite being fundamental, this step is often skipped.</p>
+<p>Effective evaluation begins with frictionless, high-quality data exploration and labeling. Without a deep understanding of your agent's failures, any metrics or conclusions you draw are on shaky ground.</p>
+<p><strong>If you haven't spent time reviewing raw examples, you're not truly evaluating.</strong></p>
+<blockquote>
+<p>Start manually. Use spreadsheets. Iterate. Understand the process before automating.</p>
+</blockquote>
+<h3 id="2-frameworks-before-fundamentals">2. Frameworks Before Fundamentals<a class="headerlink" href="#2-frameworks-before-fundamentals" title="Permanent link">&para;</a></h3>
+<p>Jumping to tools or frameworks before establishing a process is a red flag.</p>
+<p>If your first question is "What framework should I use?", you're starting in the wrong place. Evaluation is not a plug-and-play task. You must define what success looks like for your agent. Frameworks are secondary—they should support your workflow, not define it.</p>
+<h3 id="3-overreliance-on-generic-evaluations">3. Overreliance on Generic Evaluations<a class="headerlink" href="#3-overreliance-on-generic-evaluations" title="Permanent link">&para;</a></h3>
+<p>Generic metrics are not a shortcut—they're a risk.</p>
+<p>If your evals aren't grounded in known errors, you're wasting time. Off-the-shelf metrics (e.g., hallucination, toxicity, relevancy) are easy to reach for—but dangerous when misused. Agents are purpose-built. So should your evaluations be.</p>
+<p>Generic metrics may be useful <em>after</em> understanding your agent's unique failure modes, but using them prematurely becomes a crutch that masks real issues.</p>
+<h3 id="4-misusing-llm-as-a-judge">4. Misusing LLM-as-a-Judge<a class="headerlink" href="#4-misusing-llm-as-a-judge" title="Permanent link">&para;</a></h3>
+<p>Large language models can assist in evaluation, but they must be used responsibly.</p>
+<p>Relying on LLMs without first validating them against domain expert feedback is a recipe for false confidence. The correct approach:</p>
+<ol>
+<li>Build a lightweight review pipeline</li>
+<li>Have experts label a few dozen examples</li>
+<li>Align your LLM judge to match that standard</li>
+</ol>
+<p><strong>Until you achieve strong agreement between human and model judgment, LLM outputs should be treated as advisory—not definitive.</strong></p>
+<hr />
+<h2 id="the-analyze-measure-improve-methodology">The Analyze-Measure-Improve Methodology<a class="headerlink" href="#the-analyze-measure-improve-methodology" title="Permanent link">&para;</a></h2>
+<p>The AMI cycle isn't new—it's long been used in traditional ML. But with generative agents, the game has changed. We've moved from predictable single-token outputs to freeform systems with far greater complexity.</p>
+<p>If you approach evaluation as a simple side-by-side comparison or a table of results, you'll miss the deeper nuances in your data. True progress requires going beyond surface-level metrics to uncover root causes and meaningful insights.</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│    ANALYZE ──────► MEASURE ──────► IMPROVE ──────┐         │
+│        ▲                                          │         │
+│        └──────────────────────────────────────────┘         │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+</code></pre></div>
+<p>Most AI agent problems aren't solved with a single tweak—they're solved with a disciplined, repeatable process. The AMI lifecycle replaces one-off troubleshooting with a data-driven, continuous improvement loop that:</p>
+<ul>
+<li>Cuts failures</li>
+<li>Speeds time to value</li>
+<li>Manages risk</li>
+<li>Drives measurable gains</li>
+</ul>
+<h3 id="phase-1-analyze">Phase 1: ANALYZE<a class="headerlink" href="#phase-1-analyze" title="Permanent link">&para;</a></h3>
+<p><strong>Outcome:</strong> A clear map of what's broken and why.</p>
+<ol>
+<li>Collect representative agent interactions from real-world or test environments</li>
+<li>Spot and categorize failure patterns (e.g., misunderstood prompts, inconsistent answers)</li>
+<li>Trace root causes: <strong>Specification Issues</strong> (prompt ambiguity) vs. <strong>Generalization Issues</strong> (context mismatch)</li>
+</ol>
+<h3 id="phase-2-measure">Phase 2: MEASURE<a class="headerlink" href="#phase-2-measure" title="Permanent link">&para;</a></h3>
+<p><strong>Outcome:</strong> Solid baselines and clear priorities grounded in data.</p>
+<ol>
+<li>Build evaluators targeted at each failure type</li>
+<li>Quantify how often and how badly issues occur across scenarios</li>
+<li>Prioritize fixes by business impact, surfaced in dashboards everyone can trust</li>
+</ol>
+<h3 id="phase-3-improve">Phase 3: IMPROVE<a class="headerlink" href="#phase-3-improve" title="Permanent link">&para;</a></h3>
+<p><strong>Outcome:</strong> Fixes that address root causes—not just symptoms.</p>
+<ol>
+<li>Tighten prompts, definitions, and examples to fix Specification Issues</li>
+<li>Enrich data and refine model/prompt pipelines for Generalization Issues</li>
+<li>Roll out changes in controlled environments and validate improvements with metrics</li>
+</ol>
+<p><strong>And do it again, and again, and again.</strong> Once you get the handle of this process, reach for frameworks that can help automate some of this work, but never stop looking at your data!</p>
+<hr />
+<h2 id="dataset-best-practices">Dataset Best Practices<a class="headerlink" href="#dataset-best-practices" title="Permanent link">&para;</a></h2>
+<p>A strong evaluation starts with the dataset. Your dataset should be grounded in your agent's errors.</p>
+<h3 id="diversity-matters">Diversity Matters<a class="headerlink" href="#diversity-matters" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Comprehensive Testing:</strong> Covers a wide range of situations so the AI is evaluated fairly</li>
+<li><strong>Realistic Interactions:</strong> Reflects actual user behavior for relevant evaluations</li>
+<li><strong>Weakness Discovery:</strong> Surfaces areas where the AI struggles or produces errors</li>
+</ul>
+<h3 id="how-many-examples-do-you-need">How Many Examples Do You Need?<a class="headerlink" href="#how-many-examples-do-you-need" title="Permanent link">&para;</a></h3>
+<p>Start with ~30 examples. Continue adding until no new failure modes appear. Stop when additional examples stop revealing new insights.</p>
+<h3 id="coverage-dimensions">Coverage Dimensions<a class="headerlink" href="#coverage-dimensions" title="Permanent link">&para;</a></h3>
+<p>Your golden dataset must be a representative sample of the overall population of queries your end users actually ask:</p>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>What to Cover</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Intent Coverage</strong></td>
+<td>All major intents + common "out-of-scope" questions</td>
+</tr>
+<tr>
+<td><strong>Utterance Variation</strong></td>
+<td>Formal, casual, slang, misspellings, abbreviations, verbose</td>
+</tr>
+<tr>
+<td><strong>Complexity</strong></td>
+<td>Multi-turn dialogues, corrections, partial information</td>
+</tr>
+<tr>
+<td><strong>Sentiment &amp; Tone</strong></td>
+<td>Frustrated, urgent, confused, polite interactions</td>
+</tr>
+<tr>
+<td><strong>Edge Cases</strong></td>
+<td>Rare but valid queries, known failure modes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dataset-lifecycle">Dataset Lifecycle<a class="headerlink" href="#dataset-lifecycle" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Formation</strong></td>
+<td>Curate high-quality real-world utterances with expert validation</td>
+</tr>
+<tr>
+<td><strong>Maintenance</strong></td>
+<td>Continuous review cycles with clear governance</td>
+</tr>
+<tr>
+<td><strong>Expansion</strong></td>
+<td>Controlled generation and targeted mining of edge cases</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="defining-evaluation-criteria">Defining Evaluation Criteria<a class="headerlink" href="#defining-evaluation-criteria" title="Permanent link">&para;</a></h2>
+<p>Binary pass/fail judgments are important, but often not enough. Each judgment must be paired with a <strong>detailed critique</strong>.</p>
+<h3 id="why-critiques-matter">Why Critiques Matter<a class="headerlink" href="#why-critiques-matter" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Capture Nuances:</strong> Note if something was mostly correct but had areas for improvement</li>
+<li><strong>Guide Improvement:</strong> Provide specific insights into how the AI can be enhanced</li>
+<li><strong>Balance Simplicity with Depth:</strong> Pass/fail offers a clear verdict; critique offers reasoning</li>
+</ul>
+<h3 id="example-help-agent-evaluation">Example: Help Agent Evaluation<a class="headerlink" href="#example-help-agent-evaluation" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Interaction</th>
+<th>Judgment</th>
+<th>Critique</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>User asks how to create a custom field. Agent provides accurate step-by-step navigation.</td>
+<td><strong>Pass</strong></td>
+<td>Technically correct and actionable. However, missed opportunities to check permissions first or ask about field type requirements. Met primary need—passes with enhancement opportunities noted.</td>
+</tr>
+<tr>
+<td>User asks about lead scoring. Agent says "Contact your administrator."</td>
+<td><strong>Fail</strong></td>
+<td>Made assumptions without checking org capabilities. Failed to explore alternatives or explain what lead scoring entails. Dismissive rather than helpful. Due to poor investigation and lack of solutions—fails.</td>
+</tr>
+</tbody>
+</table>
+<p>The critique should be detailed enough to use in a few-shot prompt for an LLM judge.</p>
+<hr />
+<h2 id="error-classification">Error Classification<a class="headerlink" href="#error-classification" title="Permanent link">&para;</a></h2>
+<p>Once you know where the errors are, perform an error analysis to identify root causes. The most effective approach is manually classifying examples using a spreadsheet.</p>
+<h3 id="example-classification">Example Classification<a class="headerlink" href="#example-classification" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Root Cause</th>
+<th>Count</th>
+<th>Percentage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Insufficient Workflow Guidance</td>
+<td>12</td>
+<td>40%</td>
+</tr>
+<tr>
+<td>Ignoring User Context</td>
+<td>8</td>
+<td>27%</td>
+</tr>
+<tr>
+<td>Generic Documentation Links</td>
+<td>6</td>
+<td>20%</td>
+</tr>
+<tr>
+<td>Missing Permission Checks</td>
+<td>4</td>
+<td>13%</td>
+</tr>
+</tbody>
+</table>
+<p>Now you know where to focus your efforts. This classification helps identify whether the problem lies in:</p>
+<ul>
+<li>Prompt engineering</li>
+<li>Knowledge retrieval</li>
+<li>Contextual reasoning</li>
+</ul>
+<hr />
+<h2 id="metrics-philosophy">Metrics Philosophy<a class="headerlink" href="#metrics-philosophy" title="Permanent link">&para;</a></h2>
+<h3 id="metrics-without-actionable-meaning-are-worthless">Metrics Without Actionable Meaning are Worthless<a class="headerlink" href="#metrics-without-actionable-meaning-are-worthless" title="Permanent link">&para;</a></h3>
+<p>Observability and evaluation are not the same thing. Observability tells you what happened; evaluation is about making agents better—an iterative loop of analyzing, measuring, and improving.</p>
+<h3 id="why-likert-scales-fail">Why Likert Scales Fail<a class="headerlink" href="#why-likert-scales-fail" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Numbers Aren't Actionable</strong></td>
+<td>A "3" doesn't tell you how to improve</td>
+</tr>
+<tr>
+<td><strong>Subjectivity</strong></td>
+<td>Evaluators disagree on what qualifies as "minor inaccuracies" vs "some factual errors"</td>
+</tr>
+<tr>
+<td><strong>Metrics Rarely Reflect Expert Judgment</strong></td>
+<td>Domain experts make binary calls—approve vs. reject</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-better-approach">The Better Approach<a class="headerlink" href="#the-better-approach" title="Permanent link">&para;</a></h3>
+<p><strong>Binary outcomes paired with clear critiques</strong> surface what actually matters and provide a direct path for improvement.</p>
+<p><strong>Rule of Thumb:</strong> If you can't clearly explain what a score of 0.8 means—or what action it implies—it's not a useful metric.</p>
+<hr />
+<h2 id="metric-selection-guide">Metric Selection Guide<a class="headerlink" href="#metric-selection-guide" title="Permanent link">&para;</a></h2>
+<p>The most common failure mode is "Metric Spaghetti"—throwing every metric at every test case. This burns tokens, increases latency, and creates noise.</p>
+<h3 id="selection-by-dimension">Selection by Dimension<a class="headerlink" href="#selection-by-dimension" title="Permanent link">&para;</a></h3>
+<h4 id="retrieval-context-did-we-find-the-right-data">Retrieval &amp; Context (Did we find the right data?)<a class="headerlink" href="#retrieval-context-did-we-find-the-right-data" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Type</th>
+<th>Use When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HitRateAtK</code></td>
+<td>Math</td>
+<td>"Did the right doc appear in the top 5?" (Binary)</td>
+</tr>
+<tr>
+<td><code>MeanReciprocalRank</code></td>
+<td>Math</td>
+<td>You care about position</td>
+</tr>
+<tr>
+<td><code>ContextualRelevancy</code></td>
+<td>LLM</td>
+<td>No ground truth ranking—ask "Is this chunk garbage?"</td>
+</tr>
+<tr>
+<td><code>ContextualSufficiency</code></td>
+<td>LLM</td>
+<td>Check if retrieved chunks actually contain the answer</td>
+</tr>
+</tbody>
+</table>
+<h4 id="response-quality-is-the-answer-correct">Response Quality (Is the answer correct?)<a class="headerlink" href="#response-quality-is-the-answer-correct" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Type</th>
+<th>Use When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FactualAccuracy</code></td>
+<td>LLM</td>
+<td>You have a Golden Answer</td>
+</tr>
+<tr>
+<td><code>Faithfulness</code></td>
+<td>LLM</td>
+<td>RAG essential—checks hallucination</td>
+</tr>
+<tr>
+<td><code>AnswerCompleteness</code></td>
+<td>LLM</td>
+<td>User asked 3 sub-questions—did agent answer all 3?</td>
+</tr>
+<tr>
+<td><code>AnswerCriteria</code></td>
+<td>LLM</td>
+<td>You have business rules to verify</td>
+</tr>
+</tbody>
+</table>
+<h4 id="agent-behavior-is-the-interaction-working">Agent Behavior (Is the interaction working?)<a class="headerlink" href="#agent-behavior-is-the-interaction-working" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Type</th>
+<th>Use When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AnswerRelevancy</code></td>
+<td>LLM</td>
+<td>"Evasion Detector"—penalizes off-topic answers</td>
+</tr>
+<tr>
+<td><code>ConversationEfficiency</code></td>
+<td>LLM</td>
+<td>Penalizes loops (agent asks for same info twice)</td>
+</tr>
+<tr>
+<td><code>GoalCompletion</code></td>
+<td>LLM</td>
+<td>Did user achieve what they came for?</td>
+</tr>
+</tbody>
+</table>
+<h4 id="style-trust">Style &amp; Trust<a class="headerlink" href="#style-trust" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Type</th>
+<th>Use When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ToneStyleConsistency</code></td>
+<td>LLM</td>
+<td>Does it match writing style of reference?</td>
+</tr>
+<tr>
+<td><code>CitationPresence</code></td>
+<td>Heuristic</td>
+<td>Compliance—checks if citations exist</td>
+</tr>
+<tr>
+<td><code>CitationRelevancy</code></td>
+<td>LLM</td>
+<td>Do citations actually support the claim?</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="llm-as-a-judge-best-practices">LLM-as-a-Judge Best Practices<a class="headerlink" href="#llm-as-a-judge-best-practices" title="Permanent link">&para;</a></h2>
+<h3 id="the-anti-pattern">The Anti-Pattern<a class="headerlink" href="#the-anti-pattern" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>You are an evaluation expert. Judge the correctness based on:
+1. Accuracy &amp; Factual Correctness
+2. Relevance &amp; Completeness
+3. Clarity &amp; Coherence
+
+Give me a score between 1 and 10 and a reason.
+</code></pre></div>
+<p><strong>Why this fails:</strong></p>
+<ul>
+<li>What's the difference between a 7 and an 8?</li>
+<li>Five dimensions collapsed into one number</li>
+<li>Score before reasoning (LLMs reason token-by-token)</li>
+<li>No examples to ground the model</li>
+</ul>
+<h3 id="the-better-pattern">The Better Pattern<a class="headerlink" href="#the-better-pattern" title="Permanent link">&para;</a></h3>
+<p><strong>Separation of Concerns:</strong> Split into two steps.</p>
+<ol>
+<li><strong>Extraction:</strong> Parse what was said (no judgment yet)</li>
+<li><strong>Verification:</strong> Boolean logic—"Does X exist in Y?"</li>
+</ol>
+<p><strong>Atomic Statements:</strong> Break compound sentences into individual facts.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Instead of scoring &quot;The product has feature A and feature B&quot;</span>
+<span class="n">statements</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;The product has feature A.&quot;</span><span class="p">,</span>      <span class="c1"># Judge: 1 (True)</span>
+    <span class="s2">&quot;The product has feature B.&quot;</span>       <span class="c1"># Judge: 0 (False)</span>
+<span class="p">]</span>
+<span class="c1"># Result: 50% accuracy (mathematical, not vibes)</span>
+</code></pre></div>
+<p><strong>Chain of Thought:</strong> Force analysis before the score.</p>
+<p><strong>Few-Shot Examples:</strong> Always provide examples of good and bad responses with correct scores.</p>
+<h3 id="judge-model-selection">Judge Model Selection<a class="headerlink" href="#judge-model-selection" title="Permanent link">&para;</a></h3>
+<p><strong>The teacher must be smarter than the student.</strong></p>
+<p>You cannot evaluate a GPT-4o agent using a GPT-3.5-Turbo judge. The judge must have reasoning capabilities equal to or greater than the agent being tested.</p>
+<p><strong>Key principle:</strong> "Cheap on generation, expensive on evaluation."</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>The goal is not to automate evaluation away—it's to build resilient, domain-aware evaluation systems that measure what truly matters and drive meaningful, measurable improvement.</p>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 12, 2026 22:46:04 UTC">January 12, 2026</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 10, 2026 18:58:38 UTC">January 10, 2026</span>
+  </span>
+
+    
+    
+      
+  
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Contributors">
+      
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"/></svg>
+      
+    </span>
+    <nav>
+      
+        <a href="mailto:mevanoff24@gmail.com">mevanoff24</a>
+    </nav>
+  </span>
+
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.instant", "navigation.tracking", "navigation.top", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "stable", "provider": "mike"}}</script>
+    
+    
+
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+<script>
+  // Collapsible TOC (right sidebar) functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    // Create toggle button
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'toc-toggle';
+    toggleBtn.setAttribute('aria-label', 'Toggle table of contents');
+    toggleBtn.setAttribute('title', 'Toggle table of contents');
+    toggleBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+      </svg>
+    `;
+    document.body.appendChild(toggleBtn);
+
+    // Check stored preference
+    const isCollapsed = localStorage.getItem('axion-toc-collapsed') === 'true';
+    if (isCollapsed) {
+      document.body.classList.add('toc-collapsed');
+    }
+
+    // Toggle handler
+    toggleBtn.addEventListener('click', function() {
+      document.body.classList.toggle('toc-collapsed');
+      const nowCollapsed = document.body.classList.contains('toc-collapsed');
+      localStorage.setItem('axion-toc-collapsed', nowCollapsed);
+    });
+  });
+</script>
+
+  </body>
+</html>
