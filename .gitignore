@@ -31,6 +31,7 @@ CLAUDE.md
 .deepeval
 examples/
 
+
 .#*
 *\#*\#
 [#]*#
@@ -92,3 +93,15 @@ site/
 
 # Chainlit cache/config
 .chainlit/
+
+# Datasets
+*.csv
+*.parquet
+*.jsonl
+*.jsonl.gz
+*.jsonl.bz2
+*.jsonl.zip
+*.jsonl.tar
+*.jsonl.tar.gz
+*.jsonl.tar.bz2
+*.jsonl.tar.zip
