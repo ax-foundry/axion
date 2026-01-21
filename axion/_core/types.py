@@ -192,6 +192,19 @@ class FieldNames:
             'multi_turn_conversation',
         }
 
+    @classmethod
+    def get_computed_field_keys(cls) -> Set[str]:
+        """
+        Returns computed field names that are derived from other data
+        and should be excluded during serialization/deserialization.
+        These fields are calculated on-the-fly and cannot be set directly.
+        """
+        return {
+            'conversation_stats',
+            'agent_trajectory',
+            'has_errors',
+        }
+
 
 __all__ = [
     'ComponentType',

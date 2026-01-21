@@ -6,7 +6,7 @@ platforms (Langfuse, Opik, Logfire) and converting them to Axion Dataset
 format for evaluation.
 
 Example:
-    from axion._core.tracing.loaders import LangfuseTraceLoader
+    from axion.tracing import LangfuseTraceLoader
     from axion import evaluation_runner
     from axion.metrics import Faithfulness
 

@@ -73,6 +73,13 @@ from axion._core.tracing import (
     trace_function,
     trace_method,
 )
+from axion._core.tracing.loaders import (
+    BaseTraceLoader,
+    FetchedTraceData,
+    LangfuseTraceLoader,
+    LogfireTraceLoader,
+    OpikTraceLoader,
+)
 
 __all__ = [
     # Core configuration
@@ -102,4 +109,10 @@ __all__ = [
     # Utilities
     'set_default_global_tracer',
     'get_default_global_tracer',
+    # Trace loaders
+    'FetchedTraceData',
+    'BaseTraceLoader',
+    'LangfuseTraceLoader',
+    'OpikTraceLoader',
+    'LogfireTraceLoader',
 ]

@@ -43,7 +43,7 @@ stats = result.publish_to_observability(observation_id_field=None)
 For more control, use the loader's method:
 
 ```python
-from axion._core.tracing.loaders import LangfuseTraceLoader
+from axion.tracing import LangfuseTraceLoader
 
 loader = LangfuseTraceLoader(default_tags=['evaluation'])
 

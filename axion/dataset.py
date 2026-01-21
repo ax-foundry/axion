@@ -926,9 +926,15 @@ class Dataset(RichSerializer):
             FieldNames.EXPECTED_REFERENCE,
         ]
 
+        # Exclude computed fields that cannot be set during deserialization
+        exclude_fields = FieldNames.get_computed_field_keys()
+
         records = []
         for item in self.items:
             record = item.model_dump(by_alias=True)
+            # Remove computed fields
+            for field_name in exclude_fields:
+                record.pop(field_name, None)
             if not flatten_nested_json:
                 for _field in json_fields:
                     value = record.get(_field)
@@ -1201,9 +1207,13 @@ class Dataset(RichSerializer):
             Dataset: A populated Dataset instance.
         """
 
-        # Drop optional columns if they exist
+        # Drop optional columns if they exist (aliased fields and computed fields)
+        columns_to_drop = (
+            FieldNames.get_aliased_model_field_keys()
+            | FieldNames.get_computed_field_keys()
+        )
         dataframe = dataframe.drop(
-            columns=list[Hashable](FieldNames.get_aliased_model_field_keys()),
+            columns=list[Hashable](columns_to_drop),
             errors='ignore',
         )
 
