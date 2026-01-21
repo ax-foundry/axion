@@ -6,7 +6,7 @@ including configuration, state tracking, iteration history, and final results.
 """
 
 from datetime import datetime, timezone
-from typing import Any, List, Optional
+from typing import Any, List, Literal, Optional
 
 from pydantic import Field
 
@@ -16,6 +16,33 @@ from axion._core.schema import RichBaseModel
 def _strftime() -> str:
     """Generate ISO timestamp string."""
     return datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+
+
+class BeamCandidate(RichBaseModel):
+    """
+    Represents a candidate prompt in beam search.
+
+    During beam search, multiple candidate prompts are generated and
+    evaluated with a mini-eval to select the most promising one.
+    """
+
+    prompt: str = Field(
+        description='The candidate prompt text.',
+    )
+
+    reasoning: str = Field(
+        description='Explanation of what changes were made and why.',
+    )
+
+    mini_eval_pass_rate: Optional[float] = Field(
+        default=None,
+        description='Pass rate from mini-evaluation (if performed).',
+    )
+
+    rank: Optional[int] = Field(
+        default=None,
+        description='Rank after mini-evaluation (1 = best).',
+    )
 
 
 class PromptOptimizationConfig(RichBaseModel):
@@ -69,6 +96,44 @@ class PromptOptimizationConfig(RichBaseModel):
         description='Keyword argument name for injecting prompt into task function.',
     )
 
+    # Beam search configuration
+    beam_width: int = Field(
+        default=1,
+        ge=1,
+        le=10,
+        description='Number of candidate prompts to generate per iteration. '
+        'beam_width=1 means single candidate (original behavior).',
+    )
+
+    mini_eval_sample_size: int = Field(
+        default=5,
+        ge=1,
+        le=50,
+        description='Number of samples to use for mini-evaluation when beam_width > 1.',
+    )
+
+    mini_eval_sample_strategy: Literal['random', 'hard_negatives', 'stratified'] = (
+        Field(
+            default='hard_negatives',
+            description='Strategy for selecting mini-eval samples: '
+            'random (uniform), hard_negatives (focus on failures), '
+            'stratified (balanced mix of pass/fail).',
+        )
+    )
+
+    # Auto-revert configuration
+    auto_revert_on_regression: bool = Field(
+        default=True,
+        description='Whether to automatically revert to best prompt after consecutive regressions.',
+    )
+
+    max_consecutive_regressions: int = Field(
+        default=2,
+        ge=1,
+        le=5,
+        description='Number of consecutive regressions before auto-reverting to best prompt.',
+    )
+
 
 class IterationRecord(RichBaseModel):
     """
@@ -103,6 +168,17 @@ class IterationRecord(RichBaseModel):
     timestamp: str = Field(
         default_factory=_strftime,
         description='Timestamp when this iteration completed.',
+    )
+
+    # Beam search fields
+    beam_candidates: Optional[List['BeamCandidate']] = Field(
+        default=None,
+        description='All candidates considered during beam search (if beam_width > 1).',
+    )
+
+    selected_candidate_index: Optional[int] = Field(
+        default=None,
+        description='Index of the selected candidate in beam_candidates (if beam_width > 1).',
     )
 
 
@@ -165,6 +241,17 @@ class OptimizationState(RichBaseModel):
     error: Optional[str] = Field(
         default=None,
         description='Error message if optimization failed.',
+    )
+
+    # Auto-revert state tracking
+    consecutive_regressions: int = Field(
+        default=0,
+        description='Number of consecutive iterations with regression.',
+    )
+
+    reverted_from_iteration: Optional[int] = Field(
+        default=None,
+        description='If auto-reverted, the iteration we reverted from.',
     )
 
 

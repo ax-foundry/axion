@@ -5,7 +5,7 @@ This module implements the "brain" of the prompt learning system - an LLM-based
 agent that analyzes failures and generates improved prompt revisions.
 """
 
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import Field
 
@@ -47,7 +47,51 @@ class PromptRevisionOutput(RichBaseModel):
     reasoning: str = Field(description='Explanation of what changes were made and why.')
 
 
-OPTIMIZER_INSTRUCTION = """You are an expert Prompt Engineer specializing in optimizing system prompts for AI applications. Your task is to analyze evaluation failures and generate improved prompts that prevent these errors.
+class SingleCandidateOutput(RichBaseModel):
+    """A single prompt candidate within a beam search."""
+
+    revised_prompt: str = Field(description='The improved system prompt.')
+
+    reasoning: str = Field(
+        description='Explanation of what changes were made and why for this specific candidate.'
+    )
+
+
+class MultiPromptRevisionOutput(RichBaseModel):
+    """Output model for beam search generating multiple candidates."""
+
+    candidates: List[SingleCandidateOutput] = Field(
+        description='List of candidate prompts with their reasoning.'
+    )
+
+
+OPTIMIZER_EXAMPLES = """
+## Few-Shot Examples
+
+### Example 1: Unsupported Claims → Add Sourcing Constraint
+**Failure Signal**: "Claim 'The product was released in 2019' is not supported by the context"
+**Root Cause**: The AI generated information not present in the provided context.
+**Fix Applied**: Added "Only make claims that are explicitly stated in or directly inferable from the provided context. If information is not available, say so."
+
+### Example 2: Incomplete Responses → Add Coverage Instruction
+**Failure Signal**: "Response does not address the user's question about pricing"
+**Root Cause**: The AI addressed some aspects but missed specific sub-questions.
+**Fix Applied**: Added "Before responding, identify ALL questions or sub-questions in the user's query. Ensure your response addresses each one explicitly."
+
+### Example 3: Tone Issues → Add Style Constraints
+**Failure Signal**: "Response uses casual language inappropriate for professional context"
+**Root Cause**: No guidance on expected communication style.
+**Fix Applied**: Added "Maintain a professional, clear, and respectful tone. Avoid slang, casual expressions, or overly familiar language."
+
+### Example 4: Hallucination → Add Explicit Fallback
+**Failure Signal**: "Response contains fabricated statistics not in the source material"
+**Root Cause**: AI invented plausible-sounding but false details.
+**Fix Applied**: Added "If specific data, statistics, or facts are not available in the context, explicitly state 'This information is not available in the provided materials' rather than generating approximate values."
+"""
+
+
+OPTIMIZER_INSTRUCTION = (
+    """You are an expert Prompt Engineer specializing in optimizing system prompts for AI applications. Your task is to analyze evaluation failures and generate improved prompts that prevent these errors.
 
 ## Your Goal
 Improve the system prompt so that the AI produces responses that pass all evaluation metrics. Focus on:
@@ -79,6 +123,23 @@ Improve the system prompt so that the AI produces responses that pass all evalua
 ## Output Format
 Provide the complete revised prompt (not a diff) and explain your reasoning.
 The revised prompt should be production-ready and self-contained."""
+    + OPTIMIZER_EXAMPLES
+)
+
+
+OPTIMIZER_INSTRUCTION_BEAM_SUFFIX = """
+
+## Multiple Candidate Generation Mode
+You are in BEAM SEARCH mode. Instead of generating a single revised prompt, generate {beam_width} DISTINCT candidate prompts.
+
+Each candidate should:
+1. Address the same failure patterns, but with DIFFERENT approaches
+2. Vary in specificity (e.g., one more general, one more specific)
+3. Vary in strategy (e.g., one adds constraints, one restructures)
+4. Be a complete, production-ready prompt
+
+The candidates will be evaluated and the best one selected. Provide diverse options!
+"""
 
 
 class OptimizerAgent(LLMHandler[PromptRevisionInput, PromptRevisionOutput]):
@@ -166,6 +227,41 @@ The following test cases failed evaluation. Study the errors carefully.
 """
 
         return base_instruction + context
+
+    async def execute_beam(
+        self, input_data: PromptRevisionInput, beam_width: int
+    ) -> MultiPromptRevisionOutput:
+        """
+        Generate multiple candidate prompts using beam search.
+
+        This method generates `beam_width` distinct prompt candidates
+        that will be evaluated via mini-eval to select the best one.
+
+        Args:
+            input_data: The input containing current state and failure analysis.
+            beam_width: Number of candidate prompts to generate.
+
+        Returns:
+            MultiPromptRevisionOutput containing the list of candidates.
+        """
+        # Build instruction with beam suffix
+        base_instruction = self.get_instruction(input_data)
+        beam_instruction = base_instruction + OPTIMIZER_INSTRUCTION_BEAM_SUFFIX.format(
+            beam_width=beam_width
+        )
+
+        # Use the LLM directly with the multi-output model
+        messages = [
+            {'role': 'system', 'content': beam_instruction},
+            {'role': 'user', 'content': 'Generate the candidate prompts now.'},
+        ]
+
+        result = await self.llm.acompletion(
+            messages=messages,
+            response_model=MultiPromptRevisionOutput,
+        )
+
+        return result
 
 
 def create_optimizer_agent(

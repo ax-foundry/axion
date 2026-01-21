@@ -54,6 +54,7 @@ from axion.prompt_learning.runner_wrapper import (
     wrap_task_for_optimization,
 )
 from axion.prompt_learning.schema import (
+    BeamCandidate,
     IterationRecord,
     OptimizationState,
     PromptLearningResult,
@@ -71,6 +72,7 @@ __all__ = [
     'PromptLearningResult',
     'OptimizationState',
     'IterationRecord',
+    'BeamCandidate',
     # Optimizer agent
     'OptimizerAgent',
     'PromptRevisionInput',
