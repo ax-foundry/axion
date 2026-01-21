@@ -1310,3 +1310,91 @@ html {
   background-color: #1c221c;
   border-bottom: 1px solid var(--md-border-green);
 }
+
+/* =====================================================
+   COLLAPSIBLE RIGHT SIDEBAR (TOC)
+   ===================================================== */
+
+/* Toggle button for right sidebar */
+.toc-toggle {
+  position: fixed;
+  right: 10rem;  /* Matches sidebar width */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  width: 20px;
+  height: 40px;
+  background-color: var(--md-bg-card);
+  border: 1px solid var(--md-border-color);
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--md-transition-fast);
+  opacity: 0.7;
+}
+
+.toc-toggle:hover {
+  opacity: 1;
+  background-color: rgba(139, 159, 79, 0.1);
+}
+
+.toc-toggle svg {
+  width: 12px;
+  height: 12px;
+  fill: var(--md-text-muted);
+  transition: transform var(--md-transition-fast);
+}
+
+/* Dark mode toggle button */
+[data-md-color-scheme="slate"] .toc-toggle {
+  background-color: var(--md-bg-card);
+  border-color: var(--md-border-green);
+}
+
+[data-md-color-scheme="slate"] .toc-toggle:hover {
+  background-color: rgba(164, 184, 108, 0.15);
+}
+
+[data-md-color-scheme="slate"] .toc-toggle svg {
+  fill: var(--md-text-muted);
+}
+
+/* Collapsed state */
+.toc-collapsed .md-sidebar--secondary {
+  width: 0 !important;
+  min-width: 0 !important;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.toc-collapsed .toc-toggle {
+  right: 0;
+  border-right: 1px solid var(--md-border-color);
+  border-radius: 4px 0 0 4px;
+}
+
+[data-md-color-scheme="slate"] .toc-collapsed .toc-toggle {
+  border-right-color: var(--md-border-green);
+}
+
+.toc-collapsed .toc-toggle svg {
+  transform: rotate(180deg);
+}
+
+/* Expand content when TOC is collapsed */
+@media screen and (min-width: 76.25em) {
+  .toc-collapsed .md-content {
+    margin-right: 1rem;
+  }
+}
+
+/* Hide toggle on mobile (TOC is already hidden) */
+@media screen and (max-width: 76.1875em) {
+  .toc-toggle {
+    display: none;
+  }
+}

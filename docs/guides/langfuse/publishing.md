@@ -312,6 +312,19 @@ Understanding how the method handles existing datasets and runs:
 
 ## Choosing the Right Method
 
+!!! info "See Also: Evaluation Workflows"
+    The choice of publishing method depends on your evaluation workflow. See [Evaluation Workflows](overview.md#evaluation-workflows) for guidance on choosing between API-Driven, Trace-Based, and Online Production workflows.
+
+### By Workflow
+
+| Workflow | Primary Method | Alternative |
+|----------|---------------|-------------|
+| **[API-Driven](overview.md#offline-api-driven)** (black-box testing) | `publish_as_experiment()` | - |
+| **[Trace-Based](overview.md#offline-trace-based)** (white-box testing) | `publish_as_experiment(link_to_traces=True)` | `publish_to_observability()` |
+| **[Online Production](overview.md#online-production)** (monitoring) | `publish_to_observability()` | - |
+
+### By Scenario
+
 | Scenario | Use This Method |
 |----------|-----------------|
 | Scoring production traces | `publish_to_observability()` |
@@ -322,6 +335,8 @@ Understanding how the method handles existing datasets and runs:
 | Continuous monitoring | `publish_to_observability()` |
 | Experiment UI + link to evaluation traces | `publish_as_experiment(link_to_traces=True)` |
 | Scores on traces + no experiment runs | `publish_as_experiment(score_on_runtime_traces=True)` |
+
+### Quick Reference
 
 ```python
 # For existing traces (from production):

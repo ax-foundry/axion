@@ -112,13 +112,32 @@ def trace(
             return {'function.args': safe_args, 'function.kwargs': safe_kwargs}
 
         def _filter_non_null(data: Any) -> Any:
-            """Recursively filter out null values from dicts/lists."""
+            """Recursively filter out null/empty values from dicts/lists."""
+
+            def _is_empty(value: Any) -> bool:
+                if value is None:
+                    return True
+                if hasattr(value, '__len__'):
+                    try:
+                        return len(value) == 0
+                    except TypeError:
+                        return False
+                return False
+
             if isinstance(data, dict):
-                return {
-                    k: _filter_non_null(v) for k, v in data.items() if v is not None
-                }
+                filtered = {}
+                for k, v in data.items():
+                    filtered_value = _filter_non_null(v)
+                    if not _is_empty(filtered_value):
+                        filtered[k] = filtered_value
+                return filtered
             elif isinstance(data, list):
-                return [_filter_non_null(item) for item in data if item is not None]
+                filtered = []
+                for item in data:
+                    filtered_item = _filter_non_null(item)
+                    if not _is_empty(filtered_item):
+                        filtered.append(filtered_item)
+                return filtered
             return data
 
         def _build_input_data(args, kwargs) -> Any:
