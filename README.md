@@ -7,6 +7,17 @@
 
 **A modular white box evaluation framework for AI agents.**
 
+<p align="center">
+<a href="https://ax-foundry.github.io/axion/">Documentation</a> |
+<a href="https://ax-foundry.github.io/axion/getting-started/installation/">Quick Start</a> |
+<a href="https://ax-foundry.github.io/axion/metric-registry/composite/">Metrics</a> |
+<a href="https://ax-foundry.github.io/axion/agent_playbook/">Agent Playbook</a>
+</p>
+
+<p align="center">
+<a href="https://github.com/ax-foundry/axion/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+<a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.12+-blue.svg" alt="Python 3.12+"></a>
+</p>
 
 <div style="background: linear-gradient(135deg, #8B9F4F 0%, #6B7A3A 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
 
@@ -154,8 +165,8 @@ pip install -e ".[tracing]"
 **[Full Documentation](https://ax-foundry.github.io/axion/)**
 
 - [Agent Evaluation Playbook](https://ax-foundry.github.io/axion/agent_playbook/) — The Analyze-Measure-Improve methodology
-- [Metrics Reference](https://ax-foundry.github.io/axion/metrics/) — Complete metric catalog
-- [Dataset Guide](https://ax-foundry.github.io/axion/datasets/) — Building effective evaluation datasets
+- [Metrics Reference](https://ax-foundry.github.io/axion/guides/metrics/) — Complete metric catalog
+- [Dataset Guide](https://ax-foundry.github.io/axion/guides/datasets/) — Building effective evaluation datasets
 
 ---
 
