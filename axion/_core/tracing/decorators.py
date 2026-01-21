@@ -112,13 +112,32 @@ def trace(
             return {'function.args': safe_args, 'function.kwargs': safe_kwargs}
 
         def _filter_non_null(data: Any) -> Any:
-            """Recursively filter out null values from dicts/lists."""
+            """Recursively filter out null/empty values from dicts/lists."""
+
+            def _is_empty(value: Any) -> bool:
+                if value is None:
+                    return True
+                if hasattr(value, '__len__'):
+                    try:
+                        return len(value) == 0
+                    except TypeError:
+                        return False
+                return False
+
             if isinstance(data, dict):
-                return {
-                    k: _filter_non_null(v) for k, v in data.items() if v is not None
-                }
+                filtered = {}
+                for k, v in data.items():
+                    filtered_value = _filter_non_null(v)
+                    if not _is_empty(filtered_value):
+                        filtered[k] = filtered_value
+                return filtered
             elif isinstance(data, list):
-                return [_filter_non_null(item) for item in data if item is not None]
+                filtered = []
+                for item in data:
+                    filtered_item = _filter_non_null(item)
+                    if not _is_empty(filtered_item):
+                        filtered.append(filtered_item)
+                return filtered
             return data
 
         def _build_input_data(args, kwargs) -> Any:
@@ -182,7 +201,12 @@ def trace(
         @functools.wraps(func)
         def sync_wrapper(self, *args, **kwargs):
             """Synchronous function wrapper."""
-            if not hasattr(self, 'tracer'):
+            from axion._core.tracing.context import get_current_tracer_safe
+
+            # Use context tracer first (for async-safe tracing), fall back to self.tracer
+            tracer = get_current_tracer_safe() or getattr(self, 'tracer', None)
+
+            if not tracer:
                 # If no tracer available, execute function normally
                 return func(self, *args, **kwargs)
 
@@ -197,7 +221,7 @@ def trace(
             if span_type:
                 attributes['span_type'] = span_type
 
-            with self.tracer.span(effective_span_name, **attributes) as span:
+            with tracer.span(effective_span_name, **attributes) as span:
                 try:
                     result = func(self, *args, **kwargs)
                     _capture_result_attributes(span, result)
@@ -214,7 +238,12 @@ def trace(
         @functools.wraps(func)
         async def async_wrapper(self, *args, **kwargs):
             """Asynchronous function wrapper."""
-            if not hasattr(self, 'tracer'):
+            from axion._core.tracing.context import get_current_tracer_safe
+
+            # Use context tracer first (for async-safe tracing), fall back to self.tracer
+            tracer = get_current_tracer_safe() or getattr(self, 'tracer', None)
+
+            if not tracer:
                 # If no tracer available, execute function normally
                 return await func(self, *args, **kwargs)
 
@@ -229,9 +258,7 @@ def trace(
             if span_type:
                 attributes['span_type'] = span_type
 
-            async with self.tracer.async_span(
-                effective_span_name, **attributes
-            ) as span:
+            async with tracer.async_span(effective_span_name, **attributes) as span:
                 try:
                     result = await func(self, *args, **kwargs)
                     _capture_result_attributes(span, result)
