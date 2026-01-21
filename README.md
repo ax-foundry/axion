@@ -119,13 +119,13 @@ from axion.metrics import Faithfulness, AnswerRelevancy
 from axion.runners import evaluation_runner
 
 # Load your evaluation dataset
-dataset = Dataset.from_csv("eval_data.csv")
+dataset = Dataset.read_csv("eval_data.csv")
 
 # Select metrics for your use case
 metrics = [Faithfulness(), AnswerRelevancy()]
 
 # Run evaluation
-results = await evaluation_runner(dataset, metrics)
+results = evaluation_runner(dataset, evaluation_name="my_eval", scoring_metrics=metrics)
 ```
 
 ### Configuration
