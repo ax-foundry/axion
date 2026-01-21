@@ -115,7 +115,7 @@ flowchart LR
     subgraph Fetch["Fetch"]
         direction TB
         D[LangfuseTraceLoader]
-        E[/Dataset with\nActual Outputs/]
+        E[/Dataset with Actuals/]
         D --> E
     end
 
@@ -284,8 +284,62 @@ async def evaluate_production_traces():
     For high-volume production systems, consider:
 
     - **Sampling**: Evaluate a random sample (e.g., 1-5%) of traces instead of all
-    - **Lightweight metrics**: Use heuristic metrics (e.g., `ResponseLength`, `Toxicity`) instead of LLM-based metrics for high-frequency evaluation
+    - **Lightweight metrics**: Use heuristic metrics instead of LLM-based metrics for high-frequency evaluation
     - **Batching**: Aggregate traces and evaluate in batches during off-peak hours
+
+---
+
+### Disabling Evaluation Tracing
+
+By default, `evaluation_runner` creates traces for each metric execution. If you don't need these evaluation traces (most publishing workflows only use **source traces** from `DatasetItem.trace_id`), you can disable them to reduce overhead.
+
+**Important:** Configure tracing to NOOP *before* creating metric instances, since tracers are cached at instantiation time.
+
+```python
+from axion.tracing import configure_tracing
+from axion.runners import evaluation_runner
+from axion.metrics import AnswerRelevancy, ExactStringMatch
+
+# 1. Disable tracing BEFORE creating metrics
+configure_tracing('noop')
+
+# 2. Create metrics (they will use NOOP tracers)
+config = {
+    'metric': {
+        'Relevance': AnswerRelevancy(model_name='gpt-4o'),
+        'ExactStringMatch': ExactStringMatch(),
+    },
+    'model': {
+        'ANSWER_QUALITY': {
+            'Relevance': 1.0,
+            'ExactStringMatch': 1.0,
+        },
+    },
+    'weights': {
+        'ANSWER_QUALITY': 1.0,
+    }
+}
+
+# 3. Run evaluation (no evaluation traces created)
+results = evaluation_runner(
+    evaluation_inputs=dataset,
+    scoring_config=config,
+    evaluation_name='My Evaluation',
+)
+
+# 4. Restore tracing for publishing
+configure_tracing('langfuse')
+
+# 5. Publish results (uses source traces from DatasetItem.trace_id)
+results.publish_to_observability()
+```
+
+!!! note "When to keep evaluation tracing enabled"
+    Keep tracing enabled (default) when:
+
+    - Using `publish_as_experiment(score_on_runtime_traces=True)`
+    - You need to debug metric execution in Langfuse
+    - You want visibility into LLM calls made by metrics
 
 ---
 
@@ -370,7 +424,7 @@ This example demonstrates the full workflow: fetching traces, running evaluation
 ```python
 import asyncio
 from axion._core.tracing.loaders import LangfuseTraceLoader
-from axion.metrics import AnswerRelevancy, Faithfulness
+from axion.metrics import AnswerRelevancy, AnswerCompleteness
 from axion.runners import evaluation_runner
 from axion import Dataset, DatasetItem
 
@@ -394,7 +448,7 @@ async def main():
     # 3. Run evaluation
     result = await evaluation_runner(
         evaluation_inputs=dataset,
-        scoring_metrics=[AnswerRelevancy(), Faithfulness()],
+        scoring_metrics=[AnswerRelevancy(), AnswerCompleteness()],
         evaluation_name='Production Evaluation',
     )
 
