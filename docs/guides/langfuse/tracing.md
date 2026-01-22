@@ -155,7 +155,7 @@ tracer.flush()
 Use `LangfuseTraceLoader` to retrieve traces from Langfuse:
 
 ```python
-from axion._core.tracing.loaders import LangfuseTraceLoader
+from axion.tracing import LangfuseTraceLoader
 
 loader = LangfuseTraceLoader()
 

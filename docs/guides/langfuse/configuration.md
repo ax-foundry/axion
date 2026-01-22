@@ -59,7 +59,7 @@ LANGFUSE_DEFAULT_TAGS=evaluation,automated
 === "Loader with Custom Credentials"
 
     ```python
-    from axion._core.tracing.loaders import LangfuseTraceLoader
+    from axion.tracing import LangfuseTraceLoader
 
     # Override credentials for loader
     loader = LangfuseTraceLoader(
@@ -115,7 +115,7 @@ The `LangfuseTraceLoader` class accepts these initialization options:
 | `base_delay` | `float` | `0.5` | Initial retry delay |
 
 ```python
-from axion._core.tracing.loaders import LangfuseTraceLoader
+from axion.tracing import LangfuseTraceLoader
 
 loader = LangfuseTraceLoader(
     public_key='pk-lf-...',
@@ -198,7 +198,7 @@ If the Langfuse client fails to initialize:
 
 3. **Test connection:**
    ```python
-   from axion._core.tracing.loaders import LangfuseTraceLoader
+   from axion.tracing import LangfuseTraceLoader
 
    loader = LangfuseTraceLoader()
    traces = loader.fetch_traces(limit=1)

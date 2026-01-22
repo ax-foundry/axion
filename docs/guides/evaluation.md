@@ -19,8 +19,8 @@ results = await evaluation_runner(
 )
 
 # View results
-print(results.summary())
 df = results.to_dataframe()
+results.to_scorecard(display_in_notebook=True)
 ```
 
 ## Evaluation Runners
@@ -75,16 +75,46 @@ results = await evaluation_runner(dataset, metrics, cache=cache)
 ## Understanding Results
 
 ```python
-# Overall summary
-print(results.summary())
-
-# Per-metric scores
-for metric_result in results.metric_results:
-    print(f"{metric_result.name}: {metric_result.score}")
-
-# Detailed breakdown
+# Convert to DataFrame for analysis
 df = results.to_dataframe()
-df[df['score'] < 0.5]  # Find failures
+
+# Generate detailed metric summary report
+from axion.runners.summary import MetricSummary
+MetricSummary().execute(results.results, total_time=100)
+
+# Per-test results
+for test_result in results.results:
+    for score in test_result.score_results:
+        print(f"{score.name}: {score.score}")
+
+# Find failures
+df[df['metric_score'] < 0.5]
+
+# Visual scorecard (Jupyter notebooks)
+results.to_scorecard(display_in_notebook=True)
+
+# Latency analysis
+results.to_latency_plot()
+```
+
+### Summary Classes
+
+Axion provides summary classes for different reporting needs:
+
+| Class | Description |
+|-------|-------------|
+| `MetricSummary` | Detailed metric analysis with performance insights and distribution charts |
+| `SimpleSummary` | High-level KPIs and business impact dashboard |
+| `HierarchicalSummary` | Summary for hierarchical evaluation trees |
+
+```python
+from axion.runners.summary import MetricSummary, SimpleSummary
+
+# Detailed analysis
+MetricSummary(show_distribution=True).execute(results.results, total_time=100)
+
+# Simple KPI dashboard
+SimpleSummary().execute(results.results, total_time=100)
 ```
 
 ## Best Practices

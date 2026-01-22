@@ -154,7 +154,7 @@ flowchart LR
 **Example:**
 
 ```python
-from axion._core.tracing.loaders import LangfuseTraceLoader
+from axion.tracing import LangfuseTraceLoader
 from axion.metrics import AnswerRelevancy, Faithfulness
 from axion.runners import evaluation_runner
 from axion import Dataset, DatasetItem
@@ -241,7 +241,7 @@ flowchart LR
 **Example:**
 
 ```python
-from axion._core.tracing.loaders import LangfuseTraceLoader
+from axion.tracing import LangfuseTraceLoader
 from axion.metrics import AnswerRelevancy, Toxicity
 from axion.runners import evaluation_runner
 from axion import Dataset, DatasetItem
@@ -423,7 +423,7 @@ This example demonstrates the full workflow: fetching traces, running evaluation
 
 ```python
 import asyncio
-from axion._core.tracing.loaders import LangfuseTraceLoader
+from axion.tracing import LangfuseTraceLoader
 from axion.metrics import AnswerRelevancy, AnswerCompleteness
 from axion.runners import evaluation_runner
 from axion import Dataset, DatasetItem
@@ -453,7 +453,8 @@ async def main():
     )
 
     # 4. View results
-    print(result.summary())
+    from axion.runners.summary import MetricSummary
+    MetricSummary().execute(result.results, total_time=100)
     result.to_scorecard(display_in_notebook=True)
 
     # 5. Publish back to Langfuse
@@ -473,7 +474,7 @@ After running `evaluation_runner`, use these methods to analyze results:
 
 | Method | Description |
 |--------|-------------|
-| `result.summary()` | Print aggregate statistics for all metrics |
+| `MetricSummary().execute(result.results, total_time)` | Generate detailed metric analysis report |
 | `result.to_dataframe()` | Convert results to a pandas DataFrame for analysis |
 | `result.to_scorecard(display_in_notebook=True)` | Display an interactive scorecard visualization |
 | `result.to_latency_plot()` | Visualize metric latency distributions |
@@ -481,8 +482,10 @@ After running `evaluation_runner`, use these methods to analyze results:
 ### Quick Analysis
 
 ```python
-# Get summary statistics
-print(result.summary())
+from axion.runners.summary import MetricSummary
+
+# Generate detailed summary report
+MetricSummary().execute(result.results, total_time=100)
 
 # Export to DataFrame for custom analysis
 df = result.to_dataframe()

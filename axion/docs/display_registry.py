@@ -3,6 +3,78 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Protocol
 
+# Base64-encoded 64x64 Axion icon for inline display
+AXION_ICON_BASE64 = (
+    'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAARJklEQVR42u2aeXDcxZXH3+v+/eYeaXTa8i2Q'
+    'jWX5kGxjY8uYGRunwECyS1ZaQirk4AhJzG6AXRZIpcazla1kKxvAm2wSZ6FCWEIlY0I54Bhsjhk7xIBXviRLsnXf'
+    'I2l0zD3zO7rf/qF440AMYu3dStXOp2pqfvWbX093v369uvv7fgB58uTJkydPnjx58uTJkydPnitFMNjAiQjz'
+    'lvj/BBFhMBjkRIQvvf74p1588xuLiQiDFOTvf9bv9zM/+Rn9/nPh+kL5j66ngfv9F5X3/+H7z8IYzx848NDzBx7w'
+    'Xdzo/8uBmO2zeIUqZABAJ8+/ucpd4PyRYZiUyU4uUxVbpLiwLBOfng6tWnbj46FQSPH5fOaBQz+otdr5Hk3XTLPN'
+    'IUkIFGAym81qcsaThpK421v79TgAACLSxV6ze/duOvDmj+e53cpeQzcd0hSmIXJcUZCZJuiKolhyBjz0Fzv+9hSR'
+    'nyEG5Ie1XbkSBtgH+7ARG2V7z9uPmebI5v6BsyClCqrCy6anFSgqXLqhN3LqJ0vm1vaHQiElGo22ccsYmCK9rb2j'
+    'HZwFVmAqA9MwYfGCRWCRRdOIeE8o5FcAwLxQj9cLDBHN0LFnfmjIqVv6I73gdLkAkcFo3zhULloCaLoOFSrxlmCw'
+    'gSMGxEe1nV2J0W+ABjkwdqJKF7Hbz7b81kykJsW7x96l/r4OOTx8TtPMCWYY2gOISNGyKGtsbNTdBSWfUbhrqruz'
+    'zzj+zimzq6tbjI2PiRNnTuqE+t3vnHxuh88XMIPBmfhBFOQ+X8A8evy5OwjTnzzdckKPJadFd1evOHbkuDEyMGaY'
+    'uhJ1Wwo/5/MFzNbWFTSb9l+BgLEPEZE03XhQM8ctQuhg5IBPRhMYicSYandZBoc7KKfFvtTV9bvyhpoGo6lpr7pl'
+    '3Z0jDofj8Rt821QkDrFImpMErlpR6R05TwJyP2xqetkxs6QGOUArhZp+XopoPtXZ1yKZAopFtfHRgSmeTeXwuk2b'
+    '1EJP6SNbt94dJQryQODDXf+KGMBPfgbQIM8PHJuf1ibvGhw8TxaLnff2DAMAwcREDHJZE3UtKXQZ9ZgW+goi0rp1'
+    'yyhIQb5t8717i4orQtUrq5WclhPT0SSoioVNxyaFIL0KrfIfGxsbRW2tS0EMSLui/ktaj86JJePkdLrY2NAU5HJZ'
+    'sbpulWKzFrx245b7niUKcsRGMds+XJYBvGEvQ0QioK8ZYsKV05IikzNwIhoDRABTNyEyFAVVVdng0DnStdRXu7ub'
+    'CgG8oizcigAAFmZ+ufqaNdmS0lJIxjI0EUlAgbuAd/d1CML0g81tL21atmyndrL1lZ2MZz/f09cpiouKeCauw/jI'
+    'JJWWl+BVldUJSex+IsDd0Eofpw/scpYar9cr2obeK9G15H39/edIUax8sH8MspksrKndAEVFJTDQG4FMxmDZTFxI'
+    'TJQKLHX3TGT3AlGQb1r7pU5P4Zxv1m/Zyk1hiMmxBOQyOgIzYCLRz5Ar329re7UCQPu34fEuUCwMbaoNBntHAVCI'
+    'a9dfy2wWz6O3bt/VHw77eQBn5/qXbYBwOMwRkVBoX9bFZEkyNSWymokjQ1Gw2Ry0+bodVFl5DSWTaRgbjYFqUdnA'
+    'YCvljOTXT58+5PR6vQKgQQYpyF+pOf3knPKF79XW1im5bEYM9ETAoqp8YnIMEunxddyK76Ryk0ti8RiUekrYQM8o'
+    'xOJxsaZujeLxlIW2b/nCj0Ihv+LzBcyP2w92OaMfjba7dT27q7uvmRSLyiLDUUinU7Bq1TqULIWVVZVY6CmEyFAU'
+    'clmTxRLjEnhqoaO48K8RkcLhMG+ABgpgQLodxfeuv3azXlDkgYmJOI0MTYLL5YCxyW7KicnF45MDVFJSBLHJNPT2'
+    'DFFZeQksr67Nuhxz7gcA8PkCpt8PjPx+RkRINLs9Druc0Z/OTn3OlPGKqekpqeWIjQ1PgcPhhJU112o9/W29nsKS'
+    'wZoVa2FqIkaRkSngqgUGh7tIy6UeDIVCSjgclogoQ6GQUn31jpbCwvJ/2v6Jm7kpTDHYNwapZBYsNo4DI+3SohJy'
+    'YtDW1gWCDLFp82butBZ8c2Pt7R29Ib+t45kHygIBkLsBYOS5Ly9EBGpqalLHgj9wfdimDy8V3b3hP22cjo4Iwrp1'
+    'UG+rR6kOnW3rOVKVTMUoGomzzvZuc6vXq2ypv+2Fo++8EKu55vqpRDz92L59P2UFHjeuWrsMTFOIdavN3GGf8+kX'
+    'FryxfwkYLHpHRCz01TC7WoAlsqzprdDBmlMnmsTCRfP4Vu9aMA0T3K4CePdYC5xubhXXXbee163eeOrEeGLTavsu'
+    'QR/AwuyAz6nHBt12y0LKJLamrCVPgmJbmfRUtixr/MYEzXSWZrUTDGBABgA+NJj0Dv/nZybiU0tHxwaEzerkodFJ'
+    'UhSVVVWtyVbNr/+bY8ovn2g5e3Tvdu8Xr65ZteaOljMnxfjoNC8udcNQpIsqFxQ9EsDASwCQe9/0utXQtNOdHR3u'
+    'yHCUerqGcfXqKujvHYeOzh4qLSnC1SvWTdRf81c3bVnv1i4q+mryqZtfdvLYbeDQgCXSdwrhuqnivqej5PczfMS+'
+    'QHn/yAcwIJ/7zSM7bDa2RU/rkgAJFY4gJRAgIRAyVLOJVPTezr5mYpzhxHgMEokELK+uYdzC6LlXHr6XcbVescnU'
+    '8HhbQc3KOmw+dRInRqfAU+zmQyN9VFZUufFI07P/3DVyIm3hFgbIJEfOn9n/NW1F1YbhT+y4ZcWrr+2XXZ2DuGxp'
+    'FZxu7gDdMGnnDTuYCebIM298457nf/2oFVNZKtWSuCCbQq4PbpDVdVIuqjMcbz2/KD0QW0gA56CmDWcVA3b/9xUH'
+    'ZEiETCLjKKUERCYZZ0wIKeeULdmmyXjV0HA3ETE2NREHCQS1dRsBSP6MJDlUVRV2p9szMt55rMQzb3TJ1VexWCwu'
+    'Y9MJEMKAoUgH2O0FDyIwCahIlIgISIxx0g3ILlw0D+pvWAu+7ZuhueU8oEWDeYuLwOmygpA0RQyJAImjojFghiBh'
+    'kJEdZyQY5JIWUBlY7Jj5U25/SQ+4cHK665Zvvw4Ar1+qUHvf0d+caj1IQEjJWAZSibRcWlXFSosqTtZV3/pVAICf'
+    '7n+gMp3JfmfXnU+39oy+O7mm9tof9/V2y8nRGHNcNRdHRntk5eIa84u3PfVLROy8aAqUtfe98dCZtrfIaXeilhPQ'
+    'erYTPMVOcHkseKbtOF2/4aal93zyqZ2ImL24XckntiXEqdMPgvFeYQ5c57JK2cwPH3IuUGYbBLPzi7l9eErMv+pG'
+    'XyIzurOvr1NaLFY+NT4Jpilw1Yr1UFjgKWjtOvwioqKmM5MbbJaCq9u67xjPZVLOxQuugbKSuUp8KgZFpQWgWKUc'
+    'Hj1vtypvPQEAn3y5aa89AmC0dR0+MDrVUZrKpIXNWszf/l0TcM4hk9LBalcwbkyLodHO+cL4+Ut+v/+WmpqEtd62'
+    'HO16z/a0nv0FG+j4FTKxyfHI6/vG9nx688D3Guz4cCB72XoAETFElO09bx1uPh/a0dndLEyd8WgkDgUeByxevBic'
+    'bieYbBZAYKBrJnAFgXEEIQhyGR0iI8MwOjIOFqsC5fNLAElK35YGKvTM21g177oT53pDX8/q0Sd/+85hs6ysXBkZ'
+    'GoUzZ86DzaoSVxBVC4fScjcQkbn1uh2Kgq7PXr/x8y9ETj/nnEtuFev+MtbxHw8UKMSqK+/ac/yj3H/WekCQghwR'
+    '5WDk9MbIZMeOzu6zkjGVa3oWSisKQVUVGJ0YBhmVxBgIJARJxAFIMsYIJCERcEW1QNn8IkglMqBldQBmyvHpXsXh'
+    'LL6/o+Po45oR/1bTmWOSKQqPT8fh3Llu8HhcVLumDptOHCdTF5hN6+AsUFnL+Sa5ctm6J0OhvYcrau+amBkkwL5n'
+    'i/WcFQYRgD4s+n88QWTfjBOktNijg6PnQDNykqOVpWMaxM00CGEKQLzgUggEAIhAQDPXRAAIYuZHxlRFRZAEnrgn'
+    'P9t+AjzO+Z8uKSyvPd9x2hmJDsuK8grsau+FXDYLdbV1uHrlumQqmXK3nj0D2aQGNqeFTUxFxXRivLzINe+7APDF'
+    'UMivIAZMgEAOAEYAAHAWR2L8aHk7yBsaGuTgWPPK0Yn2U4fDv0BknE2PpiCX1qDAUwJFJcUgiYDNTBUAQDAMAYrC'
+    'Z6yBAMgYSEmQzWRhanIMGAcoKneDJAPWVG+GeRWL4OCbQSooKMRsQoP+vmE5f8ECrN+8td/pKr89m5p+/cjR14on'
+    'oxPkKLCz4jkuIAFi3eqN3KI4btxWv+vNYDDIGxsbBQHgbNx/dh7QMKPLne8N//1otI/rus7kaGN61gRFVeCmnbeb'
+    'pcXz3zN0HZiCREDIkEM2G6tWuG1EUa0xBEIhCYiktFrVpW+8vn9Oy5kTYLNb0e2xQXfvWerpbyWrqjChCRgZGgfG'
+    'kTZs2MTcrpLHNtU2nDp28tlH169f+++HDh0WpiZZJqGDzcmwb6iTKucv/+GxY8dqh4ae1IkIL9YRL8sAvxc7Zf9Y'
+    '09Wj0e7G1raTZLU4eGIqC7lcxty81aeUlc37VfUi7x0fUIV/vetFIfSnPn/7T96++H5kusW3YuWat9paT0sto6PN'
+    'qQARoZQSVdUCE9EY6IYm6tbWcpvVfmBT7R2/OHhwj3Xz2i88HXpn750rV9b4WprPCkwitzocbDw6ZlbMWbAMsMnf'
+    '2Ljv0VBo9x/piJd5GJqRu3Q991B0atCaziaEEIS5rAGK1cIqlywHm8X91MzpK6T4/X62d+99qt/vZ1yxMKvdYfP7'
+    '/SwU8iszun+QVxStChV55h1funwFZjIZkc3qQIjAuQLJWBoS8RSVlJfg1VctT4Lku4gI7fbVAgDAorq+umjxQs3p'
+    'doBpCkpO50CxKPxcV5vQzMTDB8N76mZ0xAZ+2QaYSTA0yIGJU/PjqehdHZ3NZLXYeCqmga5rYsWKVcxTNOdI5dz1'
+    '786o1z4zEAjIoqJpOaPHcZCSy0AgIL1ekAEMyHC4DAEAClyFTy67phoJAYysBNMwQdcMyKQNkFKItbW1zG5xBbbX'
+    '39MfDu/mPp/PDIX8Sv36z56z2Vzf3rBhPTcNQ5gaQSZpYE7PwOT0qKJy/uMZr22Y9RJ/SQN4vTNyVyYT+8rQ8DlH'
+    'V2enPjY0JeNTMWFoulhRvRYKnSXfvVQwZYioKLY/uufz+gQRITf0/SWFc3srKhbA9FTciEXjYmJsWqSSSX3p0qt4'
+    'oav4FOUG9gSDQe7zzUjbXu9uEQwGuR6r+k6hu7Rt4YJ5PJ1O6dPjSTEZSUH7uQ4tnhrbcPjI93c1NjaKYDDI/scx'
+    'wO/3M5/PZzadfXmRruUeKy1ewG7e8RmrqqogpIBCt5tbbZ62xXN7XvP7/QwRPyBCIjIB5sxU3Lev7cIaSeFQWPH5'
+    'fLn3ml/8wc07b/1ed3cvVxQGwjRBSIOXl5aAjTt33VD/0AVJnC4kSILBIOzcuVN7NfzE/XVr644urFxoYYwDEIKU'
+    'kiMiKFbY8+ob33/75hsbT84mMYKXUnwQkc50HFyg2qzXWxWrbrFbSOgG41yVFjvHoZ7+tnWrbm9/f9QNBht4Y+M+'
+    '8fwrD7+BQN/97G1PHLq4Ib9/Hva//bRrQVHxzYwxaZqGJCJC1HF8bGz61hsfDhEBIn5wKbtQ36Ej/7rNXWQtMXUw'
+    'gHOQhsYMaQqFW9RsVnbs3Pq15o+7IlyhvNyMUZ8/8Hef+tnL/7Do4ntXKrd3JfOMH1lROBzmAOH3RwjwesMSP6YC'
+    '+8H/3s3/EHNqKBxuxWi0hhobP1rXDwaDvKysFaPeGgIAaA23Yo23hsrCrRgOg5xtYuR/+QUJyL8gkSdPnjx58uTJ'
+    'kydPnjx58vz58V89cS2uD2PAqwAAAABJRU5ErkJggg=='
+)
+
 
 class RegistryItem(Protocol):
     """Protocol for items that can be displayed in a registry."""
@@ -19,7 +91,7 @@ class DisplayConfig:
 
     # Basic display properties
     title: str = 'Registry'
-    icon: str = '📊'
+    icon: str = '◈'
     description: str = 'Available items in registry'
 
     # Card display configuration
@@ -31,8 +103,8 @@ class DisplayConfig:
     # Button configuration
     show_details_button: bool = True
     show_usage_button: bool = True
-    details_button_text: str = 'ℹ️ More Details'
-    usage_button_text: str = '💡 Usage Example'
+    details_button_text: str = '◇ Details'
+    usage_button_text: str = '▸ Example'
 
     # Grid configuration
     min_card_width: str = '300px'
@@ -345,10 +417,17 @@ class GenericRegistryDisplay:
             </div>
             """
 
+        # Use base64 image if icon is default, otherwise use text icon
+        icon_html = (
+            f'<img src="data:image/png;base64,{AXION_ICON_BASE64}" alt="Axion" style="width:32px;height:32px;">'
+            if self.config.icon == '◈'
+            else self.config.icon
+        )
+
         return f"""
         <div class="registry-container">
             <div class="registry-header">
-                <div class="registry-icon">{self.config.icon}</div>
+                <div class="registry-icon">{icon_html}</div>
                 <div class="header-content">
                     <h2 class="registry-title">{self.config.title}</h2>
                     {stats_html}
@@ -382,7 +461,7 @@ class GenericRegistryDisplay:
             return """
             <div class="metrics-grid">
                 <div class="empty-state">
-                    <div class="empty-icon">📦</div>
+                    <div class="empty-icon">◇</div>
                     <p class="empty-text">No items registered.</p>
                     <p class="empty-subtext">Register some items to see them here.</p>
                 </div>
@@ -444,7 +523,7 @@ class GenericRegistryDisplay:
                 </div>
                 <div class="metric-key-container">
                     <code class="metric-key">{subtitle}</code>
-                    <button class="copy-btn" onclick="copyToClipboard('{subtitle}')" title="Copy key">📋</button>
+                    <button class="copy-btn" onclick="copyToClipboard('{subtitle}')" title="Copy key">⧉</button>
                 </div>
             </div>
 
@@ -452,7 +531,7 @@ class GenericRegistryDisplay:
                 <p class="metric-description">{description}</p>
                 <div class="fields-container">{field_sections_html}</div>
 
-                {f'<div class="tags-section"><div class="tags-header"><span class="tags-icon">🏷️</span><span class="tags-title">Tags</span></div><div class="tags-container">{tags_html}</div></div>' if self.config.show_tags and tags else ''}
+                {f'<div class="tags-section"><div class="tags-header"><span class="tags-icon">⬡</span><span class="tags-title">Tags</span></div><div class="tags-container">{tags_html}</div></div>' if self.config.show_tags and tags else ''}
 
                 <div class="metric-footer">{footer_buttons}</div>
             </div>
@@ -464,11 +543,11 @@ class GenericRegistryDisplay:
         fields_html = ''
         field_class = field_info.get('field_class', 'default')
         icon = (
-            '🔴'
+            '●'
             if field_class == 'required'
-            else '🔵'
+            else '○'
             if field_class == 'optional'
-            else '📋'
+            else '◦'
         )
 
         for field in field_info['value']:
@@ -545,7 +624,7 @@ class GenericRegistryDisplay:
             }
 
             .registry-header {
-                background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+                background: linear-gradient(135deg, #6B7A3A 0%, #8B9F4F 100%);
                 color: white;
                 padding: 24px 32px;
                 border-bottom: 1px solid #e1e5e9;
@@ -607,16 +686,16 @@ class GenericRegistryDisplay:
             }
 
             .filter-tag.active {
-                background: #007bff; color: white; border-color: #007bff;
+                background: #8B9F4F; color: white; border-color: #8B9F4F;
             }
 
             .filter-clear {
-                background: #dc3545 !important; color: white !important;
-                border-color: #dc3545 !important;
+                background: #6c757d !important; color: white !important;
+                border-color: #6c757d !important;
             }
 
             .filter-clear:hover {
-                background: #c82333 !important; border-color: #bd2130 !important;
+                background: #5a6268 !important; border-color: #545b62 !important;
             }
 
             .metrics-grid {
@@ -669,7 +748,7 @@ class GenericRegistryDisplay:
             }
 
             .score-badge {
-                background: #e3f2fd; color: #1565c0;
+                background: #D4E0B8; color: #6B7A3A;
             }
 
             .threshold-low { background: #e8f5e8; color: #2e7d32; }
@@ -710,7 +789,7 @@ class GenericRegistryDisplay:
                 padding: 12px 16px;
                 background: #f8f9fa;
                 border-radius: 4px;
-                border-left: 3px solid #007bff;
+                border-left: 3px solid #8B9F4F;
             }
 
             .fields-container {
@@ -748,7 +827,7 @@ class GenericRegistryDisplay:
             }
 
             .optional-field {
-                background: #ebf8ff; color: #3182ce; border-color: #bee3f8;
+                background: #D4E0B8; color: #6B7A3A; border-color: #B8C78A;
             }
 
             .default-field {
@@ -776,9 +855,9 @@ class GenericRegistryDisplay:
                 border: 1px solid #dee2e6;
             }
 
-            .tag-agent { background: #fff3cd; color: #856404; border-color: #ffeaa7; }
-            .tag-knowledge { background: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
-            .tag-retrieval { background: #e2e3ff; color: #4c63d2; border-color: #c3c6ff; }
+            .tag-agent { background: #D4E0B8; color: #6B7A3A; border-color: #B8C78A; }
+            .tag-knowledge { background: #e8f0d8; color: #5a6930; border-color: #c5d6a0; }
+            .tag-retrieval { background: #f0f4e6; color: #6B7A3A; border-color: #d4e0b8; }
 
             .metric-footer {
                 display: flex; gap: 8px; padding-top: 16px;
@@ -799,7 +878,7 @@ class GenericRegistryDisplay:
             }
 
             .use-btn:hover {
-                background: #007bff; color: white; border-color: #007bff;
+                background: #8B9F4F; color: white; border-color: #8B9F4F;
             }
 
             .empty-state {
@@ -925,11 +1004,13 @@ class GenericRegistryDisplay:
                     navigator.clipboard.writeText(text).then(() => {{
                         const btn = event.target;
                         const originalText = btn.textContent;
-                        btn.textContent = '✅';
-                        btn.style.background = '#28a745';
+                        btn.textContent = '✓';
+                        btn.style.background = '#8B9F4F';
+                        btn.style.color = 'white';
                         setTimeout(() => {{
                             btn.textContent = originalText;
                             btn.style.background = '';
+                            btn.style.color = '';
                         }}, 1500);
                     }}).catch(() => {{
                         fallbackCopyTextToClipboard(text);
@@ -953,9 +1034,13 @@ class GenericRegistryDisplay:
                     document.execCommand('copy');
                     const btn = event.target;
                     const originalText = btn.textContent;
-                    btn.textContent = '✅';
+                    btn.textContent = '✓';
+                    btn.style.background = '#8B9F4F';
+                    btn.style.color = 'white';
                     setTimeout(() => {{
                         btn.textContent = originalText;
+                        btn.style.background = '';
+                        btn.style.color = '';
                     }}, 1500);
                 }} catch (err) {{
                     console.error('Fallback: Oops, unable to copy', err);

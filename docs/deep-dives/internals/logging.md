@@ -1,64 +1,52 @@
-# AXION Logging
+# Axion Logging
 
-The `axion` logging module is a flexible system designed to provide a rich, informative logging experience. It intelligently adapts its behavior based on its environment, working seamlessly as a standalone application or as a plugin within a host system like MLPTK.
+The Axion logging module provides a rich, informative logging experience with beautiful console output powered by the **rich** library.
 
 ---
 
-## Core Concepts
+## Core Features
 
-The logging system operates in two distinct modes, which it switches between automatically based on the `AXION_MODE` environment variable.
-
-### 1. Standalone Mode
-
-When `AXION_MODE` is set to `standalone`, the logger provides a rich, developer-friendly experience directly in your console using the **`rich`** library.
-
-- **Beautiful Output:** Get colorized log levels, emojis, and beautifully formatted tables and tracebacks.
-- **High-Level Methods:** Use convenient methods like `logger.success()`, `logger.log_table()`, and the `logger.log_operation()` context manager.
-- **Zero-Fuss Default:** This rich output is the default in standalone mode.
-
-### 2. Plugin Mode
-
-When `AXION_MODE` is set to `plugin` (or is unset), the logger's behavior changes to integrate with the host application.
-
-- **Transparent Redirection:** Instead of printing to the console itself, it transparently **forwards** all log messages to the host application's logger.
-- **Unified Logs:** This ensures the logs are perfectly integrated with the host's logs, using the host's formatting, colors, and output destinations (e.g., files, external services).
-- **Automatic Activation:** This is the default mode. The host application is responsible for the final logging configuration.
+- **Beautiful Output**: Colorized log levels, emojis, and formatted tables and tracebacks via the `rich` library
+- **High-Level Methods**: Convenient methods like `logger.success()`, `logger.log_table()`, and the `logger.log_operation()` context manager
+- **Auto-Configuration**: Just use `get_logger()` - it auto-configures from environment variables on first use
+- **File Logging**: Optionally write logs to a file in addition to the console
 
 ---
 
 ## Basic Usage
 
-For most use cases, you can simply import the global `logger` instance. For larger applications, it's best practice to get a logger specific to your module.
+For most use cases, simply import the global `logger` instance or get a module-specific logger:
 
 ```python
-# Best Practice: Get a module-specific logger
+# Option 1: Use the global logger
+from axion.logging import logger
+
+logger.info("Hello from Axion!")
+logger.success("Task completed successfully!")
+
+# Option 2: Get a module-specific logger (recommended)
 from axion.logging import get_logger
 
-# The __name__ variable automatically gets the current module's name
 logger = get_logger(__name__)
-
 logger.warning("This warning came from the '%s' module.", __name__)
-logger.success("A task completed successfully!")
 ```
 
 ## Configuration
 
-Configuration is primarily handled by your Pydantic settings object but can be overridden by passing arguments directly to the `configure_logging` function.
+Configuration is handled via environment variables or by calling `configure_logging()` directly.
 
-### Pydantic Settings & Environment Variables
+### Environment Variables
 
-The following settings are read from your global settings object, which is populated from environment variables (e.g., `AXION_LOG_LEVEL`) or your `.env` file.
-
-| Setting | Environment Variable | Description |
-|---|---|---|
-| `log_level` | `AXION_LOG_LEVEL` | The minimum logging level (e.g., 'DEBUG'). |
-| `log_use_rich` | `AXION_LOG_USE_RICH` | Use rich for beautiful console output. |
-| `log_format_string` | `AXION_LOG_FORMAT_STRING` | A custom format string for the logger. |
-| `log_file_path` | `AXION_LOG_FILE_PATH` | If set, logs will be written to this file. |
+| Setting | Environment Variable | Default | Description |
+|---------|---------------------|---------|-------------|
+| `log_level` | `LOG_LEVEL` | `'INFO'` | Minimum logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`). |
+| `log_use_rich` | `LOG_USE_RICH` | `True` | Use rich for beautiful console output. |
+| `log_format_string` | `LOG_FORMAT_STRING` | `None` | A custom format string for the logger. |
+| `log_file_path` | `LOG_FILE_PATH` | `None` | If set, logs will be written to this file. |
 
 ### Programmatic Configuration
 
-Call `configure_logging` once at application startup, or let it auto-configure on first use.
+Call `configure_logging()` once at application startup, or let it auto-configure on first use.
 
 #### Example 1: Zero-Config (Recommended)
 
@@ -67,14 +55,14 @@ Just use `get_logger()` - it auto-configures from environment variables on first
 ```python
 from axion.logging import get_logger
 
-# Auto-configures from LOG_LEVEL, LOG_RICH, etc.
+# Auto-configures from LOG_LEVEL, LOG_USE_RICH, etc.
 logger = get_logger(__name__)
 logger.info("Using the configuration from the environment.")
 ```
 
 #### Example 2: Explicit Configuration
 
-Call `configure_logging` before getting loggers to override defaults.
+Call `configure_logging()` before getting loggers to override defaults.
 
 ```python
 from axion.logging import configure_logging, get_logger
@@ -88,7 +76,7 @@ logger.debug("This debug message is now visible.")
 
 #### Example 3: Reconfiguration
 
-Just call `configure_logging()` with new parameters - it applies immediately.
+Call `configure_logging()` with new parameters - it applies immediately.
 
 ```python
 from axion.logging import configure_logging, get_logger
@@ -102,34 +90,69 @@ configure_logging(level="ERROR")  # Now ERROR
 
 > **Note:** Calling `configure_logging()` with explicit parameters always applies them. Calling with no parameters skips if already configured.
 
-## Additional Logging Methods
+## RichLogger Methods
 
-The RichLogger provides several high-level methods to make your logs more expressive.
+The `RichLogger` class provides several high-level methods to make your logs more expressive.
 
 | Method | Description |
-|---|---|
-| `logger.success(msg)` | Logs an info-level message with a ✅ emoji. |
-| `logger.warning_highlight(msg)` | Logs a warning-level message with a ⚠️ emoji. |
-| `logger.error_highlight(msg)` | Logs an error-level message with a ❌ emoji. |
+|--------|-------------|
+| `logger.success(msg)` | Logs an info-level message with a checkmark emoji. |
+| `logger.warning_highlight(msg)` | Logs a warning-level message with a warning emoji. |
+| `logger.error_highlight(msg)` | Logs an error-level message with a cross emoji. |
 | `logger.log_table(data)` | Prints a list of dictionaries as a formatted table. |
 | `logger.log_json(data)` | Pretty-prints a dictionary or list as JSON. |
-| `logger.log_operation(name)` | A context manager that logs the start, end, and duration of a code block. |
+| `logger.log_performance(operation, duration)` | Logs performance metrics for an operation. |
+| `logger.log_exception(e)` | Logs an exception with traceback. |
+| `logger.log_operation(name)` | Context manager that logs start, end, and duration of a code block. |
+| `logger.async_log_operation(name)` | Async context manager for logging operations. |
 
-### Example
+### Examples
+
+#### Logging Tables
 
 ```python
 from axion.logging import logger
-import time
 
 users = [
     {"id": "user_1", "status": "active", "last_login": "2025-08-02"},
     {"id": "user_2", "status": "inactive", "last_login": "2025-07-15"},
 ]
 logger.log_table(users, title="User Status")
+```
+
+#### Timing Operations
+
+```python
+from axion.logging import logger
+import time
 
 with logger.log_operation("Process User Data"):
     # Your code here...
     time.sleep(0.5)
+
+# Output:
+# 🔹 Starting | Process User Data
+# ✅ Completed | Process User Data in 0.50s
+```
+
+#### Async Operations
+
+```python
+from axion.logging import logger
+
+async def fetch_data():
+    async with logger.async_log_operation("Fetch Remote Data"):
+        # Your async code here...
+        await some_async_operation()
+```
+
+#### Logging JSON
+
+```python
+from axion.logging import logger
+
+config = {"model": "gpt-4o", "temperature": 0.7}
+logger.log_json(config, title="Model Configuration")
 ```
 
 ## Advanced Usage
@@ -154,7 +177,7 @@ class MyService:
         self.logger.success("Data processing completed!")
 ```
 
-### Error Handling with Rich Logging
+### Error Handling
 
 ```python
 from axion.logging import logger
@@ -170,12 +193,52 @@ except Exception as e:
 ### Conditional Logging
 
 ```python
+import logging
 from axion.logging import logger
 
 def debug_intensive_operation(data):
     if logger.isEnabledFor(logging.DEBUG):
         logger.debug(f"Processing {len(data)} items")
         logger.log_json(data[:5])  # Log first 5 items as JSON
+```
+
+### Logging Summary
+
+Get a summary of all logging activity during the session:
+
+```python
+from axion.logging import log_summary
+
+# At the end of your application
+log_summary()
+
+# Output:
+# --- Logging Summary ---
+# Total Session Runtime: 45.32 seconds
+# Logger 'axion': 25 messages
+#     - INFO: 20
+#     - WARNING: 3
+#     - ERROR: 2
+# Grand Total Messages: 25
+# -----------------------
+```
+
+## Configuration State Management
+
+```python
+from axion.logging import (
+    configure_logging,
+    is_logging_configured,
+    clear_logging_config
+)
+
+# Check if logging is configured
+if is_logging_configured():
+    print("Logging already set up")
+
+# Full reset if needed
+clear_logging_config()
+configure_logging(level="DEBUG")
 ```
 
 ## Best Practices
@@ -191,26 +254,45 @@ def debug_intensive_operation(data):
 5. **Rich Methods in Development**: Use `logger.success()`, `logger.log_table()` etc. for better development experience.
 
 ```python
-# ✅ Good - Zero config, auto-configures from env vars
+# Good - Zero config, auto-configures from env vars
 from axion.logging import get_logger
 logger = get_logger(__name__)
 
-# ✅ Good - Configure before getting logger
+# Good - Configure before getting logger
 from axion.logging import configure_logging, get_logger
 configure_logging(level="DEBUG")
 logger = get_logger(__name__)
 
-# ✅ Good - Using context manager
+# Good - Using context manager
 with logger.log_operation("Data Migration"):
     migrate_users()
     migrate_products()
 
-# ✅ Good - Reconfigure on the fly
+# Good - Reconfigure on the fly
 from axion.logging import configure_logging
 configure_logging(level="DEBUG")  # Always applies with explicit params
 
-# ✅ Good - Check configuration state
+# Good - Check configuration state
 from axion.logging import is_logging_configured, clear_logging_config
 if is_logging_configured():
     clear_logging_config()  # Full reset if needed
 ```
+
+## API Reference
+
+### Functions
+
+| Function | Description |
+|----------|-------------|
+| `get_logger(name)` | Get a logger instance, auto-configuring on first use. |
+| `configure_logging(level, use_rich, format_string, file_path)` | Configure the logging system. |
+| `is_logging_configured()` | Check if logging has been configured. |
+| `clear_logging_config()` | Clear the logging configuration and reset state. |
+| `log_summary()` | Log a summary of all logging activity during the session. |
+
+### Classes
+
+| Class | Description |
+|-------|-------------|
+| `RichLogger` | Custom logger class with enhanced logging methods. |
+| `LoguruHandler` | Bridge handler for forwarding logs to loguru (if available). |
