@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -76,7 +76,9 @@ class BaseAlignEval(ABC):
         self.results_df: pd.DataFrame = pd.DataFrame()
         self.alignment_score: float = 0.0
 
-    async def _run_evals_async(self) -> None:
+    async def _run_evals_async(
+        self, on_progress: Optional[Callable[[int, int], None]] = None
+    ) -> None:
         """
         Runs the LLM-as-a-judge metric over the dataset and stores the results.
         """
@@ -84,7 +86,8 @@ class BaseAlignEval(ABC):
         test_results: List[TestResult] = await runner.execute_batch(self.dataset.items)
 
         self.llm_evaluations = []
-        for test_result in test_results:
+        total = len(test_results)
+        for index, test_result in enumerate(test_results, start=1):
             item_id = test_result.test_case.id
             if test_result.score_results:
                 metric_result = test_result.score_results[0]
@@ -95,6 +98,9 @@ class BaseAlignEval(ABC):
                         'llm_explanation': metric_result.explanation,
                     }
                 )
+
+            if on_progress:
+                on_progress(index, total)
             else:
                 # Log warning if subclass has logging capability
                 self._log_warning(
@@ -191,6 +197,17 @@ class BaseAlignEval(ABC):
                 'human_judgment_source',
             ]
         ]
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Return all results as JSON-serializable dict."""
+        results = self.results_df.where(pd.notna(self.results_df), None).to_dict(
+            orient='records'
+        )
+        return {
+            'results': results,
+            'metrics': self.get_alignment_summary(),
+            'confusion_matrix': self.get_confusion_matrix_df().to_dict(),
+        }
 
     def _calculate_binary_metrics(self, valid_comparisons: pd.DataFrame) -> None:
         """

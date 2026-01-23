@@ -12,6 +12,7 @@ nav:
     - Working with Datasets: guides/datasets.md
     - Metrics & Evaluation: guides/metrics.md
     - Running Evaluations: guides/evaluation.md
+    - AlignEval: guides/aligneval.md
     - Langfuse:
       - Overview: guides/langfuse/overview.md
       - Configuration: guides/langfuse/configuration.md
