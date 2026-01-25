@@ -259,25 +259,46 @@ print(SignalAdapterRegistry.list_adapters())
 
 ### Register a Custom Adapter
 
-#### Using the Decorator
+**Best Practice:** Define the adapter in the same file as your custom metric. This keeps the signal schema and adapter in sync.
 
 ```python
+# my_metrics/quality_checker.py
+
+from axion.metrics import BaseMetric
 from axion.reporting import SignalAdapterRegistry, MetricSignalAdapter
 
-@SignalAdapterRegistry.register('my_custom_metric')
-def my_adapter():
+# 1. Define your metric
+class QualityChecker(BaseMetric):
+    name = "Quality Checker"
+
+    async def a_score(self, item):
+        # Your scoring logic...
+        return MetricScore(
+            name=self.name,
+            score=score,
+            signals={
+                'quality_verdict': {'value': verdict, 'score': 1.0 if verdict == 'PASS' else 0.0},
+                'issues_found': {'value': issues, 'score': 1.0},
+                'reasoning': {'value': reason},
+            }
+        )
+
+# 2. Register adapter alongside the metric
+@SignalAdapterRegistry.register('quality_checker')
+def _quality_checker_adapter():
     return MetricSignalAdapter(
-        metric_key='my_custom_metric',
-        headline_signals=['passed', 'quality_score'],
-        issue_values={
-            'passed': [False],
-            'quality_score': [0, 'FAIL', 'LOW']
-        },
-        context_signals=['reason', 'details', 'suggestions']
+        metric_key='quality_checker',
+        headline_signals=['quality_verdict'],
+        issue_values={'quality_verdict': ['FAIL', 'PARTIAL']},
+        context_signals=['issues_found', 'reasoning']
     )
 ```
 
-#### Using Direct Registration
+The adapter registers automatically when your metric module is imported.
+
+#### Alternative: Direct Registration
+
+For quick registration without a decorator:
 
 ```python
 SignalAdapterRegistry.register_adapter(

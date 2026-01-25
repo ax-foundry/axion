@@ -130,6 +130,9 @@ Async version of `to_grouped_prompt_text`. Use this when working with async LLMs
 
 Registry for metric signal adapters. Provides centralized registration and lookup of adapters.
 
+!!! tip "Best Practice"
+    Define custom adapters in the same file as your metric class. This keeps the signal schema and adapter definition in sync. See the [guide](../guides/issue-extraction.md#register-a-custom-adapter) for a complete example.
+
 ### Class Methods
 
 #### register
