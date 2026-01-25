@@ -574,11 +574,11 @@ class AnswerCompleteness(BaseMetric):
         """
         return await self.aspect_completeness_checker.execute(
             AspectCompletenessCheckerInput(
-                query=item.query,
-                response=item.actual_output,
+                query=self.get_field(item, 'query'),
+                response=self.get_field(item, 'actual_output'),
                 expected_aspects=expected_aspects,
                 aspect_details=aspect_details,
-                expected_output=item.expected_output,
+                expected_output=self.get_field(item, 'expected_output'),
             )
         )
 
@@ -600,10 +600,10 @@ class AnswerCompleteness(BaseMetric):
         """
         return await self.sub_question_checker.execute(
             SubQuestionCheckerInput(
-                query=item.query,
-                response=item.actual_output,
+                query=self.get_field(item, 'query'),
+                response=self.get_field(item, 'actual_output'),
                 sub_questions=sub_questions,
-                expected_output=item.expected_output,
+                expected_output=self.get_field(item, 'expected_output'),
             )
         )
 
@@ -753,7 +753,7 @@ class AnswerCompleteness(BaseMetric):
         in the `signals` field.
         """
         self._validate_required_metric_fields(item)
-        expected_aspects = item.acceptance_criteria
+        expected_aspects = self.get_field(item, 'acceptance_criteria')
 
         if expected_aspects:
             logger.info('Using aspect-based evaluation approach')
@@ -762,7 +762,8 @@ class AnswerCompleteness(BaseMetric):
                     'acceptance_criteria must be a list for aspect-based evaluation.'
                 )
 
-            aspect_details = await self._analyze_aspects(item.query, expected_aspects)
+            query = self.get_field(item, 'query')
+            aspect_details = await self._analyze_aspects(query, expected_aspects)
             if not aspect_details:
                 return MetricEvaluationResult(
                     score=np.nan, explanation='Could not analyze aspect details.'
@@ -788,12 +789,14 @@ class AnswerCompleteness(BaseMetric):
             logger.info('Using sub-question based evaluation approach')
 
             # Use expected answer if available, otherwise decompose query
-            if self.use_expected_output and item.expected_output:
+            query = self.get_field(item, 'query')
+            expected_output = self.get_field(item, 'expected_output')
+            if self.use_expected_output and expected_output:
                 sub_questions = await self._analyze_expected_answer(
-                    item.query, item.expected_output
+                    query, expected_output
                 )
             else:
-                sub_questions = await self._decompose_query(item.query)
+                sub_questions = await self._decompose_query(query)
 
             if not sub_questions:
                 return MetricEvaluationResult(

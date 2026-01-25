@@ -581,15 +581,17 @@ class AnswerCriteria(BaseMetric):
         then 'additional_input'. Returns None if not found.
         """
         # Prioritize the top-level 'acceptance_criteria' field
-        if item.acceptance_criteria:
-            if isinstance(item.acceptance_criteria, list):
-                return '\n'.join(item.acceptance_criteria)
-            if isinstance(item.acceptance_criteria, str):
-                return item.acceptance_criteria
+        acceptance_criteria = self.get_field(item, 'acceptance_criteria')
+        if acceptance_criteria:
+            if isinstance(acceptance_criteria, list):
+                return '\n'.join(acceptance_criteria)
+            if isinstance(acceptance_criteria, str):
+                return acceptance_criteria
 
         # Fallback to checking the 'additional_input' dictionary using the consolidated key
-        if item.additional_input and self.criteria_key in item.additional_input:
-            criteria = item.additional_input.get(self.criteria_key)
+        additional_input = self.get_field(item, 'additional_input')
+        if additional_input and self.criteria_key in additional_input:
+            criteria = additional_input.get(self.criteria_key)
             if criteria and isinstance(criteria, str):
                 return criteria
 
@@ -602,12 +604,13 @@ class AnswerCriteria(BaseMetric):
         1. Checks `item.conversation.rubrics[self.criteria_key]`
         2. Falls back to single-turn criteria logic.
         """
+        conversation = self.get_field(item, 'conversation')
         if (
-            item.conversation
-            and item.conversation.rubrics
-            and self.criteria_key in item.conversation.rubrics
+            conversation
+            and conversation.rubrics
+            and self.criteria_key in conversation.rubrics
         ):
-            criteria = item.conversation.rubrics[self.criteria_key]
+            criteria = conversation.rubrics[self.criteria_key]
             if criteria and isinstance(criteria, str):
                 return criteria
 
@@ -765,18 +768,22 @@ class AnswerCriteria(BaseMetric):
                 f'or `additional_input["{self.criteria_key}"]`.',
             )
 
-        if not item.query:
+        query = self.get_field(item, 'query')
+        actual_output = self.get_field(item, 'actual_output')
+        expected_output = self.get_field(item, 'expected_output')
+
+        if not query:
             return MetricEvaluationResult(
                 score=np.nan, explanation='DatasetItem has no `query` to evaluate.'
             )
-        if not item.actual_output:
+        if not actual_output:
             return MetricEvaluationResult(
                 score=np.nan,
                 explanation='DatasetItem has no `actual_output` to evaluate.',
             )
 
         # Decompose criteria into key aspects
-        decomposition_result = await self._decompose_criteria(item.query, criteria)
+        decomposition_result = await self._decompose_criteria(query, criteria)
 
         if not decomposition_result.key_aspects:
             return MetricEvaluationResult(
@@ -786,9 +793,9 @@ class AnswerCriteria(BaseMetric):
 
         # Check the response against the decomposed criteria
         evaluation_results = await self._check_criteria(
-            item.query,
-            item.actual_output,
-            item.expected_output,
+            query,
+            actual_output,
+            expected_output,
             decomposition_result.key_aspects,
             decomposition_result.aspect_details,
             criteria,
@@ -820,7 +827,8 @@ class AnswerCriteria(BaseMetric):
         Run criteria evaluation for all turns in a conversation and aggregate results.
         """
         turns_to_eval = []
-        if not item.conversation or not item.conversation.messages:
+        conversation = self.get_field(item, 'conversation')
+        if not conversation or not conversation.messages:
             return MetricEvaluationResult(
                 score=np.nan, explanation='No conversation messages found to evaluate.'
             )
@@ -833,7 +841,7 @@ class AnswerCriteria(BaseMetric):
             )
 
         current_query = None
-        for i, message in enumerate(item.conversation.messages):
+        for i, message in enumerate(conversation.messages):
             if isinstance(message, HumanMessage):
                 current_query = message.content
             elif isinstance(message, AIMessage) and message.content:
@@ -1055,7 +1063,8 @@ class AnswerCriteria(BaseMetric):
         """
         self._validate_required_metric_fields(item)
 
-        if item.conversation and self.multi_turn_strategy == 'all_turns':
+        conversation = self.get_field(item, 'conversation')
+        if conversation and self.multi_turn_strategy == 'all_turns':
             logger.debug('Using multi-turn "all_turns" evaluation approach')
             result = await self._evaluate_multi_turn(item)
         else:

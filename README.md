@@ -1,18 +1,16 @@
-# AXION
+
+![header](resources/axion_main_transparent.png)
 
 <strong>A</strong>gent <strong>X</strong>-Ray <strong>I</strong>nspection & <strong>O</strong>ptimization <strong>N</strong>etwork
-
-![header](resources/toolkit_readme.png)
-
 
 **A modular white box evaluation framework for AI agents.**
 
 <p align="center">
-<a href="https://ax-foundry.github.io/axion/">Documentation</a> |
+<a href="https://ax-foundry.github.io/axion/"><strong>Documentation</a> |
 <a href="https://ax-foundry.github.io/axion/stable/getting-started/installation/">Quick Start</a> |
 <a href="https://ax-foundry.github.io/axion/stable/metric-registry/composite/">Metrics</a> |
 <a href="https://ax-foundry.github.io/axion/stable/agent_playbook/">Agent Playbook</a>
-</p>
+</strong></p>
 
 <p align="center">
 <a href="https://github.com/ax-foundry/axion/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>

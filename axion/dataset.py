@@ -158,11 +158,18 @@ class DatasetItem(RichDatasetBaseModel):
     expected_reference: Optional[List[Dict[str, Any]]] = Field(
         default=None, description='Expected Reference (Alias for expected_ranking)'
     )
+    actual_reference: Optional[List[Dict[str, Any]]] = Field(
+        default=None, description='Actual Reference (Alias for actual_ranking)'
+    )
 
     model_config = ConfigDict(arbitrary_types_allowed=True, populate_by_name=True)
 
     @field_validator(
-        'actual_ranking', 'expected_ranking', 'expected_reference', mode='before'
+        'actual_ranking',
+        'expected_ranking',
+        'expected_reference',
+        'actual_reference',
+        mode='before',
     )
     @classmethod
     def _normalize_ranking_list(
@@ -204,11 +211,17 @@ class DatasetItem(RichDatasetBaseModel):
 
     @model_validator(mode='after')
     def _sync_ranking_and_reference(self) -> 'DatasetItem':
-        """Syncs expected_ranking and expected_reference, prioritizing expected_ranking."""
+        """Syncs ranking and reference fields, prioritizing ranking."""
+        # Expected
         if self.expected_ranking is not None and self.expected_reference is None:
             self.expected_reference = self.expected_ranking
         elif self.expected_reference is not None and self.expected_ranking is None:
             self.expected_ranking = self.expected_reference
+        # Actual
+        if self.actual_ranking is not None and self.actual_reference is None:
+            self.actual_reference = self.actual_ranking
+        elif self.actual_reference is not None and self.actual_ranking is None:
+            self.actual_ranking = self.actual_reference
         return self
 
     @computed_field
@@ -924,6 +937,7 @@ class Dataset(RichSerializer):
             FieldNames.ADDITIONAL_OUTPUT,
             FieldNames.ACCEPTANCE_CRITERIA,
             FieldNames.EXPECTED_REFERENCE,
+            FieldNames.ACTUAL_REFERENCE,
         ]
 
         # Exclude computed fields that cannot be set during deserialization
@@ -1235,6 +1249,7 @@ class Dataset(RichSerializer):
             FieldNames.ACTUAL_RANKING,
             FieldNames.EXPECTED_RANKING,
             FieldNames.EXPECTED_REFERENCE,
+            FieldNames.ACTUAL_REFERENCE,
         ]
 
         def _parse_value(_value: Any) -> Any:

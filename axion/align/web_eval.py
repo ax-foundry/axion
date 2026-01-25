@@ -29,7 +29,7 @@ class WebAlignEval(BaseAlignEval):
         return self.to_dict() if as_dict else self.results_df
 
     @classmethod
-    def from_records(cls, records: List[dict], metric: BaseMetric) -> "WebAlignEval":
+    def from_records(cls, records: List[dict], metric: BaseMetric) -> 'WebAlignEval':
         """Create from list of dicts (from web upload)."""
         items = [DatasetItem(**record) for record in records]
         dataset = Dataset(items=items)

@@ -91,16 +91,21 @@ class BaseAlignEval(ABC):
             item_id = test_result.test_case.id
             if test_result.score_results:
                 metric_result = test_result.score_results[0]
+                llm_score, score_note = self._coerce_binary_score(
+                    metric_result.score, item_id
+                )
+                explanation = metric_result.explanation
+                if score_note:
+                    explanation = (
+                        f'{explanation} ({score_note})' if explanation else score_note
+                    )
                 self.llm_evaluations.append(
                     {
                         'id': item_id,
-                        'llm_score': metric_result.score,
-                        'llm_explanation': metric_result.explanation,
+                        'llm_score': llm_score,
+                        'llm_explanation': explanation,
                     }
                 )
-
-            if on_progress:
-                on_progress(index, total)
             else:
                 # Log warning if subclass has logging capability
                 self._log_warning(
@@ -109,10 +114,27 @@ class BaseAlignEval(ABC):
                 self.llm_evaluations.append(
                     {
                         'id': item_id,
-                        'llm_score': np.nan,
+                        'llm_score': 0,
                         'llm_explanation': 'Metric execution failed or produced no score.',
                     }
                 )
+
+            if on_progress:
+                on_progress(index, total)
+
+    def _coerce_binary_score(self, score: Any, item_id: str) -> tuple[int, str | None]:
+        if score in (0, 1):
+            return int(score), None
+        if isinstance(score, str) and score.strip() in ['0', '1']:
+            return int(score.strip()), None
+        if score is None or (isinstance(score, float) and np.isnan(score)):
+            note = 'Missing score coerced to 0.'
+        else:
+            note = f"Invalid score '{score}' coerced to 0."
+        self._log_warning(
+            f"Metric '{self.metric.name}' returned invalid score for item '{item_id}'."
+        )
+        return 0, note
 
     def _prepare_results_df(self) -> None:
         """

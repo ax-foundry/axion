@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 from axion.align.ui import AlignEvalRenderer
-from axion.dataset import Dataset, DatasetItem
+from axion.dataset import Dataset
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler
@@ -42,7 +42,7 @@ class NotebookAlignEvalRenderer(AlignEvalRenderer):
 
         print('\n✅ Human annotation complete! You can now run .execute()')
 
-    def style_results(self, results_df: pd.DataFrame) -> "Styler":
+    def style_results(self, results_df: pd.DataFrame) -> 'Styler':
         """
         Applies advanced conditional highlighting and styling to the results DataFrame.
         """
@@ -147,7 +147,7 @@ class NotebookAlignEvalRenderer(AlignEvalRenderer):
 
     def create_summary_stats_table(
         self, results_df: pd.DataFrame, alignment_score: float
-    ) -> "Styler":
+    ) -> 'Styler':
         """Creates a beautifully styled summary statistics table."""
         total_items = len(results_df)
         aligned_items = results_df['aligned'].sum()
@@ -178,7 +178,7 @@ class NotebookAlignEvalRenderer(AlignEvalRenderer):
             .set_properties(**{'text-align': 'left', 'font-weight': 'bold'})
         )
 
-    def display(self, summary_table: "Styler", detailed_table: "Styler") -> None:
+    def display(self, summary_table: 'Styler', detailed_table: 'Styler') -> None:
         """Display tables in notebook environment."""
         from IPython.display import display
 

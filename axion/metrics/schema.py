@@ -62,6 +62,10 @@ class MetricEvaluationResult(RichBaseModel):
 
     This model holds the final score, an explanation of how the score was derived,
     and any additional metadata useful for debugging or traceability.
+
+    The `metadata` and `signals` fields are excluded from JSON schema generation
+    to ensure compatibility with OpenAI structured output (which requires
+    additionalProperties: false for all objects).
     """
 
     score: Union[int, float] = Field(
@@ -83,6 +87,29 @@ class MetricEvaluationResult(RichBaseModel):
         default=None,
         description='A dictionary of dynamically generated signals providing a granular breakdown of the metric.',
     )
+
+    @classmethod
+    def model_json_schema(cls, *args, **kwargs) -> Dict[str, Any]:
+        """
+        Generate JSON schema excluding fields incompatible with OpenAI structured output.
+
+        The `metadata` and `signals` fields use Dict[str, Any] and Any types which
+        cannot satisfy OpenAI's additionalProperties: false requirement.
+        """
+        schema = super().model_json_schema(*args, **kwargs)
+
+        # Remove incompatible fields from schema
+        if 'properties' in schema:
+            schema['properties'].pop('metadata', None)
+            schema['properties'].pop('signals', None)
+
+        # Remove from required if present
+        if 'required' in schema:
+            schema['required'] = [
+                f for f in schema['required'] if f not in ('metadata', 'signals')
+            ]
+
+        return schema
 
     @field_serializer('explanation', when_used='json')
     def serialize_explanation(self, value: Any) -> str:
