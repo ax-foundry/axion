@@ -459,6 +459,8 @@ My RAG Evaluation                             # evaluation_name (root)
 
 **LLM Handlers**: Use `metadata.name` or class name as the span name:
 ```python
+from axion import LLMHandler
+
 class SentimentAnalysisHandler(LLMHandler):
     # ... handler config ...
     pass

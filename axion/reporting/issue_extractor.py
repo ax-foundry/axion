@@ -1,30 +1,15 @@
-"""
-Issue Extractor for Low-Score Signal Extraction
-
-This module provides utilities to extract all low-score signals from metric evaluation
-results, normalize them into a common format, and generate prompts suitable for
-LLM-based issue summarization.
-"""
-
 import asyncio
 import hashlib
 import math
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Protocol
+from typing import Any, Dict, List, Optional, Union
 
 from axion._core.logging import get_logger
+from axion._core.schema import LLMRunnable
 from axion.metrics.signal_normalizer import NormalizedSignal, normalize_signals
 from axion.schema import EvaluationResult, MetricScore, TestResult
 
 logger = get_logger(__name__)
-
-
-class LLMRunnable(Protocol):
-    """Protocol for LLM models that support completion."""
-
-    async def acomplete(self, prompt: str, **kwargs: Any) -> Any: ...
-
-    def complete(self, prompt: str, **kwargs: Any) -> Any: ...
 
 
 @dataclass
@@ -149,45 +134,426 @@ class MetricSignalAdapter:
     context_signals: List[str]
 
 
-# Pre-defined adapters for common metrics
-METRIC_ADAPTERS: Dict[str, MetricSignalAdapter] = {
-    'faithfulness': MetricSignalAdapter(
+class SignalAdapterRegistry:
+    """
+    Registry for MetricSignalAdapter instances.
+
+    Provides a centralized way to register and retrieve adapters for different metrics.
+    Users can register custom adapters for their own metrics using the decorator or
+    direct registration methods.
+
+    Example using decorator:
+        ```python
+        @SignalAdapterRegistry.register('my_custom_metric')
+        def my_adapter():
+            return MetricSignalAdapter(
+                metric_key='my_custom_metric',
+                headline_signals=['passed'],
+                issue_values={'passed': [False]},
+                context_signals=['reason'],
+            )
+        ```
+
+    Example using direct registration:
+        ```python
+        SignalAdapterRegistry.register_adapter(
+            'my_custom_metric',
+            MetricSignalAdapter(
+                metric_key='my_custom_metric',
+                headline_signals=['passed'],
+                issue_values={'passed': [False]},
+                context_signals=['reason'],
+            )
+        )
+        ```
+    """
+
+    _registry: Dict[str, MetricSignalAdapter] = {}
+
+    @classmethod
+    def register(cls, metric_key: str):
+        """
+        Decorator to register a signal adapter for a metric.
+
+        The decorated function should return a MetricSignalAdapter instance.
+
+        Args:
+            metric_key: The metric identifier (e.g., 'faithfulness', 'my_custom_metric')
+
+        Returns:
+            Decorator function
+
+        Example:
+            ```python
+            @SignalAdapterRegistry.register('custom_metric')
+            def custom_adapter():
+                return MetricSignalAdapter(
+                    metric_key='custom_metric',
+                    headline_signals=['is_valid'],
+                    issue_values={'is_valid': [False]},
+                    context_signals=['reason'],
+                )
+            ```
+        """
+        normalized_key = metric_key.strip().lower().replace(' ', '_').replace('-', '_')
+
+        def decorator(func_or_adapter):
+            if isinstance(func_or_adapter, MetricSignalAdapter):
+                cls._registry[normalized_key] = func_or_adapter
+                logger.debug(f"Signal adapter '{normalized_key}' registered.")
+                return func_or_adapter
+            elif callable(func_or_adapter):
+                adapter = func_or_adapter()
+                if not isinstance(adapter, MetricSignalAdapter):
+                    raise TypeError(
+                        f'Decorated function must return MetricSignalAdapter, '
+                        f'got {type(adapter).__name__}'
+                    )
+                cls._registry[normalized_key] = adapter
+                logger.debug(f"Signal adapter '{normalized_key}' registered.")
+                return func_or_adapter
+            else:
+                raise TypeError(
+                    f'Expected MetricSignalAdapter or callable, got {type(func_or_adapter).__name__}'
+                )
+
+        return decorator
+
+    @classmethod
+    def register_adapter(
+        cls,
+        metric_key: str,
+        adapter: MetricSignalAdapter,
+    ) -> None:
+        """
+        Directly register a MetricSignalAdapter for a metric.
+
+        Args:
+            metric_key: The metric identifier
+            adapter: The MetricSignalAdapter instance
+
+        Example:
+            ```python
+            SignalAdapterRegistry.register_adapter(
+                'my_metric',
+                MetricSignalAdapter(
+                    metric_key='my_metric',
+                    headline_signals=['score'],
+                    issue_values={'score': [0]},
+                    context_signals=['explanation'],
+                )
+            )
+            ```
+        """
+        normalized_key = metric_key.strip().lower().replace(' ', '_').replace('-', '_')
+        cls._registry[normalized_key] = adapter
+        logger.debug(f"Signal adapter '{normalized_key}' registered.")
+
+    @classmethod
+    def get(cls, metric_name: str) -> Optional[MetricSignalAdapter]:
+        """
+        Get the adapter for a metric by name.
+
+        Args:
+            metric_name: The metric name (case-insensitive, spaces/hyphens normalized)
+
+        Returns:
+            MetricSignalAdapter if found, None otherwise.
+        """
+        normalized_key = metric_name.strip().lower().replace(' ', '_').replace('-', '_')
+        return cls._registry.get(normalized_key)
+
+    @classmethod
+    def list_adapters(cls) -> List[str]:
+        """
+        List all registered adapter keys.
+
+        Returns:
+            List of registered metric keys.
+        """
+        return list(cls._registry.keys())
+
+    @classmethod
+    def clear(cls) -> None:
+        """Clear all registered adapters. Useful for testing."""
+        cls._registry.clear()
+
+
+# Register built-in adapters for common metrics
+@SignalAdapterRegistry.register('faithfulness')
+def _faithfulness_adapter():
+    return MetricSignalAdapter(
         metric_key='faithfulness',
         headline_signals=['faithfulness_verdict'],
         issue_values={'faithfulness_verdict': ['CONTRADICTORY', 'NO_EVIDENCE']},
         context_signals=['claim_text', 'reasoning', 'verdict_score'],
-    ),
-    'answer_criteria': MetricSignalAdapter(
+    )
+
+
+@SignalAdapterRegistry.register('answer_criteria')
+def _answer_criteria_adapter():
+    return MetricSignalAdapter(
         metric_key='answer_criteria',
         headline_signals=['is_covered', 'concept_coverage'],
         issue_values={'is_covered': [False]},
         context_signals=['aspect', 'concepts_missing', 'concepts_covered', 'reason'],
-    ),
-    'answer_relevancy': MetricSignalAdapter(
+    )
+
+
+@SignalAdapterRegistry.register('answer_relevancy')
+def _answer_relevancy_adapter():
+    return MetricSignalAdapter(
         metric_key='answer_relevancy',
         headline_signals=['is_relevant', 'verdict'],
         issue_values={'is_relevant': [False], 'verdict': ['no']},
         context_signals=['statement', 'reason', 'turn_index'],
-    ),
-    'answer_completeness': MetricSignalAdapter(
+    )
+
+
+@SignalAdapterRegistry.register('answer_completeness')
+def _answer_completeness_adapter():
+    return MetricSignalAdapter(
         metric_key='answer_completeness',
         headline_signals=['is_covered', 'is_addressed'],
         issue_values={'is_covered': [False], 'is_addressed': [False]},
         context_signals=['aspect', 'sub_question', 'reason', 'concepts_missing'],
-    ),
-    'contextual_relevancy': MetricSignalAdapter(
+    )
+
+
+@SignalAdapterRegistry.register('contextual_relevancy')
+def _contextual_relevancy_adapter():
+    return MetricSignalAdapter(
         metric_key='contextual_relevancy',
         headline_signals=['is_relevant'],
         issue_values={'is_relevant': [False]},
         context_signals=['context_text', 'reason', 'relevance_score'],
-    ),
-    'contextual_recall': MetricSignalAdapter(
+    )
+
+
+@SignalAdapterRegistry.register('contextual_recall')
+def _contextual_recall_adapter():
+    return MetricSignalAdapter(
         metric_key='contextual_recall',
-        headline_signals=['is_attributable'],
-        issue_values={'is_attributable': [False]},
-        context_signals=['sentence', 'reason'],
-    ),
-}
+        headline_signals=['is_attributable', 'is_supported'],
+        issue_values={'is_attributable': [False], 'is_supported': [False]},
+        context_signals=['sentence', 'statement_text', 'reason'],
+    )
+
+
+@SignalAdapterRegistry.register('factual_accuracy')
+def _factual_accuracy_adapter():
+    return MetricSignalAdapter(
+        metric_key='factual_accuracy',
+        headline_signals=['is_correct', 'accuracy_score'],
+        issue_values={'is_correct': [False, 0]},
+        context_signals=['statement', 'reason'],
+    )
+
+
+@SignalAdapterRegistry.register('answer_conciseness')
+def _answer_conciseness_adapter():
+    return MetricSignalAdapter(
+        metric_key='answer_conciseness',
+        headline_signals=['conciseness_score'],
+        issue_values={},  # Score-based, no specific failure values
+        context_signals=['segment', 'category', 'reason', 'redundancy_count'],
+    )
+
+
+@SignalAdapterRegistry.register('contextual_precision')
+def _contextual_precision_adapter():
+    return MetricSignalAdapter(
+        metric_key='contextual_precision',
+        headline_signals=['is_useful', 'map_score'],
+        issue_values={'is_useful': [False]},
+        context_signals=['position', 'chunk_text', 'reason'],
+    )
+
+
+@SignalAdapterRegistry.register('contextual_utilization')
+def _contextual_utilization_adapter():
+    return MetricSignalAdapter(
+        metric_key='contextual_utilization',
+        headline_signals=['is_utilized', 'utilization_score'],
+        issue_values={'is_utilized': [False]},
+        context_signals=['chunk_text', 'reason', 'utilization_rate'],
+    )
+
+
+@SignalAdapterRegistry.register('contextual_sufficiency')
+def _contextual_sufficiency_adapter():
+    return MetricSignalAdapter(
+        metric_key='contextual_sufficiency',
+        headline_signals=['is_sufficient', 'sufficiency_score'],
+        issue_values={'is_sufficient': [False]},
+        context_signals=['reasoning', 'query', 'context'],
+    )
+
+
+@SignalAdapterRegistry.register('contextual_ranking')
+def _contextual_ranking_adapter():
+    return MetricSignalAdapter(
+        metric_key='contextual_ranking',
+        headline_signals=['ranking_score', 'is_correctly_ranked'],
+        issue_values={'is_correctly_ranked': [False]},
+        context_signals=['position', 'expected_position', 'chunk_text', 'reason'],
+    )
+
+
+@SignalAdapterRegistry.register('citation_relevancy')
+def _citation_relevancy_adapter():
+    return MetricSignalAdapter(
+        metric_key='citation_relevancy',
+        headline_signals=['relevance_verdict', 'relevance_score'],
+        issue_values={'relevance_verdict': [False]},
+        context_signals=['citation_text', 'relevance_reason', 'turn_index', 'original_query'],
+    )
+
+
+@SignalAdapterRegistry.register('pii_leakage')
+def _pii_leakage_adapter():
+    return MetricSignalAdapter(
+        metric_key='pii_leakage',
+        headline_signals=['pii_verdict', 'final_score'],
+        issue_values={'pii_verdict': ['yes']},  # 'yes' means PII was found (bad)
+        context_signals=['statement_text', 'reasoning', 'pii_type'],
+    )
+
+
+@SignalAdapterRegistry.register('tone_style_consistency')
+def _tone_style_consistency_adapter():
+    return MetricSignalAdapter(
+        metric_key='tone_style_consistency',
+        headline_signals=['consistency_score', 'is_consistent'],
+        issue_values={'is_consistent': [False]},
+        context_signals=['tone_detected', 'expected_tone', 'reason', 'deviation_type'],
+    )
+
+
+@SignalAdapterRegistry.register('persona_tone_adherence')
+def _persona_tone_adherence_adapter():
+    return MetricSignalAdapter(
+        metric_key='persona_tone_adherence',
+        headline_signals=['persona_match', 'adherence_score', 'final_composite_score'],
+        issue_values={'persona_match': [False]},
+        context_signals=[
+            'tone_classification',
+            'deviation_type',
+            'positive_indicators',
+            'negative_indicators',
+            'violations',
+        ],
+    )
+
+
+@SignalAdapterRegistry.register('persona_tone')
+def _persona_tone_adapter():
+    """Alias for persona_tone_adherence."""
+    return MetricSignalAdapter(
+        metric_key='persona_tone',
+        headline_signals=['persona_match', 'adherence_score', 'final_composite_score'],
+        issue_values={'persona_match': [False]},
+        context_signals=[
+            'tone_classification',
+            'deviation_type',
+            'positive_indicators',
+            'negative_indicators',
+            'violations',
+        ],
+    )
+
+
+@SignalAdapterRegistry.register('conversation_efficiency')
+def _conversation_efficiency_adapter():
+    return MetricSignalAdapter(
+        metric_key='conversation_efficiency',
+        headline_signals=['efficiency_score', 'final_composite_score'],
+        issue_values={},  # Score-based with inefficiency detection
+        context_signals=[
+            'type',
+            'severity',
+            'turns_wasted',
+            'description',
+            'total_wasted_turns',
+            'redundancy_score',
+        ],
+    )
+
+
+@SignalAdapterRegistry.register('conversation_flow')
+def _conversation_flow_adapter():
+    return MetricSignalAdapter(
+        metric_key='conversation_flow',
+        headline_signals=['final_score', 'coherence_score'],
+        issue_values={},  # Score-based with issue detection
+        context_signals=[
+            'type',
+            'severity',
+            'penalty_contribution',
+            'description',
+            'turn_location',
+            'coherence',
+            'efficiency',
+            'user_experience',
+        ],
+    )
+
+
+@SignalAdapterRegistry.register('goal_completion')
+def _goal_completion_adapter():
+    return MetricSignalAdapter(
+        metric_key='goal_completion',
+        headline_signals=['completion_score', 'is_completed', 'goal_achieved'],
+        issue_values={'is_completed': [False], 'goal_achieved': [False]},
+        context_signals=['goal', 'progress', 'reason', 'blocking_issues'],
+    )
+
+
+@SignalAdapterRegistry.register('citation_presence')
+def _citation_presence_adapter():
+    return MetricSignalAdapter(
+        metric_key='citation_presence',
+        headline_signals=['presence_check_passed'],
+        issue_values={'presence_check_passed': [False]},
+        context_signals=[
+            'total_assistant_messages',
+            'messages_with_valid_citations',
+            'passing_turn_indices',
+            'mode',
+        ],
+    )
+
+
+@SignalAdapterRegistry.register('latency')
+def _latency_adapter():
+    return MetricSignalAdapter(
+        metric_key='latency',
+        headline_signals=['latency_score', 'latency_ms'],
+        issue_values={},  # Score-based, threshold determines failure
+        context_signals=['performance_classification', 'threshold', 'normalization_method'],
+    )
+
+
+@SignalAdapterRegistry.register('tool_correctness')
+def _tool_correctness_adapter():
+    return MetricSignalAdapter(
+        metric_key='tool_correctness',
+        headline_signals=['correctness_score', 'all_tools_correct'],
+        issue_values={'all_tools_correct': [False]},
+        context_signals=[
+            'tool_name',
+            'expected_tools',
+            'actual_tools',
+            'missing_tools',
+            'unexpected_tools',
+            'parameter_mismatches',
+            'reason',
+        ],
+    )
+
+
+# Backward compatibility alias
+METRIC_ADAPTERS = SignalAdapterRegistry._registry
 
 
 class IssueExtractor:
@@ -251,7 +617,7 @@ class IssueExtractor:
         hash_value = int(hashlib.md5(test_case_id.encode()).hexdigest(), 16)
         return (hash_value % 1000) < (self.sample_rate * 1000)
 
-    def _is_issue_score(self, score: float) -> bool:
+    def _is_issue_score(self, score: Union[float, int, None]) -> bool:
         """
         Check if a score qualifies as an issue.
 
@@ -284,8 +650,7 @@ class IssueExtractor:
         Returns:
             MetricSignalAdapter if found, None otherwise.
         """
-        metric_key = metric_name.strip().lower().replace(' ', '_').replace('-', '_')
-        return METRIC_ADAPTERS.get(metric_key)
+        return SignalAdapterRegistry.get(metric_name)
 
     def _is_headline_signal(
         self,

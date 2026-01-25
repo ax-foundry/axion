@@ -5,6 +5,7 @@ from axion.reporting.issue_extractor import (
     IssueGroup,
     LLMSummaryInput,
     MetricSignalAdapter,
+    SignalAdapterRegistry,
 )
 from axion.reporting.latency import LatencyAnalyzer
 from axion.reporting.scorecard import ScoreCard
@@ -18,4 +19,5 @@ __all__ = [
     'LatencyAnalyzer',
     'MetricSignalAdapter',
     'ScoreCard',
+    'SignalAdapterRegistry',
 ]

@@ -12,6 +12,7 @@ from axion.metrics import MetricRegistry, metric_registry
 # Evaluation runner
 from axion.runners import EvaluationConfig, EvaluationRunner, evaluation_runner
 from axion.schema import ErrorConfig, EvaluationResult, MetricScore, TestResult
+from axion.handlers import BaseHandler, LLMHandler
 
 
 def init(
@@ -61,6 +62,9 @@ __all__ = [
     'evaluation_runner',
     'EvaluationRunner',
     'EvaluationConfig',
+    # Handlers
+    'BaseHandler',
+    'LLMHandler',
     # Environment
     'settings',
 ]

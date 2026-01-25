@@ -14,6 +14,8 @@ from axion.reporting.issue_extractor import (
     IssueExtractionResult,
     IssueExtractor,
     LLMSummaryInput,
+    MetricSignalAdapter,
+    SignalAdapterRegistry,
 )
 from axion.schema import EvaluationResult, MetricScore, TestResult
 
@@ -1327,3 +1329,102 @@ class TestIssueExtractorGroupingWithMockLLM:
         summary = await extractor._generate_group_summary(group, mock_llm)
 
         assert summary == 'Test summary response'
+
+
+class TestSignalAdapterRegistry:
+    """Tests for SignalAdapterRegistry."""
+
+    def test_builtin_adapters_registered(self):
+        """Test that built-in adapters are registered."""
+        adapters = SignalAdapterRegistry.list_adapters()
+
+        assert 'faithfulness' in adapters
+        assert 'answer_criteria' in adapters
+        assert 'answer_relevancy' in adapters
+        assert 'answer_completeness' in adapters
+        assert 'contextual_relevancy' in adapters
+        assert 'contextual_recall' in adapters
+
+    def test_get_adapter(self):
+        """Test getting an adapter by name."""
+        adapter = SignalAdapterRegistry.get('faithfulness')
+
+        assert adapter is not None
+        assert isinstance(adapter, MetricSignalAdapter)
+        assert adapter.metric_key == 'faithfulness'
+        assert 'faithfulness_verdict' in adapter.headline_signals
+
+    def test_get_adapter_case_insensitive(self):
+        """Test getting adapter with different cases."""
+        adapter1 = SignalAdapterRegistry.get('Faithfulness')
+        adapter2 = SignalAdapterRegistry.get('FAITHFULNESS')
+        adapter3 = SignalAdapterRegistry.get('faithfulness')
+
+        assert adapter1 is adapter2 is adapter3
+
+    def test_get_adapter_normalizes_spaces_and_hyphens(self):
+        """Test adapter lookup normalizes spaces and hyphens."""
+        adapter1 = SignalAdapterRegistry.get('answer_criteria')
+        adapter2 = SignalAdapterRegistry.get('answer-criteria')
+        adapter3 = SignalAdapterRegistry.get('Answer Criteria')
+
+        assert adapter1 is adapter2 is adapter3
+
+    def test_get_nonexistent_adapter_returns_none(self):
+        """Test getting a non-existent adapter returns None."""
+        adapter = SignalAdapterRegistry.get('nonexistent_metric')
+
+        assert adapter is None
+
+    def test_register_adapter_directly(self):
+        """Test registering an adapter directly."""
+        custom_adapter = MetricSignalAdapter(
+            metric_key='test_custom_metric',
+            headline_signals=['test_signal'],
+            issue_values={'test_signal': [False]},
+            context_signals=['reason'],
+        )
+
+        SignalAdapterRegistry.register_adapter('test_custom_metric', custom_adapter)
+
+        retrieved = SignalAdapterRegistry.get('test_custom_metric')
+        assert retrieved is custom_adapter
+        assert retrieved.metric_key == 'test_custom_metric'
+
+        # Cleanup
+        del SignalAdapterRegistry._registry['test_custom_metric']
+
+    def test_register_adapter_with_decorator(self):
+        """Test registering an adapter using the decorator."""
+
+        @SignalAdapterRegistry.register('test_decorated_metric')
+        def _test_adapter():
+            return MetricSignalAdapter(
+                metric_key='test_decorated_metric',
+                headline_signals=['decorated_signal'],
+                issue_values={'decorated_signal': ['FAIL']},
+                context_signals=['info'],
+            )
+
+        retrieved = SignalAdapterRegistry.get('test_decorated_metric')
+        assert retrieved is not None
+        assert retrieved.metric_key == 'test_decorated_metric'
+        assert 'decorated_signal' in retrieved.headline_signals
+
+        # Cleanup
+        del SignalAdapterRegistry._registry['test_decorated_metric']
+
+    def test_backward_compatibility_metric_adapters_dict(self):
+        """Test that METRIC_ADAPTERS dict still works for backward compatibility."""
+        # METRIC_ADAPTERS should be an alias to the registry
+        assert 'faithfulness' in METRIC_ADAPTERS
+        assert METRIC_ADAPTERS['faithfulness'] is SignalAdapterRegistry.get(
+            'faithfulness'
+        )
+
+    def test_list_adapters(self):
+        """Test listing all registered adapters."""
+        adapters = SignalAdapterRegistry.list_adapters()
+
+        assert isinstance(adapters, list)
+        assert len(adapters) >= 6  # At least the built-in ones
