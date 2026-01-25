@@ -35,7 +35,6 @@ jobs:
           pip install \
             mkdocs \
             mkdocs-material \
-            mike \
             mkdocs-git-authors-plugin \
             mkdocs-git-revision-date-localized-plugin \
             "mkdocstrings[python]"
@@ -45,7 +44,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Deploy docs with mike
-        run: |
-          git fetch origin gh-pages --depth=1 || true
-          mike deploy --push --update-aliases stable latest
+      - name: Deploy docs
+        run: mkdocs gh-deploy --force

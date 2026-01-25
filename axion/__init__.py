@@ -5,6 +5,7 @@ from axion._core.environment import settings
 
 # Core data structures
 from axion.dataset import Dataset, DatasetItem
+from axion.handlers import BaseHandler, LLMHandler
 
 # Metric registry
 from axion.metrics import MetricRegistry, metric_registry
@@ -61,6 +62,9 @@ __all__ = [
     'evaluation_runner',
     'EvaluationRunner',
     'EvaluationConfig',
+    # Handlers
+    'BaseHandler',
+    'LLMHandler',
     # Environment
     'settings',
 ]
