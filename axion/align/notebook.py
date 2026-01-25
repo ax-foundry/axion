@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 from axion.align.ui import AlignEvalRenderer
-from axion.dataset import Dataset, DatasetItem
+from axion.dataset import Dataset
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler

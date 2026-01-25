@@ -24,5 +24,10 @@ class ExactStringMatch(BaseMetric):
         Returns 1.0 if the actual output exactly matches the expected output (after stripping).
         Returns 0.0 otherwise.
         """
-        is_match = item.actual_output == item.expected_output.strip()
+        actual_output = self.get_field(item, 'actual_output')
+        expected_output = self.get_field(item, 'expected_output')
+        if actual_output is None or expected_output is None:
+            return MetricEvaluationResult(score=0.0)
+
+        is_match = actual_output == expected_output.strip()
         return MetricEvaluationResult(score=1.0 if is_match else 0.0)

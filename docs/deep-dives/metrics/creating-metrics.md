@@ -39,6 +39,26 @@ The `@metric` decorator provides declarative configuration:
 )
 ```
 
+### Field Mapping for Nested Inputs
+
+If your dataset stores canonical fields under different names or nested paths, you can
+map them at runtime using `field_mapping`. Mapped fields are used for validation and
+lookup, so required fields still pass when they are sourced from alternate locations.
+
+```python
+from axion.metrics import AnswerCompleteness
+
+metric = AnswerCompleteness(
+    field_mapping={
+        "actual_output": "additional_output.summary",
+        "expected_output": "additional_input.reference",
+    }
+)
+```
+
+Paths use dot notation and traverse attributes or dict keys. For example, the mapping
+above resolves `actual_output` from `item.additional_output["summary"]`.
+
 ## Creating Simple Metrics
 
 ### Basic LLM-Powered Metric

@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, TypeVar
 
 import numpy as np
 from pydantic import BaseModel
+from tqdm import tqdm
 
 from axion._core.logging import get_logger
 from axion._core.tracing.loaders.base import BaseTraceLoader
@@ -276,6 +277,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
         tags: Optional[List[str]] = None,
         name: Optional[str] = None,
         fetch_full_traces: bool = True,
+        show_progress: bool = True,
     ) -> List[Any]:
         """
         Fetch raw traces from Langfuse.
@@ -288,6 +290,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
             fetch_full_traces: If True (default), fetch full trace details for each
                 trace via additional API calls. If False, only return trace summaries
                 (faster but less data). Set to False to avoid rate limits.
+            show_progress: If True, display a tqdm progress bar when fetching full traces.
 
         Returns:
             List of raw Langfuse trace objects (full traces or summaries)
@@ -323,7 +326,11 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
         # Fetch full trace details for each summary
         results = []
-        for trace_summary in traces_page.data:
+        trace_iter = traces_page.data
+        if show_progress:
+            trace_iter = tqdm(trace_iter, desc='Fetching traces', unit='trace')
+
+        for trace_summary in trace_iter:
             try:
                 full_trace = self._execute_with_retry(
                     lambda tid=trace_summary.id: self.client.api.trace.get(tid),

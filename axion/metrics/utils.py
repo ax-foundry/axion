@@ -1,7 +1,35 @@
-from typing import List
+from typing import Any, Dict, List, Optional
 
 from axion.dataset import DatasetItem
 from axion.error import MetricValidationError
+
+
+def _resolve_path(item: DatasetItem, path: str, default: Any = None) -> Any:
+    """
+    Resolve dot-notation path to get nested values from a DatasetItem.
+
+    Args:
+        item: The DatasetItem to resolve the path from
+        path: Dot-notation path (e.g., 'additional_output.summary')
+        default: Value to return if path cannot be resolved
+
+    Returns:
+        The resolved value, or default if not found
+    """
+    parts = path.split('.')
+    current = item
+
+    for part in parts:
+        if isinstance(current, dict):
+            current = current.get(part)
+        elif hasattr(current, part):
+            current = getattr(current, part)
+        else:
+            return default
+        if current is None:
+            return default
+
+    return current
 
 
 def process_retrieved_content(item: DatasetItem) -> List:
@@ -33,6 +61,7 @@ def validate_required_metric_fields(
     item: DatasetItem,
     required_fields: List[str],
     name: str,
+    field_mapping: Optional[Dict[str, str]] = None,
 ) -> None:
     """
     Validate that the input item contains all required fields for this metric.
@@ -41,7 +70,10 @@ def validate_required_metric_fields(
         item: The DatasetItem to validate
         required_fields: Fields required for metric
         name: Metric Name
+        field_mapping: Optional mapping from canonical field names to source paths.
+            If provided, validation will check the mapped paths instead of direct fields.
     """
+    field_mapping = field_mapping or {}
     missing_fields = []
     available_fields = []
 
@@ -61,9 +93,19 @@ def validate_required_metric_fields(
                 available_fields.append(field_name)
 
     for field in required_fields:
-        value = getattr(item, field, None)
+        # Check if field has a mapping
+        source_path = field_mapping.get(field)
+        if source_path:
+            value = _resolve_path(item, source_path)
+        else:
+            value = getattr(item, field, None)
+
         if value is None or (isinstance(value, str) and value.strip() == ''):
-            missing_fields.append(field)
+            # Include source path info in the missing field message
+            if source_path:
+                missing_fields.append(f'{field} (mapped from: {source_path})')
+            else:
+                missing_fields.append(field)
 
     if missing_fields:
         # Create helpful error message
@@ -72,24 +114,32 @@ def validate_required_metric_fields(
         # Show what's missing
         error_msg += f'Missing fields: {", ".join(missing_fields)}\n'
 
-        # Show what's required
-        error_msg += f'Required fields: {", ".join(required_fields)}\n\n'
+        # Show what's required (including mappings)
+        required_info = []
+        for field in required_fields:
+            if field in field_mapping:
+                required_info.append(f'{field} -> {field_mapping[field]}')
+            else:
+                required_info.append(field)
+        error_msg += f'Required fields: {", ".join(required_info)}\n\n'
 
         # Provide helpful suggestions
         error_msg += '💡 Suggestions:\n'
         for missing_field in missing_fields:
-            if missing_field == 'query':
+            # Extract the base field name (without mapping info)
+            base_field = missing_field.split(' (mapped')[0]
+            if base_field == 'query':
                 error_msg += '  • Ensure your dataset includes user questions or search queries\n'
-            elif missing_field == 'actual_output':
+            elif base_field == 'actual_output':
                 error_msg += (
                     '  • Make sure your system responses/outputs are captured\n'
                 )
-            elif missing_field == 'expected_output':
+            elif base_field == 'expected_output':
                 error_msg += '  • Add ground truth answers or expected responses to your dataset\n'
-            elif missing_field == 'retrieved_content':
+            elif base_field == 'retrieved_content':
                 error_msg += '  • Include the retrieved context/documents used to generate responses\n'
             else:
-                error_msg += f"  • Add '{missing_field}' to your dataset\n"
+                error_msg += f"  • Add '{base_field}' to your dataset\n"
 
         # Show example of correct data structure
         error_msg += '\n📋 Example of correct data structure:\n'

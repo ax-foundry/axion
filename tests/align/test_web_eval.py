@@ -1,5 +1,6 @@
 from typing import List
 
+import numpy as np
 import pytest
 
 from axion.align.web_eval import WebAlignEval
@@ -99,3 +100,32 @@ def test_progress_callback_invoked(monkeypatch, dummy_metric):
     evaluator.execute(on_progress=lambda current, total: calls.append((current, total)))
 
     assert calls == [(1, 2), (2, 2)]
+
+
+def test_invalid_scores_are_coerced(monkeypatch, dummy_metric):
+    dataset = _make_dataset()
+    evaluator = WebAlignEval(dataset, dummy_metric)
+
+    async def fake_execute_batch(self, items):
+        return [
+            TestResult(
+                test_case=item,
+                score_results=[
+                    MetricScore(
+                        id=item.id,
+                        name='dummy',
+                        score=np.nan,
+                        explanation=None,
+                    )
+                ],
+            )
+            for item in items
+        ]
+
+    monkeypatch.setattr(
+        'axion.align.base.MetricRunner.execute_batch', fake_execute_batch
+    )
+
+    payload = evaluator.execute(as_dict=True)
+
+    assert [row['llm_score'] for row in payload['results']] == [0, 0]

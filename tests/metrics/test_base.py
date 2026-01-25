@@ -323,3 +323,218 @@ def test_compute_cost_estimate():
 
     metric.compute_cost_estimate([sub_metric1, sub_metric2])
     assert metric.cost_estimate == 17.5  # 10.0 + 5.0 + 2.5
+
+
+# =====================
+# Field Mapping Tests
+# =====================
+
+
+class TestFieldMapping:
+    """Tests for the field mapping functionality."""
+
+    def test_field_mapping_initialization(self):
+        """Tests that field_mapping is properly initialized."""
+        # Without field_mapping
+        metric1 = DummyMetricEx()
+        assert metric1._field_mapping == {}
+
+        # With field_mapping
+        mapping = {'actual_output': 'additional_output.summary'}
+        metric2 = DummyMetricEx(field_mapping=mapping)
+        assert metric2._field_mapping == mapping
+
+    def test_get_field_without_mapping(self):
+        """Tests get_field returns direct attribute when no mapping exists."""
+        item = DatasetItem(
+            query='test query',
+            actual_output='direct output',
+            expected_output='expected',
+        )
+        metric = DummyMetricEx()
+
+        assert metric.get_field(item, 'actual_output') == 'direct output'
+        assert metric.get_field(item, 'query') == 'test query'
+        assert metric.get_field(item, 'expected_output') == 'expected'
+
+    def test_get_field_with_mapping_from_additional_output(self):
+        """Tests get_field resolves mapped paths from additional_output."""
+        item = DatasetItem(
+            query='test query',
+            additional_output={'summary': 'Hello from summary'},
+        )
+        metric = DummyMetricEx(
+            field_mapping={'actual_output': 'additional_output.summary'}
+        )
+
+        assert metric.get_field(item, 'actual_output') == 'Hello from summary'
+        # Non-mapped fields still work normally
+        assert metric.get_field(item, 'query') == 'test query'
+
+    def test_get_field_with_mapping_from_additional_input(self):
+        """Tests get_field resolves mapped paths from additional_input."""
+        item = DatasetItem(
+            query='test query',
+            additional_input={'reference': 'expected reference text'},
+        )
+        metric = DummyMetricEx(
+            field_mapping={'expected_output': 'additional_input.reference'}
+        )
+
+        assert metric.get_field(item, 'expected_output') == 'expected reference text'
+
+    def test_get_field_with_default_when_path_not_found(self):
+        """Tests get_field returns default when mapped path doesn't exist."""
+        item = DatasetItem(query='test query')
+        metric = DummyMetricEx(
+            field_mapping={'actual_output': 'additional_output.nonexistent'}
+        )
+
+        assert metric.get_field(item, 'actual_output') is None
+        assert metric.get_field(item, 'actual_output', 'fallback') == 'fallback'
+
+    def test_get_field_nested_dict_path(self):
+        """Tests get_field resolves deeply nested paths."""
+        item = DatasetItem(
+            query='test',
+            additional_output={'nested': {'deep': {'value': 'found it'}}},
+        )
+        metric = DummyMetricEx(
+            field_mapping={'actual_output': 'additional_output.nested.deep.value'}
+        )
+
+        assert metric.get_field(item, 'actual_output') == 'found it'
+
+    def test_resolve_path_direct_attribute(self):
+        """Tests _resolve_path for direct attributes."""
+        item = DatasetItem(query='test query', actual_output='test output')
+        metric = DummyMetricEx()
+
+        assert metric._resolve_path(item, 'query') == 'test query'
+        assert metric._resolve_path(item, 'actual_output') == 'test output'
+
+    def test_resolve_path_nested_dict(self):
+        """Tests _resolve_path for nested dictionary access."""
+        item = DatasetItem(
+            query='test',
+            additional_output={'key1': {'key2': 'nested value'}},
+        )
+        metric = DummyMetricEx()
+
+        assert (
+            metric._resolve_path(item, 'additional_output.key1.key2') == 'nested value'
+        )
+        assert metric._resolve_path(item, 'additional_output.key1') == {
+            'key2': 'nested value'
+        }
+
+    def test_resolve_path_returns_default_on_missing(self):
+        """Tests _resolve_path returns default when path is missing."""
+        item = DatasetItem(query='test')
+        metric = DummyMetricEx()
+
+        assert metric._resolve_path(item, 'nonexistent') is None
+        assert metric._resolve_path(item, 'nonexistent', 'default') == 'default'
+        assert (
+            metric._resolve_path(item, 'additional_output.missing', 'default')
+            == 'default'
+        )
+
+    def test_get_mapped_fields(self):
+        """Tests get_mapped_fields returns all fields with resolved values."""
+        item = DatasetItem(
+            query='test query',
+            expected_output='expected value',
+            additional_output={'summary': 'mapped actual'},
+        )
+        metric = DummyMetricEx(
+            required_fields=['actual_output', 'expected_output'],
+            optional_fields=['query'],
+            field_mapping={'actual_output': 'additional_output.summary'},
+        )
+
+        fields = metric.get_mapped_fields(item)
+
+        assert fields['actual_output'] == 'mapped actual'
+        assert fields['expected_output'] == 'expected value'
+        assert fields['query'] == 'test query'
+
+    def test_validation_with_field_mapping_success(self):
+        """Tests validation passes when mapped fields exist."""
+        item = DatasetItem(
+            query='test',
+            additional_output={'summary': 'Hello world'},
+            additional_input={'ref': 'Hello'},
+        )
+        metric = DummyMetricEx(
+            required_fields=['actual_output', 'expected_output'],
+            field_mapping={
+                'actual_output': 'additional_output.summary',
+                'expected_output': 'additional_input.ref',
+            },
+        )
+
+        # Should not raise
+        metric._validate_required_metric_fields(item)
+
+    def test_validation_with_field_mapping_failure(self):
+        """Tests validation fails when mapped fields are missing."""
+        item = DatasetItem(
+            query='test',
+            additional_output={},  # No 'summary' key
+        )
+        metric = DummyMetricEx(
+            required_fields=['actual_output'],
+            field_mapping={'actual_output': 'additional_output.summary'},
+        )
+
+        with pytest.raises(MetricValidationError) as exc_info:
+            metric._validate_required_metric_fields(item)
+
+        # Error message should include the mapped path info
+        assert 'actual_output' in str(exc_info.value)
+        assert 'additional_output.summary' in str(exc_info.value)
+
+
+@pytest.mark.asyncio
+async def test_field_mapping_integration():
+    """Integration test: metric execution with field mapping."""
+    item = DatasetItem(
+        query='test',
+        additional_output={'summary': 'Hello world'},
+        additional_input={'ref': 'Hello'},
+    )
+
+    class TestMappingMetric(BaseMetric):
+        config = MetricConfig(
+            key='test_mapping_metric',
+            name='Test Mapping Metric',
+            description='Tests field mapping in execute',
+            required_fields=['actual_output', 'expected_output'],
+            default_threshold=0.5,
+        )
+
+        async def execute(self, item, callbacks=None, **kwargs):
+            actual = self.get_field(item, 'actual_output')
+            expected = self.get_field(item, 'expected_output')
+
+            if actual is None or expected is None:
+                return MetricEvaluationResult(score=0.0)
+
+            is_contained = expected.strip() in actual
+            return MetricEvaluationResult(
+                score=1.0 if is_contained else 0.0,
+                explanation=f'actual={actual}, expected={expected}',
+            )
+
+    metric = TestMappingMetric(
+        field_mapping={
+            'actual_output': 'additional_output.summary',
+            'expected_output': 'additional_input.ref',
+        }
+    )
+
+    result = await metric.execute(item)
+    assert result.score == 1.0  # 'Hello' is in 'Hello world'
+    assert 'Hello world' in result.explanation
+    assert 'Hello' in result.explanation

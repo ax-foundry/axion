@@ -64,6 +64,7 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         metric_name: Optional[str] = None,
         metric_description: Optional[str] = None,
         name: Optional[str] = None,
+        field_mapping: Optional[Dict[str, str]] = None,
         **kwargs: Any,
     ):
         """
@@ -81,6 +82,9 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
             metric_name: Optional name for the metric instance (alias: name)
             metric_description: Optional description for the metric instance
             name: Alias for metric_name (for convenience)
+            field_mapping: Optional mapping from canonical field names to source paths.
+                e.g., {'actual_output': 'additional_output.summary'} will resolve
+                'actual_output' from item.additional_output['summary'].
             **kwargs: Additional keyword arguments passed to the parent LLMHandler (e.g., logger config).
         """
         self._set_llm(llm, model_name, llm_provider)
@@ -91,6 +95,7 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         # Name takes precedence
         self._metric_name = name or metric_name
         self._metric_description = metric_description
+        self._field_mapping = field_mapping or {}
 
         super().__init__(**kwargs)
 
@@ -246,7 +251,94 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         """
         if isinstance(item, dict):
             item = DatasetItem(**item)
-        validate_required_metric_fields(item, self.required_fields, self.name)
+        validate_required_metric_fields(
+            item, self.required_fields, self.name, self._field_mapping
+        )
+
+    def get_field(self, item: DatasetItem, field_name: str, default: Any = None) -> Any:
+        """
+        Resolve a field value from DatasetItem, respecting field_mapping overrides.
+
+        If a mapping is defined for the given field_name, this method resolves the value
+        from the mapped source path. Otherwise, it returns the attribute directly from
+        the item.
+
+        Args:
+            item: The DatasetItem to extract from
+            field_name: Canonical field name (e.g., 'actual_output')
+            default: Value to return if field is not found
+
+        Returns:
+            The resolved field value
+
+        Example:
+            # With field_mapping={'actual_output': 'additional_output.summary'}
+            value = self.get_field(item, 'actual_output')  # Gets item.additional_output['summary']
+        """
+        source_path = self._field_mapping.get(field_name)
+
+        if source_path:
+            return self._resolve_path(item, source_path, default)
+        else:
+            return getattr(item, field_name, default)
+
+    def _resolve_path(self, item: DatasetItem, path: str, default: Any = None) -> Any:
+        """
+        Resolve dot-notation path to get nested values from a DatasetItem.
+
+        Supports both attribute access (for DatasetItem fields) and dictionary key access
+        (for nested dictionaries like additional_output or additional_input).
+
+        Args:
+            item: The DatasetItem to resolve the path from
+            path: Dot-notation path (e.g., 'additional_output.summary')
+            default: Value to return if path cannot be resolved
+
+        Returns:
+            The resolved value, or default if not found
+
+        Example:
+            # item.additional_output = {'summary': 'Hello world'}
+            _resolve_path(item, 'additional_output.summary')  # Returns 'Hello world'
+        """
+        parts = path.split('.')
+        current = item
+
+        for part in parts:
+            if isinstance(current, dict):
+                current = current.get(part)
+            elif hasattr(current, part):
+                current = getattr(current, part)
+            else:
+                return default
+            if current is None:
+                return default
+
+        return current
+
+    def get_mapped_fields(self, item: DatasetItem) -> Dict[str, Any]:
+        """
+        Return all required and optional fields with resolved values.
+
+        This convenience method resolves all configured fields (both required and optional)
+        from the DatasetItem, applying any field mappings.
+
+        Args:
+            item: The DatasetItem to extract fields from
+
+        Returns:
+            Dictionary mapping field names to their resolved values
+
+        Example:
+            # With required_fields=['actual_output', 'expected_output']
+            # and field_mapping={'actual_output': 'additional_output.summary'}
+            fields = metric.get_mapped_fields(item)
+            # Returns {'actual_output': <resolved value>, 'expected_output': <resolved value>}
+        """
+        fields = {}
+        for field in (self.required_fields or []) + (self.optional_fields or []):
+            fields[field] = self.get_field(item, field)
+        return fields
 
     def set_instruction(self, instruction: str):
         """

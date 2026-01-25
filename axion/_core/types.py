@@ -69,6 +69,7 @@ class FieldNames:
     ACTUAL_RANKING = 'actual_ranking'
     EXPECTED_RANKING = 'expected_ranking'
     EXPECTED_REFERENCE = 'expected_reference'
+    ACTUAL_REFERENCE = 'actual_reference'
     DOCUMENT_TEXT = 'document_text'
 
     # Feedback

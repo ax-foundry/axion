@@ -24,9 +24,11 @@ class ContainsMatch(BaseMetric):
         Returns 1.0 if the actual output contains the expected output (after stripping).
         Returns 0.0 otherwise.
         """
-        if item.actual_output is None or item.expected_output is None:
+        actual_output = self.get_field(item, 'actual_output')
+        expected_output = self.get_field(item, 'expected_output')
+        if actual_output is None or expected_output is None:
             return MetricEvaluationResult(score=0.0)
 
-        expected = item.expected_output.strip()
-        is_contained = expected in item.actual_output
+        expected = expected_output.strip()
+        is_contained = expected in actual_output
         return MetricEvaluationResult(score=1.0 if is_contained else 0.0)

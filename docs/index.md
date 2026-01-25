@@ -1,6 +1,6 @@
 # Axion
 
-![header](assets/toolkit_readme.png)
+![header](assets/axion_main_transparent.png)
 
 
 <div style="background: linear-gradient(135deg, #8B9F4F 0%, #6B7A3A 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">

@@ -102,7 +102,9 @@ from axion.dataset import DatasetItem
 MetricClass = load_metric_from_yaml("answer_quality.yaml")
 
 # Create instance
-metric = MetricClass()
+metric = MetricClass(
+    field_mapping={"actual_output": "additional_output.summary"}
+)
 # Evaluate
 data_item = DatasetItem(
     query="What is machine learning?",
@@ -113,6 +115,11 @@ data_item = DatasetItem(
 result = await metric.execute(data_item)
 ```
 
+### Field Mapping for Nested Inputs
+
+YAML metrics don't define field mappings in the YAML file yet, but you can pass
+`field_mapping` when creating the metric instance to map canonical fields to nested
+paths or alternate field names.
 
 ## API Reference
 
