@@ -3329,6 +3329,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.IssueExtractor.summarize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        summarize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.IssueExtractor.summarize_sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        summarize_sync
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#constructor-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3422,6 +3444,17 @@
     <span class="md-ellipsis">
       
         IssueGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issuesummary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IssueSummary
       
     </span>
   </a>
@@ -3745,6 +3778,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.IssueExtractor.summarize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        summarize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.IssueExtractor.summarize_sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        summarize_sync
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#constructor-parameters" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3838,6 +3893,17 @@
     <span class="md-ellipsis">
       
         IssueGroup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issuesummary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IssueSummary
       
     </span>
   </a>
@@ -4476,6 +4542,193 @@ reducing context size while preserving signal quality.</p>
 
 </div>
 
+<div class="doc doc-object doc-function">
+
+
+<h3 id="axion.reporting.issue_extractor.IssueExtractor.summarize" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">summarize</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">LLMRunnable</span><span class="p">,</span> <span class="n">prompt_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IssueSummary</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.IssueExtractor.summarize" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Generate a complete LLM-powered summary of evaluation issues.</p>
+<p>This method sends the issues to an LLM and returns a structured summary
+including failure categories, root causes, and recommendations.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>result</code></b>
+              (<code><span title="axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The IssueExtractionResult to summarize</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>llm</code></b>
+              (<code><span title="axion._core.schema.LLMRunnable">LLMRunnable</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The LLM to use for generating the summary (must have acomplete method)</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>prompt_template</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Custom prompt template. If None, uses DEFAULT_SUMMARY_PROMPT.
+The template should include {overview} and {issue_data} placeholders.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>max_issues</code></b>
+              (<code><span title="int">int</span></code>, default:
+                  <code>100</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Maximum number of issues to include in the prompt (default 100)</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="axion.reporting.issue_extractor.IssueSummary">IssueSummary</span></code>
+          –
+          <div class="doc-md-description">
+            <p>IssueSummary containing the LLM's analysis.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">IssueExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.llm_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMRegistry</span>
+
+<span class="n">extractor</span> <span class="o">=</span> <span class="n">IssueExtractor</span><span class="p">()</span>
+<span class="n">issues</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">extract_from_evaluation</span><span class="p">(</span><span class="n">eval_result</span><span class="p">)</span>
+
+<span class="n">reg</span> <span class="o">=</span> <span class="n">LLMRegistry</span><span class="p">(</span><span class="s1">&#39;anthropic&#39;</span><span class="p">)</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">get_llm</span><span class="p">(</span><span class="s1">&#39;claude-sonnet-4-20250514&#39;</span><span class="p">)</span>
+
+<span class="n">summary</span> <span class="o">=</span> <span class="k">await</span> <span class="n">extractor</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">issues</span><span class="p">,</span> <span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</code></pre></div>
+</details>
+
+<details class="example-with-custom-prompt" open>
+  <summary>Example with custom prompt</summary>
+  <div class="highlight"><pre><span></span><code><span class="n">custom_prompt</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">Analyze these </span><span class="si">{overview}</span><span class="s1"> issues:</span>
+<span class="si">{issue_data}</span>
+
+<span class="s1">Provide a brief summary focused on:</span>
+<span class="s1">1. Top 3 failure patterns</span>
+<span class="s1">2. Quick wins to fix</span>
+<span class="s1">&#39;&#39;&#39;</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="k">await</span> <span class="n">extractor</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">issues</span><span class="p">,</span> <span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">,</span> <span class="n">prompt_template</span><span class="o">=</span><span class="n">custom_prompt</span><span class="p">)</span>
+</code></pre></div>
+</details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="axion.reporting.issue_extractor.IssueExtractor.summarize_sync" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">summarize_sync</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">LLMRunnable</span><span class="p">,</span> <span class="n">prompt_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IssueSummary</span></code>
+
+<a href="#axion.reporting.issue_extractor.IssueExtractor.summarize_sync" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Synchronous version of summarize().</p>
+<p>Generates a complete LLM-powered summary of evaluation issues.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>result</code></b>
+              (<code><span title="axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The IssueExtractionResult to summarize</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>llm</code></b>
+              (<code><span title="axion._core.schema.LLMRunnable">LLMRunnable</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The LLM to use for generating the summary</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>prompt_template</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Custom prompt template. If None, uses DEFAULT_SUMMARY_PROMPT.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>max_issues</code></b>
+              (<code><span title="int">int</span></code>, default:
+                  <code>100</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Maximum number of issues to include in the prompt</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="axion.reporting.issue_extractor.IssueSummary">IssueSummary</span></code>
+          –
+          <div class="doc-md-description">
+            <p>IssueSummary containing the LLM's analysis.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><span class="n">summary</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">summarize_sync</span><span class="p">(</span><span class="n">issues</span><span class="p">,</span> <span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</code></pre></div>
+</details>
+
+    </div>
+
+</div>
+
 
 
   </div>
@@ -4585,6 +4838,49 @@ reducing context size while preserving signal quality.</p>
 </code></pre></div>
 <p>Async version of <code>to_grouped_prompt_text</code>. Use this when working with async LLMs.</p>
 <hr />
+<h4 id="summarize">summarize<a class="headerlink" href="#summarize" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">summarize</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span>
+    <span class="n">llm</span><span class="p">:</span> <span class="n">LLMRunnable</span><span class="p">,</span>
+    <span class="n">prompt_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IssueSummary</span>
+</code></pre></div>
+<p>Generate a complete LLM-powered summary of evaluation issues.</p>
+<p><strong>Parameters:</strong>
+- <code>result</code>: The IssueExtractionResult to summarize
+- <code>llm</code>: The LLM to use for generating the summary (must have <code>acomplete</code> method)
+- <code>prompt_template</code>: Custom prompt template. If None, uses <code>DEFAULT_SUMMARY_PROMPT</code>. Template must include <code>{overview}</code> and <code>{issue_data}</code> placeholders.
+- <code>max_issues</code>: Maximum number of issues to include in the prompt (default 100)</p>
+<p><strong>Returns:</strong> <code>IssueSummary</code> containing the LLM's analysis</p>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">IssueExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.llm_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMRegistry</span>
+
+<span class="n">extractor</span> <span class="o">=</span> <span class="n">IssueExtractor</span><span class="p">()</span>
+<span class="n">issues</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">extract_from_evaluation</span><span class="p">(</span><span class="n">eval_result</span><span class="p">)</span>
+
+<span class="n">reg</span> <span class="o">=</span> <span class="n">LLMRegistry</span><span class="p">(</span><span class="s1">&#39;anthropic&#39;</span><span class="p">)</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">get_llm</span><span class="p">(</span><span class="s1">&#39;claude-sonnet-4-20250514&#39;</span><span class="p">)</span>
+
+<span class="n">summary</span> <span class="o">=</span> <span class="k">await</span> <span class="n">extractor</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">issues</span><span class="p">,</span> <span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</code></pre></div></p>
+<hr />
+<h4 id="summarize_sync">summarize_sync<a class="headerlink" href="#summarize_sync" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">summarize_sync</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span>
+    <span class="n">llm</span><span class="p">:</span> <span class="n">LLMRunnable</span><span class="p">,</span>
+    <span class="n">prompt_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IssueSummary</span>
+</code></pre></div>
+<p>Synchronous version of <code>summarize()</code>. Use this in non-async contexts.</p>
+<p><strong>Parameters:</strong> Same as <code>summarize()</code></p>
+<p><strong>Returns:</strong> <code>IssueSummary</code> containing the LLM's analysis</p>
+<hr />
 <h2 id="signaladapterregistry">SignalAdapterRegistry<a class="headerlink" href="#signaladapterregistry" title="Permanent link">&para;</a></h2>
 <p>Registry for metric signal adapters. Provides centralized registration and lookup of adapters.</p>
 <div class="admonition tip">
@@ -4682,6 +4978,16 @@ reducing context size while preserving signal quality.</p>
     <span class="n">representative_issues</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedIssue</span><span class="p">]</span>  <span class="c1"># Sample issues with context</span>
     <span class="n">affected_test_cases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>            <span class="c1"># List of affected test case IDs</span>
     <span class="n">llm_summary</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                <span class="c1"># Optional LLM-generated summary</span>
+</code></pre></div>
+<hr />
+<h3 id="issuesummary">IssueSummary<a class="headerlink" href="#issuesummary" title="Permanent link">&para;</a></h3>
+<p>LLM-generated summary of evaluation issues, returned by <code>summarize()</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IssueSummary</span><span class="p">:</span>
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>                    <span class="c1"># The full LLM-generated analysis</span>
+    <span class="n">prompt_used</span><span class="p">:</span> <span class="nb">str</span>             <span class="c1"># The prompt that was sent to the LLM</span>
+    <span class="n">issues_analyzed</span><span class="p">:</span> <span class="nb">int</span>         <span class="c1"># Number of issues included in analysis</span>
+    <span class="n">evaluation_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>  <span class="c1"># Name of the evaluation</span>
 </code></pre></div>
 <hr />
 <h3 id="llmsummaryinput">LLMSummaryInput<a class="headerlink" href="#llmsummaryinput" title="Permanent link">&para;</a></h3>
@@ -4858,7 +5164,7 @@ reducing context size while preserving signal quality.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 25, 2026 18:00:16 UTC">January 25, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 25, 2026 19:06:22 UTC">January 25, 2026</span>
   </span>
 
     
