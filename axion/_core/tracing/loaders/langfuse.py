@@ -348,6 +348,39 @@ class LangfuseTraceLoader(BaseTraceLoader):
         logger.info(f'Successfully loaded {len(results)} full traces')
         return results
 
+    def fetch_trace(self, trace_id: str) -> Optional[Any]:
+        """
+        Fetch a single trace by trace_id.
+
+        Args:
+            trace_id: Langfuse trace ID to fetch
+
+        Returns:
+            The full Langfuse trace object, or None if not found/failed.
+        """
+        if not self._client_initialized:
+            logger.error('Langfuse client not initialized')
+            return None
+
+        if not trace_id:
+            logger.warning('fetch_trace called with empty trace_id')
+            return None
+
+        try:
+            trace = self._execute_with_retry(
+                lambda: self.client.api.trace.get(trace_id),
+                description=f'fetch trace {trace_id}',
+            )
+
+            # Pacing to avoid rate limits
+            if self.request_pacing > 0:
+                time.sleep(self.request_pacing)
+
+            return trace
+        except Exception as e:
+            logger.warning(f'Failed to fetch trace {trace_id}: {e}')
+            return None
+
     def push_scores_to_langfuse(
         self,
         evaluation_result: 'EvaluationResult',
