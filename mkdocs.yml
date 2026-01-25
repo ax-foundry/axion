@@ -12,6 +12,7 @@ nav:
     - Working with Datasets: guides/datasets.md
     - Metrics & Evaluation: guides/metrics.md
     - Running Evaluations: guides/evaluation.md
+    - Issue Extraction & Analysis: guides/issue-extraction.md
     - AlignEval: guides/aligneval.md
     - Langfuse:
       - Overview: guides/langfuse/overview.md
@@ -78,6 +79,7 @@ nav:
     - Metrics: reference/metrics.md
     - Runners: reference/runners.md
     - Eval Tree: reference/eval-tree.md
+    - Issue Extractor: reference/issue-extractor.md
     - Synthetic: reference/synthetic.md
     - Search: reference/search.md
     - LLM Registry: reference/llm-registry.md
