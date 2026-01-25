@@ -4164,22 +4164,41 @@ Analyze the quality issues found in this evaluation. Provide:
 <span class="c1">#  &#39;factual_accuracy&#39;, &#39;pii_leakage&#39;, &#39;tool_correctness&#39;, ...]</span>
 </code></pre></div>
 <h3 id="register-a-custom-adapter">Register a Custom Adapter<a class="headerlink" href="#register-a-custom-adapter" title="Permanent link">&para;</a></h3>
-<h4 id="using-the-decorator">Using the Decorator<a class="headerlink" href="#using-the-decorator" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">SignalAdapterRegistry</span><span class="p">,</span> <span class="n">MetricSignalAdapter</span>
+<p><strong>Best Practice:</strong> Define the adapter in the same file as your custom metric. This keeps the signal schema and adapter in sync.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># my_metrics/quality_checker.py</span>
 
-<span class="nd">@SignalAdapterRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;my_custom_metric&#39;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">my_adapter</span><span class="p">():</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseMetric</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">SignalAdapterRegistry</span><span class="p">,</span> <span class="n">MetricSignalAdapter</span>
+
+<span class="c1"># 1. Define your metric</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QualityChecker</span><span class="p">(</span><span class="n">BaseMetric</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Quality Checker&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">a_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="c1"># Your scoring logic...</span>
+        <span class="k">return</span> <span class="n">MetricScore</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">,</span>
+            <span class="n">signals</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;quality_verdict&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">verdict</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">verdict</span> <span class="o">==</span> <span class="s1">&#39;PASS&#39;</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">},</span>
+                <span class="s1">&#39;issues_found&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">issues</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+                <span class="s1">&#39;reasoning&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">reason</span><span class="p">},</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+<span class="c1"># 2. Register adapter alongside the metric</span>
+<span class="nd">@SignalAdapterRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;quality_checker&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_quality_checker_adapter</span><span class="p">():</span>
     <span class="k">return</span> <span class="n">MetricSignalAdapter</span><span class="p">(</span>
-        <span class="n">metric_key</span><span class="o">=</span><span class="s1">&#39;my_custom_metric&#39;</span><span class="p">,</span>
-        <span class="n">headline_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;passed&#39;</span><span class="p">,</span> <span class="s1">&#39;quality_score&#39;</span><span class="p">],</span>
-        <span class="n">issue_values</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;passed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">],</span>
-            <span class="s1">&#39;quality_score&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;FAIL&#39;</span><span class="p">,</span> <span class="s1">&#39;LOW&#39;</span><span class="p">]</span>
-        <span class="p">},</span>
-        <span class="n">context_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reason&#39;</span><span class="p">,</span> <span class="s1">&#39;details&#39;</span><span class="p">,</span> <span class="s1">&#39;suggestions&#39;</span><span class="p">]</span>
+        <span class="n">metric_key</span><span class="o">=</span><span class="s1">&#39;quality_checker&#39;</span><span class="p">,</span>
+        <span class="n">headline_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;quality_verdict&#39;</span><span class="p">],</span>
+        <span class="n">issue_values</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;quality_verdict&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;FAIL&#39;</span><span class="p">,</span> <span class="s1">&#39;PARTIAL&#39;</span><span class="p">]},</span>
+        <span class="n">context_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;issues_found&#39;</span><span class="p">,</span> <span class="s1">&#39;reasoning&#39;</span><span class="p">]</span>
     <span class="p">)</span>
 </code></pre></div>
-<h4 id="using-direct-registration">Using Direct Registration<a class="headerlink" href="#using-direct-registration" title="Permanent link">&para;</a></h4>
+<p>The adapter registers automatically when your metric module is imported.</p>
+<h4 id="alternative-direct-registration">Alternative: Direct Registration<a class="headerlink" href="#alternative-direct-registration" title="Permanent link">&para;</a></h4>
+<p>For quick registration without a decorator:</p>
 <div class="highlight"><pre><span></span><code><span class="n">SignalAdapterRegistry</span><span class="o">.</span><span class="n">register_adapter</span><span class="p">(</span>
     <span class="s1">&#39;another_metric&#39;</span><span class="p">,</span>
     <span class="n">MetricSignalAdapter</span><span class="p">(</span>
@@ -4377,7 +4396,7 @@ Analyze the quality issues found in this evaluation. Provide:
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 25, 2026 17:42:22 UTC">January 25, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 25, 2026 18:00:16 UTC">January 25, 2026</span>
   </span>
 
     
