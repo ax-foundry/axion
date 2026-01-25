@@ -5,6 +5,7 @@ from axion._core.environment import settings
 
 # Core data structures
 from axion.dataset import Dataset, DatasetItem
+from axion.handlers import BaseHandler, LLMHandler
 
 # Metric registry
 from axion.metrics import MetricRegistry, metric_registry
@@ -12,7 +13,6 @@ from axion.metrics import MetricRegistry, metric_registry
 # Evaluation runner
 from axion.runners import EvaluationConfig, EvaluationRunner, evaluation_runner
 from axion.schema import ErrorConfig, EvaluationResult, MetricScore, TestResult
-from axion.handlers import BaseHandler, LLMHandler
 
 
 def init(

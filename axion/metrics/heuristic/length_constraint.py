@@ -1,11 +1,13 @@
 import re
 from typing import List, Optional, Tuple
+
 from pydantic import Field
 
+from axion._core.schema import RichBaseModel
 from axion.dataset import DatasetItem
 from axion.metrics.base import BaseMetric, MetricEvaluationResult, metric
 from axion.metrics.schema import SignalDescriptor
-from axion._core.schema import RichBaseModel
+
 
 class LengthResult(RichBaseModel):
     char_count: int = Field(...)
@@ -13,6 +15,7 @@ class LengthResult(RichBaseModel):
     sentence_count: int = Field(...)
     sentence_range: Optional[Tuple[Optional[int], Optional[int]]] = Field(None)
     passed: bool = Field(...)
+
 
 @metric(
     name='Length Constraint',
@@ -28,7 +31,7 @@ class LengthConstraint(BaseMetric):
         self,
         max_chars: Optional[int] = 2800,
         sentence_range: Optional[Tuple[Optional[int], Optional[int]]] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         Args:
@@ -43,7 +46,7 @@ class LengthConstraint(BaseMetric):
         self.sentence_range = sentence_range
 
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
-        text = self.get_field(item, 'actual_output', default="") or ""
+        text = self.get_field(item, 'actual_output', default='') or ''
         text = str(text)
 
         # Check Characters
@@ -58,7 +61,7 @@ class LengthConstraint(BaseMetric):
         sentence_count = len(sentences)
 
         sentence_passed = True
-        range_desc = ""
+        range_desc = ''
 
         if self.sentence_range:
             min_s, max_s = self.sentence_range
@@ -68,23 +71,23 @@ class LengthConstraint(BaseMetric):
                 sentence_passed = False
 
             # Format range string for explanation (e.g., "3-5" or "<=5")
-            min_str = str(min_s) if min_s is not None else "0"
-            max_str = str(max_s) if max_s is not None else "∞"
-            range_desc = f"(Range: {min_str}-{max_str})"
+            min_str = str(min_s) if min_s is not None else '0'
+            max_str = str(max_s) if max_s is not None else '∞'
+            range_desc = f'(Range: {min_str}-{max_str})'
 
         passed = char_passed and sentence_passed
         score = 1.0 if passed else 0.0
 
         fail_reasons = []
         if not char_passed:
-            fail_reasons.append(f"Exceeded chars ({char_count}/{self.max_chars})")
+            fail_reasons.append(f'Exceeded chars ({char_count}/{self.max_chars})')
         if not sentence_passed:
-            fail_reasons.append(f"Sentence count {sentence_count} outside {range_desc}")
+            fail_reasons.append(f'Sentence count {sentence_count} outside {range_desc}')
 
         if passed:
-            explanation = f"PASSED. Chars: {char_count}, Sentences: {sentence_count}."
+            explanation = f'PASSED. Chars: {char_count}, Sentences: {sentence_count}.'
         else:
-            explanation = "FAILED. " + ", ".join(fail_reasons) + "."
+            explanation = 'FAILED. ' + ', '.join(fail_reasons) + '.'
 
         return MetricEvaluationResult(
             score=score,
@@ -94,35 +97,40 @@ class LengthConstraint(BaseMetric):
                 max_chars_allowed=self.max_chars,
                 sentence_count=sentence_count,
                 sentence_range=self.sentence_range,
-                passed=passed
-            )
+                passed=passed,
+            ),
         )
 
     def get_signals(self, result: LengthResult) -> List[SignalDescriptor]:
-        char_desc = f"Used {result.char_count} chars."
+        char_desc = f'Used {result.char_count} chars.'
         if result.max_chars_allowed is not None:
-             char_desc = f"Used {result.char_count} of {result.max_chars_allowed} characters."
+            char_desc = (
+                f'Used {result.char_count} of {result.max_chars_allowed} characters.'
+            )
 
         signals = [
             SignalDescriptor(
-                name="char_count",
+                name='char_count',
                 description=char_desc,
                 extractor=lambda r: r.char_count,
-                headline_display=True
+                headline_display=True,
             ),
             SignalDescriptor(
-                name="status",
-                description="Pass/Fail",
-                extractor=lambda r: "Pass" if r.passed else "Fail"
-            )
+                name='status',
+                description='Pass/Fail',
+                extractor=lambda r: 'Pass' if r.passed else 'Fail',
+            ),
         ]
 
         if result.sentence_range:
-            signals.insert(1, SignalDescriptor(
-                name="sentence_count",
-                description=f"Count: {result.sentence_count}. Criteria: {result.sentence_range}",
-                extractor=lambda r: r.sentence_count,
-                headline_display=True
-            ))
+            signals.insert(
+                1,
+                SignalDescriptor(
+                    name='sentence_count',
+                    description=f'Count: {result.sentence_count}. Criteria: {result.sentence_range}',
+                    extractor=lambda r: r.sentence_count,
+                    headline_display=True,
+                ),
+            )
 
         return signals

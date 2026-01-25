@@ -406,7 +406,12 @@ def _citation_relevancy_adapter():
         metric_key='citation_relevancy',
         headline_signals=['relevance_verdict', 'relevance_score'],
         issue_values={'relevance_verdict': [False]},
-        context_signals=['citation_text', 'relevance_reason', 'turn_index', 'original_query'],
+        context_signals=[
+            'citation_text',
+            'relevance_reason',
+            'turn_index',
+            'original_query',
+        ],
     )
 
 
@@ -530,7 +535,11 @@ def _latency_adapter():
         metric_key='latency',
         headline_signals=['latency_score', 'latency_ms'],
         issue_values={},  # Score-based, threshold determines failure
-        context_signals=['performance_classification', 'threshold', 'normalization_method'],
+        context_signals=[
+            'performance_classification',
+            'threshold',
+            'normalization_method',
+        ],
     )
 
 
