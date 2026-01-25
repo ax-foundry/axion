@@ -1,0 +1,5290 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A modular evaluation framework for AI agents">
+      
+      
+      
+      
+        <link rel="prev" href="../metric-runner/">
+      
+      
+        <link rel="next" href="../api-runner/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/ax_icon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Evaluation Runner - Axion</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"Fira Code"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#evaluation-runner" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+        <aside class="md-banner">
+          <div class="md-banner__inner md-grid md-typeset">
+            
+            
+<div class="announcement-banner" id="announcement-banner">
+  <span>Axion is beta. Under active development!</span>
+  <a href="https://github.com/ax-foundry/axion">View on GitHub &rarr;</a>
+  <button class="close-btn" onclick="dismissBanner()" aria-label="Dismiss">&times;</button>
+</div>
+<script>
+  // Check if banner was previously dismissed
+  if (localStorage.getItem('axion-banner-dismissed') === 'true') {
+    document.getElementById('announcement-banner').classList.add('hidden');
+  }
+
+  function dismissBanner() {
+    document.getElementById('announcement-banner').classList.add('hidden');
+    localStorage.setItem('axion-banner-dismissed', 'true');
+  }
+</script>
+
+          </div>
+          
+        </aside>
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Axion" class="md-header__button md-logo" aria-label="Axion" data-md-component="logo">
+      
+  <img src="../../../assets/ax_icon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Axion
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Evaluation Runner
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ax-foundry/axion" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../getting-started/installation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../guides/hierarchical-scoring/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Guides
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../metric-registry/composite/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Metric Registry
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../metrics/creating-metrics/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Deep Dives
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../reference/dataset/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Axion" class="md-nav__button md-logo" aria-label="Axion" data-md-component="logo">
+      
+  <img src="../../../assets/ax_icon.png" alt="logo">
+
+    </a>
+    Axion
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ax-foundry/axion" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../getting-started/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../agent_playbook/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Evaluation Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/hierarchical-scoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hierarchical Scoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/datasets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Working with Datasets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics & Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running Evaluations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/issue-extraction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Issue Extraction & Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/aligneval/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AlignEval
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Langfuse
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Langfuse
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/langfuse/overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/langfuse/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/langfuse/tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tracing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/langfuse/publishing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Publishing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/llm-providers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Providers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/synthetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search Integrations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metric Registry
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Metric Registry
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../metric-registry/composite/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Composite
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Composite
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/faithfulness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Faithfulness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/answer_relevancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Answer Relevancy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/factual_accuracy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Factual Accuracy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/answer_completeness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Answer Completeness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/answer_criteria/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Answer Criteria
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/tone_style_consistency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tone & Style Consistency
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/citation_relevancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citation Relevancy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/pii_leakage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PII Leakage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/contextual_relevancy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Relevancy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/contextual_recall/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Recall
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/contextual_precision/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Precision
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/contextual_ranking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Ranking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/contextual_sufficiency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Sufficiency
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/composite/contextual_utilization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contextual Utilization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../metric-registry/heuristic/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Heuristic
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Heuristic
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/heuristic/exact_string_match/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Exact String Match
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/heuristic/contains_match/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contains Match
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/heuristic/levenshtein_ratio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Levenshtein Ratio
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sentence BLEU
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/heuristic/pii_leakage_heuristic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PII Leakage (Heuristic)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/heuristic/citation_presence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citation Presence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/heuristic/latency/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Latency
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Retrieval Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../metric-registry/conversational/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Conversational
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Conversational
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../metric-registry/tool/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tool
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../metric-registry/tool/tool_correctness/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Correctness
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dives
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deep Dives
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Metrics
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metrics/creating-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Creating Custom Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metrics/yaml-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    YAML-Based Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metrics/composite-metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Composite Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runners
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Runners
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metric-runner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metric Runner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation Runner
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation Runner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-metric-runners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Metric Runners
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-evaluation-no-task" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Evaluation (No Task)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#end-to-end-evaluation-with-task" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        End-to-End Evaluation (With Task)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-configuration-with-multiple-libraries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Configuration with Multiple Libraries
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simple-task-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simple Task Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-remapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Remapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#response-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Response Format
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caching-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caching Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation-tracking-and-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation Tracking and Metadata
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracing-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracing Integration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tracing Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#trace-granularity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace Granularity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trace-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace Names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#captured-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Captured Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trace-hierarchy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace Hierarchy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enabling-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enabling Tracing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.runners.evaluate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evaluate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="evaluate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axion.runners.evaluate.EvaluationConfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EvaluationConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.runners.evaluate.EvaluationRunner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EvaluationRunner
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.runners.evaluate.evaluation_runner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evaluation_runner
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api-runner/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Runner
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Synthetic
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../synthetic/document-qa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Document QA Generation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Search
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../search/google/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Google Search
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../search/tavily/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tavily Search
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../search/you/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    You.com Search
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Internals
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Internals
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/tracing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tracing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/environment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Environment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../internals/logging/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Logging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/dataset/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dataset
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/schema/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Schema
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/metrics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/runners/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Runners
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/eval-tree/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Eval Tree
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/issue-extractor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Issue Extractor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/synthetic/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/search/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Search
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/llm-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/tracer-registry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tracer Registry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-metric-runners" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Available Metric Runners
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Patterns
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-evaluation-no-task" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Evaluation (No Task)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#end-to-end-evaluation-with-task" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        End-to-End Evaluation (With Task)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#advanced-configuration-with-multiple-libraries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Configuration with Multiple Libraries
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#task-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Task Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Task Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simple-task-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simple Task Function
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-remapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Remapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#response-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Response Format
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Advanced Features
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caching-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caching Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluation-tracking-and-metadata" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation Tracking and Metadata
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tracing-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tracing Integration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tracing Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#trace-granularity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace Granularity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trace-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace Names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#captured-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Captured Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trace-hierarchy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace Hierarchy
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enabling-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enabling Tracing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.runners.evaluate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evaluate
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="evaluate">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axion.runners.evaluate.EvaluationConfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EvaluationConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.runners.evaluate.EvaluationRunner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EvaluationRunner
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.runners.evaluate.evaluation_runner" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        evaluation_runner
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="evaluation-runner">Evaluation Runner<a class="headerlink" href="#evaluation-runner" title="Permanent link">&para;</a></h1>
+<p>The Evaluation Runner is an orchestration system for running end-to-end evaluation experiments. It  integrates task execution (model inference) with metric evaluation, providing a unified workflow for evaluating AI systems. The runner supports advanced features including caching, error handling, key remapping, custom thresholds, and detailed tracing.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The Evaluation Runner combines three key phases into a single unified workflow:</p>
+<ol>
+<li><strong>Task Execution</strong> - Optional custom function to generate model predictions/outputs</li>
+<li><strong>Metric Evaluation</strong> - Automated scoring using multiple evaluation frameworks</li>
+<li><strong>Result Aggregation</strong> -  Result collection with metadata and summaries</li>
+</ol>
+<h2 id="available-metric-runners">Available Metric Runners<a class="headerlink" href="#available-metric-runners" title="Permanent link">&para;</a></h2>
+<p>To explore all inline usage examples and documentation for the evaluation runner and the configuration options, use the built-in discovery method:</p>
+<div class="highlight"><span class="filename">View Available Runners</span><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">EvaluationRunner</span>
+
+<span class="c1"># Display documentation and usage examples</span>
+<span class="n">EvaluationRunner</span><span class="o">.</span><span class="n">display</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<p>The Evaluation Runner accepts configuration through the <code>EvaluationConfig</code> object or direct function parameters:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span><span class="p">,</span> <span class="n">EvaluationConfig</span><span class="p">,</span> <span class="n">ErrorConfig</span><span class="p">,</span> <span class="n">CacheConfig</span><span class="p">,</span> <span class="n">EvaluationRunner</span>
+
+<span class="c1"># Method 1: Direct function call</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;My Experiment&quot;</span><span class="p">,</span>
+    <span class="n">task</span><span class="o">=</span><span class="n">my_task_function</span><span class="p">,</span>
+    <span class="n">max_concurrent</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">thresholds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;question_answer_relevance&quot;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Method 2: Configuration object</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">EvaluationConfig</span><span class="p">(</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Advanced Experiment&quot;</span><span class="p">,</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+    <span class="n">task</span><span class="o">=</span><span class="n">generation_task</span><span class="p">,</span>
+    <span class="n">scoring_key_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="s1">&#39;response&#39;</span><span class="p">},</span>
+    <span class="n">evaluation_description</span><span class="o">=</span><span class="s2">&quot;Evaluating new model version&quot;</span><span class="p">,</span>
+    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;model_version&quot;</span><span class="p">:</span> <span class="s2">&quot;v2.1&quot;</span><span class="p">},</span>
+    <span class="n">cache_config</span><span class="o">=</span><span class="n">CacheConfig</span><span class="p">(</span><span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">max_concurrent</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">show_progress</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">EvaluationRunner</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">runner</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>  <span class="c1"># Async execution</span>
+<span class="c1"># To Pandas DataFrame</span>
+<span class="n">results</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+<span class="c1"># Create Scorecard</span>
+<span class="n">results</span><span class="o">.</span><span class="n">to_scorecard</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="usage-patterns">Usage Patterns<a class="headerlink" href="#usage-patterns" title="Permanent link">&para;</a></h2>
+<h3 id="basic-evaluation-no-task">Basic Evaluation (No Task)<a class="headerlink" href="#basic-evaluation-no-task" title="Permanent link">&para;</a></h3>
+<p>For datasets that already contain model outputs:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+
+<span class="c1"># Prepare dataset with existing outputs</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">DatasetItem</span><span class="p">(</span>
+        <span class="n">query</span><span class="o">=</span><span class="s2">&quot;How do I reset my password?&quot;</span><span class="p">,</span>
+        <span class="n">actual_output</span><span class="o">=</span><span class="s2">&quot;To reset your password, click &#39;Forgot Password&#39; on the login page...&quot;</span><span class="p">,</span>
+        <span class="n">expected_output</span><span class="o">=</span><span class="s2">&quot;Navigate to login, click &#39;Forgot Password&#39;, and follow the reset link.&quot;</span>
+    <span class="p">),</span>
+    <span class="c1"># More items...</span>
+<span class="p">]</span>
+
+<span class="c1"># Run evaluation only</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Basic Evaluation&quot;</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluation Name: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">evaluation_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Success rate: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">success_rate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="end-to-end-evaluation-with-task">End-to-End Evaluation (With Task)<a class="headerlink" href="#end-to-end-evaluation-with-task" title="Permanent link">&para;</a></h3>
+<p>For generating predictions and evaluating them in one workflow:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Task Setup Usage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span><span class="p">,</span> <span class="n">EvaluationConfig</span><span class="p">,</span> <span class="n">CacheConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span><span class="p">,</span> <span class="n">Latency</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+
+
+<span class="n">data_item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;How do I reset my password?&quot;</span><span class="p">,</span>
+    <span class="n">expected_output</span> <span class="o">=</span> <span class="s2">&quot;Navigate to login, click &#39;Forgot Password&#39;, and follow the reset link.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Task Option 1 - Task returns python dictionary (can be async or sync)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dictionary_task_output</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="s2">&quot;To reset your password, click &#39;Forgot Password&#39; on the login page.&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;latency&#39;</span><span class="p">:</span> <span class="mf">1.3</span>
+    <span class="p">}</span>
+
+<span class="c1"># Task Option 2 - Task returns pydantic BaseModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Output</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">response</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">latency</span><span class="p">:</span> <span class="nb">float</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pydantic_task_output</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Output</span><span class="p">(</span>
+        <span class="n">response</span><span class="o">=</span><span class="s2">&quot;To reset your password, click &#39;Forgot Password&#39; on the login page.&quot;</span><span class="p">,</span>
+        <span class="n">latency</span><span class="o">=</span><span class="mf">1.3</span>
+<span class="p">)</span>
+
+<span class="c1"># Task Option 3 - Task can be API runners</span>
+<span class="n">api_runner</span> <span class="o">=</span> <span class="n">ExampleAPIRunner</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;...&#39;</span><span class="p">})</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="p">[</span><span class="n">data_item</span><span class="p">],</span>
+    <span class="n">task</span><span class="o">=</span><span class="n">dictionary_task_output</span><span class="p">,</span> <span class="c1"># or pydantic_task_output, api_runner</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">AnswerRelevancy</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o&#39;</span><span class="p">),</span>
+        <span class="n">Latency</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">1.5</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">max_concurrent</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">scoring_key_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="s1">&#39;response&#39;</span><span class="p">},</span> <span class="c1"># Required if your `task` returns a different schema</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">&#39;Custom Setup&#39;</span><span class="p">,</span>
+    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;model_version&quot;</span><span class="p">:</span> <span class="s2">&quot;v2.1&quot;</span><span class="p">,</span> <span class="s2">&quot;data_slice&quot;</span><span class="p">:</span> <span class="s2">&quot;test_set&quot;</span><span class="p">},</span>
+    <span class="n">cache_config</span><span class="o">=</span><span class="n">CacheConfig</span><span class="p">(</span><span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="c1"># To Pandas DataFrame</span>
+<span class="n">results</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+<span class="c1"># Create Scorecard</span>
+<span class="n">results</span><span class="o">.</span><span class="n">to_scorecard</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="advanced-configuration-with-multiple-libraries">Advanced Configuration with Multiple Libraries<a class="headerlink" href="#advanced-configuration-with-multiple-libraries" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Advanced configuration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">EvaluationRunner</span><span class="p">,</span>
+    <span class="n">EvaluationConfig</span><span class="p">,</span>
+    <span class="n">CacheConfig</span><span class="p">,</span>
+    <span class="n">ErrorConfig</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerCompleteness</span><span class="p">,</span> <span class="n">Latency</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.integrations.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">LiteLLMRagas</span><span class="p">,</span> <span class="n">LiteLLMDeepEval</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ragas.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Faithfulness</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">deepeval.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancyMetric</span>
+
+<span class="c1"># Create evaluation dataset</span>
+<span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;01&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s2">&quot;How do I reset my password?&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;expected_output&#39;</span><span class="p">:</span> <span class="s2">&quot;Navigate to login, click &#39;Forgot Password&#39;, and follow the reset link.&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;02&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s2">&quot;How do I update my billing information?&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;expected_output&#39;</span><span class="p">:</span> <span class="s2">&quot;Go to Account Settings, select Billing, and update your payment method.&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">])</span>
+
+<span class="c1"># Configure LLM models for third-party metrics</span>
+<span class="n">deepeval_model</span> <span class="o">=</span> <span class="n">LiteLLMDeepEval</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s1">&#39;gpt-4&#39;</span><span class="p">)</span> <span class="c1"># Optional</span>
+<span class="n">ragas_model</span> <span class="o">=</span> <span class="n">LiteLLMRagas</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s1">&#39;gpt-4&#39;</span><span class="p">)</span> <span class="c1"># Optional</span>
+
+<span class="c1"># Configure the task to evaluate</span>
+<span class="n">api_runner</span> <span class="o">=</span> <span class="n">ExampleAPIRunner</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="s1">&#39;...&#39;</span><span class="p">)</span>
+
+<span class="c1"># Define evaluation metrics</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Faithfulness</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">ragas_model</span><span class="p">),</span>
+    <span class="n">AnswerCompleteness</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4&#39;</span><span class="p">),</span>
+    <span class="n">AnswerRelevancyMetric</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">deepeval_model</span><span class="p">),</span>
+    <span class="n">Latency</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="c1"># Configure the evaluation</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">EvaluationConfig</span><span class="p">(</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Advanced Configuration Eval&quot;</span><span class="p">,</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataframe</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+    <span class="n">task</span><span class="o">=</span><span class="n">api_runner</span><span class="p">,</span>
+    <span class="n">max_concurrent</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">cache_config</span><span class="o">=</span><span class="n">CacheConfig</span><span class="p">(</span><span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_type</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">),</span>
+    <span class="n">error_config</span><span class="o">=</span><span class="n">ErrorConfig</span><span class="p">(</span><span class="n">skip_on_missing_params</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">thresholds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">&quot;answer_completeness&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">},</span>
+    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;model_version&quot;</span><span class="p">:</span> <span class="s2">&quot;v2.1&quot;</span><span class="p">},</span>
+    <span class="n">dataset_name</span><span class="o">=</span><span class="s1">&#39;Advanced Configuration Dataset&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Run the evaluation</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">EvaluationRunner</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">runner</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>  <span class="c1"># For async execution</span>
+<span class="c1"># To Pandas DataFrame</span>
+<span class="n">results</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+<span class="c1"># Create Scorecard</span>
+<span class="n">results</span><span class="o">.</span><span class="n">to_scorecard</span><span class="p">()</span>
+</code></pre></div>
+<h2 id="task-functions">Task Functions<a class="headerlink" href="#task-functions" title="Permanent link">&para;</a></h2>
+<p>Task functions are custom callables that generate model outputs for evaluation. They must accept a <code>DatasetItem</code> and return output data as either a Pydantic <code>BaseModel</code> or python <code>Dict</code>. Supports both async and sync functions.</p>
+<h3 id="simple-task-function">Simple Task Function<a class="headerlink" href="#simple-task-function" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">simple_task</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple synchronous task function.&quot;&quot;&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">your_model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
+        <span class="s1">&#39;generation_time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="p">}</span>
+</code></pre></div>
+<h2 id="key-remapping">Key Remapping<a class="headerlink" href="#key-remapping" title="Permanent link">&para;</a></h2>
+<p>Use scoring key mapping to adapt between task outputs and metric input requirements:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Your task returns this structure</span>
+<span class="n">task_output</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;generated_text&#39;</span><span class="p">:</span> <span class="s2">&quot;The answer is...&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;source_documents&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;doc1&quot;</span><span class="p">,</span> <span class="s2">&quot;doc2&quot;</span><span class="p">],</span>
+    <span class="s1">&#39;model_confidence&#39;</span><span class="p">:</span> <span class="mf">0.95</span>
+<span class="p">}</span>
+
+<span class="c1"># But metrics expect this structure</span>
+<span class="n">metric_expected</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="s2">&quot;The answer is...&quot;</span><span class="p">,</span>
+    <span class="s1">&#39;retrieved_content&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;doc1&quot;</span><span class="p">,</span> <span class="s2">&quot;doc2&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="c1"># Use key mapping to bridge the gap</span>
+<span class="n">scoring_key_mapping</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="s1">&#39;generated_text&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;retrieved_content&#39;</span><span class="p">:</span> <span class="s1">&#39;source_documents&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="n">task</span><span class="o">=</span><span class="n">my_task</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+    <span class="n">scoring_key_mapping</span><span class="o">=</span><span class="n">scoring_key_mapping</span><span class="p">,</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Mapped Evaluation&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<h2 id="response-format">Response Format<a class="headerlink" href="#response-format" title="Permanent link">&para;</a></h2>
+<p>The Evaluation Runner returns an <code>EvaluationResult</code> object containing:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>run_id</code></td>
+<td><code>str</code></td>
+<td>Unique identifier for this evaluation run</td>
+</tr>
+<tr>
+<td><code>evaluation_name</code></td>
+<td><code>str</code></td>
+<td>Name of the evaluation</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td><code>str</code></td>
+<td>ISO-formatted execution timestamp</td>
+</tr>
+<tr>
+<td><code>results</code></td>
+<td><code>List[TestResult]</code></td>
+<td>Detailed results for each evaluation input</td>
+</tr>
+<tr>
+<td><code>summary</code></td>
+<td><code>Dict[str, Any]</code></td>
+<td>Summary of the TestResult objects</td>
+</tr>
+<tr>
+<td><code>metadata</code></td>
+<td><code>Dict[str, Any]</code></td>
+<td>Evaluation metadata and configuration</td>
+</tr>
+</tbody>
+</table>
+<p>Each <code>TestResult</code> contains the same structure as described in the Metric Runner documentation.</p>
+<hr />
+<h2 id="advanced-features">Advanced Features<a class="headerlink" href="#advanced-features" title="Permanent link">&para;</a></h2>
+<h3 id="caching-configuration">Caching Configuration<a class="headerlink" href="#caching-configuration" title="Permanent link">&para;</a></h3>
+<p>Type of caching backend to use.
+- 'memory': Uses in-memory dictionary for caching (fast, but non-persistent). Must use class model for evaluations.
+- 'disk': Writes cache to disk (persistent across runs).</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">CacheConfig</span>
+
+<span class="n">cache_config</span> <span class="o">=</span> <span class="n">CacheConfig</span><span class="p">(</span>
+    <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>          <span class="c1"># Enable caching</span>
+    <span class="n">cache_task</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>         <span class="c1"># Cache task outputs</span>
+    <span class="n">cache_type</span><span class="o">=</span><span class="s1">&#39;disk&#39;</span><span class="p">,</span>
+    <span class="n">cache_dir</span><span class="o">=</span><span class="s1">&#39;cache/&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="n">task</span><span class="o">=</span><span class="n">expensive_task</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+    <span class="n">cache_config</span><span class="o">=</span><span class="n">cache_config</span><span class="p">,</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Cached Evaluation&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="evaluation-tracking-and-metadata">Evaluation Tracking and Metadata<a class="headerlink" href="#evaluation-tracking-and-metadata" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Model Comparison v2.1&quot;</span><span class="p">,</span>
+    <span class="n">evaluation_description</span><span class="o">=</span><span class="s2">&quot;Comparing new model against baseline&quot;</span><span class="p">,</span>
+    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;model_version&#39;</span><span class="p">:</span> <span class="s1">&#39;v2.1.0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;baseline_version&#39;</span><span class="p">:</span> <span class="s1">&#39;v1.9.2&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;dataset_version&#39;</span><span class="p">:</span> <span class="s1">&#39;eval_set_march_2024&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;environment&#39;</span><span class="p">:</span> <span class="s1">&#39;staging&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;researcher&#39;</span><span class="p">:</span> <span class="s1">&#39;data_science_team&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;comparison&#39;</span><span class="p">,</span> <span class="s1">&#39;monthly_eval&#39;</span><span class="p">,</span> <span class="s1">&#39;production_candidate&#39;</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="n">run_id</span><span class="o">=</span><span class="s2">&quot;evaluation_2024_03_15_001&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Access metadata in results</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model version: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;model_version&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Environment: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;environment&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="tracing-integration">Tracing Integration<a class="headerlink" href="#tracing-integration" title="Permanent link">&para;</a></h2>
+<p>The Evaluation Runner automatically integrates with Axion's tracing system for observability. When tracing is enabled (e.g., with Langfuse or Opik), you get detailed visibility into evaluation execution.</p>
+<h3 id="trace-granularity">Trace Granularity<a class="headerlink" href="#trace-granularity" title="Permanent link">&para;</a></h3>
+<p>Control how traces are organized using the <code>trace_granularity</code> parameter:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
+
+<span class="c1"># Single trace mode (default) - all evaluations under one parent trace</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;RAG Quality Check&quot;</span><span class="p">,</span>
+    <span class="n">trace_granularity</span><span class="o">=</span><span class="s1">&#39;single_trace&#39;</span>  <span class="c1"># or &#39;single&#39; or TraceGranularity.SINGLE_TRACE</span>
+<span class="p">)</span>
+
+<span class="c1"># Separate mode - each metric execution gets its own independent trace</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;RAG Quality Check&quot;</span><span class="p">,</span>
+    <span class="n">trace_granularity</span><span class="o">=</span><span class="s1">&#39;separate&#39;</span>  <span class="c1"># or TraceGranularity.SEPARATE</span>
+<span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Description</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>single_trace</code> / <code>single</code></td>
+<td>All evaluations under one parent trace (default)</td>
+<td>Viewing entire evaluation as one unit</td>
+</tr>
+<tr>
+<td><code>separate</code></td>
+<td>Each metric execution gets its own independent trace</td>
+<td>Detailed per-item analysis</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trace-names">Trace Names<a class="headerlink" href="#trace-names" title="Permanent link">&para;</a></h3>
+<p>The <code>evaluation_name</code> parameter is used as the trace name in your observability platform:</p>
+<div class="highlight"><pre><span></span><code><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">(),</span> <span class="n">Faithfulness</span><span class="p">()],</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;RAG Quality Check v2&quot;</span>  <span class="c1"># Appears as trace name in Langfuse/Opik</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>This makes it easy to identify and filter evaluations by their purpose.</p>
+<h3 id="captured-data">Captured Data<a class="headerlink" href="#captured-data" title="Permanent link">&para;</a></h3>
+<p>The evaluation runner captures input/output at multiple levels:</p>
+<table>
+<thead>
+<tr>
+<th>Span</th>
+<th>Input Captured</th>
+<th>Output Captured</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Evaluation (root)</td>
+<td>evaluation_name, dataset_name, input_count, metrics, max_concurrent</td>
+<td>run_id, total_items, metrics_evaluated, status</td>
+</tr>
+<tr>
+<td>Metric execution</td>
+<td>Query, actual/expected output, context</td>
+<td>Score, passed status, explanation</td>
+</tr>
+<tr>
+<td>LLM call</td>
+<td>Messages, model, provider</td>
+<td>Response, token usage, cost</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trace-hierarchy">Trace Hierarchy<a class="headerlink" href="#trace-hierarchy" title="Permanent link">&para;</a></h3>
+<p>The evaluation runner produces a lean 4-level trace hierarchy:</p>
+<div class="highlight"><pre><span></span><code>RAG Quality Check v2                          # evaluation_name (root span)
+├─ AnswerRelevancy.execute                    # Metric logic span
+│  └─ litellm_structured                      # LLM formatting/parsing
+│     └─ llm_call                             # LLM API call (cost/tokens)
+└─ Faithfulness.execute
+   └─ litellm_structured
+      └─ llm_call
+</code></pre></div>
+<h3 id="enabling-tracing">Enabling Tracing<a class="headerlink" href="#enabling-tracing" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TRACING_MODE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;langfuse&#39;</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANGFUSE_PUBLIC_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pk-lf-...&#39;</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANGFUSE_SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sk-lf-...&#39;</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANGFUSE_BASE_URL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;https://us.cloud.langfuse.com&#39;</span>  <span class="c1"># or EU</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_tracing</span>
+<span class="n">configure_tracing</span><span class="p">()</span>
+
+<span class="c1"># Now run your evaluation - traces are automatically captured</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;My Evaluation&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>See the <a href="../../internals/tracing/">Tracing Documentation</a> for more details on configuration options.</p>
+<hr />
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<h2 id="axion.runners.evaluate" class="doc doc-heading">
+            <code>axion.runners.evaluate</code>
+
+
+<a href="#axion.runners.evaluate" class="headerlink" title="Permanent link">&para;</a></h2>
+
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="axion.runners.evaluate.EvaluationConfig" class="doc doc-heading">
+              <code class="highlight language-python"><span class="n">EvaluationConfig</span><span class="p">(</span><span class="n">evaluation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">evaluation_inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">scoring_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scoring_metrics</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scoring_strategy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BaseScoringStrategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ScoringStrategyType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">BaseAPIRunner</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scoring_key_mapping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">evaluation_description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">evaluation_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_concurrent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">throttle_delay</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">summary_generator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseSummary</span><span class="p">]</span> <span class="o">=</span> <span class="n">MetricSummary</span><span class="p">(),</span> <span class="n">cache_config</span><span class="p">:</span> <span class="n">CacheConfig</span> <span class="o">=</span> <span class="n">CacheConfig</span><span class="p">(),</span> <span class="n">error_config</span><span class="p">:</span> <span class="n">ErrorConfig</span> <span class="o">=</span> <span class="n">ErrorConfig</span><span class="p">(),</span> <span class="n">thresholds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">enable_internal_caching</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">trace_granularity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TraceGranularity</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">TraceGranularity</span><span class="o">.</span><span class="n">SEPARATE</span><span class="p">,</span> <span class="n">flush_per_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#axion.runners.evaluate.EvaluationConfig" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+
+
+        <p>Configuration for an evaluation run.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.evaluation_inputs">evaluation_inputs</span></code></b>
+              (<code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" title="axion.dataset.Dataset(name: Optional[str] = None, description: str = '', version: str = '1.0', created_at: str = (lambda: current_datetime())(), metadata: Optional[str] = None, items: List[DatasetItem] = list(), _default_catch_all: str = FieldNames.ADDITIONAL_INPUT, _item_map: Dict[str, DatasetItem] = dict(), _synthetic_data: Optional[List[Dict[str, Any]]] = None)
+
+  
+      dataclass
+   (axion.dataset.Dataset)" href="../../../reference/dataset/#axion.dataset.Dataset">Dataset</a>, <span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="axion.dataset.DatasetItem(**data) (axion.dataset.DatasetItem)" href="../../../reference/dataset/#axion.dataset.DatasetItem">DatasetItem</a>], <span title="pandas.DataFrame">DataFrame</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>The input dataset to evaluate. Can be a high-level <code>Dataset</code> object, a list of individual <code>DatasetItem</code>
+objects, or a preloaded <code>pandas.DataFrame</code>.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.scoring_config">scoring_config</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="typing.List">List</span>[<span title="typing.Any">Any</span>], <span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>], <span title="str">str</span>]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>The scoring configuration. Can be:
+- A list of metrics for flat evaluation
+- A dictionary with 'metric' key for flat evaluation (when scoring_strategy='flat')
+- A dictionary for hierarchical (EvalTree) evaluation (with model, weights, etc.)
+- A string file path to a YAML configuration file</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.scoring_metrics">scoring_metrics</span></code></b>
+              (<code><span title="typing.List">List</span>[<span title="typing.Any">Any</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>A list of metric objects or callables used to score each item in the dataset.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.scoring_strategy">scoring_strategy</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="axion.runners.strategies.BaseScoringStrategy">BaseScoringStrategy</span>, <span title="str">str</span>, <span title="axion.runners.strategies.ScoringStrategyType">ScoringStrategyType</span>]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Defines the scoring method. Can be a pre-initialized strategy instance
+or a string/Enum alias ('flat' or 'tree'). Overrides auto-detection.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.evaluation_name">evaluation_name</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>A unique name to identify the evaluation. Used in trace logging and result storage.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.task">task</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="typing.Callable">Callable</span>, <a class="autorefs autorefs-internal" title="BaseAPIRunner(config: Union[str, Dict[str, Any], PosixPath], max_concurrent: int = 5, show_progress: bool = True, retry_config: Optional[Union[RetryConfig, Dict[str, Any]]] = None, tracer: Optional[BaseTraceHandler] = None) (axion.runners.api.BaseAPIRunner)" href="../api-runner/#axion.runners.api.BaseAPIRunner">BaseAPIRunner</a>]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>A custom function to generate predictions or transform inputs. If provided, it will be run
+before scoring to produce the model output for each dataset item.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.scoring_key_mapping">scoring_key_mapping</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>An optional dictionary mapping metric input names to dataset column names.
+Useful for adapting metrics to different schema formats.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.evaluation_description">evaluation_description</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>A human-readable description of the evaluation for documentation and trace metadata.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.evaluation_metadata">evaluation_metadata</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Additional metadata to include in the evaluation trace (e.g., model version, data slice info, tags).</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.max_concurrent">max_concurrent</span></code></b>
+              (<code><span title="int">int</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Maximum number of metric evaluations to run concurrently. Default is 5.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.throttle_delay">throttle_delay</span></code></b>
+              (<code><span title="float">float</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Specifies the time in seconds to pause after each individual task
+execution. This is used as a client-side throttle to help prevent
+API rate limit errors when processing a large number of items.
+Defaults to 0.0 (no delay).</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.summary_generator">summary_generator</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="axion.runners.summary.BaseSummary">BaseSummary</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Optional summary generator used to produce a high-level summary after the evaluation.
+If not provided, a default <code>MetricSummary</code> is used.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.cache_config">cache_config</span></code></b>
+              (<code><a class="autorefs autorefs-internal" title="axion._core.cache.CacheConfig(use_cache: bool = True, write_cache: bool = True, cache_type: str = 'memory', cache_dir: Optional[str] = '.cache', cache_task: bool = True)
+
+  
+      dataclass
+   (axion._core.cache.schema.CacheConfig)" href="../../../reference/runners/#axion._core.cache.CacheConfig">CacheConfig</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Configuration for caching metric results to avoid recomputation. Enables both read and write caching.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.error_config">error_config</span></code></b>
+              (<code><a class="autorefs autorefs-internal" title="axion.schema.ErrorConfig(ignore_errors: bool = True, skip_on_missing_params: bool = False)
+
+  
+      dataclass
+   (axion.schema.ErrorConfig)" href="../../../reference/schema/#axion.schema.ErrorConfig">ErrorConfig</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Configuration for how errors are handled during evaluation. Allows skipping metrics or suppressing failures.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.thresholds">thresholds</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="float">float</span>]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Optional threshold values for each metric. Used to flag items or datasets that fall below a given performance level.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.show_progress">show_progress</span></code></b>
+              (<code><span title="bool">bool</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Whether to show a progress bar during evaluation. Defaults to True.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.dataset_name">dataset_name</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Optional name of the dataset being evaluated. Used for display and trace logging.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.run_id">run_id</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>An optional identifier for this specific run. Useful for repeatability and audit logging.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.runners.evaluate.EvaluationConfig.trace_granularity">trace_granularity</span></code></b>
+              (<code><span title="typing.Union">Union</span>[<span title="axion._core.types.TraceGranularity">TraceGranularity</span>, <span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Controls trace granularity during evaluation. Accepts enum or string values:
+- 'single_trace' / 'single' / SINGLE_TRACE (default): All evaluations under one parent trace
+- 'separate' / SEPARATE: Each metric execution gets its own independent trace</p>
+          </div>
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="axion.runners.evaluate.EvaluationRunner" class="doc doc-heading">
+              <code class="highlight language-python"><span class="n">EvaluationRunner</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">EvaluationConfig</span><span class="p">,</span> <span class="n">tracer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseTraceHandler</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#axion.runners.evaluate.EvaluationRunner" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="axion.runners.mixin.RunnerMixin">RunnerMixin</span></code></p>
+
+
+
+        <p>Orchestrates the execution of evaluation experiments, managing task execution,
+metric scoring, and configuration. Automatically determines and initializes
+the appropriate scoring strategy (flat or hierarchical).</p>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="axion.runners.evaluate.EvaluationRunner.summary" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">summary</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#axion.runners.evaluate.EvaluationRunner.summary" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the summary from the active scoring strategy.
+For hierarchical ('tree') strategies, this provides the detailed tree summary.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="axion.runners.evaluate.EvaluationRunner.tree" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">tree</span><span class="p">:</span> <span class="n">Any</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#axion.runners.evaluate.EvaluationRunner.tree" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the underlying EvalTree instance for inspection, if the 'tree'
+strategy is active. Raises an AttributeError for other strategies.</p>
+
+    </div>
+
+</div>
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="axion.runners.evaluate.EvaluationRunner.execute" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">execute</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">EvaluationResult</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#axion.runners.evaluate.EvaluationRunner.execute" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Executes the entire evaluation and returns the final result.</p>
+<p>For SINGLE_TRACE mode, wraps execution in a trace span.
+For PER_ITEM and SEPARATE modes, skips the wrapper span to allow
+each item/metric to create its own independent trace.</p>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h4 id="axion.runners.evaluate.EvaluationRunner.display" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">display</span><span class="p">()</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#axion.runners.evaluate.EvaluationRunner.display" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Display Usage Documentation</p>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="axion.runners.evaluate.evaluation_runner" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">evaluation_runner</span><span class="p">(</span><span class="n">evaluation_inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">evaluation_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">scoring_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scoring_metrics</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scoring_strategy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BaseScoringStrategy</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ScoringStrategyType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">BaseAPIRunner</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scoring_key_mapping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">evaluation_description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">evaluation_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_concurrent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">throttle_delay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">summary_generator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BaseSummary</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cache_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CacheConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">error_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ErrorConfig</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">enable_internal_caching</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_progress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">run_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">trace_granularity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TraceGranularity</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">TraceGranularity</span><span class="o">.</span><span class="n">SEPARATE</span><span class="p">,</span> <span class="n">flush_per_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EvaluationResult</span></code>
+
+<a href="#axion.runners.evaluate.evaluation_runner" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Synchronously runs an evaluation experiment to evaluate metrics over a given dataset,
+supporting both flat and hierarchical scoring structures.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>evaluation_inputs</code></b>
+              (<code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" title="axion.dataset.Dataset(name: Optional[str] = None, description: str = '', version: str = '1.0', created_at: str = (lambda: current_datetime())(), metadata: Optional[str] = None, items: List[DatasetItem] = list(), _default_catch_all: str = FieldNames.ADDITIONAL_INPUT, _item_map: Dict[str, DatasetItem] = dict(), _synthetic_data: Optional[List[Dict[str, Any]]] = None)
+
+  
+      dataclass
+   (axion.dataset.Dataset)" href="../../../reference/dataset/#axion.dataset.Dataset">Dataset</a>, <span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="axion.dataset.DatasetItem(**data) (axion.dataset.DatasetItem)" href="../../../reference/dataset/#axion.dataset.DatasetItem">DatasetItem</a>], <span title="pandas.DataFrame">DataFrame</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>The input dataset to evaluate.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>evaluation_name</code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>A unique name to identify the evaluation.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>scoring_config</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="typing.List">List</span>[<span title="typing.Any">Any</span>], <span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>], <span title="str">str</span>]]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>The scoring configuration. Can be:
+- A list of metrics for flat evaluation
+- A dictionary with 'metric' key for flat evaluation (when scoring_strategy='flat')
+- A dictionary for hierarchical (EvalTree) evaluation (with model, weights, etc.)
+- A string file path to a YAML configuration file</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>scoring_metrics</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<span title="typing.Any">Any</span>]]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>An alternative, more intuitive parameter for passing a flat list of metrics.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>scoring_strategy</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="axion.runners.strategies.BaseScoringStrategy">BaseScoringStrategy</span>, <span title="str">str</span>, <span title="axion.runners.strategies.ScoringStrategyType">ScoringStrategyType</span>]]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Defines the scoring method. Can be a pre-initialized strategy instance
+or a string/Enum alias ('flat' or 'tree'). Overrides auto-detection.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>task</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Union">Union</span>[<span title="typing.Callable">Callable</span>, <a class="autorefs autorefs-internal" title="BaseAPIRunner(config: Union[str, Dict[str, Any], PosixPath], max_concurrent: int = 5, show_progress: bool = True, retry_config: Optional[Union[RetryConfig, Dict[str, Any]]] = None, tracer: Optional[BaseTraceHandler] = None) (axion.runners.api.BaseAPIRunner)" href="../api-runner/#axion.runners.api.BaseAPIRunner">BaseAPIRunner</a>]]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>A custom function to generate model outputs before scoring.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>scoring_key_mapping</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>]]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Maps metric input names to dataset column names.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>evaluation_description</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>A human-readable description of the evaluation.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>evaluation_metadata</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Additional metadata to include in the evaluation trace.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>max_concurrent</code></b>
+              (<code><span title="int">int</span></code>, default:
+                  <code>5</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Maximum number of concurrent evaluations. Defaults to 5.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>throttle_delay</code></b>
+              (<code><span title="float">float</span></code>, default:
+                  <code>0.0</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Specifies the time in seconds to pause after each individual task
+execution. This is used as a client-side throttle to help prevent
+API rate limit errors when processing a large number of items.
+Defaults to 0.0 (no delay).</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>summary_generator</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="axion.runners.summary.BaseSummary">BaseSummary</span>]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>A summary generator for high-level results.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>cache_config</code></b>
+              (<code><a class="autorefs autorefs-internal" title="axion._core.cache.CacheConfig(use_cache: bool = True, write_cache: bool = True, cache_type: str = 'memory', cache_dir: Optional[str] = '.cache', cache_task: bool = True)
+
+  
+      dataclass
+   (axion._core.cache.schema.CacheConfig)" href="../../../reference/runners/#axion._core.cache.CacheConfig">CacheConfig</a></code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Configuration for caching results to avoid recomputation.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>error_config</code></b>
+              (<code><a class="autorefs autorefs-internal" title="axion.schema.ErrorConfig(ignore_errors: bool = True, skip_on_missing_params: bool = False)
+
+  
+      dataclass
+   (axion.schema.ErrorConfig)" href="../../../reference/schema/#axion.schema.ErrorConfig">ErrorConfig</a></code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Configuration for handling errors during evaluation.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>enable_internal_caching</code></b>
+              (<code><span title="bool">bool</span></code>, default:
+                  <code>True</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Enables a per-item cache for metrics that share expensive internal
+computations. Defaults to True.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>thresholds</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="float">float</span>]]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Performance thresholds for each metric.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>show_progress</code></b>
+              (<code><span title="bool">bool</span></code>, default:
+                  <code>True</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Whether to show a progress bar. Defaults to True.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>dataset_name</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Optional name of the dataset.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>run_id</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>An optional identifier for this specific run.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>trace_granularity</code></b>
+              (<code><span title="typing.Union">Union</span>[<span title="axion._core.types.TraceGranularity">TraceGranularity</span>, <span title="str">str</span>]</code>, default:
+                  <code><span title="axion._core.types.TraceGranularity.SEPARATE">SEPARATE</span></code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Controls trace granularity during evaluation. Accepts enum or string values:
+- 'single_trace' / 'single' / SINGLE_TRACE (default): All evaluations under one parent trace
+- 'separate' / SEPARATE: Each metric execution gets its own independent trace</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>flush_per_metric</code></b>
+              (<code><span title="bool">bool</span></code>, default:
+                  <code>False</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>When trace_granularity='separate', controls whether each metric trace is flushed
+immediately (slower, but more "live" in the UI) vs batched (faster). Defaults to False.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+<b><code>EvaluationResult</code></b> (              <code><a class="autorefs autorefs-internal" title="axion.schema.EvaluationResult(run_id: str, evaluation_name: Optional[str], timestamp: str, results: List[TestResult], summary: Dict[str, Any] = dict(), metadata: Dict[str, Any] = dict())
+
+  
+      dataclass
+   (axion.schema.EvaluationResult)" href="../../../reference/schema/#axion.schema.EvaluationResult">EvaluationResult</a></code>
+)          –
+          <div class="doc-md-description">
+            <p>An object containing detailed metric scores, summary, and metadata.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+  
+    
+  
+  
+    
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 17, 2026 19:10:17 UTC">January 17, 2026</span>
+  </span>
+
+    
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Created">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
+    </span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 10, 2026 18:58:38 UTC">January 10, 2026</span>
+  </span>
+
+    
+    
+      
+  
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Contributors">
+      
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 10c4.42 0 8 1.79 8 4v2H4v-2c0-2.21 3.58-4 8-4"/></svg>
+      
+    </span>
+    <nav>
+      
+        <a href="mailto:mevanoff24@gmail.com">mevanoff24</a>
+    </nav>
+  </span>
+
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.instant", "navigation.tracking", "navigation.top", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+<script>
+  // Collapsible TOC (right sidebar) functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    // Create toggle button
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'toc-toggle';
+    toggleBtn.setAttribute('aria-label', 'Toggle table of contents');
+    toggleBtn.setAttribute('title', 'Toggle table of contents');
+    toggleBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+      </svg>
+    `;
+    document.body.appendChild(toggleBtn);
+
+    // Check stored preference
+    const isCollapsed = localStorage.getItem('axion-toc-collapsed') === 'true';
+    if (isCollapsed) {
+      document.body.classList.add('toc-collapsed');
+    }
+
+    // Toggle handler
+    toggleBtn.addEventListener('click', function() {
+      document.body.classList.toggle('toc-collapsed');
+      const nowCollapsed = document.body.classList.contains('toc-collapsed');
+      localStorage.setItem('axion-toc-collapsed', nowCollapsed);
+    });
+  });
+</script>
+
+  </body>
+</html>

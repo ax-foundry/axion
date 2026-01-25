@@ -11,26 +11,28 @@
       
       
       
+        <link rel="prev" href="../datasets/">
       
-        <link rel="next" href="getting-started/installation/">
+      
+        <link rel="next" href="../evaluation/">
       
       
         
       
       
-      <link rel="icon" href="assets/ax_icon.png">
+      <link rel="icon" href="../../assets/ax_icon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Axion</title>
+        <title>Metrics & Evaluation - Axion</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -49,11 +51,11 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#axion" class="md-skip">
+        <a href="#metrics-evaluation" class="md-skip">
           Skip to content
         </a>
       
@@ -119,9 +121,9 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Axion" class="md-header__button md-logo" aria-label="Axion" data-md-component="logo">
+    <a href="../.." title="Axion" class="md-header__button md-logo" aria-label="Axion" data-md-component="logo">
       
-  <img src="assets/ax_icon.png" alt="logo">
+  <img src="../../assets/ax_icon.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -138,7 +140,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Metrics & Evaluation
             
           </span>
         </div>
@@ -243,11 +245,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -268,7 +268,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="getting-started/installation/" class="md-tabs__link">
+        <a href="../../getting-started/installation/" class="md-tabs__link">
           
   
   
@@ -286,11 +286,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="guides/hierarchical-scoring/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../hierarchical-scoring/" class="md-tabs__link">
           
   
   
@@ -319,7 +321,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="metric-registry/composite/" class="md-tabs__link">
+        <a href="../../metric-registry/composite/" class="md-tabs__link">
           
   
   
@@ -351,7 +353,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="deep-dives/metrics/creating-metrics/" class="md-tabs__link">
+        <a href="../../deep-dives/metrics/creating-metrics/" class="md-tabs__link">
           
   
   
@@ -376,7 +378,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="reference/dataset/" class="md-tabs__link">
+        <a href="../../reference/dataset/" class="md-tabs__link">
           
   
   
@@ -418,9 +420,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Axion" class="md-nav__button md-logo" aria-label="Axion" data-md-component="logo">
+    <a href="../.." title="Axion" class="md-nav__button md-logo" aria-label="Axion" data-md-component="logo">
       
-  <img src="assets/ax_icon.png" alt="logo">
+  <img src="../../assets/ax_icon.png" alt="logo">
 
     </a>
     Axion
@@ -444,37 +446,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Home
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -490,78 +465,6 @@
   
 
       </a>
-      
-        
-
-  
-
-<nav class="md-nav md-nav--secondary" aria-label="On this page">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      On this page
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#component-arsenal" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Component Arsenal
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#hierarchical-scoring" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Hierarchical Scoring
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Hierarchical Scoring">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#think-of-axion-as-your-lego-set-for-ai-systems" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Think of Axion as your Lego set for AI systems:
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#why-axion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why "Axion"?
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -631,7 +534,7 @@
   
   
     <li class="md-nav__item">
-      <a href="getting-started/installation/" class="md-nav__link">
+      <a href="../../getting-started/installation/" class="md-nav__link">
         
   
   
@@ -659,7 +562,7 @@
   
   
     <li class="md-nav__item">
-      <a href="agent_playbook/" class="md-nav__link">
+      <a href="../../agent_playbook/" class="md-nav__link">
         
   
   
@@ -691,8 +594,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -720,19 +625,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -750,7 +658,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -768,7 +676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/hierarchical-scoring/" class="md-nav__link">
+      <a href="../hierarchical-scoring/" class="md-nav__link">
         
   
   
@@ -796,7 +704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/datasets/" class="md-nav__link">
+      <a href="../datasets/" class="md-nav__link">
         
   
   
@@ -821,10 +729,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="guides/metrics/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Metrics & Evaluation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -840,6 +775,133 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metric-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metric Categories
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metric Categories">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#composite-metrics-llm-based" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Composite Metrics (LLM-based)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#heuristic-metrics-non-llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Heuristic Metrics (Non-LLM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieval-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retrieval Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conversational-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conversational Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-the-metric-registry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using the Metric Registry
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#customizing-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customizing Metrics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -852,7 +914,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/evaluation/" class="md-nav__link">
+      <a href="../evaluation/" class="md-nav__link">
         
   
   
@@ -880,7 +942,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/issue-extraction/" class="md-nav__link">
+      <a href="../issue-extraction/" class="md-nav__link">
         
   
   
@@ -908,7 +970,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/aligneval/" class="md-nav__link">
+      <a href="../aligneval/" class="md-nav__link">
         
   
   
@@ -952,17 +1014,20 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
         
           
-          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="">
             
   
   
@@ -998,7 +1063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/langfuse/overview/" class="md-nav__link">
+      <a href="../langfuse/overview/" class="md-nav__link">
         
   
   
@@ -1026,7 +1091,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/langfuse/configuration/" class="md-nav__link">
+      <a href="../langfuse/configuration/" class="md-nav__link">
         
   
   
@@ -1054,7 +1119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/langfuse/tracing/" class="md-nav__link">
+      <a href="../langfuse/tracing/" class="md-nav__link">
         
   
   
@@ -1082,7 +1147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/langfuse/publishing/" class="md-nav__link">
+      <a href="../langfuse/publishing/" class="md-nav__link">
         
   
   
@@ -1118,7 +1183,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/llm-providers/" class="md-nav__link">
+      <a href="../llm-providers/" class="md-nav__link">
         
   
   
@@ -1146,7 +1211,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/synthetic/" class="md-nav__link">
+      <a href="../synthetic/" class="md-nav__link">
         
   
   
@@ -1174,7 +1239,7 @@
   
   
     <li class="md-nav__item">
-      <a href="guides/search/" class="md-nav__link">
+      <a href="../search/" class="md-nav__link">
         
   
   
@@ -1322,7 +1387,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="metric-registry/composite/" class="md-nav__link ">
+            <a href="../../metric-registry/composite/" class="md-nav__link ">
               
   
   
@@ -1366,7 +1431,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/faithfulness/" class="md-nav__link">
+      <a href="../../metric-registry/composite/faithfulness/" class="md-nav__link">
         
   
   
@@ -1394,7 +1459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/answer_relevancy/" class="md-nav__link">
+      <a href="../../metric-registry/composite/answer_relevancy/" class="md-nav__link">
         
   
   
@@ -1422,7 +1487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/factual_accuracy/" class="md-nav__link">
+      <a href="../../metric-registry/composite/factual_accuracy/" class="md-nav__link">
         
   
   
@@ -1450,7 +1515,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/answer_completeness/" class="md-nav__link">
+      <a href="../../metric-registry/composite/answer_completeness/" class="md-nav__link">
         
   
   
@@ -1478,7 +1543,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/answer_criteria/" class="md-nav__link">
+      <a href="../../metric-registry/composite/answer_criteria/" class="md-nav__link">
         
   
   
@@ -1506,7 +1571,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/tone_style_consistency/" class="md-nav__link">
+      <a href="../../metric-registry/composite/tone_style_consistency/" class="md-nav__link">
         
   
   
@@ -1534,7 +1599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/citation_relevancy/" class="md-nav__link">
+      <a href="../../metric-registry/composite/citation_relevancy/" class="md-nav__link">
         
   
   
@@ -1562,7 +1627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/pii_leakage/" class="md-nav__link">
+      <a href="../../metric-registry/composite/pii_leakage/" class="md-nav__link">
         
   
   
@@ -1590,7 +1655,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/contextual_relevancy/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_relevancy/" class="md-nav__link">
         
   
   
@@ -1618,7 +1683,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/contextual_recall/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_recall/" class="md-nav__link">
         
   
   
@@ -1646,7 +1711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/contextual_precision/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_precision/" class="md-nav__link">
         
   
   
@@ -1674,7 +1739,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/contextual_ranking/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_ranking/" class="md-nav__link">
         
   
   
@@ -1702,7 +1767,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/contextual_sufficiency/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_sufficiency/" class="md-nav__link">
         
   
   
@@ -1730,7 +1795,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/composite/contextual_utilization/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_utilization/" class="md-nav__link">
         
   
   
@@ -1805,7 +1870,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="metric-registry/heuristic/" class="md-nav__link ">
+            <a href="../../metric-registry/heuristic/" class="md-nav__link ">
               
   
   
@@ -1849,7 +1914,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/heuristic/exact_string_match/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/exact_string_match/" class="md-nav__link">
         
   
   
@@ -1877,7 +1942,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/heuristic/contains_match/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/contains_match/" class="md-nav__link">
         
   
   
@@ -1905,7 +1970,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/heuristic/levenshtein_ratio/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/levenshtein_ratio/" class="md-nav__link">
         
   
   
@@ -1933,7 +1998,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
         
   
   
@@ -1961,7 +2026,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/heuristic/pii_leakage_heuristic/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/pii_leakage_heuristic/" class="md-nav__link">
         
   
   
@@ -1989,7 +2054,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/heuristic/citation_presence/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/citation_presence/" class="md-nav__link">
         
   
   
@@ -2017,7 +2082,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/heuristic/latency/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/latency/" class="md-nav__link">
         
   
   
@@ -2045,7 +2110,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
         
   
   
@@ -2104,7 +2169,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="metric-registry/conversational/" class="md-nav__link ">
+            <a href="../../metric-registry/conversational/" class="md-nav__link ">
               
   
   
@@ -2176,7 +2241,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="metric-registry/tool/" class="md-nav__link ">
+            <a href="../../metric-registry/tool/" class="md-nav__link ">
               
   
   
@@ -2220,7 +2285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="metric-registry/tool/tool_correctness/" class="md-nav__link">
+      <a href="../../metric-registry/tool/tool_correctness/" class="md-nav__link">
         
   
   
@@ -2387,7 +2452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/metrics/creating-metrics/" class="md-nav__link">
+      <a href="../../deep-dives/metrics/creating-metrics/" class="md-nav__link">
         
   
   
@@ -2415,7 +2480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/metrics/yaml-metrics/" class="md-nav__link">
+      <a href="../../deep-dives/metrics/yaml-metrics/" class="md-nav__link">
         
   
   
@@ -2443,7 +2508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/metrics/composite-metrics/" class="md-nav__link">
+      <a href="../../deep-dives/metrics/composite-metrics/" class="md-nav__link">
         
   
   
@@ -2539,7 +2604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/runners/metric-runner/" class="md-nav__link">
+      <a href="../../deep-dives/runners/metric-runner/" class="md-nav__link">
         
   
   
@@ -2567,7 +2632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/runners/evaluation-runner/" class="md-nav__link">
+      <a href="../../deep-dives/runners/evaluation-runner/" class="md-nav__link">
         
   
   
@@ -2595,7 +2660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/runners/api-runner/" class="md-nav__link">
+      <a href="../../deep-dives/runners/api-runner/" class="md-nav__link">
         
   
   
@@ -2687,7 +2752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/synthetic/document-qa/" class="md-nav__link">
+      <a href="../../deep-dives/synthetic/document-qa/" class="md-nav__link">
         
   
   
@@ -2783,7 +2848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/search/google/" class="md-nav__link">
+      <a href="../../deep-dives/search/google/" class="md-nav__link">
         
   
   
@@ -2811,7 +2876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/search/tavily/" class="md-nav__link">
+      <a href="../../deep-dives/search/tavily/" class="md-nav__link">
         
   
   
@@ -2839,7 +2904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/search/you/" class="md-nav__link">
+      <a href="../../deep-dives/search/you/" class="md-nav__link">
         
   
   
@@ -2935,7 +3000,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/internals/tracing/" class="md-nav__link">
+      <a href="../../deep-dives/internals/tracing/" class="md-nav__link">
         
   
   
@@ -2963,7 +3028,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/internals/environment/" class="md-nav__link">
+      <a href="../../deep-dives/internals/environment/" class="md-nav__link">
         
   
   
@@ -2991,7 +3056,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deep-dives/internals/logging/" class="md-nav__link">
+      <a href="../../deep-dives/internals/logging/" class="md-nav__link">
         
   
   
@@ -3108,7 +3173,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/dataset/" class="md-nav__link">
+      <a href="../../reference/dataset/" class="md-nav__link">
         
   
   
@@ -3136,7 +3201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/schema/" class="md-nav__link">
+      <a href="../../reference/schema/" class="md-nav__link">
         
   
   
@@ -3164,7 +3229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/metrics/" class="md-nav__link">
+      <a href="../../reference/metrics/" class="md-nav__link">
         
   
   
@@ -3192,7 +3257,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/runners/" class="md-nav__link">
+      <a href="../../reference/runners/" class="md-nav__link">
         
   
   
@@ -3220,7 +3285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/eval-tree/" class="md-nav__link">
+      <a href="../../reference/eval-tree/" class="md-nav__link">
         
   
   
@@ -3248,7 +3313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/issue-extractor/" class="md-nav__link">
+      <a href="../../reference/issue-extractor/" class="md-nav__link">
         
   
   
@@ -3276,7 +3341,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/synthetic/" class="md-nav__link">
+      <a href="../../reference/synthetic/" class="md-nav__link">
         
   
   
@@ -3304,7 +3369,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/search/" class="md-nav__link">
+      <a href="../../reference/search/" class="md-nav__link">
         
   
   
@@ -3332,7 +3397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/llm-registry/" class="md-nav__link">
+      <a href="../../reference/llm-registry/" class="md-nav__link">
         
   
   
@@ -3360,7 +3425,7 @@
   
   
     <li class="md-nav__item">
-      <a href="reference/tracer-registry/" class="md-nav__link">
+      <a href="../../reference/tracer-registry/" class="md-nav__link">
         
   
   
@@ -3417,10 +3482,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#component-arsenal" class="md-nav__link">
+  <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Component Arsenal
+        Quick Start
       
     </span>
   </a>
@@ -3428,22 +3493,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hierarchical-scoring" class="md-nav__link">
+  <a href="#metric-categories" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Hierarchical Scoring
+        Metric Categories
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Hierarchical Scoring">
+    <nav class="md-nav" aria-label="Metric Categories">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#think-of-axion-as-your-lego-set-for-ai-systems" class="md-nav__link">
+  <a href="#composite-metrics-llm-based" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Think of Axion as your Lego set for AI systems:
+        Composite Metrics (LLM-based)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#heuristic-metrics-non-llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Heuristic Metrics (Non-LLM)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieval-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retrieval Metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conversational-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conversational Metrics
       
     </span>
   </a>
@@ -3456,10 +3554,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-axion" class="md-nav__link">
+  <a href="#using-the-metric-registry" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why "Axion"?
+        Using the Metric Registry
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#customizing-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Customizing Metrics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
       
     </span>
   </a>
@@ -3486,174 +3606,165 @@
   
 
 
-<h1 id="axion">Axion<a class="headerlink" href="#axion" title="Permanent link">&para;</a></h1>
-<p><img alt="header" src="assets/axion_main_transparent.png" /></p>
-<div style="background: linear-gradient(135deg, #8B9F4F 0%, #6B7A3A 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
+<h1 id="metrics-evaluation">Metrics &amp; Evaluation<a class="headerlink" href="#metrics-evaluation" title="Permanent link">&para;</a></h1>
+<p>Axion provides 30+ metrics for evaluating AI agents across multiple dimensions.</p>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">metric_registry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Faithfulness</span><span class="p">,</span> <span class="n">AnswerRelevancy</span>
 
-<p style="margin: 0; font-size: 16px; line-height: 1.6;">
-Moving from passive, black-box observation to active, <strong>white-box evaluation</strong>—Axion empowers builders with <strong>actionable signals</strong>, <strong>automated pipelines</strong>, and <strong>fully transparent metrics</strong>. See exactly why your agent succeeds or fails.
-</p>
-</div>
+<span class="c1"># Load your dataset</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="s2">&quot;eval_data.csv&quot;</span><span class="p">)</span>
 
-<hr />
-<p align="center">
-<strong>White-Box Transparency</strong> |
-<strong>Modular by Design</strong> |
-<strong>Built for Scale</strong>
-</p>
+<span class="c1"># Select metrics</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">Faithfulness</span><span class="p">(),</span> <span class="n">AnswerRelevancy</span><span class="p">()]</span>
 
-<h2 id="component-arsenal"><strong>Component Arsenal</strong><a class="headerlink" href="#component-arsenal" title="Permanent link">&para;</a></h2>
-<table>
-<tr>
-<td width="50%" valign="top">
-
-<h3><strong>Core Primitives</strong></h3>
-<strong>Structured Handlers & Tool Abstractions</strong>
-
-<p>Build composable toolchains with pre-defined base classes for structured LLMs, tools, and knowledge retrieval. Eliminate boilerplate, enforce consistency, and focus on your logic.</p>
-
-</td>
-<td width="50%" valign="top">
-
-<h3><strong>API Integrations</strong></h3>
-<strong>Extensible Backend Access</strong>
-
-<p>Base API classes with built-in tracing and authentication support. Build your own API integrations with ease or extend the provided abstractions.</p>
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-<h3><strong>Evaluation Engine & Metric Suite</strong></h3>
-<strong>Built-in & Open-Source Friendly</strong>
-
-<p>Define experiments, run batch evaluations, calibrate judges, and score using our native metrics—or integrate with open libraries for broader experimentation coverage.</p>
-
-</td>
-<td width="50%" valign="top">
-
-<h3><strong>RAG Toolbox</strong></h3>
-<strong>Everything Retrieval—Chunking, Grounding, Response Assembly</strong>
-
-<p>End-to-end support for grounding pipelines with modular components you can reuse across use cases.</p>
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-<h3><strong>Observability at Its Core</strong></h3>
-<strong>Trace, Log, Debug with Confidence</strong>
-
-<p>Native support for Logfire, structured logging, and run tracking gives you production-grade visibility across every step of your AI pipeline.</p>
-
-</td>
-<td width="50%" valign="top">
-
-<h3><strong>Designed for Scale</strong></h3>
-<strong>Async-Native, Pydantic-Validated, Error Resilient</strong>
-
-<p>Async support everywhere. Predictable, structured I/O with Pydantic validation. Robust error handling out-of-the-box.</p>
-
-</td>
-</tr>
-</table>
-
-<hr />
-<h2 id="hierarchical-scoring"><strong>Hierarchical Scoring</strong><a class="headerlink" href="#hierarchical-scoring" title="Permanent link">&para;</a></h2>
-<div style="background: rgba(139, 159, 79, 0.1); border-left: 3px solid #8B9F4F; padding: 16px; margin: 20px 0;">
-<strong>What sets Axion apart:</strong> Our scoring framework is hierarchical by design—moving from a single overall score down into layered sub-scores. This delivers a <em>diagnostic map</em> of quality, not just a number.
-</div>
-
-<div class="highlight"><pre><span></span><code>                ┌─────────────────┐
-                │  Overall Score  │
-                │      0.82       │
-                └────────┬────────┘
-                         │
-      ┌──────────────────┼──────────────────┐
-      ▼                  ▼                  ▼
-┌───────────┐      ┌───────────┐      ┌───────────┐
-│ Relevance │      │ Accuracy  │      │   Tone    │
-│   0.91    │      │   0.78    │      │   0.85    │
-└───────────┘      └───────────┘      └───────────┘
+<span class="c1"># Run evaluation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
+<span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">evaluation_runner</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
 </code></pre></div>
+<h2 id="metric-categories">Metric Categories<a class="headerlink" href="#metric-categories" title="Permanent link">&para;</a></h2>
+<h3 id="composite-metrics-llm-based">Composite Metrics (LLM-based)<a class="headerlink" href="#composite-metrics-llm-based" title="Permanent link">&para;</a></h3>
+<p>For nuanced evaluation requiring reasoning:</p>
 <table>
+<thead>
 <tr>
-<td width="50%" valign="top">
-
-**Instant Root Cause Diagnosis**
-
-Drill down to pinpoint whether issues stem from relevance, accuracy, tone, or other dimensions—no more guessing from flat scores.
-
-</td>
-<td width="50%" valign="top">
-
-**Strategic Prioritization**
-
-Forces clarity on what really matters for your business by breaking quality into weighted layers.
-
-</td>
+<th>Metric</th>
+<th>What it Measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Faithfulness</code></td>
+<td>Is the answer grounded in retrieved context?</td>
 </tr>
 <tr>
-<td width="50%" valign="top">
-
-**Actionable Feedback Loop**
-
-Each layer translates directly into actions—retraining, prompt adjustments, or alignment tuning.
-
-</td>
-<td width="50%" valign="top">
-
-**Customizable to Business Goals**
-
-Weight and expand dimensions to match your unique KPIs. Define what "good AI" means for you.
-
-</td>
+<td><code>AnswerRelevancy</code></td>
+<td>Does the answer address the question?</td>
 </tr>
+<tr>
+<td><code>FactualAccuracy</code></td>
+<td>Is the answer factually correct vs. expected?</td>
+</tr>
+<tr>
+<td><code>AnswerCompleteness</code></td>
+<td>Are all parts of the question answered?</td>
+</tr>
+<tr>
+<td><code>AnswerCriteria</code></td>
+<td>Does the answer meet specific business rules?</td>
+</tr>
+</tbody>
 </table>
+<h3 id="heuristic-metrics-non-llm">Heuristic Metrics (Non-LLM)<a class="headerlink" href="#heuristic-metrics-non-llm" title="Permanent link">&para;</a></h3>
+<p>Fast, deterministic checks:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>What it Measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ExactStringMatch</code></td>
+<td>Exact match between actual and expected</td>
+</tr>
+<tr>
+<td><code>CitationPresence</code></td>
+<td>Are citations/references present?</td>
+</tr>
+<tr>
+<td><code>Latency</code></td>
+<td>Response time (pass/fail threshold)</td>
+</tr>
+<tr>
+<td><code>ContainsMatch</code></td>
+<td>Does output contain required phrases?</td>
+</tr>
+</tbody>
+</table>
+<h3 id="retrieval-metrics">Retrieval Metrics<a class="headerlink" href="#retrieval-metrics" title="Permanent link">&para;</a></h3>
+<p>For RAG pipeline evaluation:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>What it Measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HitRateAtK</code></td>
+<td>Is the right doc in top K results?</td>
+</tr>
+<tr>
+<td><code>MeanReciprocalRank</code></td>
+<td>Position of first relevant result</td>
+</tr>
+<tr>
+<td><code>ContextualRelevancy</code></td>
+<td>Are retrieved chunks relevant?</td>
+</tr>
+<tr>
+<td><code>ContextualSufficiency</code></td>
+<td>Do chunks contain the answer?</td>
+</tr>
+</tbody>
+</table>
+<h3 id="conversational-metrics">Conversational Metrics<a class="headerlink" href="#conversational-metrics" title="Permanent link">&para;</a></h3>
+<p>For multi-turn agents:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>What it Measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GoalCompletion</code></td>
+<td>Did user achieve their goal?</td>
+</tr>
+<tr>
+<td><code>ConversationEfficiency</code></td>
+<td>Were there unnecessary loops?</td>
+</tr>
+<tr>
+<td><code>ConversationFlow</code></td>
+<td>Is the dialogue logical?</td>
+</tr>
+</tbody>
+</table>
+<h2 id="using-the-metric-registry">Using the Metric Registry<a class="headerlink" href="#using-the-metric-registry" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">metric_registry</span>
 
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="c1"># List all available metrics</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">metric_registry</span><span class="o">.</span><span class="n">list_metrics</span><span class="p">())</span>
 
-<span class="c1"># Define hierarchical scoring configuration</span>
-<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;metric&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;Relevance&#39;</span><span class="p">:</span> <span class="n">AnswerRelevancy</span><span class="p">(</span><span class="n">metric_name</span><span class="o">=</span><span class="s1">&#39;Relevancy&#39;</span><span class="p">),</span>
-    <span class="p">},</span>
-    <span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;ANSWER_QUALITY&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;Relevance&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
-    <span class="p">},</span>
-    <span class="s1">&#39;weights&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;ANSWER_QUALITY&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<span class="c1"># Get metric by name</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metric_registry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Faithfulness&quot;</span><span class="p">)</span>
 
-<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
-    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="p">[</span><span class="n">data_item</span><span class="p">],</span>
-    <span class="n">scoring_config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>  <span class="c1"># Or pass path to config.yaml</span>
+<span class="c1"># Filter by category</span>
+<span class="n">composite_metrics</span> <span class="o">=</span> <span class="n">metric_registry</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;composite&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="customizing-metrics">Customizing Metrics<a class="headerlink" href="#customizing-metrics" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Faithfulness</span>
+
+<span class="c1"># Adjust threshold</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">Faithfulness</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+<span class="c1"># Custom instructions</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">AnswerCriteria</span><span class="p">(</span>
+    <span class="n">criteria_key</span><span class="o">=</span><span class="s2">&quot;my_criteria&quot;</span><span class="p">,</span>
+    <span class="n">scoring_strategy</span><span class="o">=</span><span class="s2">&quot;aspect&quot;</span>
 <span class="p">)</span>
-
-<span class="c1"># Generate scorecard with hierarchical breakdown</span>
-<span class="n">results</span><span class="o">.</span><span class="n">to_scorecard</span><span class="p">()</span>
 </code></pre></div>
-<p><a href="guides/hierarchical-scoring/">Learn more about Hierarchical Scoring →</a></p>
-<hr />
-<div align="center">
-<h3 id="think-of-axion-as-your-lego-set-for-ai-systems"><strong>Think of Axion as your Lego set for AI systems:</strong><a class="headerlink" href="#think-of-axion-as-your-lego-set-for-ai-systems" title="Permanent link">&para;</a></h3>
-<div align="center">
-<p><a href="#"><img alt="Modular" src="https://img.shields.io/badge/-Modular-8B9F4F?style=for-the-badge" /></a>
-<a href="#"><img alt="Composable" src="https://img.shields.io/badge/-Composable-6B7A3A?style=for-the-badge" /></a>
-<a href="#"><img alt="Production Ready" src="https://img.shields.io/badge/-Production%20Ready-A4B86C?style=for-the-badge" /></a>
-<a href="#"><img alt="Open Source" src="https://img.shields.io/badge/-Open%20Source-B8C78A?style=for-the-badge" /></a></p>
-</div>
-<hr />
-<h2 id="why-axion">Why "Axion"?<a class="headerlink" href="#why-axion" title="Permanent link">&para;</a></h2>
-<p><strong>A</strong>gent <strong>X</strong>-Ray <strong>I</strong>nspection &amp; <strong>O</strong>ptimization <strong>N</strong>etwork</p>
-<p>The name draws inspiration from the <a href="https://en.wikipedia.org/wiki/Axion">axion</a>—a hypothetical particle in physics proposed to solve the "strong CP problem" in quantum chromodynamics. Physicists Frank Wilczek and Steven Weinberg named it after a laundry detergent, hoping it would "clean up" their theoretical mess.</p>
-<p>Like its namesake, this toolkit provides lightweight, modular components that work together to solve complex problems. Axions in physics are characterized by being incredibly small yet potentially accounting for much of the universe's dark matter through sheer numbers. Similarly, Axion the toolkit offers small, focused tools that combine to tackle the substantial challenge of AI agent evaluation.</p>
-</div>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../evaluation/">Running Evaluations</a> - Scale up with evaluation runners</li>
+<li><a href="../../deep-dives/metrics/creating-metrics/">Creating Custom Metrics</a> - Build your own metrics</li>
+<li><a href="../../reference/metrics/">API Reference: Metrics</a> - Full API documentation</li>
+</ul>
 
 
 
@@ -3676,7 +3787,7 @@ Weight and expand dimensions to match your unique KPIs. Define what "good AI" me
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 25, 2026 01:27:46 UTC">January 25, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 12, 2026 22:46:04 UTC">January 12, 2026</span>
   </span>
 
     
@@ -3758,11 +3869,11 @@ Weight and expand dimensions to match your unique KPIs. Define what "good AI" me
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.instant", "navigation.tracking", "navigation.top", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.instant", "navigation.tracking", "navigation.top", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
 
-      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
 <script>
