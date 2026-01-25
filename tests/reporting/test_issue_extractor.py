@@ -13,6 +13,7 @@ from axion.reporting.issue_extractor import (
     ExtractedIssue,
     IssueExtractionResult,
     IssueExtractor,
+    IssueSummary,
     LLMSummaryInput,
     MetricSignalAdapter,
     SignalAdapterRegistry,
@@ -1428,3 +1429,223 @@ class TestSignalAdapterRegistry:
 
         assert isinstance(adapters, list)
         assert len(adapters) >= 6  # At least the built-in ones
+
+
+class TestIssueSummarize:
+    """Tests for the summarize() method."""
+
+    def _create_mock_llm(self, response_text: str = 'Mock LLM analysis response.'):
+        """Create a mock LLM for testing."""
+
+        class MockResponse:
+            def __init__(self, text):
+                self.text = text
+
+        class MockLLM:
+            def __init__(self, response):
+                self.response = response
+                self.last_prompt = None
+
+            async def acomplete(self, prompt, **kwargs):
+                self.last_prompt = prompt
+                return MockResponse(self.response)
+
+        return MockLLM(response_text)
+
+    def _create_extraction_result(self) -> IssueExtractionResult:
+        """Create an extraction result for testing."""
+        issues = [
+            ExtractedIssue(
+                test_case_id='test_1',
+                metric_name='Faithfulness',
+                signal_group='claim_0',
+                signal_name='faithfulness_verdict',
+                value='CONTRADICTORY',
+                score=0.0,
+                reasoning='The claim contradicts the source',
+                item_context={
+                    'query': 'What is X?',
+                    'actual_output': 'X is Y',
+                    'expected_output': 'X is Z',
+                },
+            ),
+            ExtractedIssue(
+                test_case_id='test_2',
+                metric_name='Answer Criteria',
+                signal_group='aspect_Coverage',
+                signal_name='is_covered',
+                value=False,
+                score=0.0,
+                reasoning='Missing key concepts',
+                item_context={'query': 'Explain A and B'},
+            ),
+        ]
+
+        return IssueExtractionResult(
+            run_id='run_123',
+            evaluation_name='Test Evaluation',
+            total_test_cases=10,
+            total_signals_analyzed=50,
+            issues_found=2,
+            issues_by_metric={
+                'Faithfulness': [issues[0]],
+                'Answer Criteria': [issues[1]],
+            },
+            issues_by_type={
+                'Faithfulness:faithfulness_verdict': [issues[0]],
+                'Answer Criteria:is_covered': [issues[1]],
+            },
+            all_issues=issues,
+        )
+
+    @pytest.mark.asyncio
+    async def test_summarize_returns_issue_summary(self):
+        """Test that summarize() returns an IssueSummary dataclass."""
+
+        extractor = IssueExtractor()
+        result = self._create_extraction_result()
+        mock_llm = self._create_mock_llm('This is the LLM analysis.')
+
+        summary = await extractor.summarize(result, llm=mock_llm)
+
+        assert isinstance(summary, IssueSummary)
+        assert summary.text == 'This is the LLM analysis.'
+        assert summary.issues_analyzed == 2
+        assert summary.evaluation_name == 'Test Evaluation'
+        assert (
+            '{overview}' not in summary.prompt_used
+        )  # Placeholders should be replaced
+        assert '{issue_data}' not in summary.prompt_used
+
+    @pytest.mark.asyncio
+    async def test_summarize_uses_default_prompt(self):
+        """Test that summarize() uses DEFAULT_SUMMARY_PROMPT by default."""
+
+        extractor = IssueExtractor()
+        result = self._create_extraction_result()
+        mock_llm = self._create_mock_llm()
+
+        summary = await extractor.summarize(result, llm=mock_llm)
+
+        # The prompt should contain elements from the default template
+        assert 'Executive Summary' in summary.prompt_used
+        assert 'Missing Concepts' in summary.prompt_used
+        assert 'Failure Categories Table' in summary.prompt_used
+        assert 'Root Cause Analysis' in summary.prompt_used
+
+    @pytest.mark.asyncio
+    async def test_summarize_with_custom_prompt(self):
+        """Test that summarize() accepts a custom prompt template."""
+        extractor = IssueExtractor()
+        result = self._create_extraction_result()
+        mock_llm = self._create_mock_llm('Custom analysis result')
+
+        custom_prompt = """Custom analysis for: {overview}
+
+Issues: {issue_data}
+
+Just list top 3 problems."""
+
+        summary = await extractor.summarize(
+            result, llm=mock_llm, prompt_template=custom_prompt
+        )
+
+        assert summary.text == 'Custom analysis result'
+        assert 'Custom analysis for:' in summary.prompt_used
+        assert 'Just list top 3 problems' in summary.prompt_used
+        # Placeholders should be replaced with actual data
+        assert 'Test Evaluation' in summary.prompt_used
+        assert 'Faithfulness' in summary.prompt_used
+
+    @pytest.mark.asyncio
+    async def test_summarize_prompt_includes_issue_details(self):
+        """Test that the prompt includes issue details."""
+        extractor = IssueExtractor()
+        result = self._create_extraction_result()
+        mock_llm = self._create_mock_llm()
+
+        summary = await extractor.summarize(result, llm=mock_llm)
+
+        # Check that issue details are in the prompt
+        assert 'test_1' in summary.prompt_used
+        assert 'Faithfulness' in summary.prompt_used
+        assert 'CONTRADICTORY' in summary.prompt_used
+        assert 'The claim contradicts the source' in summary.prompt_used
+
+    @pytest.mark.asyncio
+    async def test_summarize_respects_max_issues(self):
+        """Test that summarize() respects max_issues parameter."""
+        extractor = IssueExtractor()
+
+        # Create result with many issues
+        issues = [
+            ExtractedIssue(
+                test_case_id=f'test_{i}',
+                metric_name='TestMetric',
+                signal_group='group',
+                signal_name='signal',
+                value=False,
+                score=0.0,
+                item_context={'query': f'Query {i}'},
+            )
+            for i in range(50)
+        ]
+
+        result = IssueExtractionResult(
+            run_id='run_123',
+            evaluation_name='Large Test',
+            total_test_cases=50,
+            total_signals_analyzed=100,
+            issues_found=50,
+            issues_by_metric={'TestMetric': issues},
+            issues_by_type={'TestMetric:signal': issues},
+            all_issues=issues,
+        )
+
+        mock_llm = self._create_mock_llm()
+
+        summary = await extractor.summarize(result, llm=mock_llm, max_issues=10)
+
+        assert summary.issues_analyzed == 10
+        # Should mention that not all issues are shown
+        assert 'Showing 10 of 50' in summary.prompt_used
+
+    @pytest.mark.asyncio
+    async def test_summarize_handles_llm_string_response(self):
+        """Test that summarize() handles LLM returning a plain string."""
+
+        class StringLLM:
+            async def acomplete(self, prompt, **kwargs):
+                return 'Plain string response'
+
+        extractor = IssueExtractor()
+        result = self._create_extraction_result()
+
+        summary = await extractor.summarize(result, llm=StringLLM())
+
+        assert summary.text == 'Plain string response'
+
+    def test_summarize_sync(self):
+        """Test synchronous summarize_sync() method."""
+
+        extractor = IssueExtractor()
+        result = self._create_extraction_result()
+        mock_llm = self._create_mock_llm('Sync summary result')
+
+        summary = extractor.summarize_sync(result, llm=mock_llm)
+
+        assert isinstance(summary, IssueSummary)
+        assert summary.text == 'Sync summary result'
+
+    def test_build_summary_prompt_includes_overview(self):
+        """Test that _build_summary_prompt includes overview information."""
+        extractor = IssueExtractor()
+        result = self._create_extraction_result()
+
+        prompt = extractor._build_summary_prompt(result)
+
+        assert 'Test Evaluation' in prompt
+        assert 'Total Test Cases:** 10' in prompt
+        assert 'Total Issues Found:** 2' in prompt
+        assert 'Faithfulness: 1 issues' in prompt
+        assert 'Answer Criteria: 1 issues' in prompt

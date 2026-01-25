@@ -1,8 +1,10 @@
 from axion.reporting.issue_extractor import (
+    DEFAULT_SUMMARY_PROMPT,
     ExtractedIssue,
     IssueExtractionResult,
     IssueExtractor,
     IssueGroup,
+    IssueSummary,
     LLMSummaryInput,
     MetricSignalAdapter,
     SignalAdapterRegistry,
@@ -11,10 +13,12 @@ from axion.reporting.latency import LatencyAnalyzer
 from axion.reporting.scorecard import ScoreCard
 
 __all__ = [
+    'DEFAULT_SUMMARY_PROMPT',
     'ExtractedIssue',
     'IssueExtractionResult',
     'IssueExtractor',
     'IssueGroup',
+    'IssueSummary',
     'LLMSummaryInput',
     'LatencyAnalyzer',
     'MetricSignalAdapter',

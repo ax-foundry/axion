@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "axion"
 dynamic = ["version"]
-description = "A composable suite of AI tools to accelerate development and reinforce best practices."
+description = "A modular white box evaluation framework for AI agents."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
@@ -56,6 +56,7 @@ dev = [
 "mkdocs-git-authors-plugin",
 "mkdocs-git-revision-date-localized-plugin",
 "pytest",
+"pytest-asyncio",
 "coverage",
 "mypy",
 "mike",

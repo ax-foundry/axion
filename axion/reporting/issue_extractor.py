@@ -117,6 +117,66 @@ class IssueGroup:
 
 
 @dataclass
+class IssueSummary:
+    """
+    LLM-generated summary of evaluation issues.
+
+    Attributes:
+        text: The full LLM-generated analysis and summary
+        prompt_used: The prompt that was sent to the LLM
+        issues_analyzed: Number of issues included in the analysis
+        evaluation_name: Name of the evaluation that was analyzed
+    """
+
+    text: str
+    prompt_used: str
+    issues_analyzed: int
+    evaluation_name: Optional[str] = None
+
+
+# Default prompt template for issue summarization
+# Users can customize this by passing their own template to summarize()
+DEFAULT_SUMMARY_PROMPT = """You are analyzing evaluation results from an AI system quality assessment.
+
+## Evaluation Overview
+{overview}
+
+## Issue Data
+{issue_data}
+
+## Your Task
+
+Analyze the issues above and provide a comprehensive diagnostic report with:
+
+### 1. Executive Summary
+A 2-3 sentence overview of the main quality problems identified.
+
+### 2. Missing Concepts Summary
+List the key concepts, topics, or information that the AI system consistently failed to cover or address correctly.
+
+### 3. Failure Categories Table
+
+| Failure Category | Approx. Count | Description | Example from Logs |
+|------------------|---------------|-------------|-------------------|
+| [Category name] | [Count] | [Brief description of this failure type] | [One specific example] |
+
+Include all major failure patterns. Group similar issues together.
+
+### 4. Root Cause Analysis
+What systemic issues might be causing these failures? Consider:
+- Training data gaps
+- Prompt/instruction issues
+- Context retrieval problems
+- Response generation patterns
+
+### 5. Recommended Actions
+Prioritized list of specific improvements to address these issues, ordered by impact.
+
+Provide actionable, specific recommendations based on the evidence in the logs.
+"""
+
+
+@dataclass
 class MetricSignalAdapter:
     """
     Adapter defining how to extract issues from a specific metric's signals.
@@ -1393,3 +1453,190 @@ class IssueExtractor:
         )
 
         return '\n'.join(lines)
+
+    def _build_summary_prompt(
+        self,
+        result: IssueExtractionResult,
+        prompt_template: Optional[str] = None,
+        max_issues: int = 100,
+    ) -> str:
+        """
+        Build the prompt for LLM summarization.
+
+        Args:
+            result: The IssueExtractionResult to summarize
+            prompt_template: Custom prompt template (uses DEFAULT_SUMMARY_PROMPT if None)
+            max_issues: Maximum number of issues to include in the prompt
+
+        Returns:
+            Formatted prompt string.
+        """
+        template = prompt_template or DEFAULT_SUMMARY_PROMPT
+
+        # Build overview section
+        overview_lines = []
+        if result.evaluation_name:
+            overview_lines.append(f'**Evaluation Name:** {result.evaluation_name}')
+        overview_lines.append(f'**Total Test Cases:** {result.total_test_cases}')
+        overview_lines.append(f'**Total Issues Found:** {result.issues_found}')
+        overview_lines.append('')
+        overview_lines.append('**Issues by Metric:**')
+        for metric, issues in sorted(
+            result.issues_by_metric.items(), key=lambda x: -len(x[1])
+        ):
+            overview_lines.append(f'- {metric}: {len(issues)} issues')
+        overview = '\n'.join(overview_lines)
+
+        # Build issue data section
+        issue_lines = []
+        for i, issue in enumerate(result.all_issues[:max_issues], 1):
+            issue_lines.append(f'### Issue {i}')
+            issue_lines.append(f'- **Test Case:** {issue.test_case_id}')
+            issue_lines.append(f'- **Metric:** {issue.metric_name}')
+            issue_lines.append(f'- **Signal:** {issue.signal_name}')
+            issue_lines.append(f'- **Value:** {issue.value}')
+            issue_lines.append(f'- **Score:** {issue.score}')
+
+            if issue.reasoning:
+                reasoning = issue.reasoning
+                if len(reasoning) > 300:
+                    reasoning = reasoning[:300] + '...'
+                issue_lines.append(f'- **Reasoning:** {reasoning}')
+
+            # Include context
+            for key, value in issue.item_context.items():
+                if isinstance(value, str):
+                    display_value = value[:400] + '...' if len(value) > 400 else value
+                    issue_lines.append(
+                        f'- **{key.replace("_", " ").title()}:** {display_value}'
+                    )
+
+            issue_lines.append('')
+
+        if result.issues_found > max_issues:
+            issue_lines.append(
+                f'*Note: Showing {max_issues} of {result.issues_found} total issues.*'
+            )
+
+        issue_data = '\n'.join(issue_lines)
+
+        # Format the template
+        return template.format(overview=overview, issue_data=issue_data)
+
+    async def summarize(
+        self,
+        result: IssueExtractionResult,
+        llm: LLMRunnable,
+        prompt_template: Optional[str] = None,
+        max_issues: int = 100,
+    ) -> IssueSummary:
+        """
+        Generate a complete LLM-powered summary of evaluation issues.
+
+        This method sends the issues to an LLM and returns a structured summary
+        including failure categories, root causes, and recommendations.
+
+        Args:
+            result: The IssueExtractionResult to summarize
+            llm: The LLM to use for generating the summary (must have acomplete method)
+            prompt_template: Custom prompt template. If None, uses DEFAULT_SUMMARY_PROMPT.
+                The template should include {overview} and {issue_data} placeholders.
+            max_issues: Maximum number of issues to include in the prompt (default 100)
+
+        Returns:
+            IssueSummary containing the LLM's analysis.
+
+        Example:
+            ```python
+            from axion.reporting import IssueExtractor
+            from axion.llm_registry import LLMRegistry
+
+            extractor = IssueExtractor()
+            issues = extractor.extract_from_evaluation(eval_result)
+
+            reg = LLMRegistry('anthropic')
+            llm = reg.get_llm('claude-sonnet-4-20250514')
+
+            summary = await extractor.summarize(issues, llm=llm)
+            print(summary.text)
+            ```
+
+        Example with custom prompt:
+            ```python
+            custom_prompt = '''
+            Analyze these {overview} issues:
+            {issue_data}
+
+            Provide a brief summary focused on:
+            1. Top 3 failure patterns
+            2. Quick wins to fix
+            '''
+            summary = await extractor.summarize(issues, llm=llm, prompt_template=custom_prompt)
+            ```
+        """
+        prompt = self._build_summary_prompt(result, prompt_template, max_issues)
+
+        try:
+            response = await llm.acomplete(prompt)
+
+            # Handle different response formats
+            if hasattr(response, 'text'):
+                text = response.text
+            elif isinstance(response, str):
+                text = response
+            else:
+                text = str(response)
+
+            return IssueSummary(
+                text=text.strip(),
+                prompt_used=prompt,
+                issues_analyzed=min(result.issues_found, max_issues),
+                evaluation_name=result.evaluation_name,
+            )
+        except Exception as e:
+            logger.error(f'Failed to generate issue summary: {e}')
+            raise
+
+    def summarize_sync(
+        self,
+        result: IssueExtractionResult,
+        llm: LLMRunnable,
+        prompt_template: Optional[str] = None,
+        max_issues: int = 100,
+    ) -> IssueSummary:
+        """
+        Synchronous version of summarize().
+
+        Generates a complete LLM-powered summary of evaluation issues.
+
+        Args:
+            result: The IssueExtractionResult to summarize
+            llm: The LLM to use for generating the summary
+            prompt_template: Custom prompt template. If None, uses DEFAULT_SUMMARY_PROMPT.
+            max_issues: Maximum number of issues to include in the prompt
+
+        Returns:
+            IssueSummary containing the LLM's analysis.
+
+        Example:
+            ```python
+            summary = extractor.summarize_sync(issues, llm=llm)
+            print(summary.text)
+            ```
+        """
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                raise RuntimeError(
+                    'Cannot use summarize_sync() in an async context. '
+                    'Use await summarize() instead.'
+                )
+            return loop.run_until_complete(
+                self.summarize(result, llm, prompt_template, max_issues)
+            )
+        except RuntimeError as e:
+            if 'no current event loop' in str(e).lower():
+                return asyncio.run(
+                    self.summarize(result, llm, prompt_template, max_issues)
+                )
+            raise
