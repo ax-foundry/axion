@@ -212,6 +212,72 @@ Output includes AI-generated pattern analysis:
   or hallucination patterns around technical specifications.
 ```
 
+### Full LLM Analysis with `summarize()`
+
+For a complete automated analysis (like copy-pasting to ChatGPT/Gemini, but automated), use the `summarize()` method:
+
+```python
+from axion.llm_registry import LLMRegistry
+from axion.reporting import IssueExtractor
+
+# Extract issues
+extractor = IssueExtractor()
+issues = extractor.extract_from_evaluation(results)
+
+# Get LLM
+reg = LLMRegistry('anthropic')
+llm = reg.get_llm('claude-sonnet-4-20250514')
+
+# Generate complete analysis
+summary = await extractor.summarize(issues, llm=llm)
+
+print(summary.text)
+```
+
+The default prompt generates:
+- **Executive Summary** - 2-3 sentence overview
+- **Missing Concepts** - Topics the AI consistently missed
+- **Failure Categories Table** - Structured breakdown with counts and examples
+- **Root Cause Analysis** - Systemic issues causing failures
+- **Recommended Actions** - Prioritized improvements
+
+#### Custom Prompts
+
+Override the default prompt with your own template:
+
+```python
+custom_prompt = '''
+Analyze these evaluation failures:
+
+{overview}
+
+{issue_data}
+
+Provide:
+1. Top 3 failure patterns
+2. Quick wins to fix them
+3. A table with Category, Count, and Example
+'''
+
+summary = await extractor.summarize(
+    issues,
+    llm=llm,
+    prompt_template=custom_prompt,
+    max_issues=50  # Limit issues in prompt
+)
+```
+
+The template must include `{overview}` and `{issue_data}` placeholders.
+
+#### Sync Version
+
+For non-async code:
+
+```python
+summary = extractor.summarize_sync(issues, llm=llm)
+print(summary.text)
+```
+
 ### Structured Output for Programmatic Use
 
 ```python

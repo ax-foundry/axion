@@ -32,6 +32,8 @@ from axion.reporting import (
         - to_prompt_text
         - to_grouped_prompt_text
         - to_grouped_prompt_text_async
+        - summarize
+        - summarize_sync
 
 ### Constructor Parameters
 
@@ -123,6 +125,65 @@ async def to_grouped_prompt_text_async(
 ```
 
 Async version of `to_grouped_prompt_text`. Use this when working with async LLMs.
+
+---
+
+#### summarize
+
+```python
+async def summarize(
+    self,
+    result: IssueExtractionResult,
+    llm: LLMRunnable,
+    prompt_template: Optional[str] = None,
+    max_issues: int = 100,
+) -> IssueSummary
+```
+
+Generate a complete LLM-powered summary of evaluation issues.
+
+**Parameters:**
+- `result`: The IssueExtractionResult to summarize
+- `llm`: The LLM to use for generating the summary (must have `acomplete` method)
+- `prompt_template`: Custom prompt template. If None, uses `DEFAULT_SUMMARY_PROMPT`. Template must include `{overview}` and `{issue_data}` placeholders.
+- `max_issues`: Maximum number of issues to include in the prompt (default 100)
+
+**Returns:** `IssueSummary` containing the LLM's analysis
+
+**Example:**
+```python
+from axion.reporting import IssueExtractor
+from axion.llm_registry import LLMRegistry
+
+extractor = IssueExtractor()
+issues = extractor.extract_from_evaluation(eval_result)
+
+reg = LLMRegistry('anthropic')
+llm = reg.get_llm('claude-sonnet-4-20250514')
+
+summary = await extractor.summarize(issues, llm=llm)
+print(summary.text)
+```
+
+---
+
+#### summarize_sync
+
+```python
+def summarize_sync(
+    self,
+    result: IssueExtractionResult,
+    llm: LLMRunnable,
+    prompt_template: Optional[str] = None,
+    max_issues: int = 100,
+) -> IssueSummary
+```
+
+Synchronous version of `summarize()`. Use this in non-async contexts.
+
+**Parameters:** Same as `summarize()`
+
+**Returns:** `IssueSummary` containing the LLM's analysis
 
 ---
 
@@ -266,6 +327,21 @@ class IssueGroup:
     representative_issues: List[ExtractedIssue]  # Sample issues with context
     affected_test_cases: List[str]            # List of affected test case IDs
     llm_summary: Optional[str]                # Optional LLM-generated summary
+```
+
+---
+
+### IssueSummary
+
+LLM-generated summary of evaluation issues, returned by `summarize()`.
+
+```python
+@dataclass
+class IssueSummary:
+    text: str                    # The full LLM-generated analysis
+    prompt_used: str             # The prompt that was sent to the LLM
+    issues_analyzed: int         # Number of issues included in analysis
+    evaluation_name: Optional[str]  # Name of the evaluation
 ```
 
 ---
