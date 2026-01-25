@@ -1,15 +1,13 @@
 
 ![header](resources/axion_main_transparent.png)
 
-<strong>A</strong>gent <strong>X</strong>-Ray <strong>I</strong>nspection & <strong>O</strong>ptimization <strong>N</strong>etwork
-
-**A modular white box evaluation framework for AI agents.**
+<strong>A</strong>gent <strong>X</strong>-Ray <strong>I</strong>nspection & <strong>O</strong>ptimization <strong>N</strong>etwork – **A modular white box evaluation framework for AI agents.**
 
 <p align="center">
 <a href="https://ax-foundry.github.io/axion/"><strong>Documentation</a> |
-<a href="https://ax-foundry.github.io/axion/stable/getting-started/installation/">Quick Start</a> |
-<a href="https://ax-foundry.github.io/axion/stable/metric-registry/composite/">Metrics</a> |
-<a href="https://ax-foundry.github.io/axion/stable/agent_playbook/">Agent Playbook</a>
+<a href="https://ax-foundry.github.io/axion/getting-started/installation/">Quick Start</a> |
+<a href="https://ax-foundry.github.io/axion/metric-registry/composite/">Metrics</a> |
+<a href="https://ax-foundry.github.io/axion/agent_playbook/">Agent Playbook</a>
 </strong></p>
 
 <p align="center">
@@ -162,9 +160,9 @@ pip install -e ".[tracing]"
 
 **[Full Documentation](https://ax-foundry.github.io/axion/)**
 
-- [Agent Evaluation Playbook](https://ax-foundry.github.io/axion/stable/agent_playbook/) — The Analyze-Measure-Improve methodology
-- [Metrics Reference](https://ax-foundry.github.io/axion/stable/guides/metrics/) — Complete metric catalog
-- [Dataset Guide](https://ax-foundry.github.io/axion/stable/guides/datasets/) — Building effective evaluation datasets
+- [Agent Evaluation Playbook](https://ax-foundry.github.io/axion/agent_playbook/) — The Analyze-Measure-Improve methodology
+- [Metrics Reference](https://ax-foundry.github.io/axion/guides/metrics/) — Complete metric catalog
+- [Dataset Guide](https://ax-foundry.github.io/axion/guides/datasets/) — Building effective evaluation datasets
 
 ---
 
@@ -188,7 +186,7 @@ Axion is built around the **AMI methodology**—a disciplined, repeatable proces
 | **Measure** | Solid baselines and priorities grounded in data |
 | **Improve** | Fixes that address root causes—not symptoms |
 
-See the [Agent Evaluation Playbook](https://ax-foundry.github.io/axion/stable/agent_playbook/) for the complete methodology.
+See the [Agent Evaluation Playbook](https://ax-foundry.github.io/axion/agent_playbook/) for the complete methodology.
 
 ---
 
