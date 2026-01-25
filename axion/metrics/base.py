@@ -285,21 +285,6 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
     def _resolve_path(self, item: DatasetItem, path: str, default: Any = None) -> Any:
         """
         Resolve dot-notation path to get nested values from a DatasetItem.
-
-        Supports both attribute access (for DatasetItem fields) and dictionary key access
-        (for nested dictionaries like additional_output or additional_input).
-
-        Args:
-            item: The DatasetItem to resolve the path from
-            path: Dot-notation path (e.g., 'additional_output.summary')
-            default: Value to return if path cannot be resolved
-
-        Returns:
-            The resolved value, or default if not found
-
-        Example:
-            # item.additional_output = {'summary': 'Hello world'}
-            _resolve_path(item, 'additional_output.summary')  # Returns 'Hello world'
         """
         parts = path.split('.')
         current = item
@@ -328,12 +313,6 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
 
         Returns:
             Dictionary mapping field names to their resolved values
-
-        Example:
-            # With required_fields=['actual_output', 'expected_output']
-            # and field_mapping={'actual_output': 'additional_output.summary'}
-            fields = metric.get_mapped_fields(item)
-            # Returns {'actual_output': <resolved value>, 'expected_output': <resolved value>}
         """
         fields = {}
         for field in (self.required_fields or []) + (self.optional_fields or []):
