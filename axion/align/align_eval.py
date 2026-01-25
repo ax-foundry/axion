@@ -58,6 +58,7 @@ class AlignEval(BaseAlignEval):
             pd.DataFrame | Dict: The detailed results as a DataFrame or JSON dict.
         """
         print('🤖 Running LLM-as-a-judge evaluation...')
+
         async def _run() -> None:
             await self._run_evals_async(on_progress=on_progress)
 

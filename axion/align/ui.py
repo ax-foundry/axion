@@ -19,15 +19,15 @@ class AlignEvalRenderer(ABC):
         """Collect human judgments and write to dataset items."""
 
     @abstractmethod
-    def style_results(self, results_df: pd.DataFrame) -> "Styler":
+    def style_results(self, results_df: pd.DataFrame) -> 'Styler':
         """Return a styled table for detailed results."""
 
     @abstractmethod
     def create_summary_stats_table(
         self, results_df: pd.DataFrame, alignment_score: float
-    ) -> "Styler":
+    ) -> 'Styler':
         """Return a styled table for summary statistics."""
 
     @abstractmethod
-    def display(self, summary_table: "Styler", detailed_table: "Styler") -> None:
+    def display(self, summary_table: 'Styler', detailed_table: 'Styler') -> None:
         """Render summary and detailed tables in the UI."""

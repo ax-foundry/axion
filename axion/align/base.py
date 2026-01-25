@@ -97,9 +97,7 @@ class BaseAlignEval(ABC):
                 explanation = metric_result.explanation
                 if score_note:
                     explanation = (
-                        f'{explanation} ({score_note})'
-                        if explanation
-                        else score_note
+                        f'{explanation} ({score_note})' if explanation else score_note
                     )
                 self.llm_evaluations.append(
                     {

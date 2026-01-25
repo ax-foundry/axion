@@ -37,22 +37,22 @@ class ConsoleAlignEvalRenderer(AlignEvalRenderer):
 
         print('\n✅ Human annotation complete! You can now run .execute()')
 
-    def style_results(self, results_df: pd.DataFrame) -> "Styler":
+    def style_results(self, results_df: pd.DataFrame) -> 'Styler':
         return results_df.style
 
     def create_summary_stats_table(
         self, results_df: pd.DataFrame, alignment_score: float
-    ) -> "Styler":
+    ) -> 'Styler':
         summary_df = pd.DataFrame(
             [
                 ['Overall Alignment', f'{alignment_score:.1%}'],
-                ['Aligned Items', f"{results_df['aligned'].sum()} / {len(results_df)}"],
+                ['Aligned Items', f'{results_df["aligned"].sum()} / {len(results_df)}'],
             ],
             columns=['Metric', 'Value'],
         )
         return summary_df.style
 
-    def display(self, summary_table: "Styler", detailed_table: "Styler") -> None:
+    def display(self, summary_table: 'Styler', detailed_table: 'Styler') -> None:
         print('\nSummary:')
         print(summary_table.data)
         print('\nDetailed Results:')
