@@ -1,7 +1,9 @@
 
 ![header](resources/axion_main_transparent.png)
 
+<p align="center">
 <strong>A</strong>gent <strong>X</strong>-Ray <strong>I</strong>nspection & <strong>O</strong>ptimization <strong>N</strong>etwork – **A modular white box evaluation framework for AI agents.**
+</p>
 
 <p align="center">
 <a href="https://ax-foundry.github.io/axion/"><strong>Documentation</a> |
