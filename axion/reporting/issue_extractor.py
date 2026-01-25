@@ -578,7 +578,7 @@ class IssueExtractor:
         score_threshold: float = 0.0,
         include_nan: bool = False,
         include_context_fields: Optional[List[str]] = None,
-        metric_filters: Optional[List[str]] = None,
+        metric_names: Optional[List[str]] = None,
         max_issues: Optional[int] = None,
         sample_rate: Optional[float] = None,
     ):
@@ -591,7 +591,7 @@ class IssueExtractor:
             include_nan: Whether to include signals with NaN scores as issues.
             include_context_fields: Fields to include from test case context.
                 Defaults to ['query', 'actual_output', 'expected_output'].
-            metric_filters: Optional list of metric names to filter. If None,
+            metric_names: Optional list of metric names to filter. If None,
                 all metrics are processed.
             max_issues: Hard limit on number of issues to return.
             sample_rate: Deterministic sampling rate (0.0-1.0) by test_case_id.
@@ -603,7 +603,7 @@ class IssueExtractor:
             'actual_output',
             'expected_output',
         ]
-        self.metric_filters = metric_filters
+        self.metric_names = metric_names
         self.max_issues = max_issues
         self.sample_rate = sample_rate
 
@@ -798,7 +798,7 @@ class IssueExtractor:
         metric_name = metric_score.name or 'unknown'
 
         # Check metric filter
-        if self.metric_filters and metric_name not in self.metric_filters:
+        if self.metric_names and metric_name not in self.metric_names:
             return issues
 
         normalized_signals = normalize_signals(metric_name, metric_score.signals)

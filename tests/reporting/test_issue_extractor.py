@@ -163,7 +163,7 @@ class TestIssueExtractor:
             'actual_output',
             'expected_output',
         ]
-        assert extractor.metric_filters is None
+        assert extractor.metric_names is None
         assert extractor.max_issues is None
         assert extractor.sample_rate is None
 
@@ -173,7 +173,7 @@ class TestIssueExtractor:
             score_threshold=0.5,
             include_nan=True,
             include_context_fields=['query'],
-            metric_filters=['faithfulness'],
+            metric_names=['faithfulness'],
             max_issues=100,
             sample_rate=0.5,
         )
@@ -181,7 +181,7 @@ class TestIssueExtractor:
         assert extractor.score_threshold == 0.5
         assert extractor.include_nan is True
         assert extractor.include_context_fields == ['query']
-        assert extractor.metric_filters == ['faithfulness']
+        assert extractor.metric_names == ['faithfulness']
         assert extractor.max_issues == 100
         assert extractor.sample_rate == 0.5
 
@@ -482,9 +482,9 @@ class TestIssueExtractorExtraction:
         assert issues[0].score == 0.0
         assert issues[0].reasoning == 'Claim contradicts context'
 
-    def test_extract_from_metric_score_with_metric_filter(self):
+    def test_extract_from_metric_score_with_metric_names(self):
         """Test extraction respects metric filters."""
-        extractor = IssueExtractor(metric_filters=['other_metric'])
+        extractor = IssueExtractor(metric_names=['other_metric'])
 
         signals = {
             'claim_0': [
