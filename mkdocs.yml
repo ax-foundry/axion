@@ -3,10 +3,12 @@ site_description: A modular evaluation framework for AI agents
 repo_url: https://github.com/ax-foundry/axion
 
 nav:
-  - Home: index.md
+  - Home:
+    - index.md
+    - Evaluation Flywheel: evaluation_flywheel.md
+    - Agent Evaluation Playbook: agent_playbook.md
   - Getting Started:
     - Installation: getting-started/installation.md
-    - Agent Evaluation Playbook: agent_playbook.md
   - Guides:
     - Hierarchical Scoring: guides/hierarchical-scoring.md
     - Working with Datasets: guides/datasets.md

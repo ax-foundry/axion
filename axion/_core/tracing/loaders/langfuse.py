@@ -276,6 +276,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
         days_back: int = 7,
         tags: Optional[List[str]] = None,
         name: Optional[str] = None,
+        trace_ids: Optional[List[str]] = None,
         fetch_full_traces: bool = True,
         show_progress: bool = True,
     ) -> List[Any]:
@@ -287,6 +288,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
             days_back: Number of days to look back
             tags: Filter by specific tags
             name: Filter by trace name
+            trace_ids: Optional list of trace IDs to fetch directly. If provided,
+                skips list() and fetches each trace by ID.
             fetch_full_traces: If True (default), fetch full trace details for each
                 trace via additional API calls. If False, only return trace summaries
                 (faster but less data). Set to False to avoid rate limits.
@@ -298,6 +301,25 @@ class LangfuseTraceLoader(BaseTraceLoader):
         if not self._client_initialized:
             logger.error('Langfuse client not initialized')
             return []
+
+        def _fetch_full_traces(trace_id_list: List[str]) -> List[Any]:
+            results = []
+            trace_iter = trace_id_list
+            if show_progress:
+                trace_iter = tqdm(trace_iter, desc='Fetching traces', unit='trace')
+
+            for trace_id in trace_iter:
+                if not trace_id:
+                    continue
+                trace = self.fetch_trace(trace_id)
+                if trace is not None:
+                    results.append(trace)
+
+            logger.info(f'Successfully loaded {len(results)} full traces')
+            return results
+
+        if trace_ids:
+            return _fetch_full_traces(trace_ids)
 
         from_timestamp = self._normalize_time_window(days_back)
         logger.info(
@@ -325,35 +347,15 @@ class LangfuseTraceLoader(BaseTraceLoader):
             return list(traces_page.data)
 
         # Fetch full trace details for each summary
-        results = []
-        trace_iter = traces_page.data
-        if show_progress:
-            trace_iter = tqdm(trace_iter, desc='Fetching traces', unit='trace')
+        return _fetch_full_traces([trace.id for trace in traces_page.data])
 
-        for trace_summary in trace_iter:
-            try:
-                full_trace = self._execute_with_retry(
-                    lambda tid=trace_summary.id: self.client.api.trace.get(tid),
-                    description=f'fetch trace {trace_summary.id}',
-                )
-                results.append(full_trace)
-
-                # Pacing to avoid rate limits
-                if self.request_pacing > 0:
-                    time.sleep(self.request_pacing)
-
-            except Exception as e:
-                logger.warning(f'Skipping trace {trace_summary.id}: {e}')
-
-        logger.info(f'Successfully loaded {len(results)} full traces')
-        return results
-
-    def fetch_trace(self, trace_id: str) -> Optional[Any]:
+    def fetch_trace(self, trace_id: str, pace: bool = True) -> Optional[Any]:
         """
         Fetch a single trace by trace_id.
 
         Args:
             trace_id: Langfuse trace ID to fetch
+            pace: Whether to apply request pacing delay after fetch
 
         Returns:
             The full Langfuse trace object, or None if not found/failed.
@@ -372,8 +374,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 description=f'fetch trace {trace_id}',
             )
 
-            # Pacing to avoid rate limits
-            if self.request_pacing > 0:
+            if pace and self.request_pacing > 0:
                 time.sleep(self.request_pacing)
 
             return trace

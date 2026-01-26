@@ -1,5 +1,8 @@
+<p align="center">
+  <img src="resources/axion_main_transparent.png" width="500" alt="Axion">
+</p>
 
-![header](resources/axion_main_transparent.png)
+
 
 <p align="center">
 <strong>A</strong>gent <strong>X</strong>-Ray <strong>I</strong>nspection & <strong>O</strong>ptimization <strong>N</strong>etwork – A modular white box evaluation framework for AI agents.
