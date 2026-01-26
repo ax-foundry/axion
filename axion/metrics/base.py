@@ -148,7 +148,7 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         """
 
         # TODO – Need to revisit this logic.
-        
+
         # Track if this is a non-LLM metric (heuristic) with no explicit LLM params
         is_non_llm_metric = False
 
