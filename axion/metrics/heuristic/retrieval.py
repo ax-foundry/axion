@@ -174,6 +174,7 @@ class HitRateAtK(_RetrievalMetric):
         actual_ids, expected_relevance_map, error = self._parse_item(item)
         if error:
             return error
+        assert actual_ids is not None and expected_relevance_map is not None
 
         relevant_docs = {
             doc_id
@@ -494,6 +495,7 @@ class PrecisionAtK(_RetrievalMetric):
         actual_ids, expected_relevance_map, error = self._parse_item(item)
         if error:
             return error
+        assert actual_ids is not None and expected_relevance_map is not None
 
         relevant_docs = {
             doc_id
@@ -631,6 +633,7 @@ class RecallAtK(_RetrievalMetric):
         actual_ids, expected_relevance_map, error = self._parse_item(item)
         if error:
             return error
+        assert actual_ids is not None and expected_relevance_map is not None
 
         relevant_docs = {
             doc_id

@@ -107,7 +107,7 @@ class EvalTree(TreeMixin):
                 component = ComponentNode(
                     child_name,
                     parent=parent,
-                    aggregation_strategy=strategy_cls(),
+                    aggregation_strategy=strategy_cls(),  # type: ignore[abstract]
                     exclude_failed_metrics=exclude_failed,
                 )
                 self.nodes[child_name] = component
@@ -145,7 +145,7 @@ class EvalTree(TreeMixin):
                     f"Failed to create metric '{name}' from class '{class_path}': {e}"
                 )
         metric_class = metric_registry.get(name)
-        if not metric_class:
+        if metric_class is None:
             raise InvalidConfig(f"Metric '{name}' not found in registry.")
         return metric_class(**kwargs)
 

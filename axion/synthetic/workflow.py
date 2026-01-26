@@ -183,43 +183,6 @@ def handle_node_errors(func: Callable) -> Callable:
     return wrapper
 
 
-# Forward declarations for type hints
-class ProcessDocuments:
-    pass
-
-
-class ProcessSessions:
-    pass
-
-
-class ChunkContent:
-    pass
-
-
-class ExtractStatements:
-    pass
-
-
-class GenerateQuestions:
-    pass
-
-
-class GenerateAnswers:
-    pass
-
-
-class ValidateQAPairs:
-    pass
-
-
-class PrepareEnhancement:
-    pass
-
-
-class HandleError:
-    pass
-
-
 @dataclass
 class InitializeWorkflow(BaseNode[QAWorkflowState, QAWorkflowDeps, QAWorkflowResult]):
     """Initialize workflow and route to appropriate processor based on input source."""

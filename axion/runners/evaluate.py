@@ -454,7 +454,10 @@ class EvaluationRunner(RunnerMixin):
             else:
                 task_output = await self.task_semaphore.run(self.config.task, item)
 
-            if self.config.throttle_delay > 0:
+            if (
+                self.config.throttle_delay is not None
+                and self.config.throttle_delay > 0
+            ):
                 await asyncio.sleep(self.config.throttle_delay)
             if self.cache_manager and self.config.cache_config.cache_task:
                 self.cache_manager.set(task_cache_key, task_output)
@@ -652,7 +655,7 @@ class EvaluationRunner(RunnerMixin):
 
 async def _run_evaluation_async(
     config: 'EvaluationConfig', tracer: Any
-) -> EvaluationResult:
+) -> Optional[EvaluationResult]:
     """
     Execute an evaluation asynchronously with structured metadata tracking.
 
@@ -758,7 +761,7 @@ async def _run_evaluation_async(
 
 async def _run_evaluation_no_wrapper(
     config: 'EvaluationConfig', tracer: Any
-) -> EvaluationResult:
+) -> Optional[EvaluationResult]:
     """
     Execute an evaluation without a wrapper span.
 
@@ -804,7 +807,7 @@ def evaluation_runner(
     run_id: Optional[str] = None,
     trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SEPARATE,
     flush_per_metric: bool = False,
-) -> EvaluationResult:
+) -> Optional[EvaluationResult]:
     """
     Synchronously runs an evaluation experiment to evaluate metrics over a given dataset,
     supporting both flat and hierarchical scoring structures.

@@ -921,7 +921,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
                             continue
 
                         try:
-                            score_kwargs: Dict[str, Any] = {
+                            item_score_kwargs = {
                                 'trace_id': item_trace_id,
                                 'name': metric_score.name,
                                 'value': float(metric_score.score),
@@ -930,10 +930,12 @@ class LangfuseTraceLoader(BaseTraceLoader):
                                 ),
                             }
                             if item_observation_id:
-                                score_kwargs['observation_id'] = item_observation_id
+                                item_score_kwargs['observation_id'] = (
+                                    item_observation_id
+                                )
 
                             self._execute_with_retry(
-                                lambda kwargs=score_kwargs: self.client.create_score(
+                                lambda kwargs=item_score_kwargs: self.client.create_score(
                                     **kwargs
                                 ),
                                 description=f'upload score {metric_score.name}',

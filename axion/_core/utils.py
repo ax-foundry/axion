@@ -45,7 +45,8 @@ class Timer:
     def stop(self) -> None:
         """Stop the timer and store the elapsed time and human-readable end timestamp."""
         now = time.perf_counter()
-        self._elapsed_time = now - self._start_time
+        if self._start_time is not None:
+            self._elapsed_time = now - self._start_time
         self.end_timestamp = self.current_timestamp()
 
     def __enter__(self) -> 'Timer':

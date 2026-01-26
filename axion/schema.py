@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -479,7 +479,7 @@ class EvaluationResult:
         self,
         llm: Optional[LLMRunnable] = None,
         metric_definitions: dict = None,
-        explanation_callback: callable = None,
+        explanation_callback: Optional[Callable] = None,
         instruction: Optional[str] = None,
         max_concurrent: int = 10,
         output_path: Optional[str] = None,

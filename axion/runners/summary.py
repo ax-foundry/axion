@@ -73,15 +73,15 @@ class SimpleSummary(BaseSummary):
             return {}
 
         # Collect valid scores only
-        all_scores = []
+        all_scores: List[float] = []
         for result in results:
             for score in result.score_results:
-                if self._is_valid_score(score.score):
+                if self._is_valid_score(score.score) and score.score is not None:
                     all_scores.append(score.score)
 
         # Calculate KPIs
-        overall_performance = statistics.mean(all_scores) if all_scores else 0
-        consistency = 1 - statistics.stdev(all_scores) if len(all_scores) > 1 else 1
+        overall_performance = statistics.mean(all_scores) if all_scores else 0.0
+        consistency = 1.0 - statistics.stdev(all_scores) if len(all_scores) > 1 else 1.0
 
         # Format display values
         table_width = 58
@@ -472,7 +472,7 @@ class MetricSummary(BaseSummary):
         overall_stats = self._calculate_overall_stats(results, total_task_runs)
 
         # Aggregate metric statistics - only count valid scores
-        metric_stats = defaultdict(
+        metric_stats: Dict[str, Dict[str, Any]] = defaultdict(
             lambda: {
                 'valid_scores': [],
                 'passed': 0,

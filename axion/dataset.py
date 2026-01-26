@@ -180,13 +180,13 @@ class DatasetItem(RichDatasetBaseModel):
             return None
         if not isinstance(v, list):
             # Let Pydantic handle validation for a list of dicts later
-            return v
+            return v  # type: ignore[return-value]
 
         # If the list contains strings, convert them to {"id": "..."} format
         if v and all(isinstance(item, str) for item in v):
             return [{'id': item} for item in v]
 
-        return v
+        return v  # type: ignore[return-value]
 
     @model_validator(mode='before')
     @classmethod

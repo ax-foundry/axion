@@ -196,7 +196,7 @@ class LangfuseSpan:
             logger.info(f'Failed to create Langfuse span "{self.name}": {e}')
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """Exit the span context."""
         if self._observation_context:
             try:
@@ -223,13 +223,13 @@ class LangfuseSpan:
             except Exception as e:
                 logger.debug(f'Failed to auto-flush Langfuse traces: {e}')
 
-        return False
+        return None
 
     async def __aenter__(self) -> 'LangfuseSpan':
         """Async enter - delegates to sync implementation."""
         return self.__enter__()
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> bool:
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         """Async exit - delegates to sync implementation."""
         return self.__exit__(exc_type, exc_val, exc_tb)
 
