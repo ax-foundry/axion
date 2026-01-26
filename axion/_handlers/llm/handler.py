@@ -341,8 +341,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         input_data: Optional[InputModel] = None,
     ) -> OutputModel:
         """Execute structured output call using LiteLLM (supports OpenAI, Claude, Gemini, etc.)."""
-        model_name = getattr(self.llm, 'model', 'gpt-4o')
-
+        model_name = getattr(self.llm, 'model', 'openai/gpt-4o')
         # Determine provider from model name prefix (e.g., "anthropic/claude-3" -> "anthropic")
         if '/' in model_name:
             provider = model_name.split('/')[0]
