@@ -1,6 +1,6 @@
 import asyncio
 from abc import ABC
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence
 
 from llama_index.core.extractors import (
     BaseExtractor,
@@ -31,9 +31,7 @@ class ThrottledBaseExtractor(BaseExtractor, ABC):
         super().model_post_init(__context)
         self._semaphore_executor = SemaphoreExecutor(max_concurrent=self.max_concurrent)
 
-    async def aextract(
-        self, nodes: Sequence[BaseNode]
-    ) -> Union[List[Dict], BaseException]:
+    async def aextract(self, nodes: Sequence[BaseNode]) -> List[Dict[str, Any]]:
         """Extract metadata with throttling - async version."""
         extractor_name = self.class_name()
         logger.info(
@@ -59,7 +57,7 @@ class ThrottledBaseExtractor(BaseExtractor, ABC):
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # Handle any exceptions
-        metadata_list = []
+        metadata_list: List[Dict[str, Any]] = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 logger.error(f'{extractor_name} failed for node {i}: {result}')

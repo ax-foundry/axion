@@ -2,7 +2,7 @@
 
 <div style="border-left: 4px solid #f59e0b; padding-left: 1rem; margin-bottom: 1.5rem;">
 <strong style="font-size: 1.1rem;">Fast, deterministic evaluation metrics using rule-based and statistical methods</strong><br>
-<span class="badge" style="margin-top: 0.5rem; background: #f59e0b;">12 Metrics</span>
+<span class="badge" style="margin-top: 0.5rem; background: #f59e0b;">13 Metrics</span>
 <span class="badge" style="background: #06b6d4;">No LLM Required</span>
 </div>
 
@@ -82,6 +82,22 @@ Monitor execution time and operational performance.
 
 ---
 
+## Output Constraints
+
+Enforce length and format requirements on outputs.
+
+<div class="grid-container">
+
+<div class="grid-item">
+<strong><a href="length_constraint/">Length Constraint</a></strong>
+<p style="margin: 0.3rem 0; color: var(--md-text-secondary); font-size: 0.9rem;">Verify character and sentence limits</p>
+<code>actual_output</code>
+</div>
+
+</div>
+
+---
+
 ## Retrieval Metrics (IR)
 
 Standard information retrieval metrics for evaluating search and ranking quality.
@@ -133,6 +149,7 @@ Standard information retrieval metrics for evaluating search and ranking quality
 | **PII Leakage (Heuristic)** | 0.0 – 1.0 | 0.8 | Is output privacy-safe? (1.0 = safe) |
 | **Citation Presence** | 0.0 or 1.0 | 0.5 | Are citations included? |
 | **Latency** | 0.0 – ∞ | 5.0s | How fast was the response? |
+| **Length Constraint** | 0.0 or 1.0 | 1.0 | Within char/sentence limits? |
 | **Hit Rate @ K** | 0.0 or 1.0 | - | Any relevant in top K? |
 | **MRR** | 0.0 – 1.0 | - | How early is first relevant? |
 | **NDCG @ K** | 0.0 – 1.0 | - | Is ranking optimal? |
@@ -147,6 +164,7 @@ Standard information retrieval metrics for evaluating search and ranking quality
 from axion.metrics import (
     ExactStringMatch,
     LevenshteinRatio,
+    LengthConstraint,
     PIILeakageHeuristic,
     HitRateAtK,
 )
@@ -157,6 +175,7 @@ from axion.dataset import Dataset
 metrics = [
     ExactStringMatch(),
     LevenshteinRatio(case_sensitive=False),
+    LengthConstraint(max_chars=1000, sentence_range=(1, 5)),
     PIILeakageHeuristic(confidence_threshold=0.7),
     HitRateAtK(k=10),
 ]
@@ -192,6 +211,10 @@ for item in results:
 
     - Use **PII Leakage (Heuristic)** for fast screening
     - Add **Citation Presence** for source attribution
+
+    **For Output Length/Format:**
+
+    - Use **Length Constraint** for character and sentence limits
 
     **For Search/Retrieval:**
 

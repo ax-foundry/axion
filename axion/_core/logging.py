@@ -5,7 +5,7 @@ import time
 from contextlib import asynccontextmanager, contextmanager
 from logging import StreamHandler
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from axion._core.environment import settings
 from axion._core.utils import Timer
@@ -359,7 +359,7 @@ def get_logger(name: str) -> RichLogger:
     global _logging_configured
     if not _logging_configured:
         configure_logging()
-    return logging.getLogger(name)
+    return cast(RichLogger, logging.getLogger(name))
 
 
 def is_logging_configured() -> bool:

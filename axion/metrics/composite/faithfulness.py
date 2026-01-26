@@ -104,7 +104,7 @@ class Faithfulness(BaseMetric):
                         f'Valid keys are: {[m.name for m in MetricVerdict]}'
                     )
 
-    def _get_verdict_score(self, claim: JudgedClaim) -> Tuple[str, float]:
+    def _get_verdict_score(self, claim: JudgedClaim) -> Tuple[MetricVerdict, float]:
         """Get verdict score for claim."""
         verdict_str = getattr(claim.faithfulness_verdict, 'value', None)
         verdict_str = verdict_str.upper().replace(' ', '_')

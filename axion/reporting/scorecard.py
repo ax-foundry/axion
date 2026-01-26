@@ -260,7 +260,7 @@ class ScoreCard:
         group_meta_cols: list = None,
         value_cols: list = None,
         metric_definitions: dict = None,
-        explanation_callback: callable = None,
+        explanation_callback: Optional[Callable] = None,
         instruction: Optional[str] = None,
         llm: Optional[LLMRunnable] = None,
         max_concurrent: int = 10,
@@ -440,6 +440,10 @@ class ScoreCard:
     def _create_tree_visualization_df(self) -> pd.DataFrame:
         """Transforms the MultiIndex dataframe into a flattened Tree View dataframe."""
         df = self.hierarchical_dataframe
+        if df is None:
+            raise ValueError(
+                'hierarchical_dataframe is not set. Call aggregate() first.'
+            )
         normalized_weights = self._calculate_normalized_weights(df)
 
         # Check if weight column should be included (all NaN means exclude)

@@ -550,6 +550,8 @@ class PersonaToneAdherence(BaseMetric):
         logger.debug(
             f"No persona found in additional_input['{self.persona_key}'], using passed persona"
         )
+        # self.persona is guaranteed to be PersonaDefinition after __init__
+        assert isinstance(self.persona, PersonaDefinition)
         return self.persona
 
     @trace(name='PersonaTone', capture_args=True, capture_response=True)

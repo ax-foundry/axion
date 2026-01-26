@@ -44,6 +44,7 @@ from axion.metrics.heuristic.contains import ContainsMatch
 
 # Heuristic
 from axion.metrics.heuristic.latency import Latency
+from axion.metrics.heuristic.length_constraint import LengthConstraint
 from axion.metrics.heuristic.levenshtein import LevenshteinRatio
 from axion.metrics.heuristic.retrieval import (
     HitRateAtK,
@@ -76,6 +77,7 @@ __all__ = [
     'ContextualUtilization',
     'CitationRelevancy',
     'Latency',
+    'LengthConstraint',
     'ExactStringMatch',
     'CitationPresence',
     'ContainsMatch',

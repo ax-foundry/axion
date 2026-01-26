@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import List, Union
+from typing import List, Union, cast
 
 import pandas as pd
 
@@ -43,13 +43,13 @@ class RunnerMixin(ABC):
         if isinstance(evaluation_inputs, list) and isinstance(
             evaluation_inputs[0], str
         ):
-            return evaluation_inputs
+            return cast(List[str], evaluation_inputs)
 
         dataset = self.to_evaluation_input(evaluation_inputs, dataset_name)
         if isinstance(dataset, (Dataset, list)):
             return [item.query for item in dataset]
 
-        return dataset
+        return dataset  # type: ignore[return-value]
 
     @staticmethod
     def to_evaluation_input(

@@ -551,7 +551,7 @@ class RAGAnalyzer:
         self._track_judge_usage(JudgeType.CONTEXT_SUFFICIENCY, metadata)
 
         try:
-            result = await self.judges[JudgeType.CONTEXT_SUFFICIENCY].execute(
+            result = await self.judges[JudgeType.CONTEXT_SUFFICIENCY].execute(  # type: ignore[call-arg]
                 query=item.query, context=context
             )
             metadata.llm_calls['granular_success'] += 1
@@ -576,7 +576,7 @@ class RAGAnalyzer:
         self._track_judge_usage(JudgeType.STATEMENT_EXTRACTOR, metadata)
 
         try:
-            result = await self.judges[JudgeType.STATEMENT_EXTRACTOR].execute(
+            result = await self.judges[JudgeType.STATEMENT_EXTRACTOR].execute(  # type: ignore[call-arg]
                 actual_output=source_text
             )
             metadata.llm_calls['granular_success'] += 1
@@ -597,7 +597,7 @@ class RAGAnalyzer:
         self._track_judge_usage(JudgeType.RELEVANCY, metadata)
 
         try:
-            result = await self.judges[JudgeType.RELEVANCY].execute(
+            result = await self.judges[JudgeType.RELEVANCY].execute(  # type: ignore[call-arg]
                 input_query=query, statements=statements
             )
             metadata.llm_calls['batch_success'] += 1
@@ -756,7 +756,7 @@ class RAGAnalyzer:
         self, results: List[Any], parser: Callable[[Any], T], metadata: AnalysisMetadata
     ) -> List[T]:
         """Parse granular results, handling exceptions gracefully."""
-        parsed = []
+        parsed: List[Any] = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 logger.warning(f'Granular judgment {i} failed: {result}')
@@ -764,7 +764,7 @@ class RAGAnalyzer:
                 parsed.append(False)  # Default value on failure
             else:
                 parsed.append(parser(result))
-        return parsed
+        return parsed  # type: ignore[return-value]
 
     @staticmethod
     def _should_analyze(prefix: str, required: Set[str]) -> bool:

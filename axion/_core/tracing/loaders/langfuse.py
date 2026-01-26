@@ -77,6 +77,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
         max_delay: float = 60.0,
         request_pacing: float = 0.03,
         default_tags: Optional[List[str]] = None,
+        timeout: Optional[int] = None,
     ):
         """
         Initialize Langfuse client.
@@ -91,11 +92,23 @@ class LangfuseTraceLoader(BaseTraceLoader):
             request_pacing: Delay between API requests to avoid rate limits (default: 0.03)
             default_tags: Default tags to apply to all scores (falls back to
                 LANGFUSE_DEFAULT_TAGS env var, comma-separated)
+            timeout: Timeout in seconds for API requests. Default: 30 seconds.
+                Falls back to LANGFUSE_TIMEOUT env var. The Langfuse SDK default
+                of 5s is often too short for fetching large traces.
         """
         self.max_retries = max_retries
         self.base_delay = base_delay
         self.max_delay = max_delay
         self.request_pacing = request_pacing
+
+        # Determine timeout: param > env var > default of 30s
+        if timeout is None:
+            env_timeout = os.environ.get('LANGFUSE_TIMEOUT')
+            if env_timeout:
+                timeout = int(env_timeout)
+            else:
+                timeout = 30  # Higher default than Langfuse SDK's 5s
+        self.timeout = timeout
 
         # Support LANGFUSE_DEFAULT_TAGS env var (comma-separated)
         if default_tags is None:
@@ -117,6 +130,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 secret_key=secret_key or os.environ.get('LANGFUSE_SECRET_KEY'),
                 host=host
                 or os.environ.get('LANGFUSE_BASE_URL', 'https://us.cloud.langfuse.com'),
+                timeout=timeout,
             )
             self._client_initialized = True
         except ImportError:
@@ -921,7 +935,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
                             continue
 
                         try:
-                            score_kwargs: Dict[str, Any] = {
+                            item_score_kwargs = {
                                 'trace_id': item_trace_id,
                                 'name': metric_score.name,
                                 'value': float(metric_score.score),
@@ -930,10 +944,12 @@ class LangfuseTraceLoader(BaseTraceLoader):
                                 ),
                             }
                             if item_observation_id:
-                                score_kwargs['observation_id'] = item_observation_id
+                                item_score_kwargs['observation_id'] = (
+                                    item_observation_id
+                                )
 
                             self._execute_with_retry(
-                                lambda kwargs=score_kwargs: self.client.create_score(
+                                lambda kwargs=item_score_kwargs: self.client.create_score(
                                     **kwargs
                                 ),
                                 description=f'upload score {metric_score.name}',

@@ -701,7 +701,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     )
                     return parsed_output
 
-                return response_text
+                return response_text or ''
 
             except Exception as e:
                 span.set_attribute('error', str(e))
