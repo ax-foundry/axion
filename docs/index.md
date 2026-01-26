@@ -1,12 +1,14 @@
 # Axion
 
-![header](assets/axion_main_transparent.png)
+<figure markdown="span">
+  ![Axion](assets/axion_main_transparent.png){ width="600" }
+</figure>
 
 
 <div style="background: linear-gradient(135deg, #8B9F4F 0%, #6B7A3A 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
 
 <p style="margin: 0; font-size: 16px; line-height: 1.6;">
-Moving from passive, black-box observation to active, <strong>white-box evaluation</strong>—Axion empowers builders with <strong>actionable signals</strong>, <strong>automated pipelines</strong>, and <strong>fully transparent metrics</strong>. See exactly why your agent succeeds or fails.
+<strong>White-box evaluation</strong>—Axion empowers builders with <strong>actionable signals</strong>, <strong>automated pipelines</strong>, and <strong>fully transparent metrics</strong>. See exactly why your agent succeeds or fails.
 </p>
 </div>
 

@@ -338,6 +338,12 @@ class EvaluationResult:
             for score_row in result.score_results:
                 score_data = score_row.model_dump(by_alias=by_alias)
 
+                # Flatten model info from metadata to top-level columns
+                if score_data.get('metadata'):
+                    for key in ['model_name', 'llm_provider']:
+                        if key in score_data['metadata']:
+                            score_data[key] = score_data['metadata'][key]
+
                 # Preserve test_case id if score_data overwrote it with None
                 test_case_id = test_case_data.get('id')
                 row_data = {**test_case_data, **score_data, **run_metadata}
