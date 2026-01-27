@@ -4,10 +4,10 @@ from typing import List, Optional, Tuple
 from pydantic import Field
 
 from axion._core.schema import RichBaseModel
+from axion._core.tracing import trace
 from axion.dataset import DatasetItem
 from axion.metrics.base import BaseMetric, MetricEvaluationResult, metric
 from axion.metrics.schema import SignalDescriptor
-from axion._core.tracing import trace
 
 
 class LengthResult(RichBaseModel):
