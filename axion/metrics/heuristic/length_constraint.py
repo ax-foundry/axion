@@ -7,6 +7,7 @@ from axion._core.schema import RichBaseModel
 from axion.dataset import DatasetItem
 from axion.metrics.base import BaseMetric, MetricEvaluationResult, metric
 from axion.metrics.schema import SignalDescriptor
+from axion._core.tracing import trace
 
 
 class LengthResult(RichBaseModel):
@@ -45,6 +46,7 @@ class LengthConstraint(BaseMetric):
         self.max_chars = max_chars
         self.sentence_range = sentence_range
 
+    @trace(name='LengthConstraint', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
         text = self.get_field(item, 'actual_output', default='') or ''
         text = str(text)
