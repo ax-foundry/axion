@@ -28,10 +28,30 @@ class LengthResult(RichBaseModel):
     tags=['heuristic'],
 )
 class LengthConstraint(BaseMetric):
+    DEFAULT_ABBREVIATIONS = [
+        'mr',
+        'mrs',
+        'ms',
+        'dr',
+        'prof',
+        'sr',
+        'jr',
+        'st',
+        'mt',
+        'vs',
+        'etc',
+        'e.g',
+        'i.e',
+        'u.s',
+        'u.k',
+        'p.s',
+    ]
+
     def __init__(
         self,
         max_chars: Optional[int] = 2800,
         sentence_range: Optional[Tuple[Optional[int], Optional[int]]] = None,
+        abbreviations: Optional[List[str]] = None,
         **kwargs,
     ):
         """
@@ -39,12 +59,15 @@ class LengthConstraint(BaseMetric):
             max_chars: Maximum allowed characters.
             sentence_range: Tuple of (min_sentences, max_sentences).
                             Use None for open ends, e.g., (None, 5) is max 5.
+            abbreviations: Abbreviations to avoid splitting on (no trailing dot).
             **kwargs: Supports BaseMetric field_mapping to remap actual_output
                 (e.g., {'actual_output': 'additional_output.summary'}).
         """
         super().__init__(**kwargs)
         self.max_chars = max_chars
         self.sentence_range = sentence_range
+        abbreviations = abbreviations or self.DEFAULT_ABBREVIATIONS
+        self.abbreviations_set = {value.lower() for value in abbreviations}
 
     @trace(name='LengthConstraint', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem, **kwargs) -> MetricEvaluationResult:
@@ -58,8 +81,26 @@ class LengthConstraint(BaseMetric):
             char_passed = char_count <= self.max_chars
 
         # Check Sentences (if range provided)
-        # Splits on punctuation followed by space or end of string, ignores empty splits
-        sentences = [s for s in re.split(r'[.!?]+', text) if s.strip()]
+        # Split on sentence-ending punctuation followed by whitespace and likely sentence
+        # start, while skipping common abbreviations and initials.
+        # Regex candidate split points, then validate with explicit checks to
+        # avoid variable-length lookbehinds.
+        sentence_pattern = r'([.!?])\s+(?=(?:(?:"|\'|`|\(|\[))?[A-Z])'
+        sentences = []
+        start = 0
+        for match in re.finditer(sentence_pattern, text.strip()):
+            end = match.end(1)
+            candidate = text.strip()[start:end].strip()
+            if candidate:
+                last_token = candidate.split()[-1]
+                token_base = last_token.rstrip('.').lower()
+                is_initial = len(token_base) == 1 and token_base.isalpha()
+                if not is_initial and token_base not in self.abbreviations_set:
+                    sentences.append(candidate)
+                    start = match.end()
+        tail = text.strip()[start:].strip()
+        if tail:
+            sentences.append(tail)
         sentence_count = len(sentences)
 
         sentence_passed = True
