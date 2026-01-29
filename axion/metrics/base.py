@@ -149,9 +149,6 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
 
         # TODO – Need to revisit this logic.
 
-        # Track if this is a non-LLM metric (heuristic) with no explicit LLM params
-        is_non_llm_metric = False
-
         # Priority: explicit llm > explicit model_name > default instruction check > registry default
         if llm is not None:
             # Explicit LLM passed - always use it
@@ -166,31 +163,26 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
                 'Non-LLM-based metric detected. Initializing MockLLM instance.'
             )
             self.llm = MockLLM()
-            is_non_llm_metric = True
         else:
             # No LLM info passed but this metric needs an LLM - get default from registry
             registry = LLMRegistry(llm_provider)
             self.llm = registry.get_llm(model_name)
 
-        # For non-LLM metrics (heuristics), set model info to None
-        if is_non_llm_metric:
-            self.model_name = None
-            self.llm_provider = None
-        else:
-            # Resolve model_name: passed value > LLM attribute > settings default
-            self.model_name = (
-                model_name
-                or getattr(self.llm, 'model', None)
-                or settings.llm_model_name
-            )
-            # Resolve llm_provider: passed value > LLM attributes > settings default
-            # LiteLLMWrapper uses _provider or metadata.provider, not llm_provider
-            self.llm_provider = (
-                llm_provider
-                or getattr(self.llm, '_provider', None)
-                or getattr(getattr(self.llm, 'metadata', None), 'provider', None)
-                or settings.llm_provider
-            )
+        # Resolve model_name and llm_provider even for composite metrics (non-LLM metrics
+        # that delegate to sub-metrics which DO use LLMs). This ensures metadata is
+        # accurate for the sub-metrics that will be used with default settings.
+        # Resolve model_name: passed value > LLM attribute > settings default
+        self.model_name = (
+            model_name or getattr(self.llm, 'model', None) or settings.llm_model_name
+        )
+        # Resolve llm_provider: passed value > LLM attributes > settings default
+        # LiteLLMWrapper uses _provider or metadata.provider, not llm_provider
+        self.llm_provider = (
+            llm_provider
+            or getattr(self.llm, '_provider', None)
+            or getattr(getattr(self.llm, 'metadata', None), 'provider', None)
+            or settings.llm_provider
+        )
 
     def _set_embedding_model(
         self,

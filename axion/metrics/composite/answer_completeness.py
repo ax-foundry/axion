@@ -773,6 +773,13 @@ class AnswerCompleteness(BaseMetric):
                 item, expected_aspects, aspect_details
             )
             score_data = self._compute_aspect_score(eval_results)
+            self.compute_cost_estimate(
+                [
+                    self.aspect_decomposer,
+                    self.aspect_completeness_checker,
+                ]
+            )
+
             result_data = AnswerCompletenessAspectResult(
                 score=score_data['score'],
                 covered_aspects_count=score_data['covered_aspects_count'],
@@ -791,12 +798,15 @@ class AnswerCompleteness(BaseMetric):
             # Use expected answer if available, otherwise decompose query
             query = self.get_field(item, 'query')
             expected_output = self.get_field(item, 'expected_output')
+            used_sub_metrics = [self.sub_question_checker]
             if self.use_expected_output and expected_output:
                 sub_questions = await self._analyze_expected_answer(
                     query, expected_output
                 )
+                used_sub_metrics.append(self.expected_answer_analyzer)
             else:
                 sub_questions = await self._decompose_query(query)
+                used_sub_metrics.append(self.query_decomposer)
 
             if not sub_questions:
                 return MetricEvaluationResult(
@@ -809,15 +819,7 @@ class AnswerCompleteness(BaseMetric):
             )
             score_data = self._compute_sub_question_score(eval_results)
 
-            self.compute_cost_estimate(
-                [
-                    self.aspect_decomposer,
-                    self.aspect_completeness_checker,
-                    self.expected_answer_analyzer,
-                    self.query_decomposer,
-                    self.sub_question_checker,
-                ]
-            )
+            self.compute_cost_estimate(used_sub_metrics)
 
             result_data = AnswerCompletenessSubQuestionResult(
                 score=score_data['score'],

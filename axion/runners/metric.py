@@ -90,6 +90,17 @@ class BaseMetricRunner(ABC):
         """Ensures that retrieved content is always a list of strings."""
         return [content] if isinstance(content, str) else content or []
 
+    @staticmethod
+    def _build_model_metadata(metric: Any) -> Dict[str, Optional[str]]:
+        """Normalizes model metadata for downstream publishing."""
+        model_name = getattr(metric, 'model_name', None)
+        if model_name and '/' in model_name:
+            model_name = model_name.split('/')[-1]
+        return {
+            'model_name': model_name,
+            'llm_provider': getattr(metric, 'llm_provider', None),
+        }
+
     def _has_passed(self, score: float) -> Optional[bool]:
         """Determines if a score meets the defined threshold."""
         if score is None or np.isnan(score) or self.threshold is None:
@@ -432,19 +443,12 @@ class MetricRunner(RunnerMixin):
                 try:
                     result.metadata = result.metadata or {}
 
-                    model_name = getattr(executor.metric, 'model_name', None)
-                    if model_name and '/' in model_name:
-                        model_name = model_name.split('/')[-1]
-
                     result.metadata.update(
                         {
                             'trace_id': getattr(metric_tracer, 'trace_id', None),
                             'observation_id': getattr(span, 'span_id', None),
                             'metric_name': executor.metric_name,
-                            'model_name': model_name,
-                            'llm_provider': getattr(
-                                executor.metric, 'llm_provider', None
-                            ),
+                            **self._build_model_metadata(executor.metric),
                         }
                     )
                 except Exception:
@@ -714,6 +718,15 @@ class AxionRunner(BaseMetricRunner):
                         'signals': signals,
                     }
                 )
+
+                # Extract model info from metric
+                result_metadata = getattr(result, 'metadata', None) or {}
+                result_metadata.update(
+                    {
+                        **self._build_model_metadata(self.metric),
+                    }
+                )
+
                 return MetricScore(
                     id=input_data.id,
                     name=self.metric_name,
@@ -722,7 +735,7 @@ class AxionRunner(BaseMetricRunner):
                     passed=self._has_passed(score),
                     explanation=getattr(result, 'explanation', None),
                     signals=signals,
-                    metadata=getattr(result, 'metadata', None),
+                    metadata=result_metadata,
                     source=self.source,
                     cost_estimate=getattr(self.metric, 'cost_estimate', 0),
                 )
