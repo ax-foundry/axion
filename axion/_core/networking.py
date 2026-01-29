@@ -38,6 +38,9 @@ class RateLimitInfo:
             RateLimitInfo object if parsing succeeds, None otherwise
         """
         try:
+            # Normalize escaped newlines to actual newlines
+            error_message = error_message.replace('\\n', '\n')
+
             # First check if this is a 500-wrapped 429 error and extract the inner message
             wrapped_pattern = r"Error code: 500.*?'detail':\s*'500:\s*429:\s*({.*?})'"
             wrapped_match = re.search(wrapped_pattern, error_message, re.DOTALL)
