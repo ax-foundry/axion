@@ -581,6 +581,7 @@ class EvaluationResult:
         observation_id_field: Optional[str] = 'observation_id',
         flush: bool = True,
         tags: Optional[List[str]] = None,
+        metric_names: Optional[List[str]] = None,
     ) -> Dict[str, int]:
         """
         Publish evaluation scores to an observability platform.
@@ -597,6 +598,8 @@ class EvaluationResult:
             flush: Whether to flush the client after uploading. Defaults to True.
             tags: Optional list of tags to attach to all scores as metadata.
                 Falls back to LANGFUSE_TAGS env var if not provided.
+            metric_names: Optional list of metric names to upload. If provided,
+                only scores whose metric name matches are uploaded.
 
         Note:
             Environment cannot be set when pushing scores to existing traces.
@@ -635,6 +638,7 @@ class EvaluationResult:
             observation_id_field=observation_id_field,
             flush=flush,
             tags=tags,
+            metric_names=metric_names,
         )
 
     def publish_as_experiment(
@@ -647,6 +651,7 @@ class EvaluationResult:
         tags: Optional[List[str]] = None,
         score_on_runtime_traces: bool = False,
         link_to_traces: bool = False,
+        metric_names: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         Publish evaluation results to Langfuse as a dataset experiment.
@@ -673,6 +678,8 @@ class EvaluationResult:
                 experiment runs to appear linked to the original evaluation traces in
                 Langfuse UI. Falls back to creating new traces if trace_id is not available.
                 Ignored if score_on_runtime_traces is True.
+            metric_names: Optional list of metric names to upload. If provided,
+                only scores whose metric name matches are uploaded.
 
         Returns:
             Dict with statistics:
@@ -718,6 +725,7 @@ class EvaluationResult:
             tags=tags,
             score_on_runtime_traces=score_on_runtime_traces,
             link_to_traces=link_to_traces,
+            metric_names=metric_names,
         )
 
 

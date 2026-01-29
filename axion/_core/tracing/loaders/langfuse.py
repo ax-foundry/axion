@@ -255,12 +255,66 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
         return '\n'.join(parts)
 
+    def _normalize_metric_names(
+        self, metric_names: Optional[List[str]]
+    ) -> Optional[set[str]]:
+        """
+        Normalize a metric name allowlist for filtering score uploads.
+
+        Args:
+            metric_names: Optional list of metric names to allow. If provided,
+                only matching metric names are uploaded.
+
+        Returns:
+            A set of normalized metric names, or None if no filtering is applied.
+        """
+        if metric_names is None:
+            return None
+
+        normalized = {name.strip() for name in metric_names if name and name.strip()}
+        return normalized
+
+    def _should_upload_metric(
+        self,
+        metric_score: Any,
+        metric_name_filter: Optional[set[str]],
+        stats: Dict[str, int],
+        skipped_key: str,
+    ) -> bool:
+        """
+        Determine whether a metric score should be uploaded.
+
+        Increments the provided skipped counter when a score is filtered out.
+        """
+        if metric_name_filter is not None and (
+            metric_score.name not in metric_name_filter
+        ):
+            stats[skipped_key] += 1
+            return False
+
+        if metric_score.score is None or np.isnan(metric_score.score):
+            stats[skipped_key] += 1
+            return False
+
+        return True
+
+    def _flush_client(self) -> None:
+        """Flush the Langfuse client with retry."""
+        try:
+            self._execute_with_retry(
+                lambda: self.client.flush(),
+                description='flush Langfuse client',
+            )
+        except Exception as e:
+            logger.warning(f'Failed to flush Langfuse client: {e}')
+
     def push_scores(
         self,
         evaluation_result: 'EvaluationResult',
         observation_id_field: Optional[str] = 'observation_id',
         flush: bool = True,
         tags: Optional[List[str]] = None,
+        metric_names: Optional[List[str]] = None,
     ) -> Dict[str, int]:
         """
         Push evaluation scores back to Langfuse.
@@ -273,6 +327,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 observation ID. Default: 'observation_id'
             flush: Whether to flush the client after uploading
             tags: Optional list of tags to attach to all scores as metadata
+            metric_names: Optional list of metric names to upload. If provided,
+                only scores whose metric name matches are uploaded.
 
         Returns:
             Dict with counts: {'uploaded': N, 'skipped': M}
@@ -282,6 +338,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
             observation_id_field=observation_id_field,
             flush=flush,
             tags=tags,
+            metric_names=metric_names,
         )
 
     def fetch_traces(
@@ -402,6 +459,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
         observation_id_field: Optional[str] = 'observation_id',
         flush: bool = True,
         tags: Optional[List[str]] = None,
+        metric_names: Optional[List[str]] = None,
     ) -> Dict[str, int]:
         """
         Push evaluation scores back to Langfuse traces.
@@ -415,6 +473,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
             flush: Whether to flush the client after uploading
             tags: Optional list of tags to attach to all scores as metadata.
                 Falls back to LANGFUSE_TAGS env var if not provided.
+            metric_names: Optional list of metric names to upload. If provided,
+                only scores whose metric name matches are uploaded.
 
         Note:
             Environment cannot be set when pushing scores to existing traces.
@@ -453,6 +513,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 tags = [t.strip() for t in env_tags.split(',') if t.strip()]
 
         stats = {'uploaded': 0, 'skipped': 0}
+        metric_name_filter = self._normalize_metric_names(metric_names)
 
         for test_result in evaluation_result.results:
             if not test_result.test_case:
@@ -469,8 +530,9 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 obs_id = getattr(test_result.test_case, observation_id_field, None)
 
             for metric_score in test_result.score_results:
-                if metric_score.score is None or np.isnan(metric_score.score):
-                    stats['skipped'] += 1
+                if not self._should_upload_metric(
+                    metric_score, metric_name_filter, stats, 'skipped'
+                ):
                     continue
 
                 try:
@@ -512,13 +574,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
                     stats['skipped'] += 1
 
         if flush:
-            try:
-                self._execute_with_retry(
-                    lambda: self.client.flush(),
-                    description='flush Langfuse client',
-                )
-            except Exception as e:
-                logger.warning(f'Failed to flush Langfuse client: {e}')
+            self._flush_client()
 
         logger.info(
             f'Langfuse score upload: {stats["uploaded"]} uploaded, '
@@ -587,6 +643,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
         tags: Optional[List[str]] = None,
         score_on_runtime_traces: bool = False,
         link_to_traces: bool = False,
+        metric_names: Optional[List[str]] = None,
     ) -> Dict[str, Any]:
         """
         Upload evaluation results to Langfuse as a dataset experiment.
@@ -614,6 +671,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 to the original evaluation traces in Langfuse UI. Falls back to creating
                 new traces if trace_id is not available on the test case. Ignored if
                 score_on_runtime_traces is True.
+            metric_names: Optional list of metric names to upload. If provided,
+                only scores whose metric name matches are uploaded.
 
         Returns:
             Dict with statistics:
@@ -682,6 +741,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
         effective_tags = list(self.default_tags)
         if tags:
             effective_tags.extend(tags)
+        metric_name_filter = self._normalize_metric_names(metric_names)
 
         # Create or get dataset (create_dataset upserts if exists)
         try:
@@ -805,8 +865,9 @@ class LangfuseTraceLoader(BaseTraceLoader):
                     continue
 
                 for metric_score in test_result.score_results:
-                    if metric_score.score is None or np.isnan(metric_score.score):
-                        stats['scores_skipped'] += 1
+                    if not self._should_upload_metric(
+                        metric_score, metric_name_filter, stats, 'scores_skipped'
+                    ):
                         continue
 
                     try:
@@ -859,13 +920,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
                         stats['scores_skipped'] += 1
 
             if flush:
-                try:
-                    self._execute_with_retry(
-                        lambda: self.client.flush(),
-                        description='flush Langfuse client',
-                    )
-                except Exception as e:
-                    logger.warning(f'Failed to flush Langfuse client: {e}')
+                self._flush_client()
 
             return stats
 
@@ -930,8 +985,9 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
                     # Attach scores to existing trace
                     for metric_score in test_result.score_results:
-                        if metric_score.score is None or np.isnan(metric_score.score):
-                            stats['scores_skipped'] += 1
+                        if not self._should_upload_metric(
+                            metric_score, metric_name_filter, stats, 'scores_skipped'
+                        ):
                             continue
 
                         try:
@@ -981,10 +1037,12 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
                         # Add scores using score_trace
                         for metric_score in test_result.score_results:
-                            if metric_score.score is None or np.isnan(
-                                metric_score.score
+                            if not self._should_upload_metric(
+                                metric_score,
+                                metric_name_filter,
+                                stats,
+                                'scores_skipped',
                             ):
-                                stats['scores_skipped'] += 1
                                 continue
 
                             try:
@@ -1016,13 +1074,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
         # Flush client
         if flush:
-            try:
-                self._execute_with_retry(
-                    lambda: self.client.flush(),
-                    description='flush Langfuse client',
-                )
-            except Exception as e:
-                logger.warning(f'Failed to flush Langfuse client: {e}')
+            self._flush_client()
 
         logger.info(
             f'Langfuse experiment upload complete: dataset={dataset_name}, '

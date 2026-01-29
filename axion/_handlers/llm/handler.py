@@ -77,6 +77,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         parser: Optional parser for processing the output.
         llm: Language model instance to be used.
         rate_limit_buffer: Buffer time (in seconds) to add when waiting for rate limit resets.
+        max_rate_limit_retries: Maximum retry attempts for rate limit errors.
     """
 
     # Core configuration
@@ -98,6 +99,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
     # Rate limit configuration
     # Buffer time to add to rate limit reset (seconds)
     rate_limit_buffer: float = 1.0
+    max_rate_limit_retries: int = 3
     max_delay = 120.0  # Maximum delay of 2 minutes
 
     def __init__(self, **kwargs):
@@ -207,6 +209,8 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             if rate_limit_info:
                 # Use the rate limit reset time
                 wait_time = rate_limit_info.get_wait_time(self.rate_limit_buffer)
+                backoff_time = self.retry_delay * (2**attempt)
+                wait_time = max(wait_time, backoff_time)
                 logger.warning_highlight(
                     f'⏱️  Rate limit hit: {rate_limit_info}. '
                     f'Waiting {wait_time:.1f}s for reset (attempt {attempt + 1}/{self.max_retries})'
@@ -775,7 +779,8 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         processed_data = self.process_input(input_data)
         last_exception = None
 
-        for attempt in range(self.max_retries):
+        attempt = 0
+        while True:
             try:
                 if self.as_structured_llm:
                     # Unified path via LiteLLM (handles all providers)
@@ -812,11 +817,16 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
             except Exception as e:
                 last_exception = e
+                is_rate_limit = self._is_rate_limit_error(e)
 
-                if attempt == self.max_retries - 1:
+                max_attempts = self.max_retries
+                if is_rate_limit:
+                    max_attempts = max(self.max_retries, self.max_rate_limit_retries)
+
+                if attempt >= max_attempts - 1:
                     # Final attempt failed
                     logger.error_highlight(
-                        f'❌ All {self.max_retries} attempts failed. Final error: {str(e)}'
+                        f'❌ All {max_attempts} attempts failed. Final error: {str(e)}'
                     )
                     break
                 else:
@@ -824,7 +834,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     retry_delay = self._calculate_retry_delay(attempt, e)
 
                     # Log with appropriate context
-                    if self._is_rate_limit_error(e):
+                    if is_rate_limit:
                         rate_info = RateLimitInfo.from_error(str(e))
                         if rate_info:
                             logger.warning_highlight(
@@ -842,6 +852,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                             f'Retrying in {retry_delay}s...'
                         )
 
+                    attempt += 1
                     await asyncio.sleep(retry_delay)
 
         # All attempts failed
