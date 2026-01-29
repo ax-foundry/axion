@@ -1,3 +1,4 @@
+import math
 import re
 from typing import Optional
 
@@ -62,6 +63,58 @@ class RateLimitInfo:
                 # Apply strip() first to remove any potential leading/trailing whitespace
                 # or newlines captured by the regex, then strip quotes.
                 key = match.group(4).strip().strip('"\'')
+
+                logger.info(
+                    f'📊 Rate limit detected: {remaining}/{limit} remaining, '
+                    f'resets in {reset_seconds}s (key: {key})'
+                )
+
+                return cls(
+                    limit=limit,
+                    remaining=remaining,
+                    reset_seconds=reset_seconds,
+                    key=key,
+                )
+
+            retry_pattern = (
+                r'(?:please\s+try\s+again\s+in|retry\s+after)\s*'
+                r'(\d+(?:\.\d+)?)\s*(?:s|sec|secs|seconds)?'
+            )
+            retry_match = re.search(
+                retry_pattern, error_message, re.IGNORECASE | re.DOTALL
+            )
+            if retry_match:
+                reset_seconds = max(1, math.ceil(float(retry_match.group(1))))
+                limit = 0
+                remaining = 0
+                key = 'retry-after'
+
+                usage_pattern = (
+                    r'limit[:\s]*?(\d+)[,;]?\s*'
+                    r'used[:\s]*?(\d+)[,;]?\s*'
+                    r'requested[:\s]*?(\d+)'
+                )
+                usage_match = re.search(
+                    usage_pattern, error_message, re.IGNORECASE | re.DOTALL
+                )
+                if usage_match:
+                    limit = int(usage_match.group(1))
+                    used = int(usage_match.group(2))
+                    remaining = max(limit - used, 0)
+
+                model_pattern = r'rate\s+limit\s+reached\s+for\s+([^\s]+)'
+                model_match = re.search(
+                    model_pattern, error_message, re.IGNORECASE | re.DOTALL
+                )
+                if model_match:
+                    model = model_match.group(1).strip().strip('"\'')
+                    key = model
+
+                limit_type_pattern = r'\((TPM|RPM)\)'
+                limit_type_match = re.search(limit_type_pattern, error_message)
+                if limit_type_match:
+                    limit_type = limit_type_match.group(1).lower()
+                    key = f'{key};{limit_type}'
 
                 logger.info(
                     f'📊 Rate limit detected: {remaining}/{limit} remaining, '

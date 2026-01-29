@@ -26,6 +26,30 @@ RATE_LIMIT_SUCCESS_DATA = [
         'global',
     ),
     ('429 limit=5 remaining=3 reset=1 key={client_id};', 5, 3, 1, '{client_id};'),
+    (
+        'Rate limit reached for gpt-4o in organization org-test on tokens per min (TPM): '
+        'Limit 30000, Used 30000, Requested 1809. Please try again in 3.618s.',
+        30000,
+        0,
+        4,
+        'gpt-4o;tpm',
+    ),
+    (
+        'Rate limit reached for gpt-4o in organization\\n'
+        'org-test on tokens per min (TPM): Limit 30000, Used 27142,\\n'
+        'Requested 3440. Please try again in 1.164s.',
+        30000,
+        2858,
+        2,
+        'gpt-4o;tpm',
+    ),
+    (
+        'RateLimitError: Anthropic rate limit exceeded. Please try again in 1.2s.',
+        0,
+        0,
+        2,
+        'retry-after',
+    ),
 ]
 
 # Test data for messages that should fail parsing
