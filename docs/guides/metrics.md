@@ -19,6 +19,18 @@ from axion.runners import evaluation_runner
 results = await evaluation_runner(dataset, metrics)
 ```
 
+## Metric Output Types
+
+Axion metrics can produce three types of outputs:
+
+| Type | Description | Example |
+|------|-------------|---------|
+| **Score** | Numeric value (0-1) with pass/fail threshold | `Faithfulness` → `0.85` |
+| **Classification** | Single label from a fixed set | `SentimentClassification` → `"positive"` |
+| **Analysis** | Structured insights without scoring | `ReferralReasonAnalysis` → `{reasons[], citations[]}` |
+
+See [Creating Custom Metrics](../deep-dives/metrics/creating-metrics.md#metric-categories) for details on choosing the right output type.
+
 ## Metric Categories
 
 ### Composite Metrics (LLM-based)

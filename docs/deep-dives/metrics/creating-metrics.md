@@ -33,11 +33,119 @@ The `@metric` decorator provides declarative configuration:
     description="Detailed description of what the metric measures",
     required_fields=["field1", "field2"],
     optional_fields=["field3"],
+    metric_category=MetricCategory.SCORE,  # SCORE, ANALYSIS, or CLASSIFICATION
     default_threshold=0.5,
     score_range=(0, 1),
     tags=["category", "domain"]
 )
 ```
+
+### Metric Categories
+
+Axion supports three metric categories based on output type. Use `MetricCategory` to specify what kind of output your metric produces.
+
+```python
+from axion._core.types import MetricCategory
+```
+
+#### Decision Tree
+
+```
+Does your metric produce a numeric score?
+├── YES → MetricCategory.SCORE
+└── NO → Does it output a SINGLE label from a FIXED set?
+    ├── YES → MetricCategory.CLASSIFICATION
+    └── NO → MetricCategory.ANALYSIS
+```
+
+#### Category Comparison
+
+| Aspect | `SCORE` | `CLASSIFICATION` | `ANALYSIS` |
+|--------|---------|------------------|------------|
+| **Output** | Numeric value (0-1) | Single label | Structured object |
+| **Options** | Continuous range | Fixed/predefined set | Open-ended insights |
+| **Pass/Fail** | Yes (threshold-based) | No | No |
+| **Aggregation** | Average, percentile | Count by label | Custom |
+| **Example output** | `0.85` | `"Property Condition"` | `{ category, reasons[], citations[] }` |
+
+#### When to Use Each Category
+
+| Category | Use When | Examples |
+|----------|----------|----------|
+| **`SCORE`** | Metric produces a numeric value that can be compared to a threshold | `Faithfulness`, `AnswerRelevancy`, `Latency`, `acceptance_rate` |
+| **`CLASSIFICATION`** | Metric produces a single categorical label from a fixed set | `SentimentClassification` → positive/negative/neutral |
+| **`ANALYSIS`** | Metric extracts structured insights without scoring | `ReferralReasonAnalysis` → reasons, citations, categories |
+
+#### Examples
+
+**SCORE Metric** (default):
+```python
+@metric(
+    name="Answer Quality",
+    metric_category=MetricCategory.SCORE,  # Default, can be omitted
+    default_threshold=0.7,
+    score_range=(0, 1),
+    ...
+)
+class AnswerQuality(BaseMetric):
+    async def execute(self, item, **kwargs) -> MetricEvaluationResult:
+        score = await self._evaluate(item)
+        return MetricEvaluationResult(
+            score=score,  # Numeric score required
+            explanation="Quality assessment complete"
+        )
+```
+
+**CLASSIFICATION Metric**:
+```python
+@metric(
+    name="Sentiment Classification",
+    metric_category=MetricCategory.CLASSIFICATION,
+    required_fields=["actual_output"],
+    ...
+)
+class SentimentClassification(BaseMetric):
+    async def execute(self, item, **kwargs) -> MetricEvaluationResult:
+        label = await self._classify(item.actual_output)
+        return MetricEvaluationResult(
+            score=None,  # No score for classification
+            explanation=f"Classified as: {label}",
+            signals={"label": label}  # Single categorical output
+        )
+```
+
+**ANALYSIS Metric**:
+```python
+@metric(
+    name="Referral Reason Analysis",
+    metric_category=MetricCategory.ANALYSIS,
+    required_fields=["actual_output"],
+    ...
+)
+class ReferralReasonAnalysis(BaseMetric):
+    async def execute(self, item, **kwargs) -> MetricEvaluationResult:
+        result = await self._analyze(item)
+        return MetricEvaluationResult(
+            score=None,  # No score for analysis
+            explanation=f"Extracted {len(result.reasons)} reasons",
+            signals={  # Rich structured output
+                "primary_category": result.primary_category,
+                "all_reasons": result.reasons,
+                "citations": result.citations,
+                "actionable_type": result.actionable_type,
+            }
+        )
+```
+
+#### Downstream Behavior
+
+| Behavior | `SCORE` | `CLASSIFICATION` | `ANALYSIS` |
+|----------|---------|------------------|------------|
+| `score` field | Required numeric | `None` → `np.nan` | `None` → `np.nan` |
+| `passed` field | `True`/`False` based on threshold | `None` | `None` |
+| `threshold` field | Set from config | `None` | `None` |
+| Summary reports | Included in averages | Excluded from averages | Excluded from averages |
+| Metadata | `metric_category: "score"` | `metric_category: "classification"` | `metric_category: "analysis"` |
 
 ### Field Mapping for Nested Inputs
 

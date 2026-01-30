@@ -111,6 +111,11 @@ class MetricScore(RichBaseModel):
         default=None, description='Cost estimate of executing the metric.'
     )
 
+    metric_category: Optional[str] = Field(
+        default='score',
+        description="Category of the metric output: 'score', 'analysis', or 'classification'.",
+    )
+
     # Fields for Hierarchical Structure
     parent: Optional[str] = Field(
         default=None, description='Name of the parent node in a hierarchy.'

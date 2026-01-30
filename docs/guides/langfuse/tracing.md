@@ -173,10 +173,15 @@ traces = loader.fetch_traces(
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `limit` | `int` | `50` | Maximum number of traces to fetch |
-| `days_back` | `int` | `7` | Number of days to look back |
+| `mode` | `str` | `'days_back'` | Time window mode: `days_back`, `hours_back`, `absolute` |
+| `days_back` | `int` | `7` | Number of days to look back (days_back mode) |
+| `hours_back` | `int` | `24` | Number of hours to look back (hours_back mode) |
+| `from_timestamp` | `datetime \| str \| None` | `None` | Start timestamp (absolute mode, ISO string supported) |
+| `to_timestamp` | `datetime \| str \| None` | `None` | End timestamp (absolute mode, ISO string supported) |
 | `tags` | `list[str]` | `None` | Filter by specific tags |
 | `name` | `str` | `None` | Filter by trace name |
 | `fetch_full_traces` | `bool` | `True` | Fetch full details vs. summaries |
+| `**trace_list_kwargs` | `dict` | `{}` | Extra kwargs passed to `langfuse_client.api.trace.list(...)` |
 
 ### Filtering Examples
 
@@ -199,6 +204,19 @@ traces = loader.fetch_traces(
     days_back=3,
     tags=['production'],
     name='chat-completion'
+)
+```
+
+### Absolute Window Example
+
+```python
+from datetime import datetime, timezone
+
+traces = loader.fetch_traces(
+    mode='absolute',
+    from_timestamp=datetime(2026, 1, 1, tzinfo=timezone.utc),
+    to_timestamp=datetime(2026, 1, 2, tzinfo=timezone.utc),
+    tags=['prod'],
 )
 ```
 

@@ -47,6 +47,25 @@ class TraceGranularity(RichEnum):
     SEPARATE = 'separate'
 
 
+class MetricCategory(RichEnum):
+    """
+    Categorizes metrics by their output type.
+
+    Attributes:
+        SCORE: Traditional numeric metrics that produce a score (0-1 or custom range).
+               These metrics have pass/fail thresholds.
+        ANALYSIS: Qualitative analysis metrics that produce structured insights
+                  without a numeric score. Used for extraction, categorization,
+                  and other analytical tasks.
+        CLASSIFICATION: Categorical output metrics that produce labels or classes
+                        rather than continuous scores.
+    """
+
+    SCORE = 'score'
+    ANALYSIS = 'analysis'
+    CLASSIFICATION = 'classification'
+
+
 # =============================================================================
 # Field Name Constants
 # =============================================================================
@@ -212,5 +231,6 @@ __all__ = [
     'EvaluationType',
     'EvaluationStatus',
     'TraceGranularity',
+    'MetricCategory',
     'FieldNames',
 ]

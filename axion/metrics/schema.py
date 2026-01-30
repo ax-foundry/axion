@@ -2,9 +2,10 @@ import json
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Generic, List, Optional, Tuple, TypeVar, Union
 
-from pydantic import BaseModel, Field, field_serializer
+from pydantic import BaseModel, Field, field_serializer, model_validator
 
 from axion._core.schema import RichBaseModel
+from axion._core.types import MetricCategory
 
 T = TypeVar('T', bound=BaseModel)
 
@@ -30,14 +31,19 @@ class MetricConfig(RichBaseModel):
         description="Detailed explanation of what the metric evaluates and how it's used.",
     )
 
-    default_threshold: float = Field(
-        default=0.5,
-        description='Default threshold used to determine if a score is considered a passing score.',
+    metric_category: MetricCategory = Field(
+        default=MetricCategory.SCORE,
+        description='The category of the metric output: SCORE (numeric), ANALYSIS (structured insights), or CLASSIFICATION (labels).',
     )
 
-    score_range: Tuple[Union[int, float], Union[int, float]] = Field(
+    default_threshold: Optional[float] = Field(
+        default=0.5,
+        description='Default threshold used to determine if a score is considered a passing score. Optional for ANALYSIS metrics.',
+    )
+
+    score_range: Optional[Tuple[Union[int, float], Union[int, float]]] = Field(
         default=(0, 1),
-        description='Tuple representing the valid score range for this metric (e.g., 0 to 1).',
+        description='Tuple representing the valid score range for this metric (e.g., 0 to 1). Optional for ANALYSIS metrics.',
     )
 
     required_fields: List[str] = Field(
@@ -55,6 +61,16 @@ class MetricConfig(RichBaseModel):
         description='List of searchable tags used for categorization, filtering, or grouping.',
     )
 
+    @model_validator(mode='after')
+    def validate_score_config(self) -> 'MetricConfig':
+        """Validate that SCORE metrics have threshold and score_range set."""
+        if self.metric_category == MetricCategory.SCORE:
+            if self.default_threshold is None:
+                self.default_threshold = 0.5
+            if self.score_range is None:
+                self.score_range = (0, 1)
+        return self
+
 
 class MetricEvaluationResult(RichBaseModel):
     """
@@ -63,14 +79,17 @@ class MetricEvaluationResult(RichBaseModel):
     This model holds the final score, an explanation of how the score was derived,
     and any additional metadata useful for debugging or traceability.
 
+    For analysis metrics (metric_category=ANALYSIS), score can be None.
+    The score will be normalized to np.nan downstream for consistent handling.
+
     The `metadata` and `signals` fields are excluded from JSON schema generation
     to ensure compatibility with OpenAI structured output (which requires
     additionalProperties: false for all objects).
     """
 
-    score: Union[int, float] = Field(
-        ...,
-        description="The final score assigned by the metric. Must be within the metric's defined score range.",
+    score: Optional[Union[int, float]] = Field(
+        default=None,
+        description="The final score assigned by the metric. Must be within the metric's defined score range. Optional for ANALYSIS metrics.",
     )
 
     explanation: Optional[str] = Field(

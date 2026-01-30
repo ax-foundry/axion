@@ -62,6 +62,7 @@ class LogfireTraceLoader(BaseTraceLoader):
         days_back: int = 7,
         tags: Optional[List[str]] = None,
         name: Optional[str] = None,
+        **kwargs: Any,
     ) -> List[Any]:
         """
         Fetch raw traces from Logfire.
