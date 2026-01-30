@@ -989,6 +989,13 @@ h2.doc.doc-heading {
   border-color: var(--md-border-green);
 }
 
+/* ==================== Mobile Viewport Fix ==================== */
+/* Ensure proper viewport scaling on mobile devices */
+@viewport {
+  width: device-width;
+  zoom: 1;
+}
+
 /* ==================== Responsive Adjustments ==================== */
 @media screen and (max-width: 76.25em) {
   .md-typeset h1 {
@@ -1015,6 +1022,160 @@ h2.doc.doc-heading {
 
   .grid-container {
     grid-template-columns: 1fr;
+  }
+
+  /* Better mobile content padding */
+  .md-content {
+    padding: 0 0.75rem;
+  }
+
+  /* Ensure proper text sizing on mobile */
+  .md-typeset {
+    font-size: 0.875rem;
+  }
+}
+
+/* ==================== Small Mobile Devices ==================== */
+@media screen and (max-width: 480px) {
+  /* Prevent horizontal overflow */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  /* Content area fills viewport */
+  .md-main__inner {
+    padding: 0;
+  }
+
+  .md-content__inner {
+    padding: 0 1rem;
+    margin: 0;
+  }
+
+  /* Smaller headings on mobile */
+  .md-typeset h1 {
+    font-size: 1.25rem;
+    word-break: break-word;
+  }
+
+  .md-typeset h2 {
+    font-size: 1.1rem;
+  }
+
+  .md-typeset h3 {
+    font-size: 1rem;
+  }
+
+  /* Hero section mobile */
+  .hero {
+    padding: 1.5rem 1rem;
+    margin: 0 -1rem 1rem -1rem;
+  }
+
+  .hero h1 {
+    font-size: 1.375rem;
+  }
+
+  .hero p {
+    font-size: 0.875rem;
+  }
+
+  /* Tables scroll horizontally on mobile */
+  .md-typeset__scrollwrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .md-typeset table:not([class]) {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    font-size: 0.75rem;
+  }
+
+  .md-typeset table:not([class]) th,
+  .md-typeset table:not([class]) td {
+    padding: 0.5rem 0.625rem;
+    white-space: nowrap;
+  }
+
+  /* Code blocks scroll horizontally */
+  .md-typeset pre {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-radius: 0;
+  }
+
+  .md-typeset pre > code {
+    padding: 0.75rem 1rem;
+    font-size: 0.7rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Inline code wrapping */
+  .md-typeset :not(pre) > code {
+    word-break: break-word;
+  }
+
+  /* Admonitions full width */
+  .md-typeset .admonition,
+  .md-typeset details {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    border-radius: 0;
+    border-left-width: 3px;
+  }
+
+  /* Touch-friendly navigation */
+  .md-nav__link {
+    padding: 0.75rem 0.5rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Mobile search */
+  .md-search__form {
+    border-radius: var(--md-radius-sm);
+  }
+
+  /* Buttons touch-friendly */
+  .md-typeset .md-button {
+    padding: 0.75rem 1.25rem;
+    min-height: 44px;
+  }
+
+  /* Blockquotes */
+  .md-typeset blockquote {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* ==================== Touch Device Enhancements ==================== */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  .md-nav__link {
+    min-height: 44px;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+  }
+
+  /* Remove hover effects on touch */
+  .md-typeset pre:hover,
+  .md-typeset .admonition:hover,
+  .feature-card:hover,
+  .endpoint-card:hover {
+    transform: none;
+  }
+
+  /* Scrollable code without hover */
+  .md-clipboard {
+    opacity: 0.7;
   }
 }
 
