@@ -14,7 +14,7 @@ from axion._core.cache.manager import CacheManager
 from axion._core.logging import get_logger
 from axion._core.tracing import Tracer, init_tracer
 from axion._core.tracing.handlers import BaseTraceHandler
-from axion._core.types import TraceGranularity
+from axion._core.types import MetricCategory, TraceGranularity
 from axion._core.utils import Timer
 from axion.dataset import Dataset, DatasetItem, format_input
 from axion.metrics.cache import AnalysisCache
@@ -697,32 +697,58 @@ class AxionRunner(BaseMetricRunner):
 
             try:
                 result = await self.metric.execute(input_data, cache=cache)
-                score = getattr(result, 'score', np.nan)
+
+                # Get metric category from metric property (supports instance-level override)
+                # Falls back to config, then defaults to SCORE for backward compatibility
+                metric_category = getattr(
+                    self.metric, 'metric_category', MetricCategory.SCORE
+                )
+
+                # Normalize score: None -> np.nan for consistent handling
+                raw_score = getattr(result, 'score', None)
+                score = np.nan if raw_score is None else raw_score
 
                 signals = SignalExtractor.extract(
                     self.metric, getattr(result, 'signals', None)
                 )
 
-                span.set_attribute('score', float(score))
-                span.set_attribute('passed', self._has_passed(score))
+                # For analysis metrics, passed is always None (no pass/fail without score)
+                if metric_category == MetricCategory.ANALYSIS:
+                    passed = None
+                else:
+                    passed = self._has_passed(score)
+
+                span.set_attribute(
+                    'score', float(score) if not np.isnan(score) else None
+                )
+                span.set_attribute('passed', passed)
+                span.set_attribute('metric_category', metric_category.value)
 
                 span.set_output(
                     {
                         'score': float(score) if not np.isnan(score) else None,
-                        'passed': self._has_passed(score),
+                        'passed': passed,
                         'explanation': getattr(result, 'explanation', None),
                         'signals': signals,
+                        'metric_category': metric_category.value,
                     }
                 )
+
+                # Build metadata with metric_category
+                result_metadata = getattr(result, 'metadata', None) or {}
+                result_metadata['metric_category'] = metric_category.value
+
                 return MetricScore(
                     id=input_data.id,
                     name=self.metric_name,
                     score=score,
-                    threshold=self.threshold,
-                    passed=self._has_passed(score),
+                    threshold=self.threshold
+                    if metric_category != MetricCategory.ANALYSIS
+                    else None,
+                    passed=passed,
                     explanation=getattr(result, 'explanation', None),
                     signals=signals,
-                    metadata=getattr(result, 'metadata', None),
+                    metadata=result_metadata,
                     source=self.source,
                     cost_estimate=getattr(self.metric, 'cost_estimate', 0),
                 )

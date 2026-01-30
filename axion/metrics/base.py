@@ -20,6 +20,7 @@ from axion._core.schema import (
     LLMRunnable,
     OutputModel,
 )
+from axion._core.types import MetricCategory
 from axion._handlers.llm.handler import LLMHandler
 from axion.dataset import DatasetItem
 from axion.error import MetricRegistryError
@@ -66,6 +67,7 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         metric_description: Optional[str] = None,
         name: Optional[str] = None,
         field_mapping: Optional[Dict[str, str]] = None,
+        metric_category: Optional[MetricCategory] = None,
         **kwargs: Any,
     ):
         """
@@ -86,6 +88,8 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
             field_mapping: Optional mapping from canonical field names to source paths.
                 e.g., {'actual_output': 'additional_output.summary'} will resolve
                 'actual_output' from item.additional_output['summary'].
+            metric_category: The category of metric output (SCORE, ANALYSIS, CLASSIFICATION).
+                If not provided, falls back to class config or defaults to SCORE.
             **kwargs: Additional keyword arguments passed to the parent LLMHandler (e.g., logger config).
         """
         self._set_llm(llm, model_name, llm_provider)
@@ -97,6 +101,7 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         self._metric_name = name or metric_name
         self._metric_description = metric_description
         self._field_mapping = field_mapping or {}
+        self._metric_category = metric_category
 
         super().__init__(**kwargs)
 
@@ -455,6 +460,25 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         """Sets the optional fields for evaluation."""
         self._optional_fields = fields
 
+    @property
+    def metric_category(self) -> MetricCategory:
+        """
+        Returns the metric category for this metric.
+
+        Falls back to configuration if instance-level value is not explicitly set.
+        Defaults to MetricCategory.SCORE if not defined anywhere.
+        """
+        if hasattr(self, '_metric_category') and self._metric_category is not None:
+            return self._metric_category
+        if hasattr(self, 'config') and hasattr(self.config, 'metric_category'):
+            return self.config.metric_category
+        return MetricCategory.SCORE
+
+    @metric_category.setter
+    def metric_category(self, category: MetricCategory):
+        """Sets the metric category."""
+        self._metric_category = category
+
     def compute_cost_estimate(self, sub_models: List['BaseMetric']):
         """
         Computes the total estimated cost, including the current model and any sub-models.
@@ -496,8 +520,9 @@ def metric(
     required_fields: List[str],
     optional_fields: Optional[List[str]] = None,
     key: Optional[str] = None,
-    default_threshold: float = 0.5,
-    score_range: tuple[Union[int, float], Union[int, float]] = (0, 1),
+    metric_category: MetricCategory = MetricCategory.SCORE,
+    default_threshold: Optional[float] = 0.5,
+    score_range: Optional[tuple[Union[int, float], Union[int, float]]] = (0, 1),
     tags: Optional[List[str]] = None,
 ) -> Callable[[Type[BaseMetric]], Type[BaseMetric]]:
     """
@@ -510,8 +535,12 @@ def metric(
         optional_fields: Optional fields the metric may use if available.
         key: Optional. A unique programmatic identifier for the metric.
              If not provided, it's generated from the name.
+        metric_category: The category of metric output: SCORE (numeric), ANALYSIS (structured insights),
+                         or CLASSIFICATION (labels). Defaults to SCORE.
         default_threshold: The default threshold to consider a score as 'passing'.
+                           Optional for ANALYSIS metrics.
         score_range: Tuple representing the valid score range for this metric.
+                     Optional for ANALYSIS metrics.
         tags: Searchable tags to group or filter metrics.
 
     Returns:
@@ -533,6 +562,7 @@ def metric(
             key=final_key,
             name=name,
             description=description,
+            metric_category=metric_category,
             required_fields=required_fields,
             optional_fields=optional_fields or [],
             default_threshold=default_threshold,
