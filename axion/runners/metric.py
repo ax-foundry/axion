@@ -734,7 +734,7 @@ class AxionRunner(BaseMetricRunner):
                     }
                 )
 
-                # Build metadata with metric_category
+                # Build metadata (keep metric_category in metadata for backward compat)
                 result_metadata = getattr(result, 'metadata', None) or {}
                 result_metadata['metric_category'] = metric_category.value
 
@@ -751,6 +751,7 @@ class AxionRunner(BaseMetricRunner):
                     metadata=result_metadata,
                     source=self.source,
                     cost_estimate=getattr(self.metric, 'cost_estimate', 0),
+                    metric_category=metric_category.value,
                 )
             except Exception as e:
                 logger.error(f'AXION execution failed for {self.metric_name}: {e}')

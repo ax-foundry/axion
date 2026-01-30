@@ -134,6 +134,7 @@ class BaseTraceLoader(ABC):
         days_back: int = 7,
         tags: Optional[List[str]] = None,
         name: Optional[str] = None,
+        **kwargs: Any,
     ) -> List[Any]:
         """
         Fetch raw traces from the observability platform.
@@ -143,6 +144,7 @@ class BaseTraceLoader(ABC):
             days_back: Number of days to look back
             tags: Filter by specific tags
             name: Filter by trace name
+            **kwargs: Provider-specific filters or options
 
         Returns:
             List of raw trace objects from the platform

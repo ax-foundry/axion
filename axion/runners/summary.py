@@ -277,6 +277,22 @@ class MetricSummary(BaseSummary):
 
         return insights
 
+    def _is_successful_metric(self, score_result) -> bool:
+        """
+        Check if a metric execution was successful.
+
+        A metric is considered successful if:
+        - It has a valid numeric score (for SCORE metrics), OR
+        - It is an analysis/classification metric (these don't produce scores)
+        """
+        # Analysis and classification metrics are successful if they ran (no score needed)
+        metric_category = getattr(score_result, 'metric_category', 'score')
+        if metric_category in ('analysis', 'classification'):
+            return True
+
+        # For score metrics, check if the score is valid
+        return self._is_valid_score(score_result.score)
+
     def _calculate_overall_stats(
         self, results: List['TestResult'], total_task_runs: int = None
     ) -> Dict[str, Any]:
@@ -288,7 +304,7 @@ class MetricSummary(BaseSummary):
         for result in results:
             total_expected_metrics += len(result.score_results)
             for score in result.score_results:
-                if self._is_valid_score(score.score):
+                if self._is_successful_metric(score):
                     total_successful_metrics += 1
 
         stats = {

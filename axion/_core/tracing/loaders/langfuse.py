@@ -11,7 +11,8 @@ import json
 import os
 import random
 import time
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, TypeVar
+from datetime import datetime, timedelta
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Literal, Optional, TypeVar
 
 import numpy as np
 from pydantic import BaseModel
@@ -344,19 +345,29 @@ class LangfuseTraceLoader(BaseTraceLoader):
     def fetch_traces(
         self,
         limit: int = 50,
+        mode: Literal['days_back', 'absolute', 'hours_back'] = 'days_back',
         days_back: int = 7,
+        hours_back: int = 24,
+        from_timestamp: datetime | str | None = None,
+        to_timestamp: datetime | str | None = None,
         tags: Optional[List[str]] = None,
         name: Optional[str] = None,
         trace_ids: Optional[List[str]] = None,
         fetch_full_traces: bool = True,
         show_progress: bool = True,
+        **trace_list_kwargs: Any,
     ) -> List[Any]:
         """
         Fetch raw traces from Langfuse.
 
         Args:
             limit: Maximum number of traces to fetch
-            days_back: Number of days to look back
+            mode: Time window mode to use for fetching traces. Options:
+                'days_back', 'hours_back', or 'absolute'.
+            days_back: Number of days to look back (days_back mode)
+            hours_back: Number of hours to look back (hours_back mode)
+            from_timestamp: Start timestamp for absolute mode (datetime or ISO string)
+            to_timestamp: End timestamp for absolute mode (datetime or ISO string)
             tags: Filter by specific tags
             name: Filter by trace name
             trace_ids: Optional list of trace IDs to fetch directly. If provided,
@@ -365,6 +376,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 trace via additional API calls. If False, only return trace summaries
                 (faster but less data). Set to False to avoid rate limits.
             show_progress: If True, display a tqdm progress bar when fetching full traces.
+            **trace_list_kwargs: Additional kwargs passed to
+                langfuse_client.api.trace.list(...)
 
         Returns:
             List of raw Langfuse trace objects (full traces or summaries)
@@ -392,20 +405,92 @@ class LangfuseTraceLoader(BaseTraceLoader):
         if trace_ids:
             return _fetch_full_traces(trace_ids)
 
-        from_timestamp = self._normalize_time_window(days_back)
+        if mode not in {'days_back', 'hours_back', 'absolute'}:
+            logger.error(
+                f'Invalid mode "{mode}". Use "days_back", "hours_back", or "absolute".'
+            )
+            return []
+
+        def _parse_timestamp(value: datetime | str | None, label: str) -> datetime | None:
+            if value is None:
+                return None
+            if isinstance(value, datetime):
+                return value
+            if isinstance(value, str):
+                try:
+                    return datetime.fromisoformat(value.replace('Z', '+00:00'))
+                except ValueError as exc:
+                    raise ValueError(
+                        f'Invalid {label} format. Use ISO-8601, e.g. '
+                        f'2026-01-01T12:34:56+00:00.'
+                    ) from exc
+            raise ValueError(f'Invalid {label} type: {type(value).__name__}.')
+
+        list_kwargs = dict(trace_list_kwargs)
+
+        for key, value in {
+            'limit': limit,
+            'tags': tags,
+            'name': name,
+            'from_timestamp': from_timestamp,
+            'to_timestamp': to_timestamp,
+        }.items():
+            if value is not None and key in list_kwargs:
+                raise ValueError(f'Duplicate value provided for "{key}".')
+
+        if mode != 'absolute':
+            if from_timestamp is not None or to_timestamp is not None:
+                raise ValueError(
+                    'from_timestamp/to_timestamp require mode="absolute".'
+                )
+            if mode == 'days_back':
+                from_ts = self._normalize_time_window(days_back)
+            else:
+                from_ts = datetime.now() - timedelta(hours=hours_back)
+            to_ts = None
+        else:
+            resolved_from = _parse_timestamp(
+                from_timestamp or list_kwargs.get('from_timestamp'), 'from_timestamp'
+            )
+            resolved_to = _parse_timestamp(
+                to_timestamp or list_kwargs.get('to_timestamp'), 'to_timestamp'
+            )
+
+            if resolved_from is None:
+                raise ValueError('absolute mode requires from_timestamp.')
+
+            if resolved_to and resolved_from > resolved_to:
+                raise ValueError('from_timestamp cannot be after to_timestamp.')
+
+            from_ts = resolved_from
+            to_ts = resolved_to
+
+        list_kwargs.pop('from_timestamp', None)
+        list_kwargs.pop('to_timestamp', None)
+
+        if 'limit' not in list_kwargs:
+            list_kwargs['limit'] = limit
+        if tags is not None:
+            list_kwargs['tags'] = tags
+        if name is not None:
+            list_kwargs['name'] = name
+
+        list_kwargs['from_timestamp'] = from_ts
+        if to_ts is not None:
+            list_kwargs['to_timestamp'] = to_ts
+
+        window_suffix = (
+            f'between {from_ts} and {to_ts}' if to_ts else f'since {from_ts}'
+        )
         logger.info(
-            f'Fetching up to {limit} traces from Langfuse (since {from_timestamp})...'
+            f'Fetching up to {list_kwargs["limit"]} traces from Langfuse '
+            f'({window_suffix})...'
         )
 
         # Fetch trace list with retry
         try:
             traces_page = self._execute_with_retry(
-                lambda: self.client.api.trace.list(
-                    limit=limit,
-                    from_timestamp=from_timestamp,
-                    tags=tags,
-                    name=name,
-                ),
+                lambda: self.client.api.trace.list(**list_kwargs),
                 description='list traces',
             )
         except Exception as e:
