@@ -411,7 +411,9 @@ class LangfuseTraceLoader(BaseTraceLoader):
             )
             return []
 
-        def _parse_timestamp(value: datetime | str | None, label: str) -> datetime | None:
+        def _parse_timestamp(
+            value: datetime | str | None, label: str
+        ) -> datetime | None:
             if value is None:
                 return None
             if isinstance(value, datetime):
@@ -440,9 +442,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
         if mode != 'absolute':
             if from_timestamp is not None or to_timestamp is not None:
-                raise ValueError(
-                    'from_timestamp/to_timestamp require mode="absolute".'
-                )
+                raise ValueError('from_timestamp/to_timestamp require mode="absolute".')
             if mode == 'days_back':
                 from_ts = self._normalize_time_window(days_back)
             else:
