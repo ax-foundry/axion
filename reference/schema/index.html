@@ -4342,7 +4342,7 @@ in a notebook, save it as an HTML file, or return the styled object/HTML string 
 
 
 <h3 id="axion.schema.EvaluationResult.publish_to_observability" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">publish_to_observability</span><span class="p">(</span><span class="n">loader</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">observation_id_field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;observation_id&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></code>
+            <code class="highlight language-python"><span class="n">publish_to_observability</span><span class="p">(</span><span class="n">loader</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">observation_id_field</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;observation_id&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></code>
 
 <a href="#axion.schema.EvaluationResult.publish_to_observability" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -4400,6 +4400,17 @@ Default: 'observation_id'.</p>
 Falls back to LANGFUSE_TAGS env var if not provided.</p>
           </div>
         </li>
+        <li class="doc-section-item field-body">
+            <b><code>metric_names</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<span title="str">str</span>]]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Optional list of metric names to upload. If provided,
+only scores whose metric name matches are uploaded.</p>
+          </div>
+        </li>
     </ul>
 
 
@@ -4454,7 +4465,7 @@ stats = result.publish_to_observability(
 
 
 <h3 id="axion.schema.EvaluationResult.publish_as_experiment" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">publish_as_experiment</span><span class="p">(</span><span class="n">loader</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">run_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">run_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">flush</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">score_on_runtime_traces</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">link_to_traces</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+            <code class="highlight language-python"><span class="n">publish_as_experiment</span><span class="p">(</span><span class="n">loader</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">run_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">run_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">flush</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">score_on_runtime_traces</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">link_to_traces</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">metric_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
 
 <a href="#axion.schema.EvaluationResult.publish_as_experiment" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -4556,6 +4567,17 @@ low-level API instead of creating new "Dataset run" traces. This allows
 experiment runs to appear linked to the original evaluation traces in
 Langfuse UI. Falls back to creating new traces if trace_id is not available.
 Ignored if score_on_runtime_traces is True.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>metric_names</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<span title="str">str</span>]]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Optional list of metric names to upload. If provided,
+only scores whose metric name matches are uploaded.</p>
           </div>
         </li>
     </ul>

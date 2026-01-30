@@ -3964,7 +3964,7 @@ paths or alternate field names.</p>
 
 
 <h3 id="axion.metrics.base.BaseMetric" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">BaseMetric</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LLMRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">embed_model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">embed_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EmbeddingRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm_provider</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">required_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">optional_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric_description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">field_mapping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span></code>
+              <code class="highlight language-python"><span class="n">BaseMetric</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LLMRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">embed_model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">embed_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EmbeddingRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm_provider</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">required_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">optional_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric_description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">field_mapping</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric_category</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MetricCategory</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span></code>
 
 <a href="#axion.metrics.base.BaseMetric" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -4102,6 +4102,17 @@ paths or alternate field names.</p>
             <p>Optional mapping from canonical field names to source paths.
 e.g., {'actual_output': 'additional_output.summary'} will resolve
 'actual_output' from item.additional_output['summary'].</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>metric_category</code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="axion._core.types.MetricCategory">MetricCategory</span>]</code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>The category of metric output (SCORE, ANALYSIS, CLASSIFICATION).
+If not provided, falls back to class config or defaults to SCORE.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -4265,6 +4276,31 @@ e.g., {'actual_output': 'additional_output.summary'} will resolve
 
         <p>Returns the optional fields for evaluation.</p>
 <p>Falls back to configuration if instance-level fields are not explicitly set.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="axion.metrics.base.BaseMetric.metric_category" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">metric_category</span><span class="p">:</span> <span class="n">MetricCategory</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+  </span>
+
+<a href="#axion.metrics.base.BaseMetric.metric_category" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Returns the metric category for this metric.</p>
+<p>Falls back to configuration if instance-level value is not explicitly set.
+Defaults to MetricCategory.SCORE if not defined anywhere.</p>
 
     </div>
 
@@ -4644,7 +4680,7 @@ to the current list, extending few-shot prompting context.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>sub_models</code></b>
-              (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]</code>)
+              (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, metric_category: Optional[MetricCategory] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]</code>)
           –
           <div class="doc-md-description">
             <p>List of sub-models that may have a cost_estimate.</p>
@@ -4773,7 +4809,7 @@ included in the prompt. If None, a placeholder is used. Defaults to None.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>metric_class</code></b>
-              (<code><span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]</code>)
+              (<code><span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, metric_category: Optional[MetricCategory] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]</code>)
           –
           <div class="doc-md-description">
             <p>A class inheriting from BaseMetric with a valid config.</p>
@@ -4849,7 +4885,7 @@ included in the prompt. If None, a placeholder is used. Defaults to None.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="typing.Optional">Optional</span>[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]]</code>
+              <code><span title="typing.Optional">Optional</span>[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, metric_category: Optional[MetricCategory] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]]</code>
           –
           <div class="doc-md-description">
             <p>The registered metric class, or None if not found and error=False.</p>
@@ -4892,7 +4928,7 @@ included in the prompt. If None, a placeholder is used. Defaults to None.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="typing.List">List</span>[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]]</code>
+              <code><span title="typing.List">List</span>[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, metric_category: Optional[MetricCategory] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]]</code>
           –
           <div class="doc-md-description">
             <p>A list of matching metric classes.</p>
@@ -4935,7 +4971,7 @@ included in the prompt. If None, a placeholder is used. Defaults to None.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="typing.List">List</span>[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]]</code>
+              <code><span title="typing.List">List</span>[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, metric_category: Optional[MetricCategory] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]]</code>
           –
           <div class="doc-md-description">
             <p>A list of compatible metric classes.</p>
@@ -5030,7 +5066,7 @@ included in the prompt. If None, a placeholder is used. Defaults to None.</p>
 
 
 <h3 id="axion.metrics.base.metric" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">metric</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">required_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">optional_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">default_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">score_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Type</span><span class="p">[</span><span class="n">BaseMetric</span><span class="p">]],</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseMetric</span><span class="p">]]</span></code>
+            <code class="highlight language-python"><span class="n">metric</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">required_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">optional_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric_category</span><span class="p">:</span> <span class="n">MetricCategory</span> <span class="o">=</span> <span class="n">MetricCategory</span><span class="o">.</span><span class="n">SCORE</span><span class="p">,</span> <span class="n">default_threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">score_range</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">tags</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Type</span><span class="p">[</span><span class="n">BaseMetric</span><span class="p">]],</span> <span class="n">Type</span><span class="p">[</span><span class="n">BaseMetric</span><span class="p">]]</span></code>
 
 <a href="#axion.metrics.base.metric" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -5088,23 +5124,36 @@ included in the prompt. If None, a placeholder is used. Defaults to None.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
+            <b><code>metric_category</code></b>
+              (<code><span title="axion._core.types.MetricCategory">MetricCategory</span></code>, default:
+                  <code><span title="axion._core.types.MetricCategory.SCORE">SCORE</span></code>
+)
+          –
+          <div class="doc-md-description">
+            <p>The category of metric output: SCORE (numeric), ANALYSIS (structured insights),
+             or CLASSIFICATION (labels). Defaults to SCORE.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
             <b><code>default_threshold</code></b>
-              (<code><span title="float">float</span></code>, default:
+              (<code><span title="typing.Optional">Optional</span>[<span title="float">float</span>]</code>, default:
                   <code>0.5</code>
 )
           –
           <div class="doc-md-description">
-            <p>The default threshold to consider a score as 'passing'.</p>
+            <p>The default threshold to consider a score as 'passing'.
+               Optional for ANALYSIS metrics.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
             <b><code>score_range</code></b>
-              (<code><span title="tuple">tuple</span>[<span title="typing.Union">Union</span>[<span title="int">int</span>, <span title="float">float</span>], <span title="typing.Union">Union</span>[<span title="int">int</span>, <span title="float">float</span>]]</code>, default:
+              (<code><span title="typing.Optional">Optional</span>[<span title="tuple">tuple</span>[<span title="typing.Union">Union</span>[<span title="int">int</span>, <span title="float">float</span>], <span title="typing.Union">Union</span>[<span title="int">int</span>, <span title="float">float</span>]]]</code>, default:
                   <code>(0, 1)</code>
 )
           –
           <div class="doc-md-description">
-            <p>Tuple representing the valid score range for this metric.</p>
+            <p>Tuple representing the valid score range for this metric.
+         Optional for ANALYSIS metrics.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -5123,7 +5172,7 @@ included in the prompt. If None, a placeholder is used. Defaults to None.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="typing.Callable">Callable</span>[[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]], <span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]]</code>
+              <code><span title="typing.Callable">Callable</span>[[<span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, metric_category: Optional[MetricCategory] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]], <span title="typing.Type">Type</span>[<a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, metric_category: Optional[MetricCategory] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="#axion.metrics.base.BaseMetric">BaseMetric</a>]]</code>
           –
           <div class="doc-md-description">
             <p>A class decorator that attaches config and registers the metric in the MetricRegistry.</p>

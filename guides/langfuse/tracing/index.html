@@ -1270,6 +1270,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#absolute-window-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute Window Example
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3887,6 +3898,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#absolute-window-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Absolute Window Example
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4189,10 +4211,34 @@
 <td>Maximum number of traces to fetch</td>
 </tr>
 <tr>
+<td><code>mode</code></td>
+<td><code>str</code></td>
+<td><code>'days_back'</code></td>
+<td>Time window mode: <code>days_back</code>, <code>hours_back</code>, <code>absolute</code></td>
+</tr>
+<tr>
 <td><code>days_back</code></td>
 <td><code>int</code></td>
 <td><code>7</code></td>
-<td>Number of days to look back</td>
+<td>Number of days to look back (days_back mode)</td>
+</tr>
+<tr>
+<td><code>hours_back</code></td>
+<td><code>int</code></td>
+<td><code>24</code></td>
+<td>Number of hours to look back (hours_back mode)</td>
+</tr>
+<tr>
+<td><code>from_timestamp</code></td>
+<td><code>datetime \| str \| None</code></td>
+<td><code>None</code></td>
+<td>Start timestamp (absolute mode, ISO string supported)</td>
+</tr>
+<tr>
+<td><code>to_timestamp</code></td>
+<td><code>datetime \| str \| None</code></td>
+<td><code>None</code></td>
+<td>End timestamp (absolute mode, ISO string supported)</td>
 </tr>
 <tr>
 <td><code>tags</code></td>
@@ -4211,6 +4257,12 @@
 <td><code>bool</code></td>
 <td><code>True</code></td>
 <td>Fetch full details vs. summaries</td>
+</tr>
+<tr>
+<td><code>**trace_list_kwargs</code></td>
+<td><code>dict</code></td>
+<td><code>{}</code></td>
+<td>Extra kwargs passed to <code>langfuse_client.api.trace.list(...)</code></td>
 </tr>
 </tbody>
 </table>
@@ -4233,6 +4285,16 @@
     <span class="n">days_back</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;production&#39;</span><span class="p">],</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;chat-completion&#39;</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="absolute-window-example">Absolute Window Example<a class="headerlink" href="#absolute-window-example" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+
+<span class="n">traces</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">fetch_traces</span><span class="p">(</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;absolute&#39;</span><span class="p">,</span>
+    <span class="n">from_timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span>
+    <span class="n">to_timestamp</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2026</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span>
+    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;prod&#39;</span><span class="p">],</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="converting-traces-to-dataset">Converting Traces to Dataset<a class="headerlink" href="#converting-traces-to-dataset" title="Permanent link">&para;</a></h2>
@@ -4378,7 +4440,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 22, 2026 23:34:56 UTC">January 22, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 30, 2026 03:54:46 UTC">January 30, 2026</span>
   </span>
 
     

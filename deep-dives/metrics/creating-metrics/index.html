@@ -2489,6 +2489,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#metric-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metric Categories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#field-mapping-for-nested-inputs" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3724,6 +3735,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#metric-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metric Categories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#field-mapping-for-nested-inputs" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3931,11 +3953,190 @@
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Detailed description of what the metric measures&quot;</span><span class="p">,</span>
     <span class="n">required_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;field1&quot;</span><span class="p">,</span> <span class="s2">&quot;field2&quot;</span><span class="p">],</span>
     <span class="n">optional_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;field3&quot;</span><span class="p">],</span>
+    <span class="n">metric_category</span><span class="o">=</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">SCORE</span><span class="p">,</span>  <span class="c1"># SCORE, ANALYSIS, or CLASSIFICATION</span>
     <span class="n">default_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
     <span class="n">score_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;category&quot;</span><span class="p">,</span> <span class="s2">&quot;domain&quot;</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="metric-categories">Metric Categories<a class="headerlink" href="#metric-categories" title="Permanent link">&para;</a></h3>
+<p>Axion supports three metric categories based on output type. Use <code>MetricCategory</code> to specify what kind of output your metric produces.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricCategory</span>
+</code></pre></div>
+<h4 id="decision-tree">Decision Tree<a class="headerlink" href="#decision-tree" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code>Does your metric produce a numeric score?
+├── YES → MetricCategory.SCORE
+└── NO → Does it output a SINGLE label from a FIXED set?
+    ├── YES → MetricCategory.CLASSIFICATION
+    └── NO → MetricCategory.ANALYSIS
+</code></pre></div>
+<h4 id="category-comparison">Category Comparison<a class="headerlink" href="#category-comparison" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th><code>SCORE</code></th>
+<th><code>CLASSIFICATION</code></th>
+<th><code>ANALYSIS</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Output</strong></td>
+<td>Numeric value (0-1)</td>
+<td>Single label</td>
+<td>Structured object</td>
+</tr>
+<tr>
+<td><strong>Options</strong></td>
+<td>Continuous range</td>
+<td>Fixed/predefined set</td>
+<td>Open-ended insights</td>
+</tr>
+<tr>
+<td><strong>Pass/Fail</strong></td>
+<td>Yes (threshold-based)</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Aggregation</strong></td>
+<td>Average, percentile</td>
+<td>Count by label</td>
+<td>Custom</td>
+</tr>
+<tr>
+<td><strong>Example output</strong></td>
+<td><code>0.85</code></td>
+<td><code>"Property Condition"</code></td>
+<td><code>{ category, reasons[], citations[] }</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="when-to-use-each-category">When to Use Each Category<a class="headerlink" href="#when-to-use-each-category" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Use When</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>SCORE</code></strong></td>
+<td>Metric produces a numeric value that can be compared to a threshold</td>
+<td><code>Faithfulness</code>, <code>AnswerRelevancy</code>, <code>Latency</code>, <code>acceptance_rate</code></td>
+</tr>
+<tr>
+<td><strong><code>CLASSIFICATION</code></strong></td>
+<td>Metric produces a single categorical label from a fixed set</td>
+<td><code>SentimentClassification</code> → positive/negative/neutral</td>
+</tr>
+<tr>
+<td><strong><code>ANALYSIS</code></strong></td>
+<td>Metric extracts structured insights without scoring</td>
+<td><code>ReferralReasonAnalysis</code> → reasons, citations, categories</td>
+</tr>
+</tbody>
+</table>
+<h4 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h4>
+<p><strong>SCORE Metric</strong> (default):
+<div class="highlight"><pre><span></span><code><span class="nd">@metric</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Answer Quality&quot;</span><span class="p">,</span>
+    <span class="n">metric_category</span><span class="o">=</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">SCORE</span><span class="p">,</span>  <span class="c1"># Default, can be omitted</span>
+    <span class="n">default_threshold</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">score_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnswerQuality</span><span class="p">(</span><span class="n">BaseMetric</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetricEvaluationResult</span><span class="p">:</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MetricEvaluationResult</span><span class="p">(</span>
+            <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">,</span>  <span class="c1"># Numeric score required</span>
+            <span class="n">explanation</span><span class="o">=</span><span class="s2">&quot;Quality assessment complete&quot;</span>
+        <span class="p">)</span>
+</code></pre></div></p>
+<p><strong>CLASSIFICATION Metric</strong>:
+<div class="highlight"><pre><span></span><code><span class="nd">@metric</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sentiment Classification&quot;</span><span class="p">,</span>
+    <span class="n">metric_category</span><span class="o">=</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">CLASSIFICATION</span><span class="p">,</span>
+    <span class="n">required_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;actual_output&quot;</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SentimentClassification</span><span class="p">(</span><span class="n">BaseMetric</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetricEvaluationResult</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classify</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">actual_output</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MetricEvaluationResult</span><span class="p">(</span>
+            <span class="n">score</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># No score for classification</span>
+            <span class="n">explanation</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Classified as: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">signals</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">}</span>  <span class="c1"># Single categorical output</span>
+        <span class="p">)</span>
+</code></pre></div></p>
+<p><strong>ANALYSIS Metric</strong>:
+<div class="highlight"><pre><span></span><code><span class="nd">@metric</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Referral Reason Analysis&quot;</span><span class="p">,</span>
+    <span class="n">metric_category</span><span class="o">=</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">ANALYSIS</span><span class="p">,</span>
+    <span class="n">required_fields</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;actual_output&quot;</span><span class="p">],</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReferralReasonAnalysis</span><span class="p">(</span><span class="n">BaseMetric</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetricEvaluationResult</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_analyze</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MetricEvaluationResult</span><span class="p">(</span>
+            <span class="n">score</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># No score for analysis</span>
+            <span class="n">explanation</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Extracted </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">reasons</span><span class="p">)</span><span class="si">}</span><span class="s2"> reasons&quot;</span><span class="p">,</span>
+            <span class="n">signals</span><span class="o">=</span><span class="p">{</span>  <span class="c1"># Rich structured output</span>
+                <span class="s2">&quot;primary_category&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">primary_category</span><span class="p">,</span>
+                <span class="s2">&quot;all_reasons&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">reasons</span><span class="p">,</span>
+                <span class="s2">&quot;citations&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">citations</span><span class="p">,</span>
+                <span class="s2">&quot;actionable_type&quot;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">actionable_type</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+</code></pre></div></p>
+<h4 id="downstream-behavior">Downstream Behavior<a class="headerlink" href="#downstream-behavior" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Behavior</th>
+<th><code>SCORE</code></th>
+<th><code>CLASSIFICATION</code></th>
+<th><code>ANALYSIS</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>score</code> field</td>
+<td>Required numeric</td>
+<td><code>None</code> → <code>np.nan</code></td>
+<td><code>None</code> → <code>np.nan</code></td>
+</tr>
+<tr>
+<td><code>passed</code> field</td>
+<td><code>True</code>/<code>False</code> based on threshold</td>
+<td><code>None</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td><code>threshold</code> field</td>
+<td>Set from config</td>
+<td><code>None</code></td>
+<td><code>None</code></td>
+</tr>
+<tr>
+<td>Summary reports</td>
+<td>Included in averages</td>
+<td>Excluded from averages</td>
+<td>Excluded from averages</td>
+</tr>
+<tr>
+<td>Metadata</td>
+<td><code>metric_category: "score"</code></td>
+<td><code>metric_category: "classification"</code></td>
+<td><code>metric_category: "analysis"</code></td>
+</tr>
+</tbody>
+</table>
 <h3 id="field-mapping-for-nested-inputs">Field Mapping for Nested Inputs<a class="headerlink" href="#field-mapping-for-nested-inputs" title="Permanent link">&para;</a></h3>
 <p>If your dataset stores canonical fields under different names or nested paths, you can
 map them at runtime using <code>field_mapping</code>. Mapped fields are used for validation and
@@ -4154,7 +4355,7 @@ above resolves <code>actual_output</code> from <code>item.additional_output["sum
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 25, 2026 01:27:46 UTC">January 25, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 30, 2026 03:54:46 UTC">January 30, 2026</span>
   </span>
 
     
