@@ -182,6 +182,16 @@ class MetricRegistryExtractor(BaseRegistryExtractor):
 
     def get_fields(self, item: Any) -> Dict[str, Any]:
         config = item.config
+        score_range = getattr(config, 'score_range', None)
+        if (
+            score_range is None
+            or len(score_range) < 2
+            or score_range[0] is None
+            or score_range[1] is None
+        ):
+            score_range_display = 'N/A'
+        else:
+            score_range_display = f'{score_range[0]}-{score_range[1]}'
         return {
             'threshold': {
                 'value': config.default_threshold,
@@ -189,7 +199,7 @@ class MetricRegistryExtractor(BaseRegistryExtractor):
                 'label': 'Threshold',
             },
             'score_range': {
-                'value': f'{config.score_range[0]}-{config.score_range[1]}',
+                'value': score_range_display,
                 'type': 'badge',
                 'label': 'Range',
                 'color': 'primary',
@@ -340,15 +350,23 @@ print(result.pretty())"""
 
     def get_details_content(self, key: str, item: Any) -> str:
         config = item.config
+        score_range = getattr(config, 'score_range', None)
+        if (
+            score_range is None
+            or len(score_range) < 2
+            or score_range[0] is None
+            or score_range[1] is None
+        ):
+            score_range_display = 'N/A'
+        else:
+            score_range_display = f'{score_range[0]} - {score_range[1]}'
         return f"""
         <div class="details-content">
             <h4>Configuration Details</h4>
             <ul>
                 <li><strong>Key:</strong> <code>{config.key}</code></li>
                 <li><strong>Default Threshold:</strong> {config.default_threshold}</li>
-                <li><strong>Score Range:</strong> {config.score_range[0]} - {
-            config.score_range[1]
-        }</li>
+                <li><strong>Score Range:</strong> {score_range_display}</li>
                 <li><strong>Required Fields:</strong> {len(config.required_fields)}</li>
                 <li><strong>Optional Fields:</strong> {
             len(getattr(config, 'optional_fields', []))
@@ -572,7 +590,10 @@ class GenericRegistryDisplay:
     def _get_badge_class(self, field_info: Dict[str, Any]) -> str:
         """Get the CSS class for a badge."""
         if field_info.get('type') == 'threshold_badge':
-            threshold = float(field_info['value'])
+            try:
+                threshold = float(field_info['value'])
+            except (TypeError, ValueError):
+                return 'threshold-badge threshold-medium'
             if threshold <= 0.3:
                 return 'threshold-badge threshold-low'
             elif threshold >= 0.7:
