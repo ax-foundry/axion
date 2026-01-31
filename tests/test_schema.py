@@ -93,3 +93,203 @@ def test_evaluation_result_rename_columns():
     df = eval_result.to_dataframe(rename_columns=False)
     assert 'name' in df.columns
     assert df['name'].iloc[0] == 'robustness'
+
+
+def test_to_normalized_dataframes_basic():
+    """Test basic normalized dataframes with single item and single metric."""
+    test_case = DatasetItem(
+        id='test-1', query='What is AI?', expected_output='Artificial Intelligence'
+    )
+    metric = MetricScore(name='faithfulness', score=0.95)
+    result = TestResult(test_case=test_case, score_results=[metric])
+
+    eval_result = EvaluationResult(
+        run_id='run-001',
+        evaluation_name='test-exp',
+        timestamp=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+        results=[result],
+    )
+
+    dataset_df, metrics_df = eval_result.to_normalized_dataframes()
+
+    # Verify dataset items table
+    assert isinstance(dataset_df, pd.DataFrame)
+    assert len(dataset_df) == 1
+    assert dataset_df['id'].iloc[0] == 'test-1'
+    assert dataset_df['query'].iloc[0] == 'What is AI?'
+
+    # Verify metric results table
+    assert isinstance(metrics_df, pd.DataFrame)
+    assert len(metrics_df) == 1
+    assert metrics_df['metric_name'].iloc[0] == 'faithfulness'
+    assert metrics_df['metric_score'].iloc[0] == 0.95
+    assert metrics_df['id'].iloc[0] == 'test-1'  # FK to dataset item
+
+
+def test_to_normalized_dataframes_multiple_metrics():
+    """Test normalized dataframes with one item and multiple metrics (FK validation)."""
+    test_case = DatasetItem(
+        id='test-2', query='Explain ML', expected_output='Machine Learning'
+    )
+    metrics = [
+        MetricScore(name='faithfulness', score=0.9),
+        MetricScore(name='coherence', score=0.85),
+        MetricScore(name='relevancy', score=0.95),
+    ]
+    result = TestResult(test_case=test_case, score_results=metrics)
+
+    eval_result = EvaluationResult(
+        run_id='run-002',
+        evaluation_name='multi-metric-test',
+        timestamp=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+        results=[result],
+    )
+
+    dataset_df, metrics_df = eval_result.to_normalized_dataframes()
+
+    # One dataset item row
+    assert len(dataset_df) == 1
+    assert dataset_df['id'].iloc[0] == 'test-2'
+
+    # Three metric rows, all with same FK
+    assert len(metrics_df) == 3
+    assert all(metrics_df['id'] == 'test-2')
+
+    # Verify FK relationship
+    assert set(metrics_df['id'].dropna()).issubset(set(dataset_df['id']))
+
+
+def test_to_normalized_dataframes_multiple_items():
+    """Test normalized dataframes with multiple items, each with metrics."""
+    test_case_1 = DatasetItem(id='item-1', query='Q1', expected_output='A1')
+    test_case_2 = DatasetItem(id='item-2', query='Q2', expected_output='A2')
+
+    result_1 = TestResult(
+        test_case=test_case_1, score_results=[MetricScore(name='m1', score=0.8)]
+    )
+    result_2 = TestResult(
+        test_case=test_case_2, score_results=[MetricScore(name='m1', score=0.9)]
+    )
+
+    eval_result = EvaluationResult(
+        run_id='run-003',
+        evaluation_name='multi-item-test',
+        timestamp=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+        results=[result_1, result_2],
+    )
+
+    dataset_df, metrics_df = eval_result.to_normalized_dataframes()
+
+    # Two dataset item rows (no duplication)
+    assert len(dataset_df) == 2
+    assert len(dataset_df) == dataset_df['id'].nunique()
+
+    # Two metric rows
+    assert len(metrics_df) == 2
+
+    # Verify FK relationship
+    assert set(metrics_df['id'].dropna()).issubset(set(dataset_df['id']))
+
+
+def test_to_normalized_dataframes_empty_test_case():
+    """Test handling of None test_case."""
+    metric = MetricScore(name='robustness', score=0.75)
+    result = TestResult(test_case=None, score_results=[metric])
+
+    eval_result = EvaluationResult(
+        run_id='run-004',
+        evaluation_name='null-test',
+        timestamp=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+        results=[result],
+    )
+
+    dataset_df, metrics_df = eval_result.to_normalized_dataframes()
+
+    # Empty dataset items table (no test case to extract)
+    assert len(dataset_df) == 0
+
+    # Metric row exists with None FK
+    assert len(metrics_df) == 1
+    assert metrics_df['id'].iloc[0] is None
+
+
+def test_to_normalized_dataframes_column_ordering():
+    """Verify column order in output DataFrames."""
+    test_case = DatasetItem(id='test-5', query='Q?', expected_output='A.')
+    metric = MetricScore(name='test_metric', score=0.5)
+    result = TestResult(test_case=test_case, score_results=[metric])
+
+    eval_result = EvaluationResult(
+        run_id='run-005',
+        evaluation_name='order-test',
+        timestamp=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+        results=[result],
+    )
+
+    dataset_df, metrics_df = eval_result.to_normalized_dataframes()
+
+    # Verify 'id' is first column in both tables
+    assert dataset_df.columns[0] == 'id'
+
+    # Verify expected columns exist in metrics table
+    assert 'run_id' in metrics_df.columns
+    assert 'metric_name' in metrics_df.columns
+    assert 'metric_score' in metrics_df.columns
+    assert 'id' in metrics_df.columns
+
+
+def test_to_normalized_dataframes_rename_columns():
+    """Verify column renaming works correctly."""
+    test_case = DatasetItem(id='test-6', query='Q', expected_output='A')
+    metric = MetricScore(name='test', score=0.5, type='metric')
+    result = TestResult(test_case=test_case, score_results=[metric])
+
+    eval_result = EvaluationResult(
+        run_id='run-006',
+        evaluation_name='rename-test',
+        timestamp=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+        results=[result],
+    )
+
+    # With renaming (default)
+    _, metrics_df_renamed = eval_result.to_normalized_dataframes(rename_columns=True)
+    assert 'metric_name' in metrics_df_renamed.columns
+    assert 'metric_score' in metrics_df_renamed.columns
+    assert 'metric_type' in metrics_df_renamed.columns
+    assert 'name' not in metrics_df_renamed.columns
+
+    # Without renaming
+    _, metrics_df_original = eval_result.to_normalized_dataframes(rename_columns=False)
+    assert 'name' in metrics_df_original.columns
+    assert 'score' in metrics_df_original.columns
+    assert 'type' in metrics_df_original.columns
+    assert 'id' in metrics_df_original.columns  # Always uses 'id' for DatasetItem FK
+
+
+def test_to_normalized_dataframes_include_metric_id():
+    """Verify include_metric_id parameter works correctly."""
+    test_case = DatasetItem(id='test-7', query='Q', expected_output='A')
+    metric = MetricScore(id='metric-uuid-123', name='test', score=0.5)
+    result = TestResult(test_case=test_case, score_results=[metric])
+
+    eval_result = EvaluationResult(
+        run_id='run-007',
+        evaluation_name='metric-id-test',
+        timestamp=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+        results=[result],
+    )
+
+    # Without include_metric_id (default)
+    _, metrics_df_no_metric_id = eval_result.to_normalized_dataframes(
+        include_metric_id=False
+    )
+    assert 'metric_id' not in metrics_df_no_metric_id.columns
+    assert metrics_df_no_metric_id['id'].iloc[0] == 'test-7'  # DatasetItem's id
+
+    # With include_metric_id
+    _, metrics_df_with_metric_id = eval_result.to_normalized_dataframes(
+        include_metric_id=True
+    )
+    assert 'metric_id' in metrics_df_with_metric_id.columns
+    assert metrics_df_with_metric_id['metric_id'].iloc[0] == 'metric-uuid-123'
+    assert metrics_df_with_metric_id['id'].iloc[0] == 'test-7'  # Still DatasetItem's id

@@ -7,6 +7,7 @@ nav:
     - index.md
     - Evaluation Flywheel: evaluation_flywheel.md
     - Agent Evaluation Playbook: agent_playbook.md
+    - Why Ground Truth Matters: why_ground_truth_matters.md
   - Getting Started:
     - Installation: getting-started/installation.md
   - Guides:
