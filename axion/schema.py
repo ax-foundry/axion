@@ -1,6 +1,16 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, NamedTuple, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    ClassVar,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import pandas as pd
@@ -273,6 +283,78 @@ class EvaluationResult:
     summary: Dict[str, Any] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
 
+    # Column orderings for DataFrame outputs
+    DEFAULT_DATAFRAME_COLUMN_ORDER: ClassVar[List[str]] = [
+        'id',
+        'name',
+        'parent',
+        'score',
+        'type',
+        'weight',
+        'passed',
+        'cost_estimate',
+        'explanation',
+        'source',
+    ]
+
+    DEFAULT_DATASET_COLUMN_ORDER: ClassVar[List[str]] = [
+        'id',
+        'query',
+        'expected_output',
+        'actual_output',
+        'conversation',
+        'conversation_stats',
+        'agent_trajectory',
+        'has_errors',
+        'additional_input',
+        'acceptance_criteria',
+        'judgment',
+        'critique',
+        'latency',
+        'trace',
+        'trace_id',
+        'observation_id',
+        'data_metadata',
+        'user_tags',
+        'tools_called',
+        'expected_tools',
+        'additional_output',
+        'retrieved_content',
+        'document_text',
+        'actual_ranking',
+        'expected_ranking',
+        'actual_reference',
+        'expected_reference',
+        'conversation_extraction_strategy',
+        'single_turn_query',
+        'single_turn_expected_output',
+        'multi_turn_conversation',
+    ]
+
+    DEFAULT_METRICS_COLUMN_ORDER: ClassVar[List[str]] = [
+        'run_id',
+        'evaluation_name',
+        'id',
+        'metric_name',
+        'metric_score',
+        'metric_type',
+        'metric_category',
+        'passed',
+        'explanation',
+        'threshold',
+        'signals',
+        'parent',
+        'weight',
+        'cost_estimate',
+        'source',
+        'timestamp',
+        'version',
+        'metadata',
+        'evaluation_metadata',
+        'model_name',
+        'llm_provider',
+    ]
+
     def to_dataframe(
         self,
         by_alias: bool = True,
@@ -296,20 +378,7 @@ class EvaluationResult:
         Returns:
             pd.DataFrame: Flattened view of all metrics with test case and run context.
         """
-
-        default_column_order = [
-            'id',
-            'name',
-            'parent',
-            'score',
-            'type',
-            'weight',
-            'passed',
-            'cost_estimate',
-            'explanation',
-            'source',
-        ]
-        column_order = column_order or default_column_order
+        column_order = column_order or self.DEFAULT_DATAFRAME_COLUMN_ORDER
 
         run_metadata = {}
         if include_run_metadata:
@@ -362,11 +431,11 @@ class EvaluationResult:
                         if key in score_data['metadata']:
                             score_data[key] = score_data['metadata'][key]
 
-                # Preserve test_case id if score_data overwrote it with None
+                # Always use DatasetItem's id, not MetricScore's id
                 test_case_id = test_case_data.get('id')
                 row_data = {**test_case_data, **score_data, **run_metadata}
-                if test_case_id is not None and row_data.get('id') is None:
-                    row_data['id'] = test_case_id
+                # Remove MetricScore's id (usually None) and use DatasetItem's id
+                row_data['id'] = test_case_id
 
                 all_rows.append(row_data)
 
@@ -405,6 +474,7 @@ class EvaluationResult:
         metrics_column_order: Optional[List[str]] = None,
         rename_columns: bool = True,
         include_computed_fields: bool = True,
+        include_metric_id: bool = False,
     ) -> NormalizedDataFrames:
         """
         Returns two normalized DataFrames following data engineering best practices.
@@ -420,9 +490,10 @@ class EvaluationResult:
             dataset_column_order (list): Output column ordering for dataset items table.
             metrics_column_order (list): Output column ordering for metric results table.
             rename_columns (bool): Rename columns to match model_arena format
-                (name -> metric_name, score -> metric_score, type -> metric_type,
-                test_case_id -> id).
+                (name -> metric_name, score -> metric_score, type -> metric_type).
             include_computed_fields (bool): Whether to include computed fields from DatasetItem.
+            include_metric_id (bool): Whether to include MetricScore's internal id as 'metric_id'.
+                Defaults to False since MetricScore.id is usually None.
 
         Returns:
             NormalizedDataFrames: A named tuple containing:
@@ -435,13 +506,11 @@ class EvaluationResult:
 
                 merged_df = metrics_df.merge(dataset_df, on='id', how='left')
 
-            However, there are key differences from to_dataframe():
-                - The MetricScore's internal id is renamed to 'metric_id' (separate column)
-                - The 'id' column is always the test_case id (FK), never the MetricScore's id
-                - Column order may differ
-                - Use how='left' to keep metric rows even when test_case was None
+            The merged result has the same columns as to_dataframe() (DatasetItem's
+            metadata field uses alias 'data_metadata' to avoid conflict with MetricScore's
+            metadata). The only difference is column order. Use how='left' to keep
+            metric rows even when test_case was None.
 
-            If you need exact parity with to_dataframe(), use that method directly.
             The normalized approach is better when you want to avoid data duplication
             or need to work with the data in a relational/normalized way.
 
@@ -452,68 +521,8 @@ class EvaluationResult:
             >>> # Verify no duplication in dataset table
             >>> assert len(dataset_df) == dataset_df['id'].nunique()
         """
-        # Default column orderings
-        default_dataset_column_order = [
-            'id',
-            'query',
-            'expected_output',
-            'actual_output',
-            'conversation',
-            'conversation_stats',
-            'agent_trajectory',
-            'has_errors',
-            'additional_input',
-            'acceptance_criteria',
-            'judgment',
-            'critique',
-            'latency',
-            'trace',
-            'trace_id',
-            'observation_id',
-            'data_metadata',
-            'user_tags',
-            'tools_called',
-            'expected_tools',
-            'additional_output',
-            'retrieved_content',
-            'document_text',
-            'actual_ranking',
-            'expected_ranking',
-            'actual_reference',
-            'expected_reference',
-            'conversation_extraction_strategy',
-            'single_turn_query',
-            'single_turn_expected_output',
-            'multi_turn_conversation',
-        ]
-
-        default_metrics_column_order = [
-            'run_id',
-            'evaluation_name',
-            'id',
-            'metric_id',
-            'metric_name',
-            'metric_score',
-            'metric_type',
-            'metric_category',
-            'passed',
-            'explanation',
-            'threshold',
-            'signals',
-            'parent',
-            'weight',
-            'cost_estimate',
-            'source',
-            'timestamp',
-            'version',
-            'metadata',
-            'evaluation_metadata',
-            'model_name',
-            'llm_provider',
-        ]
-
-        dataset_column_order = dataset_column_order or default_dataset_column_order
-        metrics_column_order = metrics_column_order or default_metrics_column_order
+        dataset_column_order = dataset_column_order or self.DEFAULT_DATASET_COLUMN_ORDER
+        metrics_column_order = metrics_column_order or self.DEFAULT_METRICS_COLUMN_ORDER
 
         # Prepare run metadata
         run_metadata = {}
@@ -583,8 +592,13 @@ class EvaluationResult:
             for score_row in result.score_results:
                 score_data = score_row.model_dump(by_alias=by_alias)
 
-                # Add test_case_id as FK (using 'id' column name after rename)
-                score_data['test_case_id'] = test_case_id
+                # Handle MetricScore's internal id
+                metric_score_id = score_data.pop('id', None)
+                if include_metric_id:
+                    score_data['metric_id'] = metric_score_id
+
+                # Always use DatasetItem's id as the 'id' column (FK)
+                score_data['id'] = test_case_id
 
                 # Add run metadata
                 score_data.update(run_metadata)
@@ -613,18 +627,13 @@ class EvaluationResult:
 
         # Apply renaming for model_arena convention
         if rename_columns and not metrics_df.empty:
-            # First rename MetricScore's 'id' to 'metric_id' to avoid conflict
-            # Then rename test_case_id to 'id' as the FK
             metrics_df = metrics_df.rename(
                 columns={
-                    'id': 'metric_id',
                     'name': 'metric_name',
                     'score': 'metric_score',
                     'type': 'metric_type',
                 }
             )
-            # Now rename test_case_id to id (the FK column)
-            metrics_df = metrics_df.rename(columns={'test_case_id': 'id'})
 
         # Apply column ordering to dataset items
         if not dataset_df.empty:
@@ -717,7 +726,7 @@ class EvaluationResult:
             bins=bins,
             figsize=figsize,
             show_legend=show_legend,
-            show_stats_panel=show_legend,
+            show_stats_panel=show_stats_panel,
         )
 
         if output_path:

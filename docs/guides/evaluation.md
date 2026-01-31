@@ -97,6 +97,48 @@ results.to_scorecard(display_in_notebook=True)
 results.to_latency_plot()
 ```
 
+### Normalized DataFrames for Database Loads
+
+When loading evaluation results into a database, use `to_normalized_dataframes()` instead of `to_dataframe()` to avoid data duplication. This returns two separate tables following data engineering best practices:
+
+- **Dataset Items Table**: One row per test case (inputs/ground truth)
+- **Metric Results Table**: One row per metric score, with foreign key to dataset item
+
+```python
+# Get normalized tables
+dataset_df, metrics_df = results.to_normalized_dataframes()
+
+# Load into database (example with pandas)
+dataset_df.to_sql('dataset_items', engine, if_exists='append', index=False)
+metrics_df.to_sql('metric_results', engine, if_exists='append', index=False)
+
+# The 'id' column in metrics_df is a foreign key to dataset_df['id']
+# This enables efficient joins and prevents duplicating dataset fields
+```
+
+**Why use normalized tables?**
+
+| Approach | Rows for 100 items × 5 metrics | Dataset fields duplicated? |
+|----------|-------------------------------|---------------------------|
+| `to_dataframe()` | 500 rows | Yes (5× per item) |
+| `to_normalized_dataframes()` | 100 + 500 rows | No |
+
+**Merging back to denormalized view:**
+
+```python
+# If you need the denormalized view later
+merged_df = metrics_df.merge(dataset_df, on='id', how='left')
+# This produces the same columns as to_dataframe(), just different column order
+```
+
+**Optional: Include MetricScore's internal ID**
+
+```python
+# MetricScore has its own 'id' field (usually None unless explicitly set)
+# Include it as 'metric_id' if needed:
+dataset_df, metrics_df = results.to_normalized_dataframes(include_metric_id=True)
+```
+
 ### Summary Classes
 
 Axion provides summary classes for different reporting needs:

@@ -20,6 +20,12 @@ Result types and evaluation schemas.
     options:
       show_root_heading: true
 
+## NormalizedDataFrames
+
+::: axion.schema.NormalizedDataFrames
+    options:
+      show_root_heading: true
+
 ## ErrorConfig
 
 ::: axion.schema.ErrorConfig

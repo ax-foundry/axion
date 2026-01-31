@@ -263,4 +263,33 @@ def test_to_normalized_dataframes_rename_columns():
     assert 'name' in metrics_df_original.columns
     assert 'score' in metrics_df_original.columns
     assert 'type' in metrics_df_original.columns
-    assert 'test_case_id' in metrics_df_original.columns
+    assert 'id' in metrics_df_original.columns  # Always uses 'id' for DatasetItem FK
+
+
+def test_to_normalized_dataframes_include_metric_id():
+    """Verify include_metric_id parameter works correctly."""
+    test_case = DatasetItem(id='test-7', query='Q', expected_output='A')
+    metric = MetricScore(id='metric-uuid-123', name='test', score=0.5)
+    result = TestResult(test_case=test_case, score_results=[metric])
+
+    eval_result = EvaluationResult(
+        run_id='run-007',
+        evaluation_name='metric-id-test',
+        timestamp=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+        results=[result],
+    )
+
+    # Without include_metric_id (default)
+    _, metrics_df_no_metric_id = eval_result.to_normalized_dataframes(
+        include_metric_id=False
+    )
+    assert 'metric_id' not in metrics_df_no_metric_id.columns
+    assert metrics_df_no_metric_id['id'].iloc[0] == 'test-7'  # DatasetItem's id
+
+    # With include_metric_id
+    _, metrics_df_with_metric_id = eval_result.to_normalized_dataframes(
+        include_metric_id=True
+    )
+    assert 'metric_id' in metrics_df_with_metric_id.columns
+    assert metrics_df_with_metric_id['metric_id'].iloc[0] == 'metric-uuid-123'
+    assert metrics_df_with_metric_id['id'].iloc[0] == 'test-7'  # Still DatasetItem's id
