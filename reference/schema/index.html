@@ -467,6 +467,8 @@
       
         
       
+        
+      
     
     
     
@@ -564,6 +566,34 @@
     
   
     Agent Evaluation Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../why_ground_truth_matters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why Ground Truth Matters
   
 
     
@@ -3247,6 +3277,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#axion.schema.EvaluationResult.to_normalized_dataframes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_normalized_dataframes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#axion.schema.EvaluationResult.to_latency_plot" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3311,6 +3352,28 @@
     <span class="md-ellipsis">
       
         TestResult
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalizeddataframes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NormalizedDataFrames
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.schema.NormalizedDataFrames" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NormalizedDataFrames
       
     </span>
   </a>
@@ -3664,6 +3727,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#axion.schema.EvaluationResult.to_normalized_dataframes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        to_normalized_dataframes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#axion.schema.EvaluationResult.to_latency_plot" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3728,6 +3802,28 @@
     <span class="md-ellipsis">
       
         TestResult
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalizeddataframes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NormalizedDataFrames
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.schema.NormalizedDataFrames" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NormalizedDataFrames
       
     </span>
   </a>
@@ -4023,6 +4119,149 @@ dataset name, or custom flags for internal use.</p>
         </li>
     </ul>
 
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="axion.schema.EvaluationResult.to_normalized_dataframes" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">to_normalized_dataframes</span><span class="p">(</span><span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_run_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataset_column_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metrics_column_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rename_columns</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_computed_fields</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_metric_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NormalizedDataFrames</span></code>
+
+<a href="#axion.schema.EvaluationResult.to_normalized_dataframes" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Returns two normalized DataFrames following data engineering best practices.</p>
+<p>Unlike to_dataframe() which creates one row per (test_case, metric) combination
+with duplicated dataset fields, this method returns:
+1. Dataset Items Table: One row per DatasetItem (inputs/ground truth)
+2. Metric Results Table: One row per MetricScore, with FK to dataset item</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>by_alias</code></b>
+              (<code><span title="bool">bool</span></code>, default:
+                  <code>True</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Whether to use field aliases in the output.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>include_run_metadata</code></b>
+              (<code><span title="bool">bool</span></code>, default:
+                  <code>True</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Whether to include run-level metadata in metrics table.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>dataset_column_order</code></b>
+              (<code><span title="list">list</span></code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Output column ordering for dataset items table.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>metrics_column_order</code></b>
+              (<code><span title="list">list</span></code>, default:
+                  <code>None</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Output column ordering for metric results table.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>rename_columns</code></b>
+              (<code><span title="bool">bool</span></code>, default:
+                  <code>True</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Rename columns to match model_arena format
+(name -&gt; metric_name, score -&gt; metric_score, type -&gt; metric_type).</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>include_computed_fields</code></b>
+              (<code><span title="bool">bool</span></code>, default:
+                  <code>True</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Whether to include computed fields from DatasetItem.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>include_metric_id</code></b>
+              (<code><span title="bool">bool</span></code>, default:
+                  <code>False</code>
+)
+          –
+          <div class="doc-md-description">
+            <p>Whether to include MetricScore's internal id as 'metric_id'.
+Defaults to False since MetricScore.id is usually None.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+<b><code>NormalizedDataFrames</code></b> (              <code><a class="autorefs autorefs-internal" title="axion.schema.NormalizedDataFrames" href="#axion.schema.NormalizedDataFrames">NormalizedDataFrames</a></code>
+)          –
+          <div class="doc-md-description">
+            <p>A named tuple containing:
+- dataset_items: DataFrame with one row per DatasetItem
+- metric_results: DataFrame with one row per MetricScore, with 'id' FK</p>
+          </div>
+        </li>
+    </ul>
+
+
+<details class="note" open>
+  <summary>Note</summary>
+  <p>You can merge the two DataFrames to get a denormalized view similar to
+to_dataframe()::</p>
+<div class="codehilite"><pre><span></span><code>merged_df = metrics_df.merge(dataset_df, on=&#39;id&#39;, how=&#39;left&#39;)
+</code></pre></div>
+
+<p>The merged result has the same columns as to_dataframe() (DatasetItem's
+metadata field uses alias 'data_metadata' to avoid conflict with MetricScore's
+metadata). The only difference is column order. Use how='left' to keep
+metric rows even when test_case was None.</p>
+<p>The normalized approach is better when you want to avoid data duplication
+or need to work with the data in a relational/normalized way.</p>
+</details>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>dataset_df, metrics_df = eval_result.to_normalized_dataframes()</p>
+<h4 id="axion.schema.EvaluationResult.to_normalized_dataframes--verify-fk-relationship">Verify FK relationship<a class="headerlink" href="#axion.schema.EvaluationResult.to_normalized_dataframes--verify-fk-relationship" title="Permanent link">&para;</a></h4>
+<p>assert set(metrics_df['id'].dropna()).issubset(set(dataset_df['id']))</p>
+<h4 id="axion.schema.EvaluationResult.to_normalized_dataframes--verify-no-duplication-in-dataset-table">Verify no duplication in dataset table<a class="headerlink" href="#axion.schema.EvaluationResult.to_normalized_dataframes--verify-no-duplication-in-dataset-table" title="Permanent link">&para;</a></h4>
+<p>assert len(dataset_df) == dataset_df['id'].nunique()</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
 
     </div>
 
@@ -4724,6 +4963,58 @@ experiment variant, evaluation notes, or model config parameters.</p>
 
     </div>
 
+</div><h2 id="normalizeddataframes">NormalizedDataFrames<a class="headerlink" href="#normalizeddataframes" title="Permanent link">&para;</a></h2>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="axion.schema.NormalizedDataFrames" class="doc doc-heading">
+            <code>axion.schema.NormalizedDataFrames</code>
+
+
+<a href="#axion.schema.NormalizedDataFrames" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="typing.NamedTuple">NamedTuple</span></code></p>
+
+
+
+        <p>Return type for to_normalized_dataframes() method.</p>
+<p>Provides a normalized data model with two separate DataFrames:
+- dataset_items: One row per DatasetItem (inputs/ground truth)
+- metric_results: One row per MetricScore, with FK to dataset item</p>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
 </div><h2 id="errorconfig">ErrorConfig<a class="headerlink" href="#errorconfig" title="Permanent link">&para;</a></h2>
 
 
@@ -4822,7 +5113,7 @@ If False, the metric will raise an error if required inputs are missing.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 10, 2026 18:58:38 UTC">January 10, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 31, 2026 04:04:57 UTC">January 31, 2026</span>
   </span>
 
     

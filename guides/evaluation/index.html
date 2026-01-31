@@ -467,6 +467,8 @@
       
         
       
+        
+      
     
     
     
@@ -564,6 +566,34 @@
     
   
     Agent Evaluation Playbook
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../why_ground_truth_matters/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Why Ground Truth Matters
   
 
     
@@ -978,6 +1008,17 @@
   
     <nav class="md-nav" aria-label="Understanding Results">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#normalized-dataframes-for-database-loads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalized DataFrames for Database Loads
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#summary-classes" class="md-nav__link">
@@ -3646,6 +3687,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#normalized-dataframes-for-database-loads" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalized DataFrames for Database Loads
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#summary-classes" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -3781,6 +3833,54 @@
 <span class="c1"># Latency analysis</span>
 <span class="n">results</span><span class="o">.</span><span class="n">to_latency_plot</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="normalized-dataframes-for-database-loads">Normalized DataFrames for Database Loads<a class="headerlink" href="#normalized-dataframes-for-database-loads" title="Permanent link">&para;</a></h3>
+<p>When loading evaluation results into a database, use <code>to_normalized_dataframes()</code> instead of <code>to_dataframe()</code> to avoid data duplication. This returns two separate tables following data engineering best practices:</p>
+<ul>
+<li><strong>Dataset Items Table</strong>: One row per test case (inputs/ground truth)</li>
+<li><strong>Metric Results Table</strong>: One row per metric score, with foreign key to dataset item</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get normalized tables</span>
+<span class="n">dataset_df</span><span class="p">,</span> <span class="n">metrics_df</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">to_normalized_dataframes</span><span class="p">()</span>
+
+<span class="c1"># Load into database (example with pandas)</span>
+<span class="n">dataset_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;dataset_items&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">metrics_df</span><span class="o">.</span><span class="n">to_sql</span><span class="p">(</span><span class="s1">&#39;metric_results&#39;</span><span class="p">,</span> <span class="n">engine</span><span class="p">,</span> <span class="n">if_exists</span><span class="o">=</span><span class="s1">&#39;append&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># The &#39;id&#39; column in metrics_df is a foreign key to dataset_df[&#39;id&#39;]</span>
+<span class="c1"># This enables efficient joins and prevents duplicating dataset fields</span>
+</code></pre></div>
+<p><strong>Why use normalized tables?</strong></p>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Rows for 100 items × 5 metrics</th>
+<th>Dataset fields duplicated?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>to_dataframe()</code></td>
+<td>500 rows</td>
+<td>Yes (5× per item)</td>
+</tr>
+<tr>
+<td><code>to_normalized_dataframes()</code></td>
+<td>100 + 500 rows</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Merging back to denormalized view:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># If you need the denormalized view later</span>
+<span class="n">merged_df</span> <span class="o">=</span> <span class="n">metrics_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">dataset_df</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="c1"># This produces the same columns as to_dataframe(), just different column order</span>
+</code></pre></div>
+<p><strong>Optional: Include MetricScore's internal ID</strong></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># MetricScore has its own &#39;id&#39; field (usually None unless explicitly set)</span>
+<span class="c1"># Include it as &#39;metric_id&#39; if needed:</span>
+<span class="n">dataset_df</span><span class="p">,</span> <span class="n">metrics_df</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">to_normalized_dataframes</span><span class="p">(</span><span class="n">include_metric_id</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
 <h3 id="summary-classes">Summary Classes<a class="headerlink" href="#summary-classes" title="Permanent link">&para;</a></h3>
 <p>Axion provides summary classes for different reporting needs:</p>
 <table>
@@ -3848,7 +3948,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 22, 2026 23:34:56 UTC">January 22, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 31, 2026 04:04:57 UTC">January 31, 2026</span>
   </span>
 
     
