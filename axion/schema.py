@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, NamedTuple, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -43,11 +43,24 @@ __all__ = [
     'TestResult',
     'EvaluationResult',
     'ErrorConfig',
+    'NormalizedDataFrames',
 ]
 
 
 def strftime() -> str:
     return datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+
+
+class NormalizedDataFrames(NamedTuple):
+    """Return type for to_normalized_dataframes() method.
+
+    Provides a normalized data model with two separate DataFrames:
+    - dataset_items: One row per DatasetItem (inputs/ground truth)
+    - metric_results: One row per MetricScore, with FK to dataset item
+    """
+
+    dataset_items: pd.DataFrame
+    metric_results: pd.DataFrame
 
 
 class MetricScore(RichBaseModel):
@@ -383,6 +396,251 @@ class EvaluationResult:
             df = df.set_index('id')
 
         return df
+
+    def to_normalized_dataframes(
+        self,
+        by_alias: bool = True,
+        include_run_metadata: bool = True,
+        dataset_column_order: Optional[List[str]] = None,
+        metrics_column_order: Optional[List[str]] = None,
+        rename_columns: bool = True,
+        include_computed_fields: bool = True,
+    ) -> NormalizedDataFrames:
+        """
+        Returns two normalized DataFrames following data engineering best practices.
+
+        Unlike to_dataframe() which creates one row per (test_case, metric) combination
+        with duplicated dataset fields, this method returns:
+        1. Dataset Items Table: One row per DatasetItem (inputs/ground truth)
+        2. Metric Results Table: One row per MetricScore, with FK to dataset item
+
+        Args:
+            by_alias (bool): Whether to use field aliases in the output.
+            include_run_metadata (bool): Whether to include run-level metadata in metrics table.
+            dataset_column_order (list): Output column ordering for dataset items table.
+            metrics_column_order (list): Output column ordering for metric results table.
+            rename_columns (bool): Rename columns to match model_arena format
+                (name -> metric_name, score -> metric_score, type -> metric_type,
+                test_case_id -> id).
+            include_computed_fields (bool): Whether to include computed fields from DatasetItem.
+
+        Returns:
+            NormalizedDataFrames: A named tuple containing:
+                - dataset_items: DataFrame with one row per DatasetItem
+                - metric_results: DataFrame with one row per MetricScore, with 'id' FK
+
+        Note:
+            You can merge the two DataFrames to get a denormalized view similar to
+            to_dataframe()::
+
+                merged_df = metrics_df.merge(dataset_df, on='id', how='left')
+
+            However, there are key differences from to_dataframe():
+                - The MetricScore's internal id is renamed to 'metric_id' (separate column)
+                - The 'id' column is always the test_case id (FK), never the MetricScore's id
+                - Column order may differ
+                - Use how='left' to keep metric rows even when test_case was None
+
+            If you need exact parity with to_dataframe(), use that method directly.
+            The normalized approach is better when you want to avoid data duplication
+            or need to work with the data in a relational/normalized way.
+
+        Example:
+            >>> dataset_df, metrics_df = eval_result.to_normalized_dataframes()
+            >>> # Verify FK relationship
+            >>> assert set(metrics_df['id'].dropna()).issubset(set(dataset_df['id']))
+            >>> # Verify no duplication in dataset table
+            >>> assert len(dataset_df) == dataset_df['id'].nunique()
+        """
+        # Default column orderings
+        default_dataset_column_order = [
+            'id',
+            'query',
+            'expected_output',
+            'actual_output',
+            'conversation',
+            'conversation_stats',
+            'agent_trajectory',
+            'has_errors',
+            'additional_input',
+            'acceptance_criteria',
+            'judgment',
+            'critique',
+            'latency',
+            'trace',
+            'trace_id',
+            'observation_id',
+            'data_metadata',
+            'user_tags',
+            'tools_called',
+            'expected_tools',
+            'additional_output',
+            'retrieved_content',
+            'document_text',
+            'actual_ranking',
+            'expected_ranking',
+            'actual_reference',
+            'expected_reference',
+            'conversation_extraction_strategy',
+            'single_turn_query',
+            'single_turn_expected_output',
+            'multi_turn_conversation',
+        ]
+
+        default_metrics_column_order = [
+            'run_id',
+            'evaluation_name',
+            'id',
+            'metric_id',
+            'metric_name',
+            'metric_score',
+            'metric_type',
+            'metric_category',
+            'passed',
+            'explanation',
+            'threshold',
+            'signals',
+            'parent',
+            'weight',
+            'cost_estimate',
+            'source',
+            'timestamp',
+            'version',
+            'metadata',
+            'evaluation_metadata',
+            'model_name',
+            'llm_provider',
+        ]
+
+        dataset_column_order = dataset_column_order or default_dataset_column_order
+        metrics_column_order = metrics_column_order or default_metrics_column_order
+
+        # Prepare run metadata
+        run_metadata = {}
+        if include_run_metadata:
+            run_metadata = {
+                'run_id': self.run_id,
+                'evaluation_name': self.evaluation_name,
+            }
+
+        def _extract_test_case_data(test_case: Any) -> Dict[str, Any]:
+            """Robustly extract test_case data from multiple possible formats."""
+            if not test_case:
+                return {}
+
+            extractors = [
+                lambda tc: tc.model_dump(by_alias=by_alias),
+                lambda tc: tc.dict(by_alias=by_alias),
+                dict,
+                lambda tc: getattr(tc, '__dict__', {}),
+                vars,
+            ]
+            for extractor in extractors:
+                try:
+                    data = extractor(test_case)
+                    if data:
+                        break
+                except Exception:
+                    continue
+            else:
+                data = {}
+
+            # Ensure id is captured if available
+            if 'id' not in data and hasattr(test_case, 'id'):
+                try:
+                    data['id'] = test_case.id
+                except Exception:
+                    pass
+
+            # Remove computed fields if not requested
+            if not include_computed_fields:
+                computed_fields = {
+                    'query',
+                    'expected_output',
+                    'conversation',
+                    'conversation_stats',
+                    'agent_trajectory',
+                    'has_errors',
+                }
+                for field in computed_fields:
+                    data.pop(field, None)
+
+            return data
+
+        # Build deduplicated dataset items map and metric rows
+        dataset_items_map: Dict[str, Dict[str, Any]] = {}
+        metric_rows: List[Dict[str, Any]] = []
+
+        for result in self.results:
+            test_case_data = _extract_test_case_data(result.test_case)
+            test_case_id = test_case_data.get('id') if test_case_data else None
+
+            # Add to dataset items map (deduplicate by id)
+            if test_case_id and test_case_id not in dataset_items_map:
+                dataset_items_map[test_case_id] = test_case_data
+
+            # Process each metric score
+            for score_row in result.score_results:
+                score_data = score_row.model_dump(by_alias=by_alias)
+
+                # Add test_case_id as FK (using 'id' column name after rename)
+                score_data['test_case_id'] = test_case_id
+
+                # Add run metadata
+                score_data.update(run_metadata)
+
+                # Add timestamp from run
+                score_data['timestamp'] = self.timestamp
+
+                # Flatten model info from metadata to top-level columns
+                if score_data.get('metadata'):
+                    for key in ['model_name', 'llm_provider']:
+                        if key in score_data['metadata']:
+                            score_data[key] = score_data['metadata'][key]
+
+                # Add evaluation metadata
+                score_data['evaluation_metadata'] = self.metadata
+
+                metric_rows.append(score_data)
+
+        # Build DataFrames
+        dataset_df = (
+            pd.DataFrame(list(dataset_items_map.values()))
+            if dataset_items_map
+            else pd.DataFrame()
+        )
+        metrics_df = pd.DataFrame(metric_rows) if metric_rows else pd.DataFrame()
+
+        # Apply renaming for model_arena convention
+        if rename_columns and not metrics_df.empty:
+            # First rename MetricScore's 'id' to 'metric_id' to avoid conflict
+            # Then rename test_case_id to 'id' as the FK
+            metrics_df = metrics_df.rename(
+                columns={
+                    'id': 'metric_id',
+                    'name': 'metric_name',
+                    'score': 'metric_score',
+                    'type': 'metric_type',
+                }
+            )
+            # Now rename test_case_id to id (the FK column)
+            metrics_df = metrics_df.rename(columns={'test_case_id': 'id'})
+
+        # Apply column ordering to dataset items
+        if not dataset_df.empty:
+            existing_cols = dataset_df.columns.tolist()
+            final_cols = [col for col in dataset_column_order if col in existing_cols]
+            final_cols += [col for col in existing_cols if col not in final_cols]
+            dataset_df = dataset_df[final_cols]
+
+        # Apply column ordering to metric results
+        if not metrics_df.empty:
+            existing_cols = metrics_df.columns.tolist()
+            final_cols = [col for col in metrics_column_order if col in existing_cols]
+            final_cols += [col for col in existing_cols if col not in final_cols]
+            metrics_df = metrics_df[final_cols]
+
+        return NormalizedDataFrames(dataset_items=dataset_df, metric_results=metrics_df)
 
     def to_latency_plot(
         self,
