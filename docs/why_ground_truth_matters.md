@@ -73,5 +73,5 @@ Without ground truth, evaluations drift toward subjective heuristics like
 fluency, verbosity, or "sounds right." Ground truth is the only way to anchor
 evaluation to objective, expected outcomes.
 
-Authored by Matt Evanoff  
+Authored by Matt Evanoff
 Last Updated Jan 29, 2025
