@@ -72,12 +72,8 @@ class TestBalancedStrategy:
         selector = ExampleSelector(seed=42)
         result = selector.select(sample_records, balanced_annotations, count=4)
 
-        accepts = sum(
-            1 for r in result.examples if balanced_annotations[r['id']] == 1
-        )
-        rejects = sum(
-            1 for r in result.examples if balanced_annotations[r['id']] == 0
-        )
+        accepts = sum(1 for r in result.examples if balanced_annotations[r['id']] == 1)
+        rejects = sum(1 for r in result.examples if balanced_annotations[r['id']] == 0)
 
         # With count=4, should be 2 accepts, 2 rejects
         assert accepts == 2
@@ -172,12 +168,13 @@ class TestMisalignmentGuidedStrategy:
                 strategy=SelectionStrategy.MISALIGNMENT_GUIDED,
             )
 
-    def test_falls_back_to_balanced(
-        self, sample_records, balanced_annotations
-    ):
+    def test_falls_back_to_balanced(self, sample_records, balanced_annotations):
         """Should fill remaining with balanced selection."""
         # All aligned eval results
-        eval_results = [{'id': f'rec_{i}', 'score': balanced_annotations[f'rec_{i}']} for i in range(1, 7)]
+        eval_results = [
+            {'id': f'rec_{i}', 'score': balanced_annotations[f'rec_{i}']}
+            for i in range(1, 7)
+        ]
 
         selector = ExampleSelector(seed=42)
         result = selector.select(
@@ -192,9 +189,7 @@ class TestMisalignmentGuidedStrategy:
         assert result.metadata['false_positives_selected'] == 0
         assert result.metadata['false_negatives_selected'] == 0
 
-    def test_handles_llm_score_field(
-        self, sample_records, balanced_annotations
-    ):
+    def test_handles_llm_score_field(self, sample_records, balanced_annotations):
         """Should handle 'llm_score' field name in eval results."""
         eval_results = [
             {'id': 'rec_1', 'llm_score': 0},  # Human=1, LLM=0 (FN)
@@ -277,9 +272,7 @@ class TestPatternAwareStrategy:
                 strategy=SelectionStrategy.PATTERN_AWARE,
             )
 
-    def test_falls_back_to_balanced(
-        self, sample_records, balanced_annotations
-    ):
+    def test_falls_back_to_balanced(self, sample_records, balanced_annotations):
         """Should fill remaining with balanced selection when patterns < count."""
         single_pattern = [
             DiscoveredPattern(
@@ -342,9 +335,13 @@ class TestReproducibility:
         result1 = selector1.select(sample_records, balanced_annotations, count=4)
         result2 = selector2.select(sample_records, balanced_annotations, count=4)
 
-        assert [r['id'] for r in result1.examples] == [r['id'] for r in result2.examples]
+        assert [r['id'] for r in result1.examples] == [
+            r['id'] for r in result2.examples
+        ]
 
-    def test_different_seed_different_results(self, sample_records, balanced_annotations):
+    def test_different_seed_different_results(
+        self, sample_records, balanced_annotations
+    ):
         """Different seeds should produce different results (with high probability)."""
         selector1 = ExampleSelector(seed=42)
         selector2 = ExampleSelector(seed=123)
