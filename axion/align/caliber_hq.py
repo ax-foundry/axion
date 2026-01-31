@@ -3,39 +3,39 @@ from typing import Any, Callable, Dict, Optional
 import pandas as pd
 
 from axion._core.asyncio import run_async_function
-from axion.align.base import BaseAlignEval
-from axion.align.notebook import NotebookAlignEvalRenderer
-from axion.align.ui import AlignEvalRenderer
+from axion.align.base import BaseCaliberHQ
+from axion.align.notebook import NotebookCaliberHQRenderer
+from axion.align.ui import CaliberHQRenderer
 from axion.dataset import Dataset
 from axion.metrics.base import BaseMetric
 
 
-class AlignEval(BaseAlignEval):
+class CaliberHQ(BaseCaliberHQ):
     """
     A class to calibrate LLM-as-a-judge evaluators by comparing them
     against human-provided scores. It supports a clear, step-by-step workflow:
-    1. Initialize: AlignEval(dataset, metric)
+    1. Initialize: CaliberHQ(dataset, metric)
     2. Annotate: .annotate() (optional, if data is not pre-annotated)
     3. Execute: .execute()
 
-    This class extends BaseAlignEval with notebook-specific UI functionality.
+    This class extends BaseCaliberHQ with notebook-specific UI functionality.
     """
 
     def __init__(
         self,
         dataset: Dataset,
         metric: BaseMetric,
-        renderer: AlignEvalRenderer | None = None,
+        renderer: CaliberHQRenderer | None = None,
     ):
         """
-        Initializes the NotebookAlignEval class.
+        Initializes the CaliberHQ class.
 
         Args:
             dataset (Dataset): The dataset containing items to be evaluated.
             metric (BaseMetric): The LLM-as-a-judge metric to be calibrated.
         """
         super().__init__(dataset, metric)
-        self.renderer = renderer or NotebookAlignEvalRenderer()
+        self.renderer = renderer or NotebookCaliberHQRenderer()
 
     def annotate(self) -> None:
         """
@@ -68,7 +68,7 @@ class AlignEval(BaseAlignEval):
         self._prepare_results_df()
 
         print('\n' + '=' * 50)
-        print('📊 Alignment Evaluation Results')
+        print('📊 Calibration Evaluation Results')
         print('=' * 50)
 
         summary_table = self.renderer.create_summary_stats_table(

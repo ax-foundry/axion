@@ -4,15 +4,15 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 
-from axion.align.ui import AlignEvalRenderer
+from axion.align.ui import CaliberHQRenderer
 from axion.dataset import Dataset
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler
 
 
-class NotebookAlignEvalRenderer(AlignEvalRenderer):
-    """Notebook-specific renderer for AlignEval."""
+class NotebookCaliberHQRenderer(CaliberHQRenderer):
+    """Notebook-specific renderer for CaliberHQ."""
 
     def annotate(self, dataset: Dataset) -> None:
         """
@@ -174,7 +174,7 @@ class NotebookAlignEvalRenderer(AlignEvalRenderer):
                     },
                 ]
             )
-            .set_caption('📈 Alignment Summary')
+            .set_caption('📈 Calibration Summary')
             .set_properties(**{'text-align': 'left', 'font-weight': 'bold'})
         )
 

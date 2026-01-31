@@ -17,9 +17,9 @@ from axion.runners import MetricRunner
 from axion.schema import TestResult
 
 
-class AlignMetric(BaseMetric):
+class CaliberMetric(BaseMetric):
     """
-    Dynamically configured metric from the Align Eval.
+    Dynamically configured metric from CaliberHQ.
     """
 
     def __init__(
@@ -32,7 +32,7 @@ class AlignMetric(BaseMetric):
         **kwargs,
     ):
         """
-        Initializes the metric with configuration from Align Eval.
+        Initializes the metric with configuration from CaliberHQ.
 
         Args:
             instruction (str): The LLM-as-a-judge prompt.
@@ -61,8 +61,8 @@ class AlignMetric(BaseMetric):
             self.examples = []
 
 
-class BaseAlignEval(ABC):
-    """Base class for alignment evaluation, containing core, non-UI logic."""
+class BaseCaliberHQ(ABC):
+    """Base class for calibration evaluation, containing core, non-UI logic."""
 
     def __init__(self, dataset: Dataset, metric: BaseMetric):
         if not isinstance(dataset, Dataset):

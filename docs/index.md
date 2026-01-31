@@ -12,6 +12,28 @@
 </p>
 </div>
 
+## **Seatbelts for agents**
+
+!!! danger "Safety gear, not horsepower"
+    Agents are sports cars. **Evals are the seatbelt.**
+
+    It won’t make you faster.
+    It won’t win you anything.
+    It won’t look cool in a screenshot.
+
+    But it *will* keep a bad release from turning into a public incident.
+
+    If you skip evals because you’re a “good driver,” you’re not a serious person.
+
+!!! tip "Common-sense rules (that actually ship products)"
+    - **Evals aren’t rocket science. They’re adult supervision.**
+    - **If you can’t describe “good” in a sentence, no framework will save you.**
+    - **Start with pass/fail. Add nuance only after you’ve earned it.**
+    - **LLM judges are useful. They’re also liars with confidence — calibrate them against humans or don’t pretend you measured anything.**
+
+[Go deeper → Evaluation Flywheel](evaluation_flywheel.md){ .md-button .md-button--primary }
+[Go deeper → Why Ground Truth Matters](why_ground_truth_matters.md){ .md-button }
+
 ---
 
 <p align="center">

@@ -1,6 +1,29 @@
 # Agent Evaluation Playbook
 
-This playbook outlines the core principles and strategy for effective AI agent evaluation—going beyond surface-level metrics and dashboards to focus on what truly matters: continuously improving agents to perform in the real world.
+This playbook is a practical guide to evaluating AI agents without the ceremony. The goal isn’t “more dashboards” — it’s **making the agent better in the real world**, on the things your users actually do.
+
+!!! danger "The boring thing that keeps you alive"
+    If agents are sports cars, **evals are seatbelts** — the thing you use *every time*, not the thing you brag about.
+
+    Seatbelts don’t steer. They don’t tune the engine. They don’t make you “better.”
+    They just keep you from eating the steering wheel when something goes wrong.
+
+    If your stance is “we don’t need evals because we’re careful,” you’re confusing confidence with safety.
+
+    And yes: this is mostly **data science**. Same fundamentals as traditional ML — dataset, labels, error analysis, iteration.
+    The only “new” part is the mindset: messier outputs, more ambiguity, more failure modes.
+
+    If you’re paying **$100/seat** for an eval tool and still not looking at your data, you’re doing it wrong.
+    If you’re looking at real examples, labeling failures, and iterating, you’re doing it right.
+
+    Agent evaluation is patience and first principles. Expensive tools don’t solve the problem — they just scale whatever process you already have.
+
+!!! tip "Rules of thumb (common sense, not rocket science)"
+    - **Evals aren’t rocket science. They’re adult supervision.**
+    - **If you can’t describe “good” in a sentence, no framework will save you.**
+    - **Start with pass/fail. Add nuance only after you’ve earned it.**
+    - **If you’re reaching for eval graphs before you have 25 real failure cases, you’re procrastinating with architecture.**
+    - **LLM judges are useful. They’re also liars with confidence — calibrate them against humans or don’t pretend you measured anything.**
 
 ---
 
@@ -16,6 +39,10 @@ Evaluating AI agents isn't a traditional machine learning task. It's a context-d
 
 A customer support agent and an onboarding agent may share similarities, but grading them with the same rubric is like judging a painter and a sculptor by identical standards.
 
+!!! warning "Stop confusing activity with progress"
+    Shipping a new dashboard is not the same as shipping reliability.
+    If you can’t point to **specific failure modes that got better**, you didn’t “improve the agent” — you just looked at it differently.
+
 ---
 
 ## Four Common Mistakes
@@ -30,7 +57,9 @@ Effective evaluation begins with frictionless, high-quality data exploration and
 
 **If you haven't spent time reviewing raw examples, you're not truly evaluating.**
 
-> Start manually. Use spreadsheets. Iterate. Understand the process before automating.
+!!! info "If this feels “manual,” good"
+    Start manually. Use spreadsheets. Label failures.
+    If you can’t do it by hand for 30 examples, you’re not ready to automate it for 30,000.
 
 ### 2. Frameworks Before Fundamentals
 
@@ -58,6 +87,10 @@ Relying on LLMs without first validating them against domain expert feedback is 
 
 **Until you achieve strong agreement between human and model judgment, LLM outputs should be treated as advisory—not definitive.**
 
+!!! warning "Don’t confuse “a score” with “truth”"
+    LLM judges are great at sounding right. That’s the problem.
+    If you didn’t calibrate against humans, you’re just grading your homework with the same model class.
+
 ---
 
 ## The Analyze-Measure-Improve Methodology
@@ -65,6 +98,20 @@ Relying on LLMs without first validating them against domain expert feedback is 
 The AMI cycle isn't new—it's long been used in traditional ML. But with generative agents, the game has changed. We've moved from predictable single-token outputs to freeform systems with far greater complexity.
 
 If you approach evaluation as a simple side-by-side comparison or a table of results, you'll miss the deeper nuances in your data. True progress requires going beyond surface-level metrics to uncover root causes and meaningful insights.
+
+!!! tip "This is just data science (with a different mindset)"
+    The best agent eval workflows look suspiciously like **traditional ML evaluation**, because they are.
+
+    Data scientists have been doing this for years:
+    - Curate a representative dataset
+    - Label outcomes (often binary)
+    - Do error analysis and slice breakdowns
+    - Set thresholds, ship changes, measure regressions
+
+    What’s “new” with agents is mostly the **mindset shift**:
+    - Outputs are messier and more subjective
+    - Failures are multi-causal (prompt, retrieval, tools, policy)
+    - You need to write down “good” explicitly, or your metrics will quietly drift into vibes
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -107,7 +154,8 @@ Most AI agent problems aren't solved with a single tweak—they're solved with a
 2. Enrich data and refine model/prompt pipelines for Generalization Issues
 3. Roll out changes in controlled environments and validate improvements with metrics
 
-**And do it again, and again, and again.** Once you get the handle of this process, reach for frameworks that can help automate some of this work, but never stop looking at your data!
+**And do it again, and again, and again.**
+Once you can run this loop on purpose, then (and only then) scale it with tooling. Don’t stop looking at the data just because you hired a dashboard.
 
 ---
 
@@ -124,6 +172,10 @@ A strong evaluation starts with the dataset. Your dataset should be grounded in 
 ### How Many Examples Do You Need?
 
 Start with ~30 examples. Continue adding until no new failure modes appear. Stop when additional examples stop revealing new insights.
+
+!!! tip "Treat your dataset like a crash report backlog"
+    Every new failure case is a free bug report. Collect them. Name them. Fix them.
+    If you can’t describe the failure in plain English, you can’t evaluate it.
 
 ### Coverage Dimensions
 
@@ -165,6 +217,10 @@ Binary pass/fail judgments are important, but often not enough. Each judgment mu
 | User asks about lead scoring. Agent says "Contact your administrator." | **Fail** | Made assumptions without checking org capabilities. Failed to explore alternatives or explain what lead scoring entails. Dismissive rather than helpful. Due to poor investigation and lack of solutions—fails. |
 
 The critique should be detailed enough to use in a few-shot prompt for an LLM judge.
+
+!!! info "Pass/fail is the seatbelt latch"
+    Pass/fail gives you clarity and velocity.
+    Critiques tell you what to change so tomorrow’s run is better than today’s.
 
 ---
 
@@ -214,6 +270,10 @@ Observability and evaluation are not the same thing. Observability tells you wha
 ## Metric Selection Guide
 
 The most common failure mode is "Metric Spaghetti"—throwing every metric at every test case. This burns tokens, increases latency, and creates noise.
+
+!!! tip "Pick the few that matter"
+    Start with 2–5 metrics that directly map to real failures.
+    If you can’t explain why a metric exists in one sentence, delete it.
 
 ### Selection by Dimension
 

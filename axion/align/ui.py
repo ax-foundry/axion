@@ -11,8 +11,8 @@ if TYPE_CHECKING:
     from pandas.io.formats.style import Styler
 
 
-class AlignEvalRenderer(ABC):
-    """UI adapter surface for AlignEval."""
+class CaliberHQRenderer(ABC):
+    """UI adapter surface for CaliberHQ."""
 
     @abstractmethod
     def annotate(self, dataset: Dataset) -> None:

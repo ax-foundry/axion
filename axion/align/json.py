@@ -4,19 +4,19 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 
-from axion.align.ui import AlignEvalRenderer
+from axion.align.ui import CaliberHQRenderer
 from axion.dataset import Dataset
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler
 
 
-class JsonAlignEvalRenderer(AlignEvalRenderer):
-    """JSON-first renderer for AlignEval."""
+class JsonCaliberHQRenderer(CaliberHQRenderer):
+    """JSON-first renderer for CaliberHQ."""
 
     def annotate(self, dataset: Dataset) -> None:
         raise RuntimeError(
-            'JsonAlignEvalRenderer does not support interactive annotation.'
+            'JsonCaliberHQRenderer does not support interactive annotation.'
         )
 
     def style_results(self, results_df: pd.DataFrame) -> 'Styler':

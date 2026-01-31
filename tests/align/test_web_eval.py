@@ -3,7 +3,7 @@ from typing import List
 import numpy as np
 import pytest
 
-from axion.align.web_eval import WebAlignEval
+from axion.align.web_eval import WebCaliberHQ
 from axion.dataset import Dataset, DatasetItem
 from axion.llm_registry import MockLLM
 from axion.metrics.base import BaseMetric
@@ -41,7 +41,7 @@ def dummy_metric() -> BaseMetric:
 
 def test_to_dict_returns_serializable_structures(monkeypatch, dummy_metric):
     dataset = _make_dataset()
-    evaluator = WebAlignEval(dataset, dummy_metric)
+    evaluator = WebCaliberHQ(dataset, dummy_metric)
 
     async def fake_execute_batch(self, items):
         return [
@@ -74,7 +74,7 @@ def test_to_dict_returns_serializable_structures(monkeypatch, dummy_metric):
 
 def test_progress_callback_invoked(monkeypatch, dummy_metric):
     dataset = _make_dataset()
-    evaluator = WebAlignEval(dataset, dummy_metric)
+    evaluator = WebCaliberHQ(dataset, dummy_metric)
     calls = []
 
     async def fake_execute_batch(self, items):
@@ -104,7 +104,7 @@ def test_progress_callback_invoked(monkeypatch, dummy_metric):
 
 def test_invalid_scores_are_coerced(monkeypatch, dummy_metric):
     dataset = _make_dataset()
-    evaluator = WebAlignEval(dataset, dummy_metric)
+    evaluator = WebCaliberHQ(dataset, dummy_metric)
 
     async def fake_execute_batch(self, items):
         return [

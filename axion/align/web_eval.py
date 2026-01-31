@@ -3,13 +3,13 @@ from typing import Any, Callable, Dict, List, Optional
 import pandas as pd
 
 from axion._core.asyncio import run_async_function
-from axion.align.base import BaseAlignEval
+from axion.align.base import BaseCaliberHQ
 from axion.dataset import Dataset, DatasetItem
 from axion.metrics.base import BaseMetric
 
 
-class WebAlignEval(BaseAlignEval):
-    """API-friendly AlignEval for web UIs."""
+class WebCaliberHQ(BaseCaliberHQ):
+    """API-friendly CaliberHQ for web UIs."""
 
     def __init__(self, dataset: Dataset, metric: BaseMetric):
         super().__init__(dataset, metric)
@@ -29,7 +29,7 @@ class WebAlignEval(BaseAlignEval):
         return self.to_dict() if as_dict else self.results_df
 
     @classmethod
-    def from_records(cls, records: List[dict], metric: BaseMetric) -> 'WebAlignEval':
+    def from_records(cls, records: List[dict], metric: BaseMetric) -> 'WebCaliberHQ':
         """Create from list of dicts (from web upload)."""
         items = [DatasetItem(**record) for record in records]
         dataset = Dataset(items=items)

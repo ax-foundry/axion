@@ -1,7 +1,7 @@
 import pandas as pd
 from pandas.io.formats.style import Styler
 
-from axion.align.notebook import NotebookAlignEvalRenderer
+from axion.align.notebook import NotebookCaliberHQRenderer
 
 
 def _sample_results_df() -> pd.DataFrame:
@@ -34,7 +34,7 @@ def _sample_results_df() -> pd.DataFrame:
 
 
 def test_create_summary_stats_table_returns_styler() -> None:
-    renderer = NotebookAlignEvalRenderer()
+    renderer = NotebookCaliberHQRenderer()
     results_df = _sample_results_df()
 
     summary_table = renderer.create_summary_stats_table(results_df, alignment_score=0.5)
@@ -45,7 +45,7 @@ def test_create_summary_stats_table_returns_styler() -> None:
 
 
 def test_style_results_returns_styler() -> None:
-    renderer = NotebookAlignEvalRenderer()
+    renderer = NotebookCaliberHQRenderer()
     results_df = _sample_results_df()
 
     detailed_table = renderer.style_results(results_df)

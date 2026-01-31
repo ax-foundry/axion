@@ -4,15 +4,15 @@ from typing import TYPE_CHECKING
 
 import pandas as pd
 
-from axion.align.ui import AlignEvalRenderer
+from axion.align.ui import CaliberHQRenderer
 from axion.dataset import Dataset
 
 if TYPE_CHECKING:
     from pandas.io.formats.style import Styler
 
 
-class ConsoleAlignEvalRenderer(AlignEvalRenderer):
-    """Console renderer for AlignEval."""
+class ConsoleCaliberHQRenderer(CaliberHQRenderer):
+    """Console renderer for CaliberHQ."""
 
     def annotate(self, dataset: Dataset) -> None:
         print('🚀 Starting Interactive Human Annotation Process...')
