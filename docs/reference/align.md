@@ -1,22 +1,10 @@
-# Align API Reference
+# Caliber API Reference
 
 LLM-as-judge calibration and alignment tools.
 
-## CaliberHQ
-
-::: axion.align.CaliberHQ
-    options:
-      show_root_heading: true
-
-## WebCaliberHQ
-
-::: axion.align.WebCaliberHQ
-    options:
-      show_root_heading: true
-
 ## CaliberMetric
 
-::: axion.align.CaliberMetric
+::: axion.caliber.CaliberMetric
     options:
       show_root_heading: true
 
@@ -24,19 +12,19 @@ LLM-as-judge calibration and alignment tools.
 
 ### ExampleSelector
 
-::: axion.align.ExampleSelector
+::: axion.caliber.ExampleSelector
     options:
       show_root_heading: true
 
 ### SelectionStrategy
 
-::: axion.align.SelectionStrategy
+::: axion.caliber.SelectionStrategy
     options:
       show_root_heading: true
 
 ### SelectionResult
 
-::: axion.align.SelectionResult
+::: axion.caliber.SelectionResult
     options:
       show_root_heading: true
 
@@ -44,31 +32,31 @@ LLM-as-judge calibration and alignment tools.
 
 ### PatternDiscovery
 
-::: axion.align.PatternDiscovery
+::: axion.caliber.PatternDiscovery
     options:
       show_root_heading: true
 
 ### DiscoveredPattern
 
-::: axion.align.DiscoveredPattern
+::: axion.caliber.DiscoveredPattern
     options:
       show_root_heading: true
 
 ### PatternDiscoveryResult
 
-::: axion.align.PatternDiscoveryResult
+::: axion.caliber.PatternDiscoveryResult
     options:
       show_root_heading: true
 
 ### AnnotatedItem
 
-::: axion.align.AnnotatedItem
+::: axion.caliber.AnnotatedItem
     options:
       show_root_heading: true
 
 ### ClusteringMethod
 
-::: axion.align.ClusteringMethod
+::: axion.caliber.ClusteringMethod
     options:
       show_root_heading: true
 
@@ -76,19 +64,19 @@ LLM-as-judge calibration and alignment tools.
 
 ### MisalignmentAnalyzer
 
-::: axion.align.MisalignmentAnalyzer
+::: axion.caliber.MisalignmentAnalyzer
     options:
       show_root_heading: true
 
 ### MisalignmentAnalysis
 
-::: axion.align.MisalignmentAnalysis
+::: axion.caliber.MisalignmentAnalysis
     options:
       show_root_heading: true
 
 ### MisalignmentPattern
 
-::: axion.align.MisalignmentPattern
+::: axion.caliber.MisalignmentPattern
     options:
       show_root_heading: true
 
@@ -96,44 +84,44 @@ LLM-as-judge calibration and alignment tools.
 
 ### PromptOptimizer
 
-::: axion.align.PromptOptimizer
+::: axion.caliber.PromptOptimizer
     options:
       show_root_heading: true
 
 ### OptimizedPrompt
 
-::: axion.align.OptimizedPrompt
+::: axion.caliber.OptimizedPrompt
     options:
       show_root_heading: true
 
 ### PromptSuggestion
 
-::: axion.align.PromptSuggestion
+::: axion.caliber.PromptSuggestion
     options:
       show_root_heading: true
 
 ## Renderers
 
-### CaliberHQRenderer
+### CaliberRenderer
 
-::: axion.align.CaliberHQRenderer
+::: axion.caliber.CaliberRenderer
     options:
       show_root_heading: true
 
-### NotebookCaliberHQRenderer
+### NotebookCaliberRenderer
 
-::: axion.align.NotebookCaliberHQRenderer
+::: axion.caliber.NotebookCaliberRenderer
     options:
       show_root_heading: true
 
-### ConsoleCaliberHQRenderer
+### ConsoleCaliberRenderer
 
-::: axion.align.ConsoleCaliberHQRenderer
+::: axion.caliber.ConsoleCaliberRenderer
     options:
       show_root_heading: true
 
-### JsonCaliberHQRenderer
+### JsonCaliberRenderer
 
-::: axion.align.JsonCaliberHQRenderer
+::: axion.caliber.JsonCaliberRenderer
     options:
       show_root_heading: true

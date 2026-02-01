@@ -15,7 +15,7 @@ When calibrating an LLM judge, the few-shot examples you provide significantly i
 ## Quick Start
 
 ```python
-from axion.align import ExampleSelector, SelectionStrategy
+from axion.caliber import ExampleSelector, SelectionStrategy
 
 # Initialize with seed for reproducibility
 selector = ExampleSelector(seed=42)
@@ -104,7 +104,7 @@ result = selector.select(
 Samples from discovered patterns to ensure coverage across failure categories. Requires results from Pattern Discovery.
 
 ```python
-from axion.align import PatternDiscovery
+from axion.caliber import PatternDiscovery
 
 # First, discover patterns in your annotations
 discovery = PatternDiscovery(model_name='gpt-4o')
@@ -188,7 +188,7 @@ ExampleSelector operates at the record selection level and returns generic dicts
 ### With CaliberHQ (Dict Format)
 
 ```python
-from axion.align import ExampleSelector, CaliberHQ
+from axion.caliber import ExampleSelector, CaliberMetric
 
 selector = ExampleSelector(seed=42)
 result = selector.select(records, annotations, count=6)
@@ -209,13 +209,13 @@ examples = [
     for r in result.examples
 ]
 
-evaluator = CaliberHQ(criteria="...", examples=examples)
+evaluator = CaliberMetric(criteria="...", examples=examples)
 ```
 
 ### With Pydantic-Based Metrics
 
 ```python
-from axion.align import ExampleSelector
+from axion.caliber import ExampleSelector
 from axion.metrics import Faithfulness
 from axion.metrics.faithfulness import FaithfulnessInput
 from axion.schema import MetricEvaluationResult
@@ -287,7 +287,7 @@ def auto_select_strategy(eval_results=None, patterns=None):
 
 ### ExampleSelector
 
-::: axion.align.ExampleSelector
+::: axion.caliber.ExampleSelector
     options:
       show_root_heading: false
       members:
@@ -296,12 +296,12 @@ def auto_select_strategy(eval_results=None, patterns=None):
 
 ### SelectionStrategy
 
-::: axion.align.SelectionStrategy
+::: axion.caliber.SelectionStrategy
     options:
       show_root_heading: false
 
 ### SelectionResult
 
-::: axion.align.SelectionResult
+::: axion.caliber.SelectionResult
     options:
       show_root_heading: false
