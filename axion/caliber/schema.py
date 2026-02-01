@@ -155,4 +155,3 @@ class CalibrationSessionData(StrictBaseModel):
     )
     created_at: datetime = Field(description='Session creation time')
     updated_at: datetime = Field(description='Last update time')
-
