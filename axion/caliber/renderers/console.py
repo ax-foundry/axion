@@ -1,9 +1,3 @@
-"""
-Console renderer for CaliberHQ workflow.
-
-Provides text-based rendering for terminal/CLI environments.
-"""
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional

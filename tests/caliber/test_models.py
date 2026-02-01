@@ -1,5 +1,3 @@
-"""Tests for caliber models."""
-
 from datetime import datetime, timezone
 
 import pytest

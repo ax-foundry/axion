@@ -1,5 +1,3 @@
-"""Tests for pattern discovery module."""
-
 import pytest
 
 from axion.caliber.pattern_discovery import (

@@ -1,5 +1,3 @@
-"""Tests for evaluation module."""
-
 from axion.caliber.evaluation import CaliberMetric, EvaluationRunner
 from axion.caliber.schema import (
     AlignmentMetrics,

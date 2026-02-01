@@ -1,9 +1,3 @@
-"""
-Renderers for CaliberHQ workflow.
-
-Provides UI rendering abstraction for different environments.
-"""
-
 from axion.caliber.renderers.base import CaliberRenderer
 from axion.caliber.renderers.console import ConsoleCaliberRenderer
 from axion.caliber.renderers.json import JsonCaliberRenderer

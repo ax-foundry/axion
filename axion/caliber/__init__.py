@@ -1,14 +1,4 @@
-"""
-CaliberHQ — LLM judge calibration toolkit.
 
-This package provides a workflow for calibrating LLM-as-a-judge evaluators
-against human judgments (upload → annotate → evaluate → analyze → optimize).
-
-Docs live in MkDocs:
-- `docs/guides/caliberhq.md`
-"""
-
-# Session orchestrator
 # Analysis
 from axion.caliber.analysis import (
     MisalignedCase,
@@ -17,10 +7,10 @@ from axion.caliber.analysis import (
     MisalignmentPattern,
 )
 
-# Step 2: Annotation
+# Annotation
 from axion.caliber.annotation import AnnotationManager
 
-# Step 3: Evaluation
+# Evaluation
 from axion.caliber.evaluation import CaliberMetric, EvaluationRunner
 
 # Example Selection
@@ -69,7 +59,7 @@ from axion.caliber.schema import (
 )
 from axion.caliber.session import CalibrationSession
 
-# Step 1: Upload
+# Upload
 from axion.caliber.upload import UploadHandler
 
 __all__ = [

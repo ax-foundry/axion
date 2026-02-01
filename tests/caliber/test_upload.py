@@ -1,5 +1,3 @@
-"""Tests for caliber upload handler."""
-
 import tempfile
 from pathlib import Path
 

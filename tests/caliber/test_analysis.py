@@ -1,5 +1,3 @@
-"""Tests for misalignment analysis module."""
-
 import pytest
 
 from axion.caliber.analysis import (

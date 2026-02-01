@@ -1,9 +1,3 @@
-"""
-Notebook renderer for CaliberHQ workflow.
-
-Provides rich rendering for Jupyter notebook environments.
-"""
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional

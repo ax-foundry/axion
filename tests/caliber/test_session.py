@@ -1,5 +1,3 @@
-"""Tests for CalibrationSession."""
-
 import pytest
 
 from axion.caliber.schema import SessionState

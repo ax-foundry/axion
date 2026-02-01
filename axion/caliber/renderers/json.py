@@ -1,9 +1,3 @@
-"""
-JSON renderer for CaliberHQ workflow.
-
-Provides minimal rendering for API/web environments.
-"""
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional

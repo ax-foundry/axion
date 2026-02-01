@@ -1,5 +1,3 @@
-"""Tests for caliber example selector."""
-
 import pytest
 
 from axion.caliber.example_selector import (

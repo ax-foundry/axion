@@ -1,9 +1,3 @@
-"""
-Abstract base renderer for CaliberHQ workflow.
-
-Defines the interface for UI rendering implementations.
-"""
-
 from __future__ import annotations
 
 from abc import ABC, abstractmethod

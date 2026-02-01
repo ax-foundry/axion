@@ -1,5 +1,3 @@
-"""Tests for prompt optimizer module."""
-
 import pytest
 
 from axion.caliber.analysis import MisalignedCase

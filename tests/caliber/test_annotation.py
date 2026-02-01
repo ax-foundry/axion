@@ -1,5 +1,3 @@
-"""Tests for caliber annotation manager."""
-
 import pytest
 
 from axion.caliber.annotation import AnnotationManager
