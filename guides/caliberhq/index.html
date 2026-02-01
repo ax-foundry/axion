@@ -25,7 +25,7 @@
     
     
       
-        <title>AlignEval - Axion</title>
+        <title>CaliberHQ - Axion</title>
       
     
     
@@ -85,7 +85,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#aligneval" class="md-skip">
+        <a href="#caliberhq" class="md-skip">
           Skip to content
         </a>
       
@@ -145,7 +145,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              AlignEval
+              CaliberHQ
             
           </span>
         </div>
@@ -386,7 +386,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../reference/dataset/" class="md-tabs__link">
+        <a href="../../reference/align/" class="md-tabs__link">
           
   
   
@@ -947,7 +947,7 @@
   <span class="md-ellipsis">
     
   
-    AlignEval
+    CaliberHQ
   
 
     
@@ -965,7 +965,7 @@
   <span class="md-ellipsis">
     
   
-    AlignEval
+    CaliberHQ
   
 
     
@@ -993,10 +993,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#core-philosophy-calibrate-dont-just-create" class="md-nav__link">
+  <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Core Philosophy: Calibrate, Don’t Just Create
+        Quick start
       
     </span>
   </a>
@@ -1004,10 +1004,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#workflow" class="md-nav__link">
+  <a href="#the-6-step-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Workflow
+        The 6-step workflow
       
     </span>
   </a>
@@ -1015,22 +1015,72 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using-aligneval-in-python" class="md-nav__link">
+  <a href="#two-usage-patterns" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using AlignEval in Python
+        Two usage patterns
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Using AlignEval in Python">
+    <nav class="md-nav" aria-label="Two usage patterns">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#step-1-create-a-dataset" class="md-nav__link">
+  <a href="#pattern-1-session-based-recommended" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Create a Dataset
+        Pattern 1: Session-based (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-2-direct-components-advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 2: Direct components (advanced)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-components-what-to-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key components (what to import)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Demo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Demo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#notes-on-data-shapes-for-integrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes on data shapes (for integrations)
       
     </span>
   </a>
@@ -1049,10 +1099,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-3-run-aligneval" class="md-nav__link">
+  <a href="#step-3-run-caliberhq" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 3: Run AlignEval
+        Step 3: Run CaliberHQ
       
     </span>
   </a>
@@ -1069,6 +1119,28 @@
     <span class="md-ellipsis">
       
         UI-Friendly Outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#intelligent-example-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intelligent Example Selection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#renderers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Renderers
       
     </span>
   </a>
@@ -1946,6 +2018,8 @@
       
         
       
+        
+      
     
     
     
@@ -2203,6 +2277,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../metric-registry/heuristic/length_constraint/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Length Constraint
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
         
   
@@ -2422,6 +2524,8 @@
   
     
     
+      
+        
       
         
       
@@ -2816,7 +2920,7 @@
   <span class="md-ellipsis">
     
   
-    Synthetic
+    Caliber
   
 
     
@@ -2829,6 +2933,98 @@
         
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Caliber
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deep-dives/align/example-selector/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Example Selector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthetic
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -2902,10 +3098,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
         
           
-          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
             
   
   
@@ -2923,8 +3119,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_4">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -3054,10 +3250,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" >
         
           
-          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
             
   
   
@@ -3075,8 +3271,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -3214,6 +3410,8 @@
       
         
       
+        
+      
     
     
     
@@ -3258,6 +3456,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/align/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caliber
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -3575,10 +3801,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#core-philosophy-calibrate-dont-just-create" class="md-nav__link">
+  <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Core Philosophy: Calibrate, Don’t Just Create
+        Quick start
       
     </span>
   </a>
@@ -3586,10 +3812,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#workflow" class="md-nav__link">
+  <a href="#the-6-step-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Workflow
+        The 6-step workflow
       
     </span>
   </a>
@@ -3597,22 +3823,72 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#using-aligneval-in-python" class="md-nav__link">
+  <a href="#two-usage-patterns" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Using AlignEval in Python
+        Two usage patterns
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Using AlignEval in Python">
+    <nav class="md-nav" aria-label="Two usage patterns">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#step-1-create-a-dataset" class="md-nav__link">
+  <a href="#pattern-1-session-based-recommended" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 1: Create a Dataset
+        Pattern 1: Session-based (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-2-direct-components-advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern 2: Direct components (advanced)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-components-what-to-import" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key components (what to import)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Demo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Demo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#notes-on-data-shapes-for-integrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes on data shapes (for integrations)
       
     </span>
   </a>
@@ -3631,10 +3907,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#step-3-run-aligneval" class="md-nav__link">
+  <a href="#step-3-run-caliberhq" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Step 3: Run AlignEval
+        Step 3: Run CaliberHQ
       
     </span>
   </a>
@@ -3651,6 +3927,28 @@
     <span class="md-ellipsis">
       
         UI-Friendly Outputs
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#intelligent-example-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intelligent Example Selection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#renderers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Renderers
       
     </span>
   </a>
@@ -3677,29 +3975,265 @@
   
 
 
-<h1 id="aligneval">AlignEval<a class="headerlink" href="#aligneval" title="Permanent link">&para;</a></h1>
-<p>AlignEval is a tool for calibrating LLM-as-a-judge evaluators against a
-human-labeled baseline. Instead of writing criteria in the abstract, you
-work backward from real outputs so the evaluator learns what actually
-matters for your use case.</p>
-<h2 id="core-philosophy-calibrate-dont-just-create">Core Philosophy: Calibrate, Don’t Just Create<a class="headerlink" href="#core-philosophy-calibrate-dont-just-create" title="Permanent link">&para;</a></h2>
-<p>Aligning AI to human preferences is only half the battle. The other half is
-calibrating your criteria to the model’s output distribution. Teams often
-write elaborate rubrics without looking at the data first, which produces
-criteria that are irrelevant or unrealistic. AlignEval is built to keep the
-data in the loop.</p>
-<p>Inspiration for AlignEval comes from eugeneyan’s aligneval.</p>
-<h2 id="workflow">Workflow<a class="headerlink" href="#workflow" title="Permanent link">&para;</a></h2>
+<h1 id="caliberhq">CaliberHQ<a class="headerlink" href="#caliberhq" title="Permanent link">&para;</a></h1>
+<p>CaliberHQ is a toolkit for calibrating <strong>LLM-as-a-judge</strong> evaluators against a
+<strong>human-labeled baseline</strong>. Instead of writing rubrics in the abstract, you work
+backward from real outputs so the evaluator learns what actually matters for your
+use case.</p>
+<h2 id="quick-start">Quick start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">CalibrationSession</span>
+
+<span class="n">session</span> <span class="o">=</span> <span class="n">CalibrationSession</span><span class="p">()</span>
+
+<span class="c1"># 1) Upload your data</span>
+<span class="n">session</span><span class="o">.</span><span class="n">upload_records</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;r1&quot;</span><span class="p">,</span> <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;…&quot;</span><span class="p">,</span> <span class="s2">&quot;actual_output&quot;</span><span class="p">:</span> <span class="s2">&quot;…&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;r2&quot;</span><span class="p">,</span> <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;…&quot;</span><span class="p">,</span> <span class="s2">&quot;actual_output&quot;</span><span class="p">:</span> <span class="s2">&quot;…&quot;</span><span class="p">},</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># 2) Add human annotations</span>
+<span class="n">session</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s2">&quot;r1&quot;</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="s2">&quot;Good response&quot;</span><span class="p">)</span>
+<span class="n">session</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s2">&quot;r2&quot;</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="s2">&quot;Factually incorrect&quot;</span><span class="p">)</span>
+
+<span class="c1"># 3) Run LLM evaluation + alignment metrics</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+    <span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;Score 1 if accurate and helpful, 0 otherwise&quot;</span><span class="p">,</span>
+    <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;gpt-4o&quot;</span><span class="p">,</span>
+    <span class="n">llm_provider</span><span class="o">=</span><span class="s2">&quot;openai&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cohen&#39;s Kappa: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">cohen_kappa</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="the-6-step-workflow">The 6-step workflow<a class="headerlink" href="#the-6-step-workflow" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Prepare Data</strong>: Start with a dataset of inputs and generated outputs.</li>
-<li><strong>Annotate</strong>: Add a human judgment (pass/fail) to each item.</li>
-<li><strong>Configure &amp; Execute</strong>: Define the LLM-as-a-judge instructions and run.</li>
-<li><strong>Analyze</strong>: Compare LLM scores to the human baseline to find gaps.</li>
+<li><strong>Upload</strong>: Load your evaluation data</li>
+<li><strong>Annotate</strong>: Add human judgments (Accept=1, Reject=0) + optional notes</li>
+<li><strong>Evaluate</strong>: Run the LLM judge and compute alignment metrics</li>
+<li><strong>Discover patterns</strong>: Cluster annotation notes into themes (LLM / BERTopic / hybrid)</li>
+<li><strong>Analyze misalignments</strong>: False positives / false negatives (judge vs human)</li>
+<li><strong>Optimize</strong>: Produce improved evaluation criteria</li>
 </ol>
-<h2 id="using-aligneval-in-python">Using AlignEval in Python<a class="headerlink" href="#using-aligneval-in-python" title="Permanent link">&para;</a></h2>
-<p>AlignEval is designed for programmatic workflows and Jupyter notebooks. It
-includes an interactive annotation flow and rich analysis outputs.</p>
-<h3 id="step-1-create-a-dataset">Step 1: Create a Dataset<a class="headerlink" href="#step-1-create-a-dataset" title="Permanent link">&para;</a></h3>
+<h2 id="two-usage-patterns">Two usage patterns<a class="headerlink" href="#two-usage-patterns" title="Permanent link">&para;</a></h2>
+<h3 id="pattern-1-session-based-recommended">Pattern 1: Session-based (recommended)<a class="headerlink" href="#pattern-1-session-based-recommended" title="Permanent link">&para;</a></h3>
+<p>Use <code>CalibrationSession</code> for state management and serialization. Good for scripts,
+web APIs, and notebooks.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">CalibrationSession</span>
+
+<span class="n">session</span> <span class="o">=</span> <span class="n">CalibrationSession</span><span class="p">()</span>
+<span class="n">session</span><span class="o">.</span><span class="n">upload_csv</span><span class="p">(</span><span class="s2">&quot;data.csv&quot;</span><span class="p">)</span>
+<span class="n">session</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s2">&quot;r1&quot;</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="s2">&quot;Good&quot;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;…&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="pattern-2-direct-components-advanced">Pattern 2: Direct components (advanced)<a class="headerlink" href="#pattern-2-direct-components-advanced" title="Permanent link">&para;</a></h3>
+<p>Use individual components for fine-grained control.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationManager</span><span class="p">,</span> <span class="n">EvaluationRunner</span><span class="p">,</span> <span class="n">UploadHandler</span>
+
+<span class="n">upload</span> <span class="o">=</span> <span class="n">UploadHandler</span><span class="p">()</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="s2">&quot;data.csv&quot;</span><span class="p">)</span>
+<span class="n">manager</span> <span class="o">=</span> <span class="n">AnnotationManager</span><span class="p">(</span><span class="n">upload</span><span class="o">.</span><span class="n">records</span><span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s2">&quot;r1&quot;</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="s2">&quot;Good&quot;</span><span class="p">)</span>
+
+<span class="c1"># Run evaluation with your own config (see `EvaluationConfig`)</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">EvaluationRunner</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">upload</span><span class="o">.</span><span class="n">records</span><span class="p">,</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_annotations_dict</span><span class="p">())</span>
+</code></pre></div>
+<h2 id="key-components-what-to-import">Key components (what to import)<a class="headerlink" href="#key-components-what-to-import" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Core session</strong></li>
+<li><code>CalibrationSession</code></li>
+<li><strong>Step components</strong></li>
+<li><code>UploadHandler</code>, <code>AnnotationManager</code>, <code>EvaluationRunner</code></li>
+<li><strong>Analysis tools</strong></li>
+<li><code>PatternDiscovery</code>, <code>MisalignmentAnalyzer</code>, <code>PromptOptimizer</code>, <code>ExampleSelector</code></li>
+<li><strong>Renderers</strong></li>
+<li><code>ConsoleCaliberRenderer</code>, <code>NotebookCaliberRenderer</code>, <code>JsonCaliberRenderer</code></li>
+</ul>
+<h2 id="demo">Demo<a class="headerlink" href="#demo" title="Permanent link">&para;</a></h2>
+<p>Run the demo script to see the full workflow in action:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Basic demo (no API key needed)</span>
+python<span class="w"> </span>examples/caliber_demo.py
+
+<span class="c1"># Full end-to-end with LLM calls</span>
+<span class="nv">OPENAI_API_KEY</span><span class="o">=</span>your-key<span class="w"> </span>python<span class="w"> </span>examples/caliber_demo.py<span class="w"> </span>--full
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │                              CaliberHQ Workflow                                      │
+  │                   Align LLM Judges with Human Judgment                              │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  STEP 1: UPLOAD                                                                      │
+  ├─────────────────────────────────────────────────────────────────────────────────────┤
+  │                                                                                      │
+  │   ┌──────────────┐         ┌─────────────────────────────────────────────────────┐  │
+  │   │   CSV File   │────────▶│  Expected Columns:                                  │  │
+  │   │  (drag/drop) │         │  • id, query, actual_output                         │  │
+  │   └──────────────┘         │  • llm_score (0/1), reasoning (optional)            │  │
+  │                            └─────────────────────────────────────────────────────┘  │
+  │                                              │                                       │
+  │                                              ▼                                       │
+  │                            ┌─────────────────────────────────────────────────────┐  │
+  │                            │  Data loaded into calibration store                 │  │
+  │                            │  Records ready for human review                     │  │
+  │                            └─────────────────────────────────────────────────────┘  │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+                                                 │
+                                                 ▼
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  STEP 2: REVIEW &amp; LABEL                                                              │
+  ├─────────────────────────────────────────────────────────────────────────────────────┤
+  │                                                                                      │
+  │   ┌─────────────────────────────────────────┐    ┌────────────────────────────────┐ │
+  │   │         ANNOTATION CARD                 │    │      PROGRESS SIDEBAR          │ │
+  │   │  ┌───────────────────────────────────┐  │    │  ┌──────────────────────────┐  │ │
+  │   │  │  Query: &quot;User question...&quot;        │  │    │  │  ○ ○ ● ○ ○ ○ ○ ○ ○ ○    │  │ │
+  │   │  │  Output: &quot;LLM response...&quot;        │  │    │  │  3 / 50 annotated        │  │ │
+  │   │  │  LLM Score: 1 (Accept)            │  │    │  │                          │  │ │
+  │   │  │  Reasoning: &quot;Good because...&quot;     │  │    │  │  Legend:                 │  │ │
+  │   │  └───────────────────────────────────┘  │    │  │  ● Current   ✓ Done      │  │ │
+  │   │                                         │    │  │  ○ Pending   ✗ Rejected  │  │ │
+  │   │  ┌─────────────────────────────────┐    │    │  └──────────────────────────┘  │ │
+  │   │  │  YOUR JUDGMENT                  │    │    └────────────────────────────────┘ │
+  │   │  │                                 │    │                                       │
+  │   │  │  ┌─────────┐    ┌─────────┐     │    │    ┌────────────────────────────────┐ │
+  │   │  │  │ ACCEPT  │    │ REJECT  │     │    │    │      KEYBOARD SHORTCUTS        │ │
+  │   │  │  │  [ A ]  │    │  [ R ]  │     │    │    │  ┌──────────────────────────┐  │ │
+  │   │  │  └─────────┘    └─────────┘     │    │    │  │  A = Accept              │  │ │
+  │   │  │                                 │    │    │  │  R = Reject              │  │ │
+  │   │  │  Notes: ___________________     │    │    │  │  ← → = Navigate          │  │ │
+  │   │  │         (optional patterns)     │    │    │  └──────────────────────────┘  │ │
+  │   │  └─────────────────────────────────┘    │    └────────────────────────────────┘ │
+  │   │                                         │                                       │
+  │   │       [ ← Previous ]  [ Next → ]        │                                       │
+  │   └─────────────────────────────────────────┘                                       │
+  │                                                                                      │
+  │   Output: humanAnnotations = { &quot;id1&quot;: {score: 1, notes: &quot;...&quot;}, ... }               │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+                                                 │
+                                                 ▼
+  ┌─────────────────────────────────────────────────────────────────────────────────────┐
+  │  STEP 3: BUILD EVAL                                                                  │
+  ├─────────────────────────────────────────────────────────────────────────────────────┤
+  │                                                                                      │
+  │   ┌─────────────────────────────────────────────────────────────────────────────┐   │
+  │   │  1. RUN EVALUATION                                                          │   │
+  │   │  ┌───────────────────────────────────────────────────────────────────────┐  │   │
+  │   │  │  Configure:  Model [gpt-4o ▼]  System Prompt [...]  Criteria [...]    │  │   │
+  │   │  │                                                                       │  │   │
+  │   │  │                    [ ▶ Run LLM Evaluation ]                           │  │   │
+  │   │  └───────────────────────────────────────────────────────────────────────┘  │   │
+  │   └─────────────────────────────────────────────────────────────────────────────┘   │
+  │                                               │                                      │
+  │                                               ▼                                      │
+  │   ┌─────────────────────────────────────────────────────────────────────────────┐   │
+  │   │  2. ALIGNMENT METRICS                                                       │   │
+  │   │  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐               │   │
+  │   │  │  Accuracy  │ │ Precision  │ │   Recall   │ │  F1 Score  │               │   │
+  │   │  │   0.82     │ │   0.85     │ │   0.79     │ │   0.82     │               │   │
+  │   │  └────────────┘ └────────────┘ └────────────┘ └────────────┘               │   │
+  │   │                                                                             │   │
+  │   │  ┌─────────────────────────────────┐  Cohen&#39;s Kappa: 0.64 (Substantial)    │   │
+  │   │  │      CONFUSION MATRIX          │                                        │   │
+  │   │  │  ┌─────────────────────────┐   │  Interpretation:                       │   │
+  │   │  │  │         │ Human │ Human │   │  • LLM agrees with humans 82% of time  │   │
+  │   │  │  │         │ Accept│Reject │   │  • Kappa &gt; 0.6 = good agreement        │   │
+  │   │  │  │─────────┼───────┼───────│   │                                        │   │
+  │   │  │  │LLM Acc. │  TP   │  FP   │   │                                        │   │
+  │   │  │  │LLM Rej. │  FN   │  TN   │   │                                        │   │
+  │   │  │  └─────────────────────────┘   │                                        │   │
+  │   │  └─────────────────────────────────┘                                        │   │
+  │   └─────────────────────────────────────────────────────────────────────────────┘   │
+  │                                               │                                      │
+  │                                               ▼                                      │
+  │   ┌─────────────────────────────────────────────────────────────────────────────┐   │
+  │   │  3. MISALIGNMENT ANALYSIS                                                   │   │
+  │   │  ┌─────────────────────────────┐  ┌─────────────────────────────────────┐   │   │
+  │   │  │  FALSE POSITIVES (FP)       │  │  FALSE NEGATIVES (FN)               │   │   │
+  │   │  │  LLM: Accept, Human: Reject │  │  LLM: Reject, Human: Accept         │   │   │
+  │   │  │  → LLM is too lenient       │  │  → LLM is too strict                │   │   │
+  │   │  │                             │  │                                     │   │   │
+  │   │  │  Examples:                  │  │  Examples:                          │   │   │
+  │   │  │  • &quot;Hallucinated facts...&quot;  │  │  • &quot;Minor formatting but correct..&quot; │   │   │
+  │   │  │  • &quot;Missed key context...&quot;  │  │  • &quot;Edge case handled well...&quot;      │   │   │
+  │   │  └─────────────────────────────┘  └─────────────────────────────────────┘   │   │
+  │   └─────────────────────────────────────────────────────────────────────────────┘   │
+  │                                               │                                      │
+  │                                               ▼                                      │
+  │   ┌─────────────────────────────────────────────────────────────────────────────┐   │
+  │   │  4. PROMPT OPTIMIZATION                                                     │   │
+  │   │  ┌───────────────────────────────────────────────────────────────────────┐  │   │
+  │   │  │  Based on misalignment patterns, suggested criteria improvements:     │  │   │
+  │   │  │                                                                       │  │   │
+  │   │  │  • Add explicit check for factual accuracy                           │  │   │
+  │   │  │  • Clarify handling of edge cases                                    │  │   │
+  │   │  │  • Reduce strictness on formatting requirements                      │  │   │
+  │   │  │                                                                       │  │   │
+  │   │  │  [ Copy Optimized Prompt ]  [ Apply &amp; Re-run ]                       │  │   │
+  │   │  └───────────────────────────────────────────────────────────────────────┘  │   │
+  │   └─────────────────────────────────────────────────────────────────────────────┘   │
+  │                                               │                                      │
+  │                                               ▼                                      │
+  │   ┌─────────────────────────────────────────────────────────────────────────────┐   │
+  │   │  5. PATTERN INSIGHTS (from annotation notes)                                │   │
+  │   │  ┌───────────────────────────────────────────────────────────────────────┐  │   │
+  │   │  │  Discovered patterns from human annotator notes:                      │  │   │
+  │   │  │                                                                       │  │   │
+  │   │  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐         │  │   │
+  │   │  │  │ Hallucinations  │ │ Tone Issues     │ │ Missing Context │         │  │   │
+  │   │  │  │ 12 cases        │ │ 8 cases         │ │ 5 cases         │         │  │   │
+  │   │  │  │ [expandable]    │ │ [expandable]    │ │ [expandable]    │         │  │   │
+  │   │  │  └─────────────────┘ └─────────────────┘ └─────────────────┘         │  │   │
+  │   │  └───────────────────────────────────────────────────────────────────────┘  │   │
+  │   └─────────────────────────────────────────────────────────────────────────────┘   │
+  │                                                                                      │
+  │   ┌─────────────────────────────────────────────────────────────────────────────┐   │
+  │   │                          [ Export Results ]                                 │   │
+  │   └─────────────────────────────────────────────────────────────────────────────┘   │
+  └─────────────────────────────────────────────────────────────────────────────────────┘
+
+
+                                ┌───────────────────────┐
+                                │   FEEDBACK LOOP       │
+                                │                       │
+                                │  Optimized prompt     │
+                                │         │             │
+                                │         ▼             │
+                                │  Re-run evaluation    │
+                                │         │             │
+                                │         ▼             │
+                                │  Compare metrics      │
+                                │         │             │
+                                │         ▼             │
+                                │  Iterate until        │
+                                │  aligned              │
+                                └───────────────────────┘
+
+  Summary Flow:
+
+      ┌────────┐      ┌──────────────┐      ┌────────────┐
+      │ UPLOAD │ ───▶ │ REVIEW/LABEL │ ───▶ │ BUILD EVAL │
+      └────────┘      └──────────────┘      └────────────┘
+           │                  │                    │
+           ▼                  ▼                    ▼
+      CSV with LLM       Human scores         Metrics + Analysis
+      judge outputs      (Accept/Reject)      + Optimized Prompts
+                         + Notes                    │
+                                                    │
+                                ┌───────────────────┘
+                                ▼
+                          Iterate until
+                          LLM ≈ Human
+</code></pre></div>
+<h3 id="notes-on-data-shapes-for-integrations">Notes on data shapes (for integrations)<a class="headerlink" href="#notes-on-data-shapes-for-integrations" title="Permanent link">&para;</a></h3>
+<p>Internally, CaliberHQ uses <code>DatasetItem</code> (for the underlying data record) plus
+<code>MetricScore</code>-like fields (for judge outputs):</p>
+<ul>
+<li><code>id</code>, <code>query</code>, <code>actual_output</code> (DatasetItem-style)</li>
+<li><code>judgment</code> (human label)</li>
+<li><code>score</code>, <code>explanation</code>, <code>signals</code> (judge output)</li>
+</ul>
 <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetItem</span>
 
 <span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
@@ -3730,20 +4264,20 @@ as simple as a binary pass/fail rubric.</p>
         <span class="s2">&quot;Otherwise score 0 and explain why.&quot;</span>
     <span class="p">)</span>
 </code></pre></div>
-<h3 id="step-3-run-aligneval">Step 3: Run AlignEval<a class="headerlink" href="#step-3-run-aligneval" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.align</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlignEval</span>
+<h3 id="step-3-run-caliberhq">Step 3: Run CaliberHQ<a class="headerlink" href="#step-3-run-caliberhq" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.align</span><span class="w"> </span><span class="kn">import</span> <span class="n">CaliberHQ</span>
 
-<span class="n">evaluator</span> <span class="o">=</span> <span class="n">AlignEval</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">PassFailMetric</span><span class="p">())</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">CaliberHQ</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">PassFailMetric</span><span class="p">())</span>
 <span class="n">evaluator</span><span class="o">.</span><span class="n">annotate</span><span class="p">()</span>  <span class="c1"># optional if judgments are already present</span>
 <span class="n">results_df</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="ui-friendly-outputs">UI-Friendly Outputs<a class="headerlink" href="#ui-friendly-outputs" title="Permanent link">&para;</a></h2>
-<p>For web or UI pipelines, use <code>WebAlignEval</code> to return JSON-serializable
-results and attach optional progress callbacks. Both <code>AlignEval</code> and
-<code>WebAlignEval</code> support <code>execute(as_dict=...)</code> for a shared interface.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.align</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebAlignEval</span>
+<p>For web or UI pipelines, use <code>WebCaliberHQ</code> to return JSON-serializable
+results and attach optional progress callbacks. Both <code>CaliberHQ</code> and
+<code>WebCaliberHQ</code> support <code>execute(as_dict=...)</code> for a shared interface.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.align</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebCaliberHQ</span>
 
-<span class="n">web_eval</span> <span class="o">=</span> <span class="n">WebAlignEval</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">PassFailMetric</span><span class="p">())</span>
+<span class="n">web_eval</span> <span class="o">=</span> <span class="n">WebCaliberHQ</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">PassFailMetric</span><span class="p">())</span>
 <span class="n">payload</span> <span class="o">=</span> <span class="n">web_eval</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
     <span class="n">as_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">on_progress</span><span class="o">=</span><span class="k">lambda</span> <span class="n">current</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">total</span><span class="p">),</span>
@@ -3754,25 +4288,71 @@ results and attach optional progress callbacks. Both <code>AlignEval</code> and
 <span class="c1"># payload[&quot;confusion_matrix&quot;] -&gt; confusion matrix dict</span>
 </code></pre></div>
 <p>You can also construct a dataset from uploaded records:</p>
-<p><div class="highlight"><pre><span></span><code><span class="n">web_eval</span> <span class="o">=</span> <span class="n">WebAlignEval</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">PassFailMetric</span><span class="p">())</span>
+<div class="highlight"><pre><span></span><code><span class="n">web_eval</span> <span class="o">=</span> <span class="n">WebCaliberHQ</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">PassFailMetric</span><span class="p">())</span>
 <span class="n">payload</span> <span class="o">=</span> <span class="n">web_eval</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">as_dict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="intelligent-example-selection">Intelligent Example Selection<a class="headerlink" href="#intelligent-example-selection" title="Permanent link">&para;</a></h2>
+<p>When providing few-shot examples to calibrate your LLM judge, use
+<code>ExampleSelector</code> for smarter selection instead of naive slicing.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.align</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSelector</span><span class="p">,</span> <span class="n">SelectionStrategy</span>
 
-<span class="c1">## Renderers</span>
+<span class="n">selector</span> <span class="o">=</span> <span class="n">ExampleSelector</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 
-<span class="n">AlignEval</span> <span class="n">uses</span> <span class="n">a</span> <span class="n">renderer</span> <span class="n">interface</span> <span class="n">so</span> <span class="n">UIs</span> <span class="n">can</span> <span class="n">plug</span> <span class="ow">in</span> <span class="n">without</span> <span class="n">changing</span>
-<span class="n">core</span> <span class="n">logic</span><span class="o">.</span> <span class="n">Out</span> <span class="n">of</span> <span class="n">the</span> <span class="n">box</span> <span class="n">you</span> <span class="n">get</span><span class="p">:</span>
+<span class="c1"># Balanced selection (50/50 accept/reject)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">annotations</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
 
-<span class="o">-</span> <span class="err">`</span><span class="n">NotebookAlignEvalRenderer</span><span class="err">`</span> <span class="k">for</span> <span class="n">notebooks</span> <span class="p">(</span><span class="n">Jupyter</span><span class="p">)</span>
-<span class="o">-</span> <span class="err">`</span><span class="n">ConsoleAlignEvalRenderer</span><span class="err">`</span> <span class="k">for</span> <span class="n">terminal</span> <span class="n">usage</span>
-<span class="o">-</span> <span class="err">`</span><span class="n">JsonAlignEvalRenderer</span><span class="err">`</span> <span class="k">for</span> <span class="n">JSON</span><span class="o">-</span><span class="n">first</span> <span class="n">workflows</span>
+<span class="c1"># Prioritize misaligned cases (requires prior eval results)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+    <span class="n">records</span><span class="p">,</span> <span class="n">annotations</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">strategy</span><span class="o">=</span><span class="n">SelectionStrategy</span><span class="o">.</span><span class="n">MISALIGNMENT_GUIDED</span><span class="p">,</span>
+    <span class="n">eval_results</span><span class="o">=</span><span class="n">prior_results</span>
+<span class="p">)</span>
 
-<span class="err">```</span><span class="n">python</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">axion.align</span><span class="w"> </span><span class="kn">import</span> <span class="n">AlignEval</span><span class="p">,</span> <span class="n">ConsoleAlignEvalRenderer</span>
+<span class="c1"># Cover discovered patterns (requires Pattern Discovery)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+    <span class="n">records</span><span class="p">,</span> <span class="n">annotations</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="n">strategy</span><span class="o">=</span><span class="n">SelectionStrategy</span><span class="o">.</span><span class="n">PATTERN_AWARE</span><span class="p">,</span>
+    <span class="n">patterns</span><span class="o">=</span><span class="n">discovered_patterns</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Three strategies are available:</p>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BALANCED</code></td>
+<td>Default - 50/50 accept/reject sampling</td>
+</tr>
+<tr>
+<td><code>MISALIGNMENT_GUIDED</code></td>
+<td>Prioritize FP/FN cases from prior eval</td>
+</tr>
+<tr>
+<td><code>PATTERN_AWARE</code></td>
+<td>Cover discovered failure patterns</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="../../deep-dives/align/example-selector/">Example Selector Deep Dive</a> for
+detailed usage.</p>
+<h2 id="renderers">Renderers<a class="headerlink" href="#renderers" title="Permanent link">&para;</a></h2>
+<p>CaliberHQ uses a renderer interface so UIs can plug in without changing
+core logic. Out of the box you get:</p>
+<ul>
+<li><code>NotebookCaliberHQRenderer</code> for notebooks (Jupyter)</li>
+<li><code>ConsoleCaliberHQRenderer</code> for terminal usage</li>
+<li><code>JsonCaliberHQRenderer</code> for JSON-first workflows</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">axion.align</span><span class="w"> </span><span class="kn">import</span> <span class="n">CaliberHQ</span><span class="p">,</span> <span class="n">ConsoleCaliberHQRenderer</span>
 
-<span class="n">evaluator</span> <span class="o">=</span> <span class="n">AlignEval</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">PassFailMetric</span><span class="p">(),</span> <span class="n">renderer</span><span class="o">=</span><span class="n">ConsoleAlignEvalRenderer</span><span class="p">())</span>
+<span class="n">evaluator</span> <span class="o">=</span> <span class="n">CaliberHQ</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">PassFailMetric</span><span class="p">(),</span> <span class="n">renderer</span><span class="o">=</span><span class="n">ConsoleCaliberHQRenderer</span><span class="p">())</span>
 <span class="n">evaluator</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div>
-```</p>
 
 
 
@@ -3795,7 +4375,7 @@ results and attach optional progress callbacks. Both <code>AlignEval</code> and
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 23, 2026 19:07:54 UTC">January 23, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 1, 2026 16:46:24 UTC">February 1, 2026</span>
   </span>
 
     
@@ -3805,7 +4385,7 @@ results and attach optional progress callbacks. Both <code>AlignEval</code> and
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 23, 2026 19:07:54 UTC">January 23, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 1, 2026 16:46:24 UTC">February 1, 2026</span>
   </span>
 
     
