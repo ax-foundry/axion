@@ -53,6 +53,7 @@ class TestCaliberMetric:
             required_fields=['query', 'actual_output'],
         )
         # required_fields is handled by BaseMetric
+        assert metric.instruction == 'Test'
 
 
 class TestEvaluationRunner:

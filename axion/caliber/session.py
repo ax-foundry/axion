@@ -7,7 +7,10 @@ Optional for notebooks (use components directly), required for web UI (state per
 
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
+
+if TYPE_CHECKING:
+    import pandas as pd
 
 from axion._core.uuid import uuid7
 from axion.caliber.analysis import MisalignmentAnalysis, MisalignmentAnalyzer
