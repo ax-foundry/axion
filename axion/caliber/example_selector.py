@@ -1,9 +1,15 @@
+"""
+Example selection for CaliberHQ workflow.
+
+Selects few-shot examples for LLM-as-judge calibration using various strategies.
+"""
+
 import random
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from axion.align.pattern_discovery import DiscoveredPattern
+from axion.caliber.pattern_discovery import DiscoveredPattern
 
 
 class SelectionStrategy(str, Enum):

@@ -1,3 +1,9 @@
+"""
+Pattern discovery for CaliberHQ workflow.
+
+Discovers patterns in evaluation annotations using LLM-based and/or topic modeling approaches.
+"""
+
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Type, Union
@@ -230,7 +236,7 @@ class PatternDiscovery:
     and consistent LLM configuration with the rest of axion.
 
     Example:
-        >>> from axion.align import PatternDiscovery, AnnotatedItem
+        >>> from axion.caliber import PatternDiscovery, AnnotatedItem
         >>>
         >>> annotations = {
         ...     'rec_1': AnnotatedItem(record_id='rec_1', score=0, notes='Missing context'),
