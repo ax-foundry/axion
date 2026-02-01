@@ -74,6 +74,8 @@ search = ["google-search-results>=2.4.2", "serpapi>=0.1.5"]
 # LlamaIndex extensions (optional)
 huggingface = ["llama-index-embeddings-huggingface>=0.6.0"]
 docling = ["llama-index-readers-docling>=0.4.0"]
+# Pattern discovery with BERTopic (optional)
+bertopic = ["bertopic>=0.16.0", "sentence-transformers>=2.2.0"]
 
 [project.urls]
 Homepage = "https://github.com/ax-foundry/axion"

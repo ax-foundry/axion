@@ -137,7 +137,7 @@ class EvaluationConfig:
     dataset_name: Optional[str] = None
     run_id: Optional[str] = None
     enable_internal_caching: bool = True
-    trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SEPARATE
+    trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SINGLE_TRACE
     flush_per_metric: bool = False
 
     def __post_init__(self):
@@ -805,7 +805,7 @@ def evaluation_runner(
     show_progress: bool = True,
     dataset_name: Optional[str] = None,
     run_id: Optional[str] = None,
-    trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SEPARATE,
+    trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SINGLE_TRACE,
     flush_per_metric: bool = False,
 ) -> Optional[EvaluationResult]:
     """

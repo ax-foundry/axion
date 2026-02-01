@@ -16,7 +16,7 @@ nav:
     - Metrics & Evaluation: guides/metrics.md
     - Running Evaluations: guides/evaluation.md
     - Issue Extraction & Analysis: guides/issue-extraction.md
-    - AlignEval: guides/aligneval.md
+    - CaliberHQ: guides/caliberhq.md
     - Langfuse:
       - Overview: guides/langfuse/overview.md
       - Configuration: guides/langfuse/configuration.md
@@ -66,6 +66,8 @@ nav:
       - Metric Runner: deep-dives/runners/metric-runner.md
       - Evaluation Runner: deep-dives/runners/evaluation-runner.md
       - API Runner: deep-dives/runners/api-runner.md
+    - Align:
+      - Example Selector: deep-dives/align/example-selector.md
     - Synthetic:
       - Document QA Generation: deep-dives/synthetic/document-qa.md
     - Search:
@@ -77,6 +79,7 @@ nav:
       - Environment: deep-dives/internals/environment.md
       - Logging: deep-dives/internals/logging.md
   - Reference:
+    - Align: reference/align.md
     - Dataset: reference/dataset.md
     - Schema: reference/schema.md
     - Metrics: reference/metrics.md

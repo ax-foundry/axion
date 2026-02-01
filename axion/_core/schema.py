@@ -315,6 +315,23 @@ class RichBaseModel(BaseModel):
         display_pydantic(self, title, **kwargs)
 
 
+class StrictBaseModel(BaseModel):
+    """
+    Minimal strict Pydantic model for LLM structured outputs.
+
+    Use this when you need OpenAI strict JSON schema compatibility (i.e.
+    `additionalProperties: false`) but don't want the convenience methods on
+    `RichBaseModel` that can conflict with field names (e.g., a `summary` field).
+    """
+
+    model_config = ConfigDict(
+        extra='forbid',
+        # Required for OpenAI structured outputs (strict mode) which requires
+        # ALL properties to be in the 'required' array, even those with defaults
+        json_schema_serialization_defaults_required=True,
+    )
+
+
 @dataclass
 class RichSerializer:
     """
