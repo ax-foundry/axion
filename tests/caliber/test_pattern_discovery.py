@@ -14,6 +14,18 @@ from axion.caliber.pattern_discovery import (
     PatternDiscoveryResult,
 )
 
+# Check if BERTopic is available
+try:
+    import bertopic  # noqa: F401
+
+    HAS_BERTOPIC = True
+except ImportError:
+    HAS_BERTOPIC = False
+
+requires_bertopic = pytest.mark.skipif(
+    not HAS_BERTOPIC, reason='BERTopic not installed'
+)
+
 
 class TestAnnotatedItem:
     """Tests for AnnotatedItem dataclass."""
@@ -278,6 +290,7 @@ class TestLabelModels:
         assert output.category_name == 'Missing Context'
 
 
+@requires_bertopic
 class TestBERTopicClustering:
     """Tests for BERTopic clustering method."""
 
@@ -323,6 +336,7 @@ class TestBERTopicClustering:
         assert discovery._bertopic_embedding_model == 'paraphrase-MiniLM-L6-v2'
 
 
+@requires_bertopic
 class TestHybridClustering:
     """Tests for Hybrid clustering method."""
 
@@ -367,6 +381,7 @@ class TestPatternDiscoveryMethodDispatch:
         result = await discovery.discover(annotations, method=ClusteringMethod.LLM)
         assert result.method == ClusteringMethod.LLM
 
+    @requires_bertopic
     @pytest.mark.asyncio
     async def test_discover_dispatches_to_bertopic(self):
         """Test discover() dispatches to BERTopic method."""
@@ -380,6 +395,7 @@ class TestPatternDiscoveryMethodDispatch:
         result = await discovery.discover(annotations, method=ClusteringMethod.BERTOPIC)
         assert result.method == ClusteringMethod.BERTOPIC
 
+    @requires_bertopic
     @pytest.mark.asyncio
     async def test_discover_dispatches_to_hybrid(self):
         """Test discover() dispatches to Hybrid method."""
