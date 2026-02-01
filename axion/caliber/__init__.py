@@ -129,7 +129,26 @@ Run the demo script to see the full workflow in action:
 """
 
 # Session orchestrator
-from axion.caliber.session import CalibrationSession
+# Analysis
+from axion.caliber.analysis import (
+    MisalignedCase,
+    MisalignmentAnalysis,
+    MisalignmentAnalyzer,
+    MisalignmentPattern,
+)
+
+# Step 2: Annotation
+from axion.caliber.annotation import AnnotationManager
+
+# Step 3: Evaluation
+from axion.caliber.evaluation import CaliberMetric, EvaluationRunner
+
+# Example Selection
+from axion.caliber.example_selector import (
+    ExampleSelector,
+    SelectionResult,
+    SelectionStrategy,
+)
 
 # Models
 from axion.caliber.models import (
@@ -145,30 +164,6 @@ from axion.caliber.models import (
     UploadResult,
 )
 
-# Step 1: Upload
-from axion.caliber.upload import UploadHandler
-
-# Step 2: Annotation
-from axion.caliber.annotation import AnnotationManager
-
-# Step 3: Evaluation
-from axion.caliber.evaluation import CaliberMetric, EvaluationRunner
-
-# Analysis
-from axion.caliber.analysis import (
-    MisalignedCase,
-    MisalignmentAnalysis,
-    MisalignmentAnalyzer,
-    MisalignmentPattern,
-)
-
-# Prompt Optimization
-from axion.caliber.prompt_optimizer import (
-    OptimizedPrompt,
-    PromptOptimizer,
-    PromptSuggestion,
-)
-
 # Pattern Discovery
 from axion.caliber.pattern_discovery import (
     AnnotatedItem,
@@ -178,11 +173,11 @@ from axion.caliber.pattern_discovery import (
     PatternDiscoveryResult,
 )
 
-# Example Selection
-from axion.caliber.example_selector import (
-    ExampleSelector,
-    SelectionResult,
-    SelectionStrategy,
+# Prompt Optimization
+from axion.caliber.prompt_optimizer import (
+    OptimizedPrompt,
+    PromptOptimizer,
+    PromptSuggestion,
 )
 
 # Renderers
@@ -192,6 +187,10 @@ from axion.caliber.renderers import (
     JsonCaliberRenderer,
     NotebookCaliberRenderer,
 )
+from axion.caliber.session import CalibrationSession
+
+# Step 1: Upload
+from axion.caliber.upload import UploadHandler
 
 __all__ = [
     # Session

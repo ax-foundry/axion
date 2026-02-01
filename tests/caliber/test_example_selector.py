@@ -57,7 +57,9 @@ class TestExampleSelector:
         assert 'accepts' in result.metadata
         assert 'rejects' in result.metadata
 
-    def test_balanced_selection_ratio(self, selector, sample_records, balanced_annotations):
+    def test_balanced_selection_ratio(
+        self, selector, sample_records, balanced_annotations
+    ):
         """Test that balanced selection maintains 50/50 ratio."""
         result = selector.select(
             sample_records,
@@ -66,14 +68,20 @@ class TestExampleSelector:
             strategy=SelectionStrategy.BALANCED,
         )
 
-        accepts = sum(1 for ex in result.examples if balanced_annotations[ex['id']] == 1)
-        rejects = sum(1 for ex in result.examples if balanced_annotations[ex['id']] == 0)
+        accepts = sum(
+            1 for ex in result.examples if balanced_annotations[ex['id']] == 1
+        )
+        rejects = sum(
+            1 for ex in result.examples if balanced_annotations[ex['id']] == 0
+        )
 
         # Should be roughly balanced (2 each for count=4)
         assert accepts == 2
         assert rejects == 2
 
-    def test_misalignment_guided_selection(self, selector, sample_records, balanced_annotations):
+    def test_misalignment_guided_selection(
+        self, selector, sample_records, balanced_annotations
+    ):
         """Test misalignment-guided selection strategy."""
         eval_results = [
             {'id': 'r1', 'llm_score': 0, 'score': 0},  # FN: llm=0, human=1
@@ -108,7 +116,9 @@ class TestExampleSelector:
                 strategy=SelectionStrategy.MISALIGNMENT_GUIDED,
             )
 
-    def test_pattern_aware_selection(self, selector, sample_records, balanced_annotations):
+    def test_pattern_aware_selection(
+        self, selector, sample_records, balanced_annotations
+    ):
         """Test pattern-aware selection strategy."""
         patterns = [
             DiscoveredPattern(

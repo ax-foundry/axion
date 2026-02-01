@@ -56,7 +56,7 @@ class ConsoleCaliberRenderer(CaliberRenderer):
         filled = int(bar_width * state.progress)
         bar = '█' * filled + '░' * (bar_width - filled)
 
-        print(f'\n🚀 Annotation Progress')
+        print('\n🚀 Annotation Progress')
         print(f'  [{bar}] {progress_pct:.1f}%')
         print(f'  {completed} / {total} records annotated')
 
@@ -80,8 +80,12 @@ class ConsoleCaliberRenderer(CaliberRenderer):
         cm = result.confusion_matrix
         print('\n📋 Confusion Matrix:')
         print('              Human=0  Human=1')
-        print(f"  LLM=0        {cm['LLM=0']['Human=0']:5d}    {cm['LLM=0']['Human=1']:5d}")
-        print(f"  LLM=1        {cm['LLM=1']['Human=0']:5d}    {cm['LLM=1']['Human=1']:5d}")
+        print(
+            f'  LLM=0        {cm["LLM=0"]["Human=0"]:5d}    {cm["LLM=0"]["Human=1"]:5d}'
+        )
+        print(
+            f'  LLM=1        {cm["LLM=1"]["Human=0"]:5d}    {cm["LLM=1"]["Human=1"]:5d}'
+        )
 
         # Count stats
         print('\n📊 Counts:')
@@ -102,7 +106,7 @@ class ConsoleCaliberRenderer(CaliberRenderer):
         print('🔍 Misalignment Analysis')
         print('=' * 50)
 
-        print(f'\n📊 Summary:')
+        print('\n📊 Summary:')
         print(f'  Total Misaligned: {analysis.total_misaligned}')
         print(f'  False Positives (LLM too lenient): {analysis.false_positives}')
         print(f'  False Negatives (LLM too strict): {analysis.false_negatives}')

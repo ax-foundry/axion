@@ -2,6 +2,7 @@
 
 import pytest
 
+from axion.caliber.analysis import MisalignedCase
 from axion.caliber.prompt_optimizer import (
     OptimizedPrompt,
     OptimizeInput,
@@ -10,7 +11,6 @@ from axion.caliber.prompt_optimizer import (
     PromptSuggestion,
     SuggestionOutput,
 )
-from axion.caliber.analysis import MisalignedCase
 
 
 class TestPromptSuggestion:
@@ -139,8 +139,20 @@ class TestPromptOptimizer:
 
         # All aligned results
         results = [
-            {'record_id': 'r1', 'human_score': 1, 'llm_score': 1, 'query': 'Q', 'actual_output': 'A'},
-            {'record_id': 'r2', 'human_score': 0, 'llm_score': 0, 'query': 'Q', 'actual_output': 'A'},
+            {
+                'record_id': 'r1',
+                'human_score': 1,
+                'llm_score': 1,
+                'query': 'Q',
+                'actual_output': 'A',
+            },
+            {
+                'record_id': 'r2',
+                'human_score': 0,
+                'llm_score': 0,
+                'query': 'Q',
+                'actual_output': 'A',
+            },
         ]
 
         criteria = 'Score 1 if accurate.'
@@ -182,7 +194,13 @@ class TestPromptOptimizerInputValidation:
 
         # All aligned - just testing the extract logic
         results = [
-            {'record_id': 'r1', 'human_score': 1, 'llm_score': 1, 'query': 'Q', 'actual_output': 'A'},
+            {
+                'record_id': 'r1',
+                'human_score': 1,
+                'llm_score': 1,
+                'query': 'Q',
+                'actual_output': 'A',
+            },
         ]
 
         optimized = await optimizer.optimize(results, 'Criteria')

@@ -4,7 +4,7 @@ Evaluation handling for CaliberHQ workflow (Step 3).
 Runs LLM-as-judge evaluation and computes alignment metrics.
 """
 
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
 
@@ -141,7 +141,9 @@ class EvaluationRunner:
         llm_evaluations = await self._run_evaluations(dataset, on_progress)
 
         # Build evaluation records
-        eval_records = self._build_evaluation_records(records, annotations, llm_evaluations)
+        eval_records = self._build_evaluation_records(
+            records, annotations, llm_evaluations
+        )
 
         # Compute metrics
         metrics = self._compute_metrics(eval_records)
@@ -186,7 +188,9 @@ class EvaluationRunner:
         on_progress: Optional[Callable[[int, int], None]] = None,
     ) -> Dict[str, Dict[str, Any]]:
         """Run LLM evaluations on the dataset."""
-        runner = MetricRunner(metrics=[self._metric], max_concurrent=self._max_concurrent)
+        runner = MetricRunner(
+            metrics=[self._metric], max_concurrent=self._max_concurrent
+        )
         test_results: List[TestResult] = await runner.execute_batch(dataset.items)
 
         evaluations = {}

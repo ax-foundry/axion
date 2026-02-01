@@ -43,7 +43,12 @@ class UploadHandler:
         'actual_output': ['actual_output', 'output', 'response', 'answer'],
         'expected_output': ['expected_output', 'reference', 'ground_truth', 'expected'],
         'llm_score': ['llm_score', 'score', 'llm_judgment'],
-        'llm_reasoning': ['llm_reasoning', 'reasoning', 'explanation', 'llm_explanation'],
+        'llm_reasoning': [
+            'llm_reasoning',
+            'reasoning',
+            'explanation',
+            'llm_explanation',
+        ],
         'id': ['id', 'record_id', 'item_id'],
     }
 
@@ -231,7 +236,9 @@ class UploadHandler:
         return str(val) if val is not None else default
 
     @staticmethod
-    def _get_int_value(row: pd.Series, key: str, default: Optional[int]) -> Optional[int]:
+    def _get_int_value(
+        row: pd.Series, key: str, default: Optional[int]
+    ) -> Optional[int]:
         """Get an integer value from a row, handling NaN and type conversion."""
         val = row.get(key, default)
         if pd.isna(val):

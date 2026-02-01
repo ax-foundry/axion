@@ -1,7 +1,5 @@
 """Tests for evaluation module."""
 
-import pytest
-
 from axion.caliber.evaluation import CaliberMetric, EvaluationRunner
 from axion.caliber.models import (
     AlignmentMetrics,
@@ -91,10 +89,34 @@ class TestEvaluationRunner:
         runner = EvaluationRunner(config)
 
         records = [
-            EvaluationRecord(record_id='r1', human_score=1, llm_score=1, aligned=True, score_difference=0),
-            EvaluationRecord(record_id='r2', human_score=0, llm_score=0, aligned=True, score_difference=0),
-            EvaluationRecord(record_id='r3', human_score=1, llm_score=1, aligned=True, score_difference=0),
-            EvaluationRecord(record_id='r4', human_score=0, llm_score=0, aligned=True, score_difference=0),
+            EvaluationRecord(
+                record_id='r1',
+                human_score=1,
+                llm_score=1,
+                aligned=True,
+                score_difference=0,
+            ),
+            EvaluationRecord(
+                record_id='r2',
+                human_score=0,
+                llm_score=0,
+                aligned=True,
+                score_difference=0,
+            ),
+            EvaluationRecord(
+                record_id='r3',
+                human_score=1,
+                llm_score=1,
+                aligned=True,
+                score_difference=0,
+            ),
+            EvaluationRecord(
+                record_id='r4',
+                human_score=0,
+                llm_score=0,
+                aligned=True,
+                score_difference=0,
+            ),
         ]
 
         metrics = runner._compute_metrics(records)
@@ -115,10 +137,34 @@ class TestEvaluationRunner:
         runner = EvaluationRunner(config)
 
         records = [
-            EvaluationRecord(record_id='r1', human_score=1, llm_score=1, aligned=True, score_difference=0),  # TP
-            EvaluationRecord(record_id='r2', human_score=0, llm_score=0, aligned=True, score_difference=0),  # TN
-            EvaluationRecord(record_id='r3', human_score=0, llm_score=1, aligned=False, score_difference=1),  # FP
-            EvaluationRecord(record_id='r4', human_score=1, llm_score=0, aligned=False, score_difference=1),  # FN
+            EvaluationRecord(
+                record_id='r1',
+                human_score=1,
+                llm_score=1,
+                aligned=True,
+                score_difference=0,
+            ),  # TP
+            EvaluationRecord(
+                record_id='r2',
+                human_score=0,
+                llm_score=0,
+                aligned=True,
+                score_difference=0,
+            ),  # TN
+            EvaluationRecord(
+                record_id='r3',
+                human_score=0,
+                llm_score=1,
+                aligned=False,
+                score_difference=1,
+            ),  # FP
+            EvaluationRecord(
+                record_id='r4',
+                human_score=1,
+                llm_score=0,
+                aligned=False,
+                score_difference=1,
+            ),  # FN
         ]
 
         metrics = runner._compute_metrics(records)
@@ -147,10 +193,34 @@ class TestEvaluationRunner:
         runner = EvaluationRunner(config)
 
         records = [
-            EvaluationRecord(record_id='r1', human_score=1, llm_score=1, aligned=True, score_difference=0),  # TP
-            EvaluationRecord(record_id='r2', human_score=0, llm_score=0, aligned=True, score_difference=0),  # TN
-            EvaluationRecord(record_id='r3', human_score=0, llm_score=1, aligned=False, score_difference=1),  # FP
-            EvaluationRecord(record_id='r4', human_score=1, llm_score=0, aligned=False, score_difference=1),  # FN
+            EvaluationRecord(
+                record_id='r1',
+                human_score=1,
+                llm_score=1,
+                aligned=True,
+                score_difference=0,
+            ),  # TP
+            EvaluationRecord(
+                record_id='r2',
+                human_score=0,
+                llm_score=0,
+                aligned=True,
+                score_difference=0,
+            ),  # TN
+            EvaluationRecord(
+                record_id='r3',
+                human_score=0,
+                llm_score=1,
+                aligned=False,
+                score_difference=1,
+            ),  # FP
+            EvaluationRecord(
+                record_id='r4',
+                human_score=1,
+                llm_score=0,
+                aligned=False,
+                score_difference=1,
+            ),  # FN
         ]
 
         matrix = runner._build_confusion_matrix(records)
@@ -190,7 +260,6 @@ class TestEvaluationRunner:
 
     def test_coerce_binary_score_nan(self):
         """Test coercing NaN scores."""
-        import math
 
         config = EvaluationConfig(criteria='Test')
         runner = EvaluationRunner(config)
@@ -205,7 +274,9 @@ class TestEvaluationRunner:
         runner = EvaluationRunner(config)
 
         records = [
-            UploadedRecord(id='r1', query='Q1', actual_output='A1', expected_output='E1'),
+            UploadedRecord(
+                id='r1', query='Q1', actual_output='A1', expected_output='E1'
+            ),
             UploadedRecord(id='r2', query='Q2', actual_output='A2'),
         ]
         annotations = {
@@ -258,7 +329,9 @@ class TestEvaluationRunner:
             'r2': {'llm_score': 1, 'llm_reasoning': 'Also good'},  # Misaligned
         }
 
-        eval_records = runner._build_evaluation_records(records, annotations, llm_evaluations)
+        eval_records = runner._build_evaluation_records(
+            records, annotations, llm_evaluations
+        )
 
         assert len(eval_records) == 2
         assert eval_records[0].record_id == 'r1'

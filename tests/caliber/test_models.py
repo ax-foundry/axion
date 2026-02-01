@@ -14,7 +14,6 @@ from axion.caliber.models import (
     EvaluationResult,
     SessionState,
     UploadedRecord,
-    UploadResult,
 )
 
 

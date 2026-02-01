@@ -40,16 +40,16 @@ class NotebookCaliberRenderer(CaliberRenderer):
         status = ''
         if annotation:
             score_icon = '✅' if annotation.score == 1 else '❌'
-            status = f"<p><strong>Current Annotation:</strong> {score_icon} Score: {annotation.score}</p>"
+            status = f'<p><strong>Current Annotation:</strong> {score_icon} Score: {annotation.score}</p>'
             if annotation.notes:
-                status += f"<p><strong>Notes:</strong> {annotation.notes}</p>"
+                status += f'<p><strong>Notes:</strong> {annotation.notes}</p>'
 
         html = f"""
         <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px;">
             <h4>Record: {record.id}</h4>
             <p><strong>Query:</strong> {record.query}</p>
             <p><strong>Actual Output:</strong> {record.actual_output}</p>
-            {f"<p><strong>Expected Output:</strong> {record.expected_output}</p>" if record.expected_output else ""}
+            {f'<p><strong>Expected Output:</strong> {record.expected_output}</p>' if record.expected_output else ''}
             {status}
         </div>
         """
@@ -86,7 +86,7 @@ class NotebookCaliberRenderer(CaliberRenderer):
             ['✅ Precision', f'{metrics.precision:.1%}'],
             ['📊 Recall', f'{metrics.recall:.1%}'],
             ['📈 F1 Score', f'{metrics.f1_score:.1%}'],
-            ['🤝 Cohen\'s Kappa', f'{metrics.cohen_kappa:.3f}'],
+            ["🤝 Cohen's Kappa", f'{metrics.cohen_kappa:.3f}'],
             ['🎚️ Specificity', f'{metrics.specificity:.1%}'],
         ]
         summary_df = pd.DataFrame(summary_data, columns=['Metric', 'Value'])
@@ -146,15 +146,15 @@ class NotebookCaliberRenderer(CaliberRenderer):
         display(HTML(html))
 
         # Summary text
-        print(f"\n📝 Summary: {analysis.summary}")
+        print(f'\n📝 Summary: {analysis.summary}')
 
         # Patterns
         if analysis.patterns:
             print('\n🔍 Discovered Patterns:')
             for i, pattern in enumerate(analysis.patterns, 1):
                 print(
-                    f"  {i}. [{pattern.pattern_type}] {pattern.description} "
-                    f"(Count: {pattern.count})"
+                    f'  {i}. [{pattern.pattern_type}] {pattern.description} '
+                    f'(Count: {pattern.count})'
                 )
 
         # Recommendations

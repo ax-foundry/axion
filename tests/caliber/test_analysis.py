@@ -151,8 +151,20 @@ class TestExtractMisalignedCases:
     def test_extract_no_misalignment(self):
         """Test with no misalignments."""
         results = [
-            {'record_id': 'r1', 'human_score': 1, 'llm_score': 1, 'query': 'Q', 'actual_output': 'A'},
-            {'record_id': 'r2', 'human_score': 0, 'llm_score': 0, 'query': 'Q', 'actual_output': 'A'},
+            {
+                'record_id': 'r1',
+                'human_score': 1,
+                'llm_score': 1,
+                'query': 'Q',
+                'actual_output': 'A',
+            },
+            {
+                'record_id': 'r2',
+                'human_score': 0,
+                'llm_score': 0,
+                'query': 'Q',
+                'actual_output': 'A',
+            },
         ]
 
         fp, fn = extract_misaligned_cases(results)
@@ -229,8 +241,20 @@ class TestMisalignmentAnalyzer:
         """Test analysis with no misalignments."""
         analyzer = MisalignmentAnalyzer(model_name='gpt-4o')
         results = [
-            {'record_id': 'r1', 'human_score': 1, 'llm_score': 1, 'query': 'Q', 'actual_output': 'A'},
-            {'record_id': 'r2', 'human_score': 0, 'llm_score': 0, 'query': 'Q', 'actual_output': 'A'},
+            {
+                'record_id': 'r1',
+                'human_score': 1,
+                'llm_score': 1,
+                'query': 'Q',
+                'actual_output': 'A',
+            },
+            {
+                'record_id': 'r2',
+                'human_score': 0,
+                'llm_score': 0,
+                'query': 'Q',
+                'actual_output': 'A',
+            },
         ]
 
         analysis = await analyzer.analyze(results, 'Test criteria')

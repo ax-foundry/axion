@@ -54,7 +54,9 @@ class AnnotationManager:
     @property
     def progress(self) -> float:
         """Progress as a fraction (0.0 to 1.0)."""
-        return self.completed_count / self.total_records if self.total_records > 0 else 0.0
+        return (
+            self.completed_count / self.total_records if self.total_records > 0 else 0.0
+        )
 
     def annotate(
         self,

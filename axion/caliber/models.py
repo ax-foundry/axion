@@ -12,7 +12,6 @@ from pydantic import Field
 
 from axion._core.schema import StrictBaseModel
 
-
 # =============================================================================
 # Step 1: Upload Models
 # =============================================================================
@@ -85,7 +84,9 @@ class AnnotationState(StrictBaseModel):
     @property
     def progress(self) -> float:
         """Progress as a fraction (0.0 to 1.0)."""
-        return self.completed_count / self.total_records if self.total_records > 0 else 0.0
+        return (
+            self.completed_count / self.total_records if self.total_records > 0 else 0.0
+        )
 
 
 # =============================================================================
@@ -130,8 +131,12 @@ class AlignmentMetrics(StrictBaseModel):
     specificity: float = Field(description='Specificity/true negative rate')
     true_positives: int = Field(description='Count of true positives')
     true_negatives: int = Field(description='Count of true negatives')
-    false_positives: int = Field(description='Count of false positives (LLM too lenient)')
-    false_negatives: int = Field(description='Count of false negatives (LLM too strict)')
+    false_positives: int = Field(
+        description='Count of false positives (LLM too lenient)'
+    )
+    false_negatives: int = Field(
+        description='Count of false negatives (LLM too strict)'
+    )
 
 
 class EvaluationResult(StrictBaseModel):
