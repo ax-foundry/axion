@@ -9,6 +9,8 @@ from axion.caliber.pattern_discovery import (
     ClusteringMethod,
     ClusteringOutput,
     DiscoveredPattern,
+    LabelInput,
+    LabelOutput,
     PatternCategory,
     PatternDiscovery,
     PatternDiscoveryResult,
@@ -243,3 +245,161 @@ class TestPatternDiscoveryEmptyInput:
         assert result.patterns == []
         assert set(result.uncategorized) == {'r1', 'r2'}
         assert result.metadata.get('error') == 'No items with notes to cluster'
+
+
+class TestLabelModels:
+    """Tests for LabelInput and LabelOutput Pydantic models."""
+
+    def test_label_input(self):
+        """Test LabelInput model."""
+        input_data = LabelInput(
+            examples=['Missing context in response', 'Lacks background info'],
+            keywords='missing, context, background, info',
+        )
+        assert len(input_data.examples) == 2
+        assert 'missing' in input_data.keywords
+
+    def test_label_output(self):
+        """Test LabelOutput model."""
+        output = LabelOutput(category_name='Missing Context')
+        assert output.category_name == 'Missing Context'
+
+    def test_label_output_alias_category(self):
+        """Test LabelOutput accepts 'category' alias."""
+        output = LabelOutput(category='Missing Context')
+        assert output.category_name == 'Missing Context'
+
+    def test_label_output_alias_name(self):
+        """Test LabelOutput accepts 'name' alias."""
+        output = LabelOutput(name='Missing Context')
+        assert output.category_name == 'Missing Context'
+
+    def test_label_output_alias_label(self):
+        """Test LabelOutput accepts 'label' alias."""
+        output = LabelOutput(label='Missing Context')
+        assert output.category_name == 'Missing Context'
+
+
+class TestBERTopicClustering:
+    """Tests for BERTopic clustering method."""
+
+    @pytest.mark.asyncio
+    async def test_bertopic_too_few_documents(self):
+        """Test BERTopic with too few documents returns early."""
+        discovery = PatternDiscovery()
+
+        # Only 3 items - below BERTOPIC_MIN_DOCUMENTS (5)
+        annotations = {
+            'r1': AnnotatedItem(record_id='r1', score=0, notes='Missing context'),
+            'r2': AnnotatedItem(record_id='r2', score=0, notes='Lacks detail'),
+            'r3': AnnotatedItem(record_id='r3', score=1, notes='Good response'),
+        }
+
+        items = discovery._normalize_annotations(annotations)
+        result = await discovery._cluster_with_bertopic(items)
+
+        assert result.patterns == []
+        assert set(result.uncategorized) == {'r1', 'r2', 'r3'}
+        assert result.method == ClusteringMethod.BERTOPIC
+        assert 'Too few documents' in result.metadata.get('error', '')
+
+    @pytest.mark.asyncio
+    async def test_bertopic_no_notes(self):
+        """Test BERTopic with no notes returns early."""
+        discovery = PatternDiscovery()
+
+        annotations = {
+            'r1': AnnotatedItem(record_id='r1', score=0, notes=None),
+            'r2': AnnotatedItem(record_id='r2', score=1, notes=None),
+        }
+
+        items = discovery._normalize_annotations(annotations)
+        result = await discovery._cluster_with_bertopic(items)
+
+        assert result.patterns == []
+        assert 'Too few documents' in result.metadata.get('error', '')
+
+    def test_bertopic_embedding_model_config(self):
+        """Test BERTopic embedding model can be configured."""
+        discovery = PatternDiscovery(bertopic_embedding_model='paraphrase-MiniLM-L6-v2')
+        assert discovery._bertopic_embedding_model == 'paraphrase-MiniLM-L6-v2'
+
+
+class TestHybridClustering:
+    """Tests for Hybrid clustering method."""
+
+    @pytest.mark.asyncio
+    async def test_hybrid_too_few_documents(self):
+        """Test Hybrid with too few documents returns early with correct method."""
+        discovery = PatternDiscovery(model_name='gpt-4o')
+
+        # Only 3 items - below BERTOPIC_MIN_DOCUMENTS
+        annotations = {
+            'r1': AnnotatedItem(record_id='r1', score=0, notes='Missing context'),
+            'r2': AnnotatedItem(record_id='r2', score=0, notes='Lacks detail'),
+            'r3': AnnotatedItem(record_id='r3', score=1, notes='Good response'),
+        }
+
+        items = discovery._normalize_annotations(annotations)
+        result = await discovery._cluster_hybrid(items)
+
+        # Should still return HYBRID method even though it fell back
+        assert result.method == ClusteringMethod.HYBRID
+        assert result.patterns == []
+
+    def test_label_handler_lazy_init(self):
+        """Test that label handler is lazily initialized."""
+        discovery = PatternDiscovery(model_name='gpt-4o')
+        assert discovery._label_handler is None
+        # Handler created on first access (not testing actual call to avoid API)
+
+
+class TestPatternDiscoveryMethodDispatch:
+    """Tests for method dispatch in discover()."""
+
+    @pytest.mark.asyncio
+    async def test_discover_dispatches_to_llm(self):
+        """Test discover() dispatches to LLM method."""
+        discovery = PatternDiscovery(model_name='gpt-4o')
+        annotations = {
+            'r1': AnnotatedItem(record_id='r1', score=0, notes=None),
+        }
+
+        # With no notes, LLM method returns early
+        result = await discovery.discover(annotations, method=ClusteringMethod.LLM)
+        assert result.method == ClusteringMethod.LLM
+
+    @pytest.mark.asyncio
+    async def test_discover_dispatches_to_bertopic(self):
+        """Test discover() dispatches to BERTopic method."""
+        discovery = PatternDiscovery()
+        annotations = {
+            'r1': AnnotatedItem(record_id='r1', score=0, notes='Note 1'),
+            'r2': AnnotatedItem(record_id='r2', score=0, notes='Note 2'),
+        }
+
+        # Too few docs, returns early
+        result = await discovery.discover(annotations, method=ClusteringMethod.BERTOPIC)
+        assert result.method == ClusteringMethod.BERTOPIC
+
+    @pytest.mark.asyncio
+    async def test_discover_dispatches_to_hybrid(self):
+        """Test discover() dispatches to Hybrid method."""
+        discovery = PatternDiscovery(model_name='gpt-4o')
+        annotations = {
+            'r1': AnnotatedItem(record_id='r1', score=0, notes='Note 1'),
+            'r2': AnnotatedItem(record_id='r2', score=0, notes='Note 2'),
+        }
+
+        # Too few docs, returns early but with HYBRID method
+        result = await discovery.discover(annotations, method=ClusteringMethod.HYBRID)
+        assert result.method == ClusteringMethod.HYBRID
+
+    @pytest.mark.asyncio
+    async def test_discover_invalid_method(self):
+        """Test discover() raises on invalid method."""
+        discovery = PatternDiscovery()
+        annotations = {'r1': AnnotatedItem(record_id='r1', score=0, notes='Note')}
+
+        with pytest.raises(ValueError, match='Unknown clustering method'):
+            await discovery.discover(annotations, method='invalid')

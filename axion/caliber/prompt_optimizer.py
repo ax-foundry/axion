@@ -1,9 +1,3 @@
-"""
-Prompt optimization for CaliberHQ workflow.
-
-Optimizes LLM-as-judge evaluation prompts based on misalignment analysis.
-"""
-
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Type, Union
 
@@ -16,11 +10,6 @@ from axion.caliber.analysis import MisalignedCase, extract_misaligned_cases
 from axion.llm_registry import LLMRegistry
 
 logger = get_logger(__name__)
-
-
-# =============================================================================
-# Pydantic Models for Prompt Optimization
-# =============================================================================
 
 
 class OptimizeInput(StrictBaseModel):
@@ -59,11 +48,6 @@ class OptimizeOutput(StrictBaseModel):
     expected_improvement: str = Field(
         description='Rationale for why these changes should improve alignment'
     )
-
-
-# =============================================================================
-# Data Classes for API Results
-# =============================================================================
 
 
 @dataclass

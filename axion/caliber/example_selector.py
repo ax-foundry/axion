@@ -1,9 +1,3 @@
-"""
-Example selection for CaliberHQ workflow.
-
-Selects few-shot examples for LLM-as-judge calibration using various strategies.
-"""
-
 import random
 from dataclasses import dataclass
 from enum import Enum

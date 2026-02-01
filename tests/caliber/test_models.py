@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from axion.caliber.models import (
+from axion.caliber.schema import (
     AlignmentMetrics,
     Annotation,
     AnnotationState,

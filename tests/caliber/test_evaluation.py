@@ -1,7 +1,7 @@
 """Tests for evaluation module."""
 
 from axion.caliber.evaluation import CaliberMetric, EvaluationRunner
-from axion.caliber.models import (
+from axion.caliber.schema import (
     AlignmentMetrics,
     Annotation,
     EvaluationConfig,

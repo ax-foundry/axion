@@ -1,9 +1,3 @@
-"""
-Misalignment analysis for CaliberHQ workflow.
-
-Analyzes patterns in disagreements between LLM judges and human annotators.
-"""
-
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Sequence, Type, Union
 
@@ -43,11 +37,6 @@ def _get_first_attr(obj: Any, attrs: Sequence[str], default: Any = None) -> Any:
         if hasattr(obj, a):
             return getattr(obj, a)
     return default
-
-
-# =============================================================================
-# Pydantic Models for Misalignment Analysis
-# =============================================================================
 
 
 class MisalignedCase(StrictBaseModel):
@@ -97,11 +86,6 @@ class MisalignmentOutput(StrictBaseModel):
     recommendations: List[str] = Field(
         description='3-4 specific recommendations to improve alignment'
     )
-
-
-# =============================================================================
-# Shared Extraction Function
-# =============================================================================
 
 
 def extract_misaligned_cases(
@@ -189,11 +173,6 @@ def extract_misaligned_cases(
                 false_negatives.append(case)
 
     return false_positives, false_negatives
-
-
-# =============================================================================
-# Data Classes for API Results
-# =============================================================================
 
 
 @dataclass

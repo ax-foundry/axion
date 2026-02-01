@@ -2,7 +2,7 @@
 
 import pytest
 
-from axion.caliber.models import SessionState
+from axion.caliber.schema import SessionState
 from axion.caliber.session import CalibrationSession
 
 

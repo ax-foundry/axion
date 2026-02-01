@@ -10,13 +10,13 @@ from typing import TYPE_CHECKING, Optional
 
 import pandas as pd
 
-from axion.caliber.models import (
+from axion.caliber.renderers.base import CaliberRenderer
+from axion.caliber.schema import (
     Annotation,
     AnnotationState,
     EvaluationResult,
     UploadedRecord,
 )
-from axion.caliber.renderers.base import CaliberRenderer
 
 if TYPE_CHECKING:
     from axion.caliber.analysis import MisalignmentAnalysis

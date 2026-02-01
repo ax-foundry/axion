@@ -1,29 +1,103 @@
 # CaliberHQ
 
-CaliberHQ is a tool for calibrating LLM-as-a-judge evaluators against a
-human-labeled baseline. Instead of writing criteria in the abstract, you
-work backward from real outputs so the evaluator learns what actually
-matters for your use case.
+CaliberHQ is a toolkit for calibrating **LLM-as-a-judge** evaluators against a
+**human-labeled baseline**. Instead of writing rubrics in the abstract, you work
+backward from real outputs so the evaluator learns what actually matters for your
+use case.
 
-## Core Philosophy: Calibrate, Don't Just Create
+## Quick start
 
-Aligning AI to human preferences is only half the battle. The other half is
-calibrating your criteria to the model's output distribution. Teams often
-write elaborate rubrics without looking at the data first, which produces
-criteria that are irrelevant or unrealistic. CaliberHQ is built to keep the
-data in the loop.
+```python
+from axion.caliber import CalibrationSession
 
-## Workflow
+session = CalibrationSession()
 
-1. **Prepare Data**: Start with a dataset of inputs and generated outputs.
-2. **Annotate**: Add a human judgment (pass/fail) to each item.
-3. **Configure & Execute**: Define the LLM-as-a-judge instructions and run.
-4. **Analyze**: Compare LLM scores to the human baseline to find gaps.
+# 1) Upload your data
+session.upload_records(
+    [
+        {"id": "r1", "query": "…", "actual_output": "…"},
+        {"id": "r2", "query": "…", "actual_output": "…"},
+    ]
+)
 
-## Using CaliberHQ in Python
+# 2) Add human annotations
+session.annotate("r1", score=1, notes="Good response")
+session.annotate("r2", score=0, notes="Factually incorrect")
 
-CaliberHQ is designed for programmatic workflows and Jupyter notebooks. It
-includes an interactive annotation flow and rich analysis outputs.
+# 3) Run LLM evaluation + alignment metrics
+result = await session.evaluate(
+    criteria="Score 1 if accurate and helpful, 0 otherwise",
+    model_name="gpt-4o",
+    llm_provider="openai",
+)
+
+print(f"Accuracy: {result.metrics.accuracy:.1%}")
+print(f"Cohen's Kappa: {result.metrics.cohen_kappa:.3f}")
+```
+
+## The 6-step workflow
+
+1. **Upload**: Load your evaluation data
+2. **Annotate**: Add human judgments (Accept=1, Reject=0) + optional notes
+3. **Evaluate**: Run the LLM judge and compute alignment metrics
+4. **Discover patterns**: Cluster annotation notes into themes (LLM / BERTopic / hybrid)
+5. **Analyze misalignments**: False positives / false negatives (judge vs human)
+6. **Optimize**: Produce improved evaluation criteria
+
+## Two usage patterns
+
+### Pattern 1: Session-based (recommended)
+
+Use `CalibrationSession` for state management and serialization. Good for scripts,
+web APIs, and notebooks.
+
+```python
+from axion.caliber import CalibrationSession
+
+session = CalibrationSession()
+session.upload_csv("data.csv")
+session.annotate("r1", score=1, notes="Good")
+result = await session.evaluate(criteria="…")
+```
+
+### Pattern 2: Direct components (advanced)
+
+Use individual components for fine-grained control.
+
+```python
+from axion.caliber import AnnotationManager, EvaluationRunner, UploadHandler
+
+upload = UploadHandler().from_csv("data.csv")
+manager = AnnotationManager(upload.records)
+manager.annotate("r1", score=1, notes="Good")
+
+# Run evaluation with your own config (see `EvaluationConfig`)
+runner = EvaluationRunner()
+result = await runner.run(upload.records, manager.get_annotations_dict())
+```
+
+## Key components (what to import)
+
+- **Core session**
+  - `CalibrationSession`
+- **Step components**
+  - `UploadHandler`, `AnnotationManager`, `EvaluationRunner`
+- **Analysis tools**
+  - `PatternDiscovery`, `MisalignmentAnalyzer`, `PromptOptimizer`, `ExampleSelector`
+- **Renderers**
+  - `ConsoleCaliberRenderer`, `NotebookCaliberRenderer`, `JsonCaliberRenderer`
+
+## Demo
+
+Run the demo script to see the full workflow in action:
+
+```bash
+# Basic demo (no API key needed)
+python examples/caliber_demo.py
+
+# Full end-to-end with LLM calls
+OPENAI_API_KEY=your-key python examples/caliber_demo.py --full
+```
 
 
 ```
@@ -196,7 +270,14 @@ includes an interactive annotation flow and rich analysis outputs.
                           LLM ≈ Human
 ```
 
-### Step 1: Create a Dataset
+### Notes on data shapes (for integrations)
+
+Internally, CaliberHQ uses `DatasetItem` (for the underlying data record) plus
+`MetricScore`-like fields (for judge outputs):
+
+- `id`, `query`, `actual_output` (DatasetItem-style)
+- `judgment` (human label)
+- `score`, `explanation`, `signals` (judge output)
 
 ```python
 from axion.dataset import Dataset, DatasetItem

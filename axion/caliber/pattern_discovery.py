@@ -1,9 +1,3 @@
-"""
-Pattern discovery for CaliberHQ workflow.
-
-Discovers patterns in evaluation annotations using LLM-based and/or topic modeling approaches.
-"""
-
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Type, Union

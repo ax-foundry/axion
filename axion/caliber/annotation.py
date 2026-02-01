@@ -1,13 +1,7 @@
-"""
-Annotation management for CaliberHQ workflow (Step 2).
-
-Manages human annotation state and provides navigation through records.
-"""
-
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from axion.caliber.models import Annotation, AnnotationState, UploadedRecord
+from axion.caliber.schema import Annotation, AnnotationState, UploadedRecord
 
 
 class AnnotationManager:

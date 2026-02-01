@@ -1,10 +1,3 @@
-"""
-CalibrationSession for CaliberHQ workflow.
-
-Central orchestrator that manages the 3-step workflow: Upload, Annotate, Evaluate.
-Optional for notebooks (use components directly), required for web UI (state persistence).
-"""
-
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
@@ -21,7 +14,14 @@ from axion.caliber.example_selector import (
     SelectionResult,
     SelectionStrategy,
 )
-from axion.caliber.models import (
+from axion.caliber.pattern_discovery import (
+    AnnotatedItem,
+    ClusteringMethod,
+    PatternDiscovery,
+    PatternDiscoveryResult,
+)
+from axion.caliber.prompt_optimizer import OptimizedPrompt, PromptOptimizer
+from axion.caliber.schema import (
     Annotation,
     AnnotationState,
     CalibrationSessionData,
@@ -31,13 +31,6 @@ from axion.caliber.models import (
     UploadedRecord,
     UploadResult,
 )
-from axion.caliber.pattern_discovery import (
-    AnnotatedItem,
-    ClusteringMethod,
-    PatternDiscovery,
-    PatternDiscoveryResult,
-)
-from axion.caliber.prompt_optimizer import OptimizedPrompt, PromptOptimizer
 from axion.caliber.upload import UploadHandler
 
 
@@ -113,10 +106,6 @@ class CalibrationSession:
         """Uploaded records."""
         return self._records
 
-    # =========================================================================
-    # Step 1: Upload
-    # =========================================================================
-
     def upload_csv(
         self,
         path: Union[str, Path],
@@ -172,10 +161,6 @@ class CalibrationSession:
         self._state = SessionState.ANNOTATE
         self._updated_at = datetime.now(timezone.utc)
         return result
-
-    # =========================================================================
-    # Step 2: Annotate
-    # =========================================================================
 
     def annotate(
         self,
@@ -251,10 +236,6 @@ class CalibrationSession:
         if self._annotation_manager is None:
             return False
         return self._annotation_manager.is_complete()
-
-    # =========================================================================
-    # Step 3: Evaluate
-    # =========================================================================
 
     async def evaluate(
         self,
@@ -336,10 +317,6 @@ class CalibrationSession:
     def get_evaluation_result(self) -> Optional[EvaluationResult]:
         """Get the evaluation result if available."""
         return self._evaluation_result
-
-    # =========================================================================
-    # Analysis (post-evaluation)
-    # =========================================================================
 
     async def analyze_misalignments(
         self,
@@ -523,10 +500,6 @@ class CalibrationSession:
             if record.id == record_id:
                 return getattr(record, field, None)
         return None
-
-    # =========================================================================
-    # Serialization
-    # =========================================================================
 
     def to_dict(self) -> Dict[str, Any]:
         """

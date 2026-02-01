@@ -3,7 +3,7 @@
 import pytest
 
 from axion.caliber.annotation import AnnotationManager
-from axion.caliber.models import UploadedRecord
+from axion.caliber.schema import UploadedRecord
 
 
 class TestAnnotationManager:

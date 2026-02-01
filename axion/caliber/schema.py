@@ -1,9 +1,3 @@
-"""
-Pydantic models for the CaliberHQ 3-step workflow.
-
-All models are JSON-serializable for both Python API and web UI consumption.
-"""
-
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
@@ -11,10 +5,6 @@ from typing import Any, Dict, List, Optional
 from pydantic import Field
 
 from axion._core.schema import StrictBaseModel
-
-# =============================================================================
-# Step 1: Upload Models
-# =============================================================================
 
 
 class UploadedRecord(StrictBaseModel):
@@ -50,11 +40,6 @@ class UploadResult(StrictBaseModel):
     )
 
 
-# =============================================================================
-# Step 2: Annotation Models
-# =============================================================================
-
-
 class Annotation(StrictBaseModel):
     """Human annotation for a single record."""
 
@@ -87,11 +72,6 @@ class AnnotationState(StrictBaseModel):
         return (
             self.completed_count / self.total_records if self.total_records > 0 else 0.0
         )
-
-
-# =============================================================================
-# Step 3: Evaluation Models
-# =============================================================================
 
 
 class EvaluationConfig(StrictBaseModel):
@@ -150,11 +130,6 @@ class EvaluationResult(StrictBaseModel):
     config: EvaluationConfig = Field(description='Evaluation configuration used')
 
 
-# =============================================================================
-# Session State Models
-# =============================================================================
-
-
 class SessionState(str, Enum):
     """Session workflow states."""
 
@@ -180,3 +155,4 @@ class CalibrationSessionData(StrictBaseModel):
     )
     created_at: datetime = Field(description='Session creation time')
     updated_at: datetime = Field(description='Last update time')
+

@@ -1,9 +1,3 @@
-"""
-Evaluation handling for CaliberHQ workflow (Step 3).
-
-Runs LLM-as-judge evaluation and computes alignment metrics.
-"""
-
 from typing import Any, Callable, Dict, List, Optional
 
 import numpy as np
@@ -16,7 +10,7 @@ from axion._core.metrics_utils import (
     precision_score,
     recall_score,
 )
-from axion.caliber.models import (
+from axion.caliber.schema import (
     AlignmentMetrics,
     Annotation,
     EvaluationConfig,

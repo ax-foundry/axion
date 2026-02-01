@@ -1,9 +1,3 @@
-"""
-Upload handling for CaliberHQ workflow (Step 1).
-
-Handles data loading and validation from various sources.
-"""
-
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Union
 
@@ -11,7 +5,7 @@ import pandas as pd
 
 from axion._core.logging import get_logger
 from axion._core.uuid import uuid7
-from axion.caliber.models import UploadedRecord, UploadResult
+from axion.caliber.schema import UploadedRecord, UploadResult
 
 logger = get_logger(__name__)
 
