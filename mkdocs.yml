@@ -51,6 +51,7 @@ nav:
       - PII Leakage (Heuristic): metric-registry/heuristic/pii_leakage_heuristic.md
       - Citation Presence: metric-registry/heuristic/citation_presence.md
       - Latency: metric-registry/heuristic/latency.md
+      - Length Constraint: metric-registry/heuristic/length_constraint.md
       - Retrieval Metrics: metric-registry/heuristic/retrieval_metrics.md
     - Conversational:
       - Overview: metric-registry/conversational/index.md
@@ -66,7 +67,7 @@ nav:
       - Metric Runner: deep-dives/runners/metric-runner.md
       - Evaluation Runner: deep-dives/runners/evaluation-runner.md
       - API Runner: deep-dives/runners/api-runner.md
-    - Align:
+    - Caliber:
       - Example Selector: deep-dives/align/example-selector.md
     - Synthetic:
       - Document QA Generation: deep-dives/synthetic/document-qa.md
@@ -79,7 +80,7 @@ nav:
       - Environment: deep-dives/internals/environment.md
       - Logging: deep-dives/internals/logging.md
   - Reference:
-    - Align: reference/align.md
+    - Caliber: reference/align.md
     - Dataset: reference/dataset.md
     - Schema: reference/schema.md
     - Metrics: reference/metrics.md
