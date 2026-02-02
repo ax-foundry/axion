@@ -4206,7 +4206,8 @@ dataset name, or custom flags for internal use.</p>
 )
           –
           <div class="doc-md-description">
-            <p>Whether to use field aliases in the output.</p>
+            <p>Whether to use field aliases in the output. When True,
+MetricScore fields use aliases (id -&gt; metric_id, metadata -&gt; metric_metadata).</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -4282,7 +4283,7 @@ dataset name, or custom flags for internal use.</p>
 
 
 <h3 id="axion.schema.EvaluationResult.to_normalized_dataframes" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">to_normalized_dataframes</span><span class="p">(</span><span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_run_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataset_column_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metrics_column_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rename_columns</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_computed_fields</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_metric_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NormalizedDataFrames</span></code>
+            <code class="highlight language-python"><span class="n">to_normalized_dataframes</span><span class="p">(</span><span class="n">by_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_run_metadata</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataset_column_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metrics_column_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rename_columns</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_computed_fields</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NormalizedDataFrames</span></code>
 
 <a href="#axion.schema.EvaluationResult.to_normalized_dataframes" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -4305,7 +4306,8 @@ with duplicated dataset fields, this method returns:
 )
           –
           <div class="doc-md-description">
-            <p>Whether to use field aliases in the output.</p>
+            <p>Whether to use field aliases in the output. When True,
+MetricScore fields use aliases (id -&gt; metric_id, metadata -&gt; metric_metadata).</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -4359,17 +4361,6 @@ with duplicated dataset fields, this method returns:
             <p>Whether to include computed fields from DatasetItem.</p>
           </div>
         </li>
-        <li class="doc-section-item field-body">
-            <b><code>include_metric_id</code></b>
-              (<code><span title="bool">bool</span></code>, default:
-                  <code>False</code>
-)
-          –
-          <div class="doc-md-description">
-            <p>Whether to include MetricScore's internal id as 'metric_id'.
-Defaults to False since MetricScore.id is usually None.</p>
-          </div>
-        </li>
     </ul>
 
 
@@ -4390,14 +4381,19 @@ Defaults to False since MetricScore.id is usually None.</p>
 <details class="note" open>
   <summary>Note</summary>
   <p>You can merge the two DataFrames to get a denormalized view similar to
-to_dataframe()::</p>
-<div class="codehilite"><pre><span></span><code>merged_df = metrics_df.merge(dataset_df, on=&#39;id&#39;, how=&#39;left&#39;)
+to_dataframe(). The FK column name depends on the by_alias parameter::</p>
+<div class="codehilite"><pre><span></span><code><span class="gh">#</span> With by_alias=False (default)
+merged_df = metrics_df.merge(dataset_df, on=&#39;id&#39;, how=&#39;left&#39;)
+
+<span class="gh">#</span> With by_alias=True
+merged_df = metrics_df.merge(dataset_df, on=&#39;dataset_id&#39;, how=&#39;left&#39;)
 </code></pre></div>
 
-<p>The merged result has the same columns as to_dataframe() (DatasetItem's
-metadata field uses alias 'data_metadata' to avoid conflict with MetricScore's
-metadata). The only difference is column order. Use how='left' to keep
-metric rows even when test_case was None.</p>
+<p>The merged result has the same columns as to_dataframe(). Both metadata
+fields use aliases to avoid conflicts: DatasetItem's metadata uses
+'dataset_metadata' and MetricScore's metadata uses 'metric_metadata'.
+The only difference is column order. Use how='left' to keep metric rows
+even when test_case was None.</p>
 <p>The normalized approach is better when you want to avoid data duplication
 or need to work with the data in a relational/normalized way.</p>
 </details>

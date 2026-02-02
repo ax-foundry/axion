@@ -6058,7 +6058,7 @@ and richer evaluation with tool usage tracking.</p>
 <p><span class="doc-section-title">Attributes:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" title="id: str = Field(default_factory=(lambda: str(uuid7())))
+          <b><code><a class="autorefs autorefs-internal" title="id: str = Field(default_factory=(lambda: str(uuid7())), alias='dataset_id')
 
   
       class-attribute
@@ -6217,7 +6217,7 @@ in a multi-turn conversation. Defaults to 'last'.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" title="metadata: Optional[str] = Field(None, alias='data_metadata')
+          <b><code><a class="autorefs autorefs-internal" title="metadata: Optional[str] = Field(None, alias='dataset_metadata')
 
   
       class-attribute
@@ -6292,7 +6292,7 @@ Trace ID for the original observation from tracing provider.</p>
 
 
 <h3 id="axion.dataset.DatasetItem.id" class="doc doc-heading">
-            <code class="highlight language-python"><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid7</span><span class="p">())))</span></code>
+            <code class="highlight language-python"><span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid7</span><span class="p">())),</span> <span class="n">alias</span><span class="o">=</span><span class="s1">&#39;dataset_id&#39;</span><span class="p">)</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
@@ -6566,7 +6566,7 @@ returns the stored expected output.</p>
 
 
 <h3 id="axion.dataset.DatasetItem.metadata" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="s1">&#39;data_metadata&#39;</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">alias</span><span class="o">=</span><span class="s1">&#39;dataset_metadata&#39;</span><span class="p">)</span></code>
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
