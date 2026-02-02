@@ -426,10 +426,11 @@ class EvaluationResult:
             else:
                 data = {}
 
-            # Ensure id is captured if available
-            if 'id' not in data and hasattr(test_case, 'id'):
+            # Ensure id is captured if available (use alias-aware key)
+            id_key = 'dataset_id' if by_alias else 'id'
+            if id_key not in data and hasattr(test_case, 'id'):
                 try:
-                    data['id'] = test_case.id
+                    data[id_key] = test_case.id
                 except Exception:
                     pass
 
@@ -452,10 +453,8 @@ class EvaluationResult:
                 if not by_alias:
                     score_data.pop('id', None)
 
-                # Always use DatasetItem's id as the 'id' column
-                test_case_id = test_case_data.get('id')
+                # Merge data - DatasetItem's id is already in test_case_data with the correct key
                 row_data = {**test_case_data, **score_data, **run_metadata}
-                row_data['id'] = test_case_id
 
                 all_rows.append(row_data)
 
@@ -481,8 +480,9 @@ class EvaluationResult:
             )
             df['evaluation_metadata'] = [self.metadata] * len(df)
 
-        if id_as_index and 'id' in df.columns:
-            df = df.set_index('id')
+        id_col = 'dataset_id' if by_alias else 'id'
+        if id_as_index and id_col in df.columns:
+            df = df.set_index(id_col)
 
         return df
 
@@ -577,10 +577,11 @@ class EvaluationResult:
             else:
                 data = {}
 
-            # Ensure id is captured if available
-            if 'id' not in data and hasattr(test_case, 'id'):
+            # Ensure id is captured if available (use alias-aware key)
+            id_key = 'dataset_id' if by_alias else 'id'
+            if id_key not in data and hasattr(test_case, 'id'):
                 try:
-                    data['id'] = test_case.id
+                    data[id_key] = test_case.id
                 except Exception:
                     pass
 
@@ -605,9 +606,10 @@ class EvaluationResult:
         dataset_items_map: Dict[str, Dict[str, Any]] = {}
         metric_rows: List[Dict[str, Any]] = []
 
+        id_key = 'dataset_id' if by_alias else 'id'
         for result in self.results:
             test_case_data = _extract_test_case_data(result.test_case)
-            test_case_id = test_case_data.get('id') if test_case_data else None
+            test_case_id = test_case_data.get(id_key) if test_case_data else None
 
             # Add to dataset items map (deduplicate by id)
             if test_case_id and test_case_id not in dataset_items_map:

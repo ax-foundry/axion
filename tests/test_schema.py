@@ -59,7 +59,7 @@ def test_evaluation_result_to_dataframe():
     df = eval_result.to_dataframe(id_as_index=True, rename_columns=False)
     assert isinstance(df, pd.DataFrame)
     assert not df.empty
-    assert df.index.name == 'id'
+    assert df.index.name == 'dataset_id'  # by_alias=True (default) uses dataset_id
     assert 'score' in df.columns
 
 

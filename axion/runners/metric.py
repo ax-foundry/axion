@@ -75,10 +75,9 @@ class BaseMetricRunner(ABC):
             version='1.0.0',
         )
 
-    def _create_error_score(self, input_id: str, error: Exception) -> MetricScore:
+    def _create_error_score(self, error: Exception) -> MetricScore:
         """Creates a fallback MetricScore in case of an execution error."""
         return MetricScore(
-            id=input_id,
             name=self.metric_name,
             score=np.nan,
             explanation=f'Error executing metric: {str(error)}',
@@ -572,6 +571,7 @@ class MetricRunner(RunnerMixin):
 
         results_map = defaultdict(list)
         tasks = []
+        task_item_ids = []  # Track which item each task belongs to
 
         for item in items:
             item_specific_cache = (
@@ -596,14 +596,15 @@ class MetricRunner(RunnerMixin):
                         ignore_errors=self.error_config.ignore_errors,
                     )
                 )
+                task_item_ids.append(item.id)  # Track the item id for this task
 
         all_results = await gather_with_progress(
             tasks, '📊 Evaluating metrics', show_progress
         )
 
-        for result in all_results:
+        for item_id, result in zip(task_item_ids, all_results):
             if isinstance(result, MetricScore):
-                results_map[result.id].append(result)
+                results_map[item_id].append(result)
             elif isinstance(result, Exception):
                 logger.error(f'Metric execution failed: {result}', exc_info=False)
 
@@ -732,7 +733,6 @@ class AxionRunner(BaseMetricRunner):
                 model_name, llm_provider = extract_model_info(self.metric)
 
                 return MetricScore(
-                    id=input_data.id,
                     name=self.metric_name,
                     score=score,
                     threshold=self.threshold
@@ -751,7 +751,7 @@ class AxionRunner(BaseMetricRunner):
             except Exception as e:
                 logger.error(f'AXION execution failed for {self.metric_name}: {e}')
                 span.set_attribute('error', str(e))
-                return self._create_error_score(input_data.id, e)
+                return self._create_error_score(e)
 
 
 @MetricRunnerFactory.register('ragas')
@@ -853,7 +853,6 @@ class RagasRunner(BaseMetricRunner):
                 model_name, llm_provider = extract_model_info(self.metric)
 
                 return MetricScore(
-                    id=input_data.id,
                     name=self.metric_name,
                     score=score,
                     threshold=self.threshold,
@@ -866,7 +865,7 @@ class RagasRunner(BaseMetricRunner):
             except Exception as e:
                 logger.error(f'Ragas execution failed for {self.metric_name}: {e}')
                 span.set_attribute('error', str(e))
-                return self._create_error_score(input_data.id, e)
+                return self._create_error_score(e)
 
 
 @MetricRunnerFactory.register('deepeval')
@@ -977,7 +976,6 @@ class DeepEvalRunner(BaseMetricRunner):
                 model_name, llm_provider = extract_model_info(self.metric)
 
                 return MetricScore(
-                    id=input_data.id,
                     name=self.metric_name,
                     score=score,
                     explanation=getattr(self.metric, 'reason', None),
@@ -992,4 +990,4 @@ class DeepEvalRunner(BaseMetricRunner):
             except Exception as e:
                 logger.error(f'DeepEval execution failed for {self.metric_name}: {e}')
                 span.set_attribute('error', str(e))
-                return self._create_error_score(input_data.id, e)
+                return self._create_error_score(e)
