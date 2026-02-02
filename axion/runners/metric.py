@@ -22,7 +22,7 @@ from axion.metrics.signal_extractor import SignalExtractor
 from axion.runners.cost import extract_cost
 from axion.runners.mixin import RunnerMixin
 from axion.runners.summary import BaseSummary, MetricSummary
-from axion.runners.utils import input_to_dataset
+from axion.runners.utils import extract_model_info, input_to_dataset
 from axion.schema import ErrorConfig, MetricScore, TestResult
 from axion.validation import EvaluationValidation
 
@@ -431,20 +431,11 @@ class MetricRunner(RunnerMixin):
                 # runtime trace/span (e.g., publish_as_experiment(score_on_runtime_traces=True)).
                 try:
                     result.metadata = result.metadata or {}
-
-                    model_name = getattr(executor.metric, 'model_name', None)
-                    if model_name and '/' in model_name:
-                        model_name = model_name.split('/')[-1]
-
                     result.metadata.update(
                         {
                             'trace_id': getattr(metric_tracer, 'trace_id', None),
                             'observation_id': getattr(span, 'span_id', None),
                             'metric_name': executor.metric_name,
-                            'model_name': model_name,
-                            'llm_provider': getattr(
-                                executor.metric, 'llm_provider', None
-                            ),
                         }
                     )
                 except Exception:
@@ -734,9 +725,11 @@ class AxionRunner(BaseMetricRunner):
                     }
                 )
 
-                # Build metadata (keep metric_category in metadata for backward compat)
+                # Build metadata from result
                 result_metadata = getattr(result, 'metadata', None) or {}
-                result_metadata['metric_category'] = metric_category.value
+
+                # Extract model info
+                model_name, llm_provider = extract_model_info(self.metric)
 
                 return MetricScore(
                     id=input_data.id,
@@ -751,6 +744,8 @@ class AxionRunner(BaseMetricRunner):
                     metadata=result_metadata,
                     source=self.source,
                     cost_estimate=getattr(self.metric, 'cost_estimate', 0),
+                    model_name=model_name,
+                    llm_provider=llm_provider,
                     metric_category=metric_category.value,
                 )
             except Exception as e:
@@ -854,6 +849,9 @@ class RagasRunner(BaseMetricRunner):
                     }
                 )
 
+                # Extract model info
+                model_name, llm_provider = extract_model_info(self.metric)
+
                 return MetricScore(
                     id=input_data.id,
                     name=self.metric_name,
@@ -862,6 +860,8 @@ class RagasRunner(BaseMetricRunner):
                     passed=self._has_passed(score),
                     source=self.source,
                     cost_estimate=cost,
+                    model_name=model_name,
+                    llm_provider=llm_provider,
                 )
             except Exception as e:
                 logger.error(f'Ragas execution failed for {self.metric_name}: {e}')
@@ -973,6 +973,9 @@ class DeepEvalRunner(BaseMetricRunner):
                     }
                 )
 
+                # Extract model info
+                model_name, llm_provider = extract_model_info(self.metric)
+
                 return MetricScore(
                     id=input_data.id,
                     name=self.metric_name,
@@ -982,6 +985,8 @@ class DeepEvalRunner(BaseMetricRunner):
                     passed=self._has_passed(score),
                     source=self.source,
                     cost_estimate=cost,
+                    model_name=model_name,
+                    llm_provider=llm_provider,
                 )
 
             except Exception as e:

@@ -92,7 +92,7 @@ class DatasetItem(RichDatasetBaseModel):
             A list of custom tags to apply to all tool calls in the conversation.
     """
 
-    id: str = Field(default_factory=lambda: str(uuid7()))
+    id: str = Field(default_factory=lambda: str(uuid7()), alias='dataset_id')
 
     # --- Internal Fields ---
     multi_turn_conversation: Optional[MultiTurnConversation] = Field(
@@ -119,7 +119,7 @@ class DatasetItem(RichDatasetBaseModel):
     # --- Standard fields ---
     acceptance_criteria: Optional[List[str]] = None
     additional_input: Dict[str, Any] = Field(default_factory=dict)
-    metadata: Optional[str] = Field(None, alias='data_metadata')
+    metadata: Optional[str] = Field(None, alias='dataset_metadata')
     user_tags: List[str] = Field(
         default_factory=list,
         description='A list of custom tags to apply to all tool calls in the conversation.',
@@ -830,7 +830,7 @@ class Dataset(RichSerializer):
                     ]
                 )
                 # Also include the alias for metadata field
-                valid_fields.add('data_metadata')
+                valid_fields.add('dataset_metadata')
                 filtered_item = {k: v for k, v in item.items() if k in valid_fields}
                 item_obj = DatasetItem(**filtered_item)
             else:

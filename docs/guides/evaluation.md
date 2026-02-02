@@ -112,7 +112,7 @@ dataset_df, metrics_df = results.to_normalized_dataframes()
 dataset_df.to_sql('dataset_items', engine, if_exists='append', index=False)
 metrics_df.to_sql('metric_results', engine, if_exists='append', index=False)
 
-# The 'id' column in metrics_df is a foreign key to dataset_df['id']
+# The 'dataset_id' column in metrics_df is a foreign key to dataset_df['dataset_id']
 # This enables efficient joins and prevents duplicating dataset fields
 ```
 
@@ -126,17 +126,25 @@ metrics_df.to_sql('metric_results', engine, if_exists='append', index=False)
 **Merging back to denormalized view:**
 
 ```python
-# If you need the denormalized view later
-merged_df = metrics_df.merge(dataset_df, on='id', how='left')
+# If you need the denormalized view later (by_alias=True is the default)
+merged_df = metrics_df.merge(dataset_df, on='dataset_id', how='left')
 # This produces the same columns as to_dataframe(), just different column order
 ```
 
-**Optional: Include MetricScore's internal ID**
+**Column naming with `by_alias`:**
 
 ```python
-# MetricScore has its own 'id' field (usually None unless explicitly set)
-# Include it as 'metric_id' if needed:
-dataset_df, metrics_df = results.to_normalized_dataframes(include_metric_id=True)
+# by_alias=True (default): Uses descriptive aliases to avoid conflicts
+# - dataset_id: DatasetItem's unique identifier
+# - dataset_metadata: DatasetItem's metadata
+# - metric_id: MetricScore's unique identifier
+# - metric_metadata: MetricScore's metadata
+dataset_df, metrics_df = results.to_normalized_dataframes(by_alias=True)
+
+# by_alias=False: Uses original field names
+# - id: Used for both DatasetItem FK (MetricScore's id is removed to avoid conflict)
+dataset_df, metrics_df = results.to_normalized_dataframes(by_alias=False)
+merged_df = metrics_df.merge(dataset_df, on='id', how='left')
 ```
 
 ### Summary Classes

@@ -268,17 +268,19 @@ def test_validation_failure_raises():
         metric._validate_required_metric_fields(item)
 
 
-def test_non_llm_metric_uses_mock_llm():
-    """Tests that a metric with default instructions gets a MockLLM."""
+def test_metric_gets_default_llm():
+    """Tests that a metric without explicit LLM gets the default from registry."""
 
-    class NonLLMMetric(BaseMetric):
-        # Does not override self.instruction
+    class SimpleMetric(BaseMetric):
         pass
 
-    metric = NonLLMMetric()
-    from axion.llm_registry import MockLLM
+    metric = SimpleMetric()
+    from axion.llm_registry import LiteLLMWrapper
 
-    assert isinstance(metric.llm, MockLLM)
+    # Should get a real LLM from registry
+    assert isinstance(metric.llm, LiteLLMWrapper)
+    assert metric.model_name is not None
+    assert metric.llm_provider is not None
 
 
 def test_embedding_model_skipped_if_not_required():

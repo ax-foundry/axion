@@ -29,6 +29,8 @@ from axion._core.schema import (
     ToolCall,
     ToolMessage,
 )
+from axion._core.types import FieldNames
+from axion._core.uuid import uuid7
 from axion.dataset import DatasetItem
 
 __all__ = [
@@ -80,8 +82,9 @@ class MetricScore(RichBaseModel):
     and any metadata useful for debugging or reporting.
     """
 
-    id: Optional[str] = Field(
-        default=None,
+    id: str = Field(
+        default_factory=lambda: str(uuid7()),
+        alias='metric_id',
         description='Unique identifier for this metric evaluation run or record.',
     )
 
@@ -116,6 +119,7 @@ class MetricScore(RichBaseModel):
 
     metadata: Optional[Dict[str, Any]] = Field(
         default={},
+        alias='metric_metadata',
         description='Optional structured metadata (e.g., token usage, evaluator version, raw model output).',
     )
 
@@ -132,6 +136,14 @@ class MetricScore(RichBaseModel):
 
     cost_estimate: Optional[float] = Field(
         default=None, description='Cost estimate of executing the metric.'
+    )
+
+    model_name: Optional[str] = Field(
+        default=None, description='Name of the LLM model used for evaluation.'
+    )
+
+    llm_provider: Optional[str] = Field(
+        default=None, description='The LLM provider used for evaluation.'
     )
 
     metric_category: Optional[str] = Field(
@@ -298,6 +310,7 @@ class EvaluationResult:
     ]
 
     DEFAULT_DATASET_COLUMN_ORDER: ClassVar[List[str]] = [
+        'dataset_id',
         'id',
         'query',
         'expected_output',
@@ -314,7 +327,7 @@ class EvaluationResult:
         'trace',
         'trace_id',
         'observation_id',
-        'data_metadata',
+        'dataset_metadata',
         'user_tags',
         'tools_called',
         'expected_tools',
@@ -334,6 +347,8 @@ class EvaluationResult:
     DEFAULT_METRICS_COLUMN_ORDER: ClassVar[List[str]] = [
         'run_id',
         'evaluation_name',
+        'dataset_id',
+        'metric_id',
         'id',
         'metric_name',
         'metric_score',
@@ -368,7 +383,8 @@ class EvaluationResult:
         Flattens the entire evaluation result into a single pandas DataFrame.
 
         Args:
-            by_alias (bool): Whether to use field aliases in the output.
+            by_alias (bool): Whether to use field aliases in the output. When True,
+                MetricScore fields use aliases (id -> metric_id, metadata -> metric_metadata).
             id_as_index (bool): If True, sets the test_case `id` as the DataFrame index.
             include_test_case (bool): Whether to include test_case fields in the output.
             include_run_metadata (bool): Whether to include run-level metadata.
@@ -416,6 +432,12 @@ class EvaluationResult:
                     data['id'] = test_case.id
                 except Exception:
                     pass
+
+            # Remove internal fields that computed fields derive from (avoid redundancy)
+            internal_fields = FieldNames.get_aliased_model_field_keys()
+            for f in internal_fields:
+                data.pop(f, None)
+
             return data
 
         all_rows = []
@@ -425,16 +447,14 @@ class EvaluationResult:
             for score_row in result.score_results:
                 score_data = score_row.model_dump(by_alias=by_alias)
 
-                # Flatten model info from metadata to top-level columns
-                if score_data.get('metadata'):
-                    for key in ['model_name', 'llm_provider']:
-                        if key in score_data['metadata']:
-                            score_data[key] = score_data['metadata'][key]
+                # When by_alias=False, remove MetricScore's 'id' to avoid conflict with DatasetItem's id
+                # When by_alias=True, MetricScore's id is aliased as 'metric_id' so no conflict
+                if not by_alias:
+                    score_data.pop('id', None)
 
-                # Always use DatasetItem's id, not MetricScore's id
+                # Always use DatasetItem's id as the 'id' column
                 test_case_id = test_case_data.get('id')
                 row_data = {**test_case_data, **score_data, **run_metadata}
-                # Remove MetricScore's id (usually None) and use DatasetItem's id
                 row_data['id'] = test_case_id
 
                 all_rows.append(row_data)
@@ -474,7 +494,6 @@ class EvaluationResult:
         metrics_column_order: Optional[List[str]] = None,
         rename_columns: bool = True,
         include_computed_fields: bool = True,
-        include_metric_id: bool = False,
     ) -> NormalizedDataFrames:
         """
         Returns two normalized DataFrames following data engineering best practices.
@@ -485,15 +504,14 @@ class EvaluationResult:
         2. Metric Results Table: One row per MetricScore, with FK to dataset item
 
         Args:
-            by_alias (bool): Whether to use field aliases in the output.
+            by_alias (bool): Whether to use field aliases in the output. When True,
+                MetricScore fields use aliases (id -> metric_id, metadata -> metric_metadata).
             include_run_metadata (bool): Whether to include run-level metadata in metrics table.
             dataset_column_order (list): Output column ordering for dataset items table.
             metrics_column_order (list): Output column ordering for metric results table.
             rename_columns (bool): Rename columns to match model_arena format
                 (name -> metric_name, score -> metric_score, type -> metric_type).
             include_computed_fields (bool): Whether to include computed fields from DatasetItem.
-            include_metric_id (bool): Whether to include MetricScore's internal id as 'metric_id'.
-                Defaults to False since MetricScore.id is usually None.
 
         Returns:
             NormalizedDataFrames: A named tuple containing:
@@ -502,14 +520,19 @@ class EvaluationResult:
 
         Note:
             You can merge the two DataFrames to get a denormalized view similar to
-            to_dataframe()::
+            to_dataframe(). The FK column name depends on the by_alias parameter::
 
+                # With by_alias=False (default)
                 merged_df = metrics_df.merge(dataset_df, on='id', how='left')
 
-            The merged result has the same columns as to_dataframe() (DatasetItem's
-            metadata field uses alias 'data_metadata' to avoid conflict with MetricScore's
-            metadata). The only difference is column order. Use how='left' to keep
-            metric rows even when test_case was None.
+                # With by_alias=True
+                merged_df = metrics_df.merge(dataset_df, on='dataset_id', how='left')
+
+            The merged result has the same columns as to_dataframe(). Both metadata
+            fields use aliases to avoid conflicts: DatasetItem's metadata uses
+            'dataset_metadata' and MetricScore's metadata uses 'metric_metadata'.
+            The only difference is column order. Use how='left' to keep metric rows
+            even when test_case was None.
 
             The normalized approach is better when you want to avoid data duplication
             or need to work with the data in a relational/normalized way.
@@ -561,18 +584,20 @@ class EvaluationResult:
                 except Exception:
                     pass
 
-            # Remove computed fields if not requested
-            if not include_computed_fields:
-                computed_fields = {
-                    'query',
-                    'expected_output',
-                    'conversation',
-                    'conversation_stats',
-                    'agent_trajectory',
-                    'has_errors',
-                }
-                for field in computed_fields:
-                    data.pop(field, None)
+            # Handle computed fields and their internal counterparts
+            if include_computed_fields:
+                # Remove internal fields that computed fields derive from (avoid redundancy)
+                internal_fields = FieldNames.get_aliased_model_field_keys()
+                for f in internal_fields:
+                    data.pop(f, None)
+            else:
+                # Remove computed fields, keep internal fields
+                computed_fields = (
+                    FieldNames.get_computed_convenience_field_keys()
+                    | FieldNames.get_computed_field_keys()
+                )
+                for f in computed_fields:
+                    data.pop(f, None)
 
             return data
 
@@ -592,25 +617,20 @@ class EvaluationResult:
             for score_row in result.score_results:
                 score_data = score_row.model_dump(by_alias=by_alias)
 
-                # Handle MetricScore's internal id
-                metric_score_id = score_data.pop('id', None)
-                if include_metric_id:
-                    score_data['metric_id'] = metric_score_id
+                # When by_alias=False, remove MetricScore's 'id' to avoid conflict with DatasetItem's id
+                # When by_alias=True, MetricScore's id is aliased as 'metric_id' so no conflict
+                if not by_alias:
+                    score_data.pop('id', None)
 
-                # Always use DatasetItem's id as the 'id' column (FK)
-                score_data['id'] = test_case_id
+                # Use DatasetItem's id as the FK column (named based on by_alias)
+                fk_column = 'dataset_id' if by_alias else 'id'
+                score_data[fk_column] = test_case_id
 
                 # Add run metadata
                 score_data.update(run_metadata)
 
                 # Add timestamp from run
                 score_data['timestamp'] = self.timestamp
-
-                # Flatten model info from metadata to top-level columns
-                if score_data.get('metadata'):
-                    for key in ['model_name', 'llm_provider']:
-                        if key in score_data['metadata']:
-                            score_data[key] = score_data['metadata'][key]
 
                 # Add evaluation metadata
                 score_data['evaluation_metadata'] = self.metadata

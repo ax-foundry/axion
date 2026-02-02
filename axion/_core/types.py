@@ -225,6 +225,20 @@ class FieldNames:
             'has_errors',
         }
 
+    @classmethod
+    def get_computed_convenience_field_keys(cls) -> Set[str]:
+        """
+        Returns convenience fields that are exposed as computed properties on `DatasetItem`.
+
+        These are derived from internal storage fields (e.g. `single_turn_query`,
+        `multi_turn_conversation`) but are commonly used as the public-facing API.
+
+        This is intentionally separate from `get_computed_field_keys()` because these
+        fields are sometimes desirable to keep (e.g. for reporting) and sometimes
+        desirable to drop (e.g. when you want only the internal/raw storage fields).
+        """
+        return {cls.QUERY, cls.EXPECTED_OUTPUT, cls.CONVERSATION}
+
 
 __all__ = [
     'ComponentType',

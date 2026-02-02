@@ -154,31 +154,22 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
 
         # TODO – Need to revisit this logic.
 
-        # Track if this is a non-LLM metric (heuristic) with no explicit LLM params
-        is_non_llm_metric = False
+        # Check if this is a heuristic metric (doesn't use LLM)
+        is_heuristic = 'heuristic' in getattr(getattr(self, 'config', None), 'tags', [])
 
-        # Priority: explicit llm > explicit model_name > default instruction check > registry default
+        # Priority: explicit llm > registry default
         if llm is not None:
-            # Explicit LLM passed - always use it
             self.llm = llm
-        elif model_name is not None or llm_provider is not None:
-            # Model/provider explicitly specified - get from registry
-            registry = LLMRegistry(llm_provider)
-            self.llm = registry.get_llm(model_name)
-        elif self.instruction == self._default_instructions:
-            # No LLM info passed and this is a composite/non-LLM metric - use MockLLM
-            logger.debug(
-                'Non-LLM-based metric detected. Initializing MockLLM instance.'
-            )
+        elif is_heuristic:
+            # Heuristic metrics don't need an LLM
             self.llm = MockLLM()
-            is_non_llm_metric = True
         else:
-            # No LLM info passed but this metric needs an LLM - get default from registry
+            # Get LLM from registry (uses defaults if model_name/llm_provider are None)
             registry = LLMRegistry(llm_provider)
             self.llm = registry.get_llm(model_name)
 
-        # For non-LLM metrics (heuristics), set model info to None
-        if is_non_llm_metric:
+        # For heuristic metrics, set model info to None
+        if is_heuristic and llm is None:
             self.model_name = None
             self.llm_provider = None
         else:
@@ -189,7 +180,6 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
                 or settings.llm_model_name
             )
             # Resolve llm_provider: passed value > LLM attributes > settings default
-            # LiteLLMWrapper uses _provider or metadata.provider, not llm_provider
             self.llm_provider = (
                 llm_provider
                 or getattr(self.llm, '_provider', None)
