@@ -277,6 +277,26 @@ class MetricSummary(BaseSummary):
 
         return insights
 
+    def _calculate_analysis_insights(self, analysis_metrics: Dict) -> Dict[str, Any]:
+        """Calculate insights for analysis metrics (no numeric scores)."""
+        insights = {}
+
+        for name, data in analysis_metrics.items():
+            if data['total_count'] == 0:
+                continue
+
+            insights[name] = {
+                'total_count': data['total_count'],
+                'successful_count': data['successful_count'],
+                'success_rate': (
+                    data['successful_count'] / data['total_count']
+                    if data['total_count'] > 0
+                    else 0
+                ),
+            }
+
+        return insights
+
     def _is_successful_metric(self, score_result) -> bool:
         """
         Check if a metric execution was successful.
@@ -464,6 +484,34 @@ class MetricSummary(BaseSummary):
 
             print()
 
+    def _print_analysis_metrics(self, insights: Dict):
+        """Print analysis metrics section (metrics without numeric scores)."""
+        if not insights:
+            return
+
+        print(
+            f'{self.COLORS["header"]}{self.COLORS["bold"]}🔍 ANALYSIS METRICS{self.COLORS["reset"]}'
+        )
+        print(f'{self.COLORS["dim"]}{"─" * 50}{self.COLORS["reset"]}\n')
+
+        for name, insight in insights.items():
+            name = normalize_metric_name(name)
+            success_rate = insight['success_rate']
+            success_color = self._get_performance_color(success_rate)
+
+            print(
+                f'{self.COLORS["accent"]}{self.COLORS["bold"]}▶ {name}{self.COLORS["reset"]}'
+            )
+            print(
+                f'  🔧 Execution Success: {success_color}'
+                + f'{insight["successful_count"]}/{insight["total_count"]} ({success_rate:.1%}){self.COLORS["reset"]} '
+                + 'ran successfully'
+            )
+            print(
+                f'  📝 Category: {self.COLORS["dim"]}Analysis (qualitative insights, no numeric score){self.COLORS["reset"]}'
+            )
+            print()
+
     def execute(
         self,
         results: List['TestResult'],
@@ -497,8 +545,26 @@ class MetricSummary(BaseSummary):
             }
         )
 
+        # Track analysis metrics separately
+        analysis_metrics: Dict[str, Dict[str, Any]] = defaultdict(
+            lambda: {
+                'total_count': 0,
+                'successful_count': 0,
+            }
+        )
+
         for result in results:
             for score in result.score_results:
+                metric_category = getattr(score, 'metric_category', 'score')
+
+                # Handle analysis metrics separately
+                if metric_category == 'analysis':
+                    analysis_metrics[score.name]['total_count'] += 1
+                    # Analysis metrics are successful if they ran (have reasoning)
+                    if hasattr(score, 'reasoning') and score.reasoning:
+                        analysis_metrics[score.name]['successful_count'] += 1
+                    continue
+
                 metric_stats[score.name]['total_count'] += 1
 
                 if self._is_valid_score(score.score):
@@ -509,10 +575,12 @@ class MetricSummary(BaseSummary):
 
         # Calculate insights
         insights = self._calculate_metric_insights(metric_stats)
+        analysis_insights = self._calculate_analysis_insights(analysis_metrics)
 
         # Display sections
         self._print_header(overall_stats, total_time)
         self._print_metric_details(insights)
+        self._print_analysis_metrics(analysis_insights)
 
         # Footer
         print(f'\n{self.COLORS["dim"]}{"─" * 60}{self.COLORS["reset"]}')
