@@ -153,7 +153,7 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         """
 
         # TODO – Need to revisit this logic.
-
+        # This is a hack to support heuristic metrics.
         # Check if this is a heuristic metric (doesn't use LLM)
         is_heuristic = 'heuristic' in getattr(getattr(self, 'config', None), 'tags', [])
 
