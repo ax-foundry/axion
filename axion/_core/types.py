@@ -1,7 +1,3 @@
-"""
-Shared types, enums, and constants used across the axion package.
-"""
-
 from typing import Dict, List, Set
 
 from axion._core.schema import RichEnum
@@ -224,6 +220,13 @@ class FieldNames:
             'agent_trajectory',
             'has_errors',
         }
+
+    @classmethod
+    def get_computed_convenience_field_keys(cls) -> Set[str]:
+        """
+        Returns convenience fields that are exposed as computed properties on `DatasetItem`.
+        """
+        return {cls.QUERY, cls.EXPECTED_OUTPUT, cls.CONVERSATION}
 
 
 __all__ = [

@@ -590,10 +590,10 @@ class TestBaseMetricRunner:
         runner = MockTestMetricRunner(mock_metric)
         error = RuntimeError('Test error')
 
-        error_score = runner._create_error_score('test_id', error)
+        error_score = runner._create_error_score(error)
 
         assert isinstance(error_score, MetricScore)
-        assert error_score.id == 'test_id'
+        assert error_score.id is not None  # MetricScore has its own auto-generated UUID
         assert error_score.name == runner.metric_name
         assert np.isnan(error_score.score)
         assert 'Error executing metric: Test error' in error_score.explanation
@@ -634,7 +634,7 @@ class TestAxionRunner:
         result = await runner.execute(input_data)
 
         assert isinstance(result, MetricScore)
-        assert result.id == 'test_id'
+        assert result.id is not None  # MetricScore has its own auto-generated UUID
         assert result.name == 'MockAXIONMetric'
         assert result.score == 0.85
         assert result.threshold == 0.7
@@ -654,7 +654,7 @@ class TestAxionRunner:
         result = await runner.execute(input_data)
 
         assert isinstance(result, MetricScore)
-        assert result.id == 'test_id'
+        assert result.id is not None  # MetricScore has its own auto-generated UUID
         assert np.isnan(result.score)
         assert 'Error executing metric' in result.explanation
 
@@ -672,7 +672,7 @@ class TestAxionRunner:
         result = await runner.execute(input_dict)
 
         assert isinstance(result, MetricScore)
-        assert result.id == 'test_id'
+        assert result.id is not None  # MetricScore has its own auto-generated UUID
         assert result.score == 0.75
 
 
@@ -702,7 +702,7 @@ class TestRagasRunner:
             result = await runner.execute(input_data)
 
             assert isinstance(result, MetricScore)
-            assert result.id == 'test_id'
+            assert result.id is not None  # MetricScore has its own auto-generated UUID
             assert result.name == 'MockRagasMetric'
             assert result.score == 0.8
             assert result.threshold == 0.6
@@ -764,7 +764,7 @@ class TestDeepEvalRunner:
             result = await runner.execute(input_data)
 
             assert isinstance(result, MetricScore)
-            assert result.id == 'test_id'
+            assert result.id is not None  # MetricScore has its own auto-generated UUID
             assert result.name == 'MockDeepEvalMetric'
             assert result.score == 0.9
             assert result.threshold == 0.8

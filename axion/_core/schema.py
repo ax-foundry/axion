@@ -39,6 +39,8 @@ class RichBaseModel(BaseModel):
 
     model_config = ConfigDict(
         extra='forbid',
+        # Allow using both field name and alias when creating instances
+        populate_by_name=True,
         # Required for OpenAI structured outputs (strict mode) which requires
         # ALL properties to be in the 'required' array, even those with defaults
         json_schema_serialization_defaults_required=True,

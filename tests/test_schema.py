@@ -59,7 +59,7 @@ def test_evaluation_result_to_dataframe():
     df = eval_result.to_dataframe(id_as_index=True, rename_columns=False)
     assert isinstance(df, pd.DataFrame)
     assert not df.empty
-    assert df.index.name == 'id'
+    assert df.index.name == 'dataset_id'  # by_alias=True (default) uses dataset_id
     assert 'score' in df.columns
 
 
@@ -112,10 +112,10 @@ def test_to_normalized_dataframes_basic():
 
     dataset_df, metrics_df = eval_result.to_normalized_dataframes()
 
-    # Verify dataset items table
+    # Verify dataset items table (by_alias=True uses dataset_id)
     assert isinstance(dataset_df, pd.DataFrame)
     assert len(dataset_df) == 1
-    assert dataset_df['id'].iloc[0] == 'test-1'
+    assert dataset_df['dataset_id'].iloc[0] == 'test-1'
     assert dataset_df['query'].iloc[0] == 'What is AI?'
 
     # Verify metric results table
@@ -123,7 +123,7 @@ def test_to_normalized_dataframes_basic():
     assert len(metrics_df) == 1
     assert metrics_df['metric_name'].iloc[0] == 'faithfulness'
     assert metrics_df['metric_score'].iloc[0] == 0.95
-    assert metrics_df['id'].iloc[0] == 'test-1'  # FK to dataset item
+    assert metrics_df['dataset_id'].iloc[0] == 'test-1'  # FK to dataset item
 
 
 def test_to_normalized_dataframes_multiple_metrics():
@@ -147,16 +147,18 @@ def test_to_normalized_dataframes_multiple_metrics():
 
     dataset_df, metrics_df = eval_result.to_normalized_dataframes()
 
-    # One dataset item row
+    # One dataset item row (by_alias=True uses dataset_id)
     assert len(dataset_df) == 1
-    assert dataset_df['id'].iloc[0] == 'test-2'
+    assert dataset_df['dataset_id'].iloc[0] == 'test-2'
 
     # Three metric rows, all with same FK
     assert len(metrics_df) == 3
-    assert all(metrics_df['id'] == 'test-2')
+    assert all(metrics_df['dataset_id'] == 'test-2')
 
     # Verify FK relationship
-    assert set(metrics_df['id'].dropna()).issubset(set(dataset_df['id']))
+    assert set(metrics_df['dataset_id'].dropna()).issubset(
+        set(dataset_df['dataset_id'])
+    )
 
 
 def test_to_normalized_dataframes_multiple_items():
@@ -180,15 +182,17 @@ def test_to_normalized_dataframes_multiple_items():
 
     dataset_df, metrics_df = eval_result.to_normalized_dataframes()
 
-    # Two dataset item rows (no duplication)
+    # Two dataset item rows (no duplication, by_alias=True uses dataset_id)
     assert len(dataset_df) == 2
-    assert len(dataset_df) == dataset_df['id'].nunique()
+    assert len(dataset_df) == dataset_df['dataset_id'].nunique()
 
     # Two metric rows
     assert len(metrics_df) == 2
 
     # Verify FK relationship
-    assert set(metrics_df['id'].dropna()).issubset(set(dataset_df['id']))
+    assert set(metrics_df['dataset_id'].dropna()).issubset(
+        set(dataset_df['dataset_id'])
+    )
 
 
 def test_to_normalized_dataframes_empty_test_case():
@@ -208,9 +212,9 @@ def test_to_normalized_dataframes_empty_test_case():
     # Empty dataset items table (no test case to extract)
     assert len(dataset_df) == 0
 
-    # Metric row exists with None FK
+    # Metric row exists with None FK (by_alias=True uses dataset_id)
     assert len(metrics_df) == 1
-    assert metrics_df['id'].iloc[0] is None
+    assert metrics_df['dataset_id'].iloc[0] is None
 
 
 def test_to_normalized_dataframes_column_ordering():
@@ -228,14 +232,14 @@ def test_to_normalized_dataframes_column_ordering():
 
     dataset_df, metrics_df = eval_result.to_normalized_dataframes()
 
-    # Verify 'id' is first column in both tables
-    assert dataset_df.columns[0] == 'id'
+    # Verify 'dataset_id' is first column in dataset table (by_alias=True)
+    assert dataset_df.columns[0] == 'dataset_id'
 
     # Verify expected columns exist in metrics table
     assert 'run_id' in metrics_df.columns
     assert 'metric_name' in metrics_df.columns
     assert 'metric_score' in metrics_df.columns
-    assert 'id' in metrics_df.columns
+    assert 'dataset_id' in metrics_df.columns
 
 
 def test_to_normalized_dataframes_rename_columns():
@@ -258,16 +262,16 @@ def test_to_normalized_dataframes_rename_columns():
     assert 'metric_type' in metrics_df_renamed.columns
     assert 'name' not in metrics_df_renamed.columns
 
-    # Without renaming
+    # Without renaming (by_alias=True is still default)
     _, metrics_df_original = eval_result.to_normalized_dataframes(rename_columns=False)
     assert 'name' in metrics_df_original.columns
     assert 'score' in metrics_df_original.columns
     assert 'type' in metrics_df_original.columns
-    assert 'id' in metrics_df_original.columns  # Always uses 'id' for DatasetItem FK
+    assert 'dataset_id' in metrics_df_original.columns  # FK to DatasetItem
 
 
-def test_to_normalized_dataframes_include_metric_id():
-    """Verify include_metric_id parameter works correctly."""
+def test_to_normalized_dataframes_by_alias():
+    """Verify by_alias controls metric_id column in output."""
     test_case = DatasetItem(id='test-7', query='Q', expected_output='A')
     metric = MetricScore(id='metric-uuid-123', name='test', score=0.5)
     result = TestResult(test_case=test_case, score_results=[metric])
@@ -279,17 +283,15 @@ def test_to_normalized_dataframes_include_metric_id():
         results=[result],
     )
 
-    # Without include_metric_id (default)
-    _, metrics_df_no_metric_id = eval_result.to_normalized_dataframes(
-        include_metric_id=False
-    )
-    assert 'metric_id' not in metrics_df_no_metric_id.columns
-    assert metrics_df_no_metric_id['id'].iloc[0] == 'test-7'  # DatasetItem's id
+    # With by_alias=True - metric_id and dataset_id columns are used
+    _, metrics_df_with_alias = eval_result.to_normalized_dataframes(by_alias=True)
+    assert 'metric_id' in metrics_df_with_alias.columns
+    assert metrics_df_with_alias['metric_id'].iloc[0] == 'metric-uuid-123'
+    assert 'dataset_id' in metrics_df_with_alias.columns
+    assert metrics_df_with_alias['dataset_id'].iloc[0] == 'test-7'  # FK to DatasetItem
 
-    # With include_metric_id
-    _, metrics_df_with_metric_id = eval_result.to_normalized_dataframes(
-        include_metric_id=True
-    )
-    assert 'metric_id' in metrics_df_with_metric_id.columns
-    assert metrics_df_with_metric_id['metric_id'].iloc[0] == 'metric-uuid-123'
-    assert metrics_df_with_metric_id['id'].iloc[0] == 'test-7'  # Still DatasetItem's id
+    # With by_alias=False - no metric_id column, uses 'id' for FK
+    _, metrics_df_no_alias = eval_result.to_normalized_dataframes(by_alias=False)
+    assert 'metric_id' not in metrics_df_no_alias.columns
+    assert 'dataset_id' not in metrics_df_no_alias.columns
+    assert metrics_df_no_alias['id'].iloc[0] == 'test-7'  # FK to DatasetItem

@@ -22,7 +22,7 @@ from axion.metrics.signal_extractor import SignalExtractor
 from axion.runners.cost import extract_cost
 from axion.runners.mixin import RunnerMixin
 from axion.runners.summary import BaseSummary, MetricSummary
-from axion.runners.utils import input_to_dataset
+from axion.runners.utils import extract_model_info, input_to_dataset
 from axion.schema import ErrorConfig, MetricScore, TestResult
 from axion.validation import EvaluationValidation
 
@@ -75,10 +75,9 @@ class BaseMetricRunner(ABC):
             version='1.0.0',
         )
 
-    def _create_error_score(self, input_id: str, error: Exception) -> MetricScore:
+    def _create_error_score(self, error: Exception) -> MetricScore:
         """Creates a fallback MetricScore in case of an execution error."""
         return MetricScore(
-            id=input_id,
             name=self.metric_name,
             score=np.nan,
             explanation=f'Error executing metric: {str(error)}',
@@ -431,20 +430,11 @@ class MetricRunner(RunnerMixin):
                 # runtime trace/span (e.g., publish_as_experiment(score_on_runtime_traces=True)).
                 try:
                     result.metadata = result.metadata or {}
-
-                    model_name = getattr(executor.metric, 'model_name', None)
-                    if model_name and '/' in model_name:
-                        model_name = model_name.split('/')[-1]
-
                     result.metadata.update(
                         {
                             'trace_id': getattr(metric_tracer, 'trace_id', None),
                             'observation_id': getattr(span, 'span_id', None),
                             'metric_name': executor.metric_name,
-                            'model_name': model_name,
-                            'llm_provider': getattr(
-                                executor.metric, 'llm_provider', None
-                            ),
                         }
                     )
                 except Exception:
@@ -581,6 +571,7 @@ class MetricRunner(RunnerMixin):
 
         results_map = defaultdict(list)
         tasks = []
+        task_item_ids = []  # Track which item each task belongs to
 
         for item in items:
             item_specific_cache = (
@@ -605,14 +596,15 @@ class MetricRunner(RunnerMixin):
                         ignore_errors=self.error_config.ignore_errors,
                     )
                 )
+                task_item_ids.append(item.id)  # Track the item id for this task
 
         all_results = await gather_with_progress(
             tasks, '📊 Evaluating metrics', show_progress
         )
 
-        for result in all_results:
+        for item_id, result in zip(task_item_ids, all_results):
             if isinstance(result, MetricScore):
-                results_map[result.id].append(result)
+                results_map[item_id].append(result)
             elif isinstance(result, Exception):
                 logger.error(f'Metric execution failed: {result}', exc_info=False)
 
@@ -734,12 +726,13 @@ class AxionRunner(BaseMetricRunner):
                     }
                 )
 
-                # Build metadata (keep metric_category in metadata for backward compat)
+                # Build metadata from result
                 result_metadata = getattr(result, 'metadata', None) or {}
-                result_metadata['metric_category'] = metric_category.value
+
+                # Extract model info
+                model_name, llm_provider = extract_model_info(self.metric)
 
                 return MetricScore(
-                    id=input_data.id,
                     name=self.metric_name,
                     score=score,
                     threshold=self.threshold
@@ -751,12 +744,14 @@ class AxionRunner(BaseMetricRunner):
                     metadata=result_metadata,
                     source=self.source,
                     cost_estimate=getattr(self.metric, 'cost_estimate', 0),
+                    model_name=model_name,
+                    llm_provider=llm_provider,
                     metric_category=metric_category.value,
                 )
             except Exception as e:
                 logger.error(f'AXION execution failed for {self.metric_name}: {e}')
                 span.set_attribute('error', str(e))
-                return self._create_error_score(input_data.id, e)
+                return self._create_error_score(e)
 
 
 @MetricRunnerFactory.register('ragas')
@@ -854,19 +849,23 @@ class RagasRunner(BaseMetricRunner):
                     }
                 )
 
+                # Extract model info
+                model_name, llm_provider = extract_model_info(self.metric)
+
                 return MetricScore(
-                    id=input_data.id,
                     name=self.metric_name,
                     score=score,
                     threshold=self.threshold,
                     passed=self._has_passed(score),
                     source=self.source,
                     cost_estimate=cost,
+                    model_name=model_name,
+                    llm_provider=llm_provider,
                 )
             except Exception as e:
                 logger.error(f'Ragas execution failed for {self.metric_name}: {e}')
                 span.set_attribute('error', str(e))
-                return self._create_error_score(input_data.id, e)
+                return self._create_error_score(e)
 
 
 @MetricRunnerFactory.register('deepeval')
@@ -973,8 +972,10 @@ class DeepEvalRunner(BaseMetricRunner):
                     }
                 )
 
+                # Extract model info
+                model_name, llm_provider = extract_model_info(self.metric)
+
                 return MetricScore(
-                    id=input_data.id,
                     name=self.metric_name,
                     score=score,
                     explanation=getattr(self.metric, 'reason', None),
@@ -982,9 +983,11 @@ class DeepEvalRunner(BaseMetricRunner):
                     passed=self._has_passed(score),
                     source=self.source,
                     cost_estimate=cost,
+                    model_name=model_name,
+                    llm_provider=llm_provider,
                 )
 
             except Exception as e:
                 logger.error(f'DeepEval execution failed for {self.metric_name}: {e}')
                 span.set_attribute('error', str(e))
-                return self._create_error_score(input_data.id, e)
+                return self._create_error_score(e)
