@@ -1559,3 +1559,248 @@ html {
     display: none;
   }
 }
+
+/* =====================================================
+   MOBILE NAVIGATION FIX
+   Ensures hamburger menu and navigation work on mobile
+   ===================================================== */
+
+/* ==================== Mobile Navigation Fix ==================== */
+/* Ensure hamburger menu is visible and accessible on mobile */
+@media screen and (max-width: 76.1875em) {
+  /* Force hamburger button visibility */
+  .md-header__button[for="__drawer"],
+  label[for="__drawer"].md-header__button {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  /* Ensure header has proper z-index */
+  .md-header {
+    z-index: 4;
+    position: sticky;
+  }
+
+  /* Style hamburger icon for visibility */
+  .md-header__button.md-icon svg {
+    fill: currentColor;
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  /* Ensure drawer checkbox input is functional */
+  #__drawer {
+    display: none;
+  }
+
+  /* Show navigation when drawer is checked */
+  #__drawer:checked ~ .md-container .md-sidebar--primary {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* ==================== Mobile Drawer Styling ==================== */
+@media screen and (max-width: 76.1875em) {
+  /* Drawer container */
+  .md-sidebar--primary {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16rem;
+    height: 100vh;
+    z-index: 5;
+    background-color: var(--md-bg-card);
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s,
+                visibility 0.25s;
+    box-shadow: var(--md-shadow-lg);
+    overflow-y: auto;
+  }
+
+  /* Drawer header */
+  .md-nav--primary .md-nav__title {
+    background-color: var(--md-primary-fg-color);
+    color: white;
+    padding: 0.8rem 1rem;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  /* Drawer nav items - touch friendly */
+  .md-nav--primary .md-nav__item {
+    border-bottom: 1px solid var(--md-border-color);
+  }
+
+  .md-nav--primary .md-nav__link {
+    padding: 0.8rem 1rem;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+  }
+
+  /* Overlay backdrop when drawer is open */
+  .md-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.54);
+    z-index: 4;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s, visibility 0.25s;
+  }
+
+  #__drawer:checked ~ .md-overlay {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Dark mode drawer styling */
+[data-md-color-scheme="slate"] .md-sidebar--primary {
+  background-color: var(--md-bg-card);
+}
+
+[data-md-color-scheme="slate"] .md-nav--primary .md-nav__title {
+  background-color: var(--md-primary-fg-color--dark);
+}
+
+[data-md-color-scheme="slate"] .md-nav--primary .md-nav__item {
+  border-bottom-color: var(--md-border-green);
+}
+
+/* ==================== Mobile TOC Access ==================== */
+/* Show TOC inline at top of content on mobile */
+@media screen and (max-width: 60em) {
+  /* Create inline TOC container */
+  .md-sidebar--secondary {
+    position: relative;
+    width: 100% !important;
+    height: auto;
+    max-height: none;
+    display: block;
+    background: var(--md-bg-card);
+    border: 1px solid var(--md-border-color);
+    border-radius: var(--md-radius-sm);
+    margin: 0 0 1rem 0;
+    padding: 0;
+    order: -1;
+  }
+
+  .md-sidebar--secondary .md-sidebar__scrollwrap {
+    overflow: visible;
+    padding: 0;
+  }
+
+  .md-sidebar--secondary .md-sidebar__inner {
+    position: relative;
+  }
+
+  /* TOC title - acts as toggle */
+  .md-nav--secondary .md-nav__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    color: var(--md-text-primary);
+    border-bottom: 1px solid var(--md-border-color);
+    margin: 0;
+  }
+
+  .md-nav--secondary .md-nav__title::after {
+    content: "▼";
+    font-size: 0.625rem;
+    color: var(--md-text-muted);
+    transition: transform 0.2s ease;
+  }
+
+  /* Collapsible TOC list */
+  .md-nav--secondary > ul {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    padding: 0;
+    margin: 0;
+  }
+
+  .md-nav--secondary:focus-within > ul,
+  .md-nav--secondary:hover > ul,
+  .md-nav--secondary.toc-expanded > ul {
+    max-height: 500px;
+    padding: 0.5rem 0;
+  }
+
+  .md-nav--secondary:focus-within .md-nav__title::after,
+  .md-nav--secondary:hover .md-nav__title::after,
+  .md-nav--secondary.toc-expanded .md-nav__title::after {
+    transform: rotate(180deg);
+  }
+
+  /* TOC items styling */
+  .md-nav--secondary .md-nav__item {
+    margin: 0;
+  }
+
+  .md-nav--secondary .md-nav__link {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Indent nested TOC items */
+  .md-nav--secondary .md-nav__item .md-nav__item .md-nav__link {
+    padding-left: 1.5rem;
+  }
+
+  .md-nav--secondary .md-nav__item .md-nav__item .md-nav__item .md-nav__link {
+    padding-left: 2rem;
+  }
+}
+
+/* Dark mode mobile TOC */
+[data-md-color-scheme="slate"] .md-sidebar--secondary {
+  background-color: var(--md-bg-card);
+  border-color: var(--md-border-green);
+}
+
+[data-md-color-scheme="slate"] .md-nav--secondary .md-nav__title {
+  border-bottom-color: var(--md-border-green);
+}
+
+/* ==================== Small Mobile Adjustments ==================== */
+@media screen and (max-width: 480px) {
+  /* Full-width drawer on very small screens */
+  .md-sidebar--primary {
+    width: 85vw;
+    max-width: 300px;
+  }
+
+  /* Compact inline TOC */
+  .md-sidebar--secondary {
+    margin: 0 -1rem 1rem -1rem;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  /* Larger touch targets on mobile */
+  .md-nav--primary .md-nav__link,
+  .md-nav--secondary .md-nav__link {
+    min-height: 48px;
+  }
+}
