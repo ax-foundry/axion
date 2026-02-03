@@ -471,21 +471,18 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
 
     def compute_cost_estimate(self, sub_models: List['BaseMetric']):
         """
-        Computes the total estimated cost, including the current model and any sub-models.
+        Computes the total estimated cost from sub-models for this execution.
 
         Args:
             sub_models (List[BaseMetric]): List of sub-models that may have a cost_estimate.
         """
-        current_cost = float(getattr(self, 'cost_estimate', 0.0) or 0.0)
         sub_model_cost = sum(
             model.cost_estimate
             for model in sub_models
             if hasattr(model, 'cost_estimate')
             and isinstance(model.cost_estimate, float)
         )
-
-        total_cost = current_cost + sub_model_cost
-        self.cost_estimate = total_cost
+        self.cost_estimate = sub_model_cost
 
     def display_prompt(self, item: Union[dict, InputModel] = None, **kwargs):
         """
