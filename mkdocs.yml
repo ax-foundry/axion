@@ -108,6 +108,7 @@ theme:
     - navigation.instant
     - navigation.tracking
     - navigation.top
+    - toc.integrate
     - content.code.copy
     - content.tabs.link
     - search.suggest
