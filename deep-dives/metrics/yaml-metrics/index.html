@@ -428,7 +428,9 @@
   
 
 
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../../.." title="Axion" class="md-nav__button md-logo" aria-label="Axion" data-md-component="logo">
       
@@ -3810,201 +3812,6 @@
               </div>
             
             
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-  
-
-<nav class="md-nav md-nav--secondary" aria-label="On this page">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      On this page
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overview
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#basic-structure" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Basic Structure
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#llm-powered-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LLM-Powered Metrics
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="LLM-Powered Metrics">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#basic-llm-metric" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Basic LLM Metric
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#heuristic-based-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Heuristic-Based Metrics
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Heuristic-Based Metrics">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#string-matching-heuristic" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        String Matching Heuristic
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#loading-and-using-yaml-metrics" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Loading and Using YAML Metrics
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Loading and Using YAML Metrics">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#field-mapping-for-nested-inputs" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Field Mapping for Nested Inputs
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#api-reference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        API Reference
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#axion.metrics.base" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        base
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="base">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#axion.metrics.base.BaseMetric" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        BaseMetric
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#axion.metrics.base.MetricRegistry" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        MetricRegistry
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#axion.metrics.base.metric" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        metric
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
           
           
             <div class="md-content" data-md-component="content">
@@ -4865,7 +4672,7 @@ to the current list, extending few-shot prompting context.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Computes the total estimated cost, including the current model and any sub-models.</p>
+        <p>Computes the total estimated cost from sub-models for this execution.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -5500,7 +5307,7 @@ included in the prompt. If None, a placeholder is used. Defaults to None.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.instant", "navigation.tracking", "navigation.top", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.instant", "navigation.tracking", "navigation.top", "toc.integrate", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
 
