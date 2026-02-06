@@ -1022,6 +1022,93 @@ class EvaluationResult:
             metric_names=metric_names,
         )
 
+    def expand_multi_metrics(
+        self,
+        expansion_map: Optional[
+            Dict[str, Callable[[MetricScore], List[MetricScore]]]
+        ] = None,
+        in_place: bool = False,
+    ) -> 'EvaluationResult':
+        """
+        Expand multi-metric results using custom expansion functions.
+
+        This method allows post-hoc expansion of metric scores that contain
+        nested data in their metadata or signals. It's useful when you have
+        existing results that weren't exploded at runtime, or when you want
+        to apply custom expansion logic.
+
+        Args:
+            expansion_map: Dict mapping metric names to expansion functions.
+                Each function takes a MetricScore and returns List[MetricScore].
+                If None, no expansion is performed.
+            in_place: If True, modifies this instance. If False, returns a new copy.
+
+        Returns:
+            EvaluationResult with expanded metrics.
+
+        Example:
+            def expand_slack(score: MetricScore) -> List[MetricScore]:
+                data = score.metadata.get('slack_analysis_result', {})
+                return [
+                    MetricScore(
+                        name='slack_engagement',
+                        score=data.get('engagement_score'),
+                        parent=score.name,
+                        type='sub_metric',
+                        source=score.source,
+                    ),
+                    MetricScore(
+                        name='slack_frustration',
+                        score=data.get('frustration_score'),
+                        parent=score.name,
+                        type='sub_metric',
+                        source=score.source,
+                    ),
+                ]
+
+            expanded = result.expand_multi_metrics({'MultiMetricAnalyzer': expand_slack})
+        """
+        if expansion_map is None:
+            expansion_map = {}
+
+        if in_place:
+            target = self
+        else:
+            # Create a shallow copy with deep-copied results
+            from copy import deepcopy
+
+            target = EvaluationResult(
+                run_id=self.run_id,
+                evaluation_name=self.evaluation_name,
+                timestamp=self.timestamp,
+                results=deepcopy(self.results),
+                summary=deepcopy(self.summary),
+                metadata=deepcopy(self.metadata),
+            )
+
+        # Process each test result
+        for test_result in target.results:
+            expanded_scores: List[MetricScore] = []
+
+            for score in test_result.score_results:
+                # Check if this metric should be expanded
+                if score.name in expansion_map:
+                    expansion_func = expansion_map[score.name]
+                    try:
+                        sub_scores = expansion_func(score)
+                        # Keep original score and add sub-scores
+                        expanded_scores.append(score)
+                        expanded_scores.extend(sub_scores)
+                    except Exception:
+                        # If expansion fails, keep original score
+                        expanded_scores.append(score)
+                else:
+                    expanded_scores.append(score)
+
+            test_result.score_results = expanded_scores
+
+        return target
+
 
 @dataclass
 class ErrorConfig:

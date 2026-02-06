@@ -178,3 +178,57 @@ class SignalDescriptor(Generic[T]):
         """Auto-generate a default description if one is not provided."""
         if not self.description:
             self.description = f'Signal: {self.name}'
+
+
+class SubMetricResult(RichBaseModel):
+    """A sub-metric extracted from a multi-metric evaluation.
+
+    Used by metrics with `is_multi_metric=True` to define how a single
+    evaluation result explodes into multiple sub-metric scores.
+
+    Example:
+        A SlackObjectiveAnalyzer metric might produce:
+        - engagement (score: 0.7, group: 'behavioral')
+        - frustration (score: 0.2, group: 'sentiment')
+        - sentiment (score: 0.85, group: 'sentiment')
+        - is_resolved (score: 1.0, group: 'outcome')
+    """
+
+    name: str = Field(
+        ...,
+        description="Sub-metric name (e.g., 'engagement', 'frustration')",
+    )
+
+    score: Optional[float] = Field(
+        default=None,
+        description='The computed score for this sub-metric.',
+    )
+
+    explanation: Optional[str] = Field(
+        default=None,
+        description='Explanation of how this sub-metric score was derived.',
+    )
+
+    threshold: Optional[float] = Field(
+        default=None,
+        description='Optional threshold for this specific sub-metric. If not set, inherits from parent metric.',
+    )
+
+    metric_category: Optional[MetricCategory] = Field(
+        default=None,
+        description=(
+            'Category for this sub-metric: SCORE (numeric pass/fail), ANALYSIS (qualitative insights), '
+            'or CLASSIFICATION (labels). If not set, defaults to SCORE when score is present, '
+            'otherwise inherits from parent metric.'
+        ),
+    )
+
+    group: Optional[str] = Field(
+        default=None,
+        description="Logical grouping for related sub-metrics (e.g., 'sentiment', 'behavioral').",
+    )
+
+    metadata: Dict[str, Any] = Field(
+        default_factory=dict,
+        description='Additional structured data specific to this sub-metric.',
+    )

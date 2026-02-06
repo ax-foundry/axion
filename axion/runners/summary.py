@@ -278,7 +278,7 @@ class MetricSummary(BaseSummary):
         return insights
 
     def _calculate_analysis_insights(self, analysis_metrics: Dict) -> Dict[str, Any]:
-        """Calculate insights for analysis metrics (no numeric scores)."""
+        """Calculate insights for analysis/classification metrics (no numeric scores)."""
         insights = {}
 
         for name, data in analysis_metrics.items():
@@ -293,6 +293,7 @@ class MetricSummary(BaseSummary):
                     if data['total_count'] > 0
                     else 0
                 ),
+                'category': data.get('category', 'analysis'),
             }
 
         return insights
@@ -303,9 +304,14 @@ class MetricSummary(BaseSummary):
 
         A metric is considered successful if:
         - It has a valid numeric score (for SCORE metrics), OR
-        - It is an analysis/classification metric (these don't produce scores)
+        - It is an analysis/classification metric that ran without error
         """
-        # Analysis and classification metrics are successful if they ran (no score needed)
+        # Check for execution error in explanation
+        explanation = getattr(score_result, 'explanation', '') or ''
+        if explanation.startswith('Error executing metric'):
+            return False
+
+        # Analysis and classification metrics are successful if they ran without error
         metric_category = getattr(score_result, 'metric_category', 'score')
         if metric_category in ('analysis', 'classification'):
             return True
@@ -485,7 +491,7 @@ class MetricSummary(BaseSummary):
             print()
 
     def _print_analysis_metrics(self, insights: Dict):
-        """Print analysis metrics section (metrics without numeric scores)."""
+        """Print analysis/classification metrics section (metrics without numeric pass/fail)."""
         if not insights:
             return
 
@@ -498,6 +504,13 @@ class MetricSummary(BaseSummary):
             name = normalize_metric_name(name)
             success_rate = insight['success_rate']
             success_color = self._get_performance_color(success_rate)
+            category = insight.get('category', 'analysis')
+
+            # Category-specific descriptions
+            if category == 'classification':
+                category_desc = 'Classification (categorical labels, no numeric score)'
+            else:
+                category_desc = 'Analysis (qualitative insights, no numeric score)'
 
             print(
                 f'{self.COLORS["accent"]}{self.COLORS["bold"]}▶ {name}{self.COLORS["reset"]}'
@@ -508,7 +521,7 @@ class MetricSummary(BaseSummary):
                 + 'ran successfully'
             )
             print(
-                f'  📝 Category: {self.COLORS["dim"]}Analysis (qualitative insights, no numeric score){self.COLORS["reset"]}'
+                f'  📝 Category: {self.COLORS["dim"]}{category_desc}{self.COLORS["reset"]}'
             )
             print()
 
@@ -545,11 +558,12 @@ class MetricSummary(BaseSummary):
             }
         )
 
-        # Track analysis metrics separately
+        # Track analysis/classification metrics separately
         analysis_metrics: Dict[str, Dict[str, Any]] = defaultdict(
             lambda: {
                 'total_count': 0,
                 'successful_count': 0,
+                'category': 'analysis',
             }
         )
 
@@ -557,11 +571,14 @@ class MetricSummary(BaseSummary):
             for score in result.score_results:
                 metric_category = getattr(score, 'metric_category', 'score')
 
-                # Handle analysis metrics separately
-                if metric_category == 'analysis':
+                # Handle analysis and classification metrics separately
+                if metric_category in ('analysis', 'classification'):
                     analysis_metrics[score.name]['total_count'] += 1
-                    # Analysis metrics are successful if they ran (have reasoning)
-                    if hasattr(score, 'reasoning') and score.reasoning:
+                    analysis_metrics[score.name]['category'] = metric_category
+                    # These metrics are successful if they ran without error
+                    # (explanation doesn't indicate an execution failure)
+                    explanation = getattr(score, 'explanation', '') or ''
+                    if not explanation.startswith('Error executing metric'):
                         analysis_metrics[score.name]['successful_count'] += 1
                     continue
 

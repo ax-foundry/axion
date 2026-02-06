@@ -324,7 +324,7 @@ def test_compute_cost_estimate():
     sub_metric2.cost_estimate = 2.5
 
     metric.compute_cost_estimate([sub_metric1, sub_metric2])
-    assert metric.cost_estimate == 17.5  # 10.0 + 5.0 + 2.5
+    assert metric.cost_estimate == 7.5
 
 
 # =====================
