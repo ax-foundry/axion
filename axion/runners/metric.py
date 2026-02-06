@@ -18,6 +18,7 @@ from axion._core.types import MetricCategory, TraceGranularity
 from axion._core.utils import Timer
 from axion.dataset import Dataset, DatasetItem, format_input
 from axion.metrics.cache import AnalysisCache
+from axion.metrics.schema import SubMetricResult
 from axion.metrics.signal_extractor import SignalExtractor
 from axion.runners.cost import extract_cost
 from axion.runners.mixin import RunnerMixin
@@ -60,8 +61,13 @@ class BaseMetricRunner(ABC):
     @abstractmethod
     async def execute(
         self, evaluation_input: DatasetItem, cache: Optional[AnalysisCache] = None
-    ) -> MetricScore:
-        """Executes the metric for a single evaluation input."""
+    ) -> Union[MetricScore, List[MetricScore]]:
+        """Executes the metric for a single evaluation input.
+
+        Returns:
+            MetricScore for single-metric evaluation, or List[MetricScore]
+            for multi-metric explosion (when metric.is_multi_metric=True).
+        """
         pass
 
     def get_tool_metadata(self):
@@ -276,7 +282,7 @@ class MetricRunner(RunnerMixin):
         executor: 'BaseMetricRunner',
         input_data: DatasetItem,
         cache: Optional[AnalysisCache] = None,
-    ) -> Optional[MetricScore]:
+    ) -> Optional[Union[MetricScore, List[MetricScore]]]:
         """Handles caching, parameter checks, and execution for one metric."""
 
         if self.error_config.skip_on_missing_params:
@@ -516,6 +522,8 @@ class MetricRunner(RunnerMixin):
         for item_id, result in all_results:
             if isinstance(result, MetricScore):
                 results_map[item_id].append(result)
+            elif isinstance(result, list):  # Handle exploded multi-metric results
+                results_map[item_id].extend(result)
 
         final_results = [
             TestResult(test_case=item, score_results=results_map.get(item.id, []))
@@ -605,6 +613,8 @@ class MetricRunner(RunnerMixin):
         for item_id, result in zip(task_item_ids, all_results):
             if isinstance(result, MetricScore):
                 results_map[item_id].append(result)
+            elif isinstance(result, list):  # Handle exploded multi-metric results
+                results_map[item_id].extend(result)
             elif isinstance(result, Exception):
                 logger.error(f'Metric execution failed: {result}', exc_info=False)
 
@@ -664,7 +674,7 @@ class AxionRunner(BaseMetricRunner):
         self,
         input_data: Union[DatasetItem, Dict[str, Any]],
         cache: Optional[AnalysisCache] = None,
-    ) -> MetricScore:
+    ) -> Union[MetricScore, List[MetricScore]]:
         from axion._core.tracing.context import get_current_tracer_safe
 
         # Use context tracer first (for async-safe tracing), fall back to self.tracer
@@ -732,6 +742,24 @@ class AxionRunner(BaseMetricRunner):
                 # Extract model info
                 model_name, llm_provider = extract_model_info(self.metric)
 
+                # Check for multi-metric explosion
+                is_multi_metric = getattr(self.metric, 'is_multi_metric', False)
+                if is_multi_metric:
+                    sub_metrics = self.metric.get_sub_metrics(result)
+                    if sub_metrics:
+                        return self._create_exploded_scores(
+                            parent_result=result,
+                            sub_metrics=sub_metrics,
+                            parent_score=score,
+                            parent_passed=passed,
+                            metric_category=metric_category,
+                            signals=signals,
+                            result_metadata=result_metadata,
+                            model_name=model_name,
+                            llm_provider=llm_provider,
+                        )
+
+                # Normal single-metric path (unchanged)
                 return MetricScore(
                     name=self.metric_name,
                     score=score,
@@ -752,6 +780,133 @@ class AxionRunner(BaseMetricRunner):
                 logger.error(f'AXION execution failed for {self.metric_name}: {e}')
                 span.set_attribute('error', str(e))
                 return self._create_error_score(e)
+
+    def _create_exploded_scores(
+        self,
+        parent_result: Any,
+        sub_metrics: List[SubMetricResult],
+        parent_score: float,
+        parent_passed: Optional[bool],
+        metric_category: MetricCategory,
+        signals: Optional[Any],
+        result_metadata: Dict[str, Any],
+        model_name: Optional[str],
+        llm_provider: Optional[str],
+    ) -> List[MetricScore]:
+        """Convert sub-metrics to MetricScore instances for multi-metric explosion.
+
+        Args:
+            parent_result: The original MetricEvaluationResult from execute()
+            sub_metrics: List of SubMetricResult from get_sub_metrics()
+            parent_score: Normalized parent score
+            parent_passed: Parent pass/fail status
+            metric_category: The metric category
+            signals: Extracted signals
+            result_metadata: Metadata from the result
+            model_name: Model name for the metric
+            llm_provider: LLM provider name
+
+        Returns:
+            List of MetricScore instances (parent + sub-metrics if include_parent_score=True)
+        """
+        scores: List[MetricScore] = []
+        use_prefix = getattr(self.metric, 'sub_metric_prefix', True)
+        include_parent = getattr(self.metric, 'include_parent_score', True)
+        cost_estimate = getattr(self.metric, 'cost_estimate', 0)
+
+        # Optionally include parent metric as aggregate
+        if include_parent:
+            scores.append(
+                MetricScore(
+                    name=self.metric_name,
+                    score=parent_score,
+                    threshold=self.threshold
+                    if metric_category != MetricCategory.ANALYSIS
+                    else None,
+                    passed=parent_passed,
+                    explanation=getattr(parent_result, 'explanation', None),
+                    signals=signals,
+                    metadata=result_metadata,
+                    source=self.source,
+                    cost_estimate=cost_estimate,
+                    model_name=model_name,
+                    llm_provider=llm_provider,
+                    metric_category=metric_category.value,
+                    parent=None,
+                    type='aggregate',
+                )
+            )
+
+        # Add sub-metric scores
+        for sub in sub_metrics:
+            if use_prefix:
+                # Prefixed: ParentMetric_engagement
+                name = f'{self.metric_name}_{sub.name}'
+                parent = self.metric_name
+                metric_type = 'sub_metric'
+            else:
+                # Standalone: engagement (independent metric)
+                name = sub.name
+                parent = None
+                metric_type = 'metric'
+
+            # Normalize sub-metric score
+            sub_score = np.nan if sub.score is None else sub.score
+
+            # Determine sub-metric category:
+            # 1. If explicitly set on sub-metric, use it
+            # 2. Else if sub-metric has a score, default to SCORE
+            # 3. Else inherit from parent metric
+            if sub.metric_category is not None:
+                sub_metric_category = sub.metric_category
+            elif sub.score is not None:
+                sub_metric_category = MetricCategory.SCORE
+            else:
+                sub_metric_category = metric_category
+
+            # Determine threshold: sub-metric specific > parent metric default
+            sub_threshold = sub.threshold or self.threshold
+
+            # Determine pass/fail for sub-metric
+            if sub_metric_category == MetricCategory.ANALYSIS:
+                sub_passed = None
+            elif not np.isnan(sub_score) and sub_threshold is not None:
+                sub_passed = self._has_passed(sub_score)
+            else:
+                sub_passed = None
+
+            # Build sub-metric metadata
+            # Extract cost_estimate from metadata if provided (for multi-metric cost distribution)
+            sub_cost_estimate = sub.metadata.pop('cost_estimate', None)
+
+            sub_metadata = {
+                'group': sub.group,
+                'source_metric': self.metric_name,
+                **sub.metadata,
+            }
+
+            scores.append(
+                MetricScore(
+                    name=name,
+                    score=sub_score,
+                    threshold=sub_threshold
+                    if sub_metric_category != MetricCategory.ANALYSIS
+                    else None,
+                    passed=sub_passed,
+                    explanation=sub.explanation,
+                    signals=None,  # Sub-metrics don't carry full signals
+                    metadata=sub_metadata,
+                    source=self.source,
+                    cost_estimate=sub_cost_estimate,  # Cost distributed from parent
+                    model_name=model_name,
+                    llm_provider=llm_provider,
+                    metric_category=sub_metric_category.value,
+                    parent=parent,
+                    type=metric_type,
+                )
+            )
+
+        return scores
 
 
 @MetricRunnerFactory.register('ragas')

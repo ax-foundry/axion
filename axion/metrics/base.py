@@ -25,7 +25,7 @@ from axion._handlers.llm.handler import LLMHandler
 from axion.dataset import DatasetItem
 from axion.error import MetricRegistryError
 from axion.llm_registry import LLMRegistry, MockLLM
-from axion.metrics.schema import MetricConfig, MetricEvaluationResult
+from axion.metrics.schema import MetricConfig, MetricEvaluationResult, SubMetricResult
 from axion.metrics.utils import validate_required_metric_fields
 
 logger = get_logger(__name__)
@@ -52,6 +52,13 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
     shares_internal_cache: bool = False
     cost_estimate: float
     examples: List[Tuple[InputModel, OutputModel]] = []
+
+    # Multi-metric support
+    is_multi_metric: bool = False
+    include_parent_score: bool = True  # Include aggregate score as parent row
+    sub_metric_prefix: bool = (
+        True  # If True: 'Parent_engagement', if False: 'engagement'
+    )
 
     def __init__(
         self,
@@ -495,6 +502,43 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         if item:
             item = self.get_evaluation_fields(item)
         super().display_prompt(item, **kwargs)
+
+    def get_sub_metrics(self, result: MetricEvaluationResult) -> List[SubMetricResult]:
+        """
+        Override to define how results explode into sub-metrics.
+
+        This method is called when `is_multi_metric=True` to extract individual
+        sub-metric scores from a single evaluation result. The default implementation
+        returns an empty list, meaning no explosion occurs.
+
+        Args:
+            result: The evaluation result from execute() containing signals and metadata.
+
+        Returns:
+            List of SubMetricResult objects representing individual sub-metrics.
+            Returns empty list by default (no explosion).
+
+        Example:
+            def get_sub_metrics(self, result: MetricEvaluationResult) -> List[SubMetricResult]:
+                signals = result.signals
+                if not signals:
+                    return []
+
+                return [
+                    SubMetricResult(
+                        name='engagement',
+                        score=signals.engagement_score,
+                        group='behavioral',
+                    ),
+                    SubMetricResult(
+                        name='sentiment',
+                        score=signals.sentiment_score,
+                        group='sentiment',
+                        threshold=0.5,
+                    ),
+                ]
+        """
+        return []
 
     def __repr__(self):
         """Get a string representation of the handler."""
