@@ -185,13 +185,6 @@ class SubMetricResult(RichBaseModel):
 
     Used by metrics with `is_multi_metric=True` to define how a single
     evaluation result explodes into multiple sub-metric scores.
-
-    Example:
-        A SlackObjectiveAnalyzer metric might produce:
-        - engagement (score: 0.7, group: 'behavioral')
-        - frustration (score: 0.2, group: 'sentiment')
-        - sentiment (score: 0.85, group: 'sentiment')
-        - is_resolved (score: 1.0, group: 'outcome')
     """
 
     name: str = Field(

@@ -1042,31 +1042,6 @@ class EvaluationResult:
                 Each function takes a MetricScore and returns List[MetricScore].
                 If None, no expansion is performed.
             in_place: If True, modifies this instance. If False, returns a new copy.
-
-        Returns:
-            EvaluationResult with expanded metrics.
-
-        Example:
-            def expand_slack(score: MetricScore) -> List[MetricScore]:
-                data = score.metadata.get('slack_analysis_result', {})
-                return [
-                    MetricScore(
-                        name='slack_engagement',
-                        score=data.get('engagement_score'),
-                        parent=score.name,
-                        type='sub_metric',
-                        source=score.source,
-                    ),
-                    MetricScore(
-                        name='slack_frustration',
-                        score=data.get('frustration_score'),
-                        parent=score.name,
-                        type='sub_metric',
-                        source=score.source,
-                    ),
-                ]
-
-            expanded = result.expand_multi_metrics({'MultiMetricAnalyzer': expand_slack})
         """
         if expansion_map is None:
             expansion_map = {}

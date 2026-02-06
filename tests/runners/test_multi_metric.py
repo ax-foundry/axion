@@ -1,5 +1,3 @@
-"""Tests for multi-metric explosion functionality."""
-
 from dataclasses import dataclass
 from typing import List
 
@@ -14,11 +12,6 @@ from axion.schema import EvaluationResult, MetricScore, TestResult
 
 clear_tracing_config()
 configure_tracing('noop')
-
-
-# =====================
-# Test Fixtures
-# =====================
 
 
 @dataclass
@@ -123,11 +116,6 @@ def sample_dataset_items():
     ]
 
 
-# =====================
-# SubMetricResult Tests
-# =====================
-
-
 class TestSubMetricResult:
     """Tests for SubMetricResult model."""
 
@@ -169,11 +157,6 @@ class TestSubMetricResult:
         assert data['name'] == 'engagement'
         assert data['score'] == 0.75
         assert data['group'] == 'behavioral'
-
-
-# =====================
-# AxionRunner Multi-Metric Tests
-# =====================
 
 
 class TestAxionRunnerMultiMetric:
@@ -398,11 +381,6 @@ class TestAxionRunnerMultiMetric:
         assert sentiment.threshold is not None
 
 
-# =====================
-# MetricRunner Integration Tests
-# =====================
-
-
 class TestMetricRunnerMultiMetric:
     """Tests for MetricRunner handling multi-metric results."""
 
@@ -463,11 +441,6 @@ class TestMetricRunnerMultiMetric:
             assert 'frustration' in names
             assert 'sentiment' in names
             assert 'SlackConversationAnalyzer' not in names  # No parent
-
-
-# =====================
-# EvaluationResult expand_multi_metrics Tests
-# =====================
 
 
 class TestExpandMultiMetrics:
