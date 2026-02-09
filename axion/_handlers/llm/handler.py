@@ -1,5 +1,6 @@
 import asyncio
 import json
+import random
 from typing import Any, Dict, Generic, List, Optional, Tuple, Union
 
 import litellm
@@ -98,9 +99,12 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
     # Rate limit configuration
     # Buffer time to add to rate limit reset (seconds)
-    rate_limit_buffer: float = 1.0
-    max_rate_limit_retries: int = 3
-    max_delay = 120.0  # Maximum delay of 2 minutes
+    rate_limit_buffer: float = 2.0
+    max_rate_limit_retries: int = 10
+    max_delay = 300.0  # Maximum delay of 5 minutes
+    rate_limit_jitter: float = (
+        5.0  # Max random jitter (seconds) to stagger concurrent retries
+    )
 
     def __init__(self, **kwargs):
         """Initialize LLM handler."""
@@ -211,9 +215,12 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 wait_time = rate_limit_info.get_wait_time(self.rate_limit_buffer)
                 backoff_time = self.retry_delay * (2**attempt)
                 wait_time = max(wait_time, backoff_time)
+                # Add jitter to stagger concurrent retries (thundering herd prevention)
+                jitter = random.uniform(0, self.rate_limit_jitter)
+                wait_time += jitter
                 logger.warning_highlight(
                     f'⏱️  Rate limit hit: {rate_limit_info}. '
-                    f'Waiting {wait_time:.1f}s for reset (attempt {attempt + 1}/{self.max_retries})'
+                    f'Waiting {wait_time:.1f}s for reset (attempt {attempt + 1}/{self.max_rate_limit_retries})'
                 )
                 return min(wait_time, self.max_delay)
 
@@ -390,6 +397,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                         response_format=response_format,
                         temperature=getattr(self.llm, 'temperature', 0.0),
                         api_key=api_key,
+                        num_retries=0,  # Disable LiteLLM's internal retry; Axion handles retries
                     )
 
                 # Extract the JSON response
@@ -790,7 +798,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                             messages, attempt=attempt + 1, input_data=processed_data
                         )
                     except Exception as structured_error:
-                        if self.fallback_to_parser:
+                        if self.fallback_to_parser and not self._is_rate_limit_error(
+                            structured_error
+                        ):
                             logger.warning_highlight(
                                 f'Structured call failed: {str(structured_error)}. '
                                 f'Falling back to parser mode.'

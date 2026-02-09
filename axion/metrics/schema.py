@@ -221,6 +221,11 @@ class SubMetricResult(RichBaseModel):
         description="Logical grouping for related sub-metrics (e.g., 'sentiment', 'behavioral').",
     )
 
+    signals: Optional[Any] = Field(
+        default=None,
+        description='Optional signals for this sub-metric. If set, propagated to the MetricScore signals column.',
+    )
+
     metadata: Dict[str, Any] = Field(
         default_factory=dict,
         description='Additional structured data specific to this sub-metric.',

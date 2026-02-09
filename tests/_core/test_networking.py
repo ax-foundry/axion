@@ -50,6 +50,23 @@ RATE_LIMIT_SUCCESS_DATA = [
         2,
         'retry-after',
     ),
+    # Millisecond format from OpenAI (e.g., "Please try again in 898ms")
+    (
+        'Rate limit reached for gpt-4o in organization org-test on tokens per min (TPM): '
+        'Limit 30000, Used 27174, Requested 4151. Please try again in 898ms.',
+        30000,
+        2826,
+        1,
+        'gpt-4o;tpm',
+    ),
+    (
+        'Rate limit reached for gpt-4o in organization org-test on tokens per min (TPM): '
+        'Limit 30000, Used 27070, Requested 3104. Please try again in 348ms.',
+        30000,
+        2930,
+        1,
+        'gpt-4o;tpm',
+    ),
 ]
 
 # Test data for messages that should fail parsing

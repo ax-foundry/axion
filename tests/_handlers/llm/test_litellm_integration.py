@@ -423,3 +423,132 @@ class TestParserModeOutputSanitization:
         assert logged_response.strip().startswith('{')
         assert logged_response.strip().endswith('}')
         assert '```' not in logged_response
+
+
+class TestRateLimitRetryBehavior:
+    """Test rate-limit specific retry improvements."""
+
+    @pytest.mark.asyncio
+    async def test_rate_limit_error_skips_parser_fallback(self):
+        """Verify structured rate-limit error re-raises instead of falling back to parser."""
+        import litellm.exceptions
+
+        class TestHandler(LLMHandler):
+            instruction = 'Answer the question.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = MockLLM(model='gpt-4o')
+            fallback_to_parser = True
+            max_retries = 1
+            max_rate_limit_retries = 1
+
+        handler = TestHandler()
+
+        with patch('litellm.acompletion', new_callable=AsyncMock) as mock_acompletion:
+            mock_acompletion.side_effect = litellm.exceptions.RateLimitError(
+                message='Rate limit exceeded',
+                llm_provider='openai',
+                model='gpt-4o',
+            )
+
+            from axion._core.error import GenerationError
+
+            with pytest.raises(GenerationError):
+                await handler.execute({'query': 'Test query'})
+
+            # The parser fallback should NOT have been called —
+            # only the structured call should have been attempted.
+            # With max_rate_limit_retries=1 we expect exactly 1 acompletion call.
+            assert mock_acompletion.call_count == 1
+
+    @pytest.mark.asyncio
+    async def test_non_rate_limit_error_still_falls_back(self):
+        """Regression test: format/parse errors still trigger parser fallback."""
+
+        class ParserFallbackLLM:
+            def __init__(self):
+                self.model = 'gpt-4o'
+                self.temperature = 0.0
+
+            def complete(self, **kwargs):
+                pass
+
+            async def acomplete(self, *args, **kwargs):
+                return MagicMock(
+                    text='{"answer": "fallback answer", "confidence": 0.7}'
+                )
+
+        class TestHandler(LLMHandler):
+            instruction = 'Answer the question.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = ParserFallbackLLM()
+            fallback_to_parser = True
+            max_retries = 1
+
+        handler = TestHandler()
+
+        with patch('litellm.acompletion', new_callable=AsyncMock) as mock_acompletion:
+            # Simulate a non-rate-limit error (e.g., JSON parsing failure)
+            mock_acompletion.side_effect = Exception('Invalid JSON in response')
+
+            result = await handler.execute({'query': 'Test query'})
+
+            # Parser fallback should have succeeded
+            assert isinstance(result, SimpleOutput)
+            assert result.answer == 'fallback answer'
+
+    def test_retry_delay_includes_jitter(self):
+        """Verify jitter is added to rate-limit retry delays."""
+
+        class TestHandler(LLMHandler):
+            instruction = 'Answer the question.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = MockLLM(model='gpt-4o')
+            rate_limit_jitter = 5.0
+            rate_limit_buffer = 2.0
+
+        handler = TestHandler()
+
+        # Create a rate-limit error with a known reset time
+        error = Exception(
+            'Rate limit exceeded: Limit 30000, Used 29500, Requested 1000. '
+            'Please try again in 30s.'
+        )
+
+        delays = set()
+        for _ in range(20):
+            delay = handler._calculate_retry_delay(attempt=0, error=error)
+            delays.add(delay)
+
+        # With jitter, we should see variation in delays
+        # The base wait time should be >= 30s (from the error message)
+        # All delays should be >= the base backoff
+        base_backoff = handler.retry_delay * (2**0)
+        for d in delays:
+            assert d >= base_backoff
+
+        # With 20 samples and jitter up to 5.0, we should see some variation
+        assert len(delays) > 1, 'Expected jitter to produce varying delays'
+
+    @pytest.mark.asyncio
+    async def test_litellm_num_retries_disabled(self):
+        """Verify num_retries=0 is passed to litellm.acompletion."""
+
+        class TestHandler(LLMHandler):
+            instruction = 'Answer the question.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = MockLLM(model='gpt-4o')
+
+        handler = TestHandler()
+
+        with patch('litellm.acompletion', new_callable=AsyncMock) as mock_acompletion:
+            mock_acompletion.return_value = create_mock_response()
+
+            with patch('litellm.completion_cost', return_value=0.001):
+                await handler.execute({'query': 'Test query'})
+
+            call_kwargs = mock_acompletion.call_args.kwargs
+            assert call_kwargs['num_retries'] == 0

@@ -894,7 +894,7 @@ class AxionRunner(BaseMetricRunner):
                     else None,
                     passed=sub_passed,
                     explanation=sub.explanation,
-                    signals=None,  # Sub-metrics don't carry full signals
+                    signals=sub.signals,
                     metadata=sub_metadata,
                     source=self.source,
                     cost_estimate=sub_cost_estimate,  # Cost distributed from parent

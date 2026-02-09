@@ -81,13 +81,17 @@ class RateLimitInfo:
 
             retry_pattern = (
                 r'(?:please\s+try\s+again\s+in|retry\s+after)\s*'
-                r'(\d+(?:\.\d+)?)\s*(?:s|sec|secs|seconds)?'
+                r'(\d+(?:\.\d+)?)\s*(ms|s|sec|secs|seconds)?'
             )
             retry_match = re.search(
                 retry_pattern, error_message, re.IGNORECASE | re.DOTALL
             )
             if retry_match:
-                reset_seconds = max(1, math.ceil(float(retry_match.group(1))))
+                raw_value = float(retry_match.group(1))
+                unit = (retry_match.group(2) or 's').lower()
+                if unit == 'ms':
+                    raw_value = raw_value / 1000.0
+                reset_seconds = max(1, math.ceil(raw_value))
                 limit = 0
                 remaining = 0
                 key = 'retry-after'
