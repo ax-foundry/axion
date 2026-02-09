@@ -38,7 +38,6 @@ class RateLimitInfo:
             RateLimitInfo object if parsing succeeds, None otherwise
         """
         try:
-            logger.debug(f'Parsing rate limit info from error: {error_message[:500]}')
 
             # Normalize escaped newlines to actual newlines
             error_message = error_message.replace('\\n', '\n')
