@@ -38,7 +38,6 @@ class RateLimitInfo:
             RateLimitInfo object if parsing succeeds, None otherwise
         """
         try:
-
             # Normalize escaped newlines to actual newlines
             error_message = error_message.replace('\\n', '\n')
 
