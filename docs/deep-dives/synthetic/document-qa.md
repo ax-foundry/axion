@@ -10,22 +10,66 @@ The Synthetic QA Generation System provides a user flexible solution for creatin
 
 ### Pipeline Stages
 
-1. **Document Ingestion** - Load and prepare documents from directories
-2. **Content Chunking** - Intelligent splitting while preserving context
-3. **Statement Extraction** - Extract factual, standalone statements
-4. **Question Generation** - Create diverse questions across multiple types
-5. **Answer Generation** - Generate accurate, grounded answers
-6. **Validation & Reflection** - Quality assessment with iterative improvement
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Document Ingestion</p>
+<p class="rule-card__desc">Load and prepare documents from directories.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Content Chunking</p>
+<p class="rule-card__desc">Intelligent splitting while preserving context.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Statement Extraction</p>
+<p class="rule-card__desc">Extract factual, standalone statements from chunks.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">4</span>
+<p class="rule-card__title">Question Generation</p>
+<p class="rule-card__desc">Create diverse questions across multiple types.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">5</span>
+<p class="rule-card__title">Answer Generation</p>
+<p class="rule-card__desc">Generate accurate, grounded answers.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">6</span>
+<p class="rule-card__title">Validation & Reflection</p>
+<p class="rule-card__desc">Quality assessment with iterative improvement.</p>
+</div>
+</div>
 
 #### Langraph Workflow
 ![Workflow](../../assets/synthetic_workflow.png)
 
 ### Key Components
 
-- **DocumentQAGenerator** - Main orchestrator for the entire pipeline
-- **GenerationParams** - Configuration object for all generation parameters
-- **QAWorkflowGraph** - A `LangGraph` based workflow execution engine
-- **Quality Validators** - Multi-dimensional assessment and feedback
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">DocumentQAGenerator</p>
+<p class="rule-card__desc">Main orchestrator for the entire pipeline.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">GenerationParams</p>
+<p class="rule-card__desc">Configuration object for all generation parameters.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">QAWorkflowGraph</p>
+<p class="rule-card__desc">A LangGraph-based workflow execution engine.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Quality Validators</p>
+<p class="rule-card__desc">Multi-dimensional assessment and feedback.</p>
+</div>
+</div>
 
 ---
 
@@ -171,22 +215,47 @@ pd.DataFrame(results)
 
 The system evaluates QA pairs across five dimensions:
 
-1. **Accuracy** - Is the answer factually correct and well-grounded?
-2. **Completeness** - Does it fully address the question?
-3. **Relevance** - Is it directly aligned with the question?
-4. **Clarity** - Is the language clear and understandable?
-5. **Factual Integrity** - Does it avoid hallucination or extraneous information?
-
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Accuracy</p>
+<p class="rule-card__desc">Is the answer factually correct and well-grounded?</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Completeness</p>
+<p class="rule-card__desc">Does it fully address the question?</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Relevance</p>
+<p class="rule-card__desc">Is it directly aligned with the question?</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">4</span>
+<p class="rule-card__title">Clarity</p>
+<p class="rule-card__desc">Is the language clear and understandable?</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">5</span>
+<p class="rule-card__title">Factual Integrity</p>
+<p class="rule-card__desc">Does it avoid hallucination or extraneous information?</p>
+</div>
+</div>
 
 ### Reflection Process
 
 When QA pairs fall below the validation threshold:
 
-1. **Issue Identification** - Low-quality pairs are analyzed
-2. **Feedback Generation** - Specific improvement suggestions are created
-3. **Prompt Enhancement** - Generation prompts are refined with feedback
-4. **Regeneration** - Questions and answers are recreated with improvements
-5. **Re-validation** - Quality is reassessed until threshold is met
+```mermaid
+graph LR
+    I["Identify Issues"] --> F["Generate Feedback"]
+    F --> P["Enhance Prompts"]
+    P --> R["Regenerate QA"]
+    R --> V["Re-validate"]
+    V -->|"Below threshold"| I
+    V -->|"Passes"| D["Done"]
+```
 
 
 ### Integration with Evaluation
@@ -219,6 +288,11 @@ dataset.synthetic_generate_from_directory(
 )
 ```
 
-## API Reference
+---
 
-::: axion.synthetic.document_generator
+<div class="ref-nav" markdown="1">
+
+[Synthetic API Reference :octicons-arrow-right-24:](../../reference/synthetic.md){ .md-button .md-button--primary }
+[Datasets Guide :octicons-arrow-right-24:](../../guides/datasets.md){ .md-button }
+
+</div>

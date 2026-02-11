@@ -27,5 +27,10 @@ for result in results:
 
 
 
-## API Reference
-::: axion.search.you_retriever
+---
+
+<div class="ref-nav" markdown="1">
+
+[Search API Reference :octicons-arrow-right-24:](../../reference/search.md){ .md-button .md-button--primary }
+
+</div>

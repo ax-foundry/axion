@@ -21,21 +21,52 @@ results = await evaluation_runner(dataset, metrics)
 
 ## Metric Output Types
 
-Axion metrics can produce three types of outputs:
-
-| Type | Description | Example |
-|------|-------------|---------|
-| **Score** | Numeric value (0-1) with pass/fail threshold | `Faithfulness` → `0.85` |
-| **Classification** | Single label from a fixed set | `SentimentClassification` → `"positive"` |
-| **Analysis** | Structured insights without scoring | `ReferralReasonAnalysis` → `{reasons[], citations[]}` |
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">S</span>
+<p class="rule-card__title">Score</p>
+<p class="rule-card__desc">Numeric value (0&ndash;1) with pass/fail threshold. Example: <code>Faithfulness</code> &rarr; <code>0.85</code></p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">C</span>
+<p class="rule-card__title">Classification</p>
+<p class="rule-card__desc">Single label from a fixed set. Example: <code>SentimentClassification</code> &rarr; <code>"positive"</code></p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">A</span>
+<p class="rule-card__title">Analysis</p>
+<p class="rule-card__desc">Structured insights without scoring. Example: <code>ReferralReasonAnalysis</code> &rarr; <code>{reasons[], citations[]}</code></p>
+</div>
+</div>
 
 See [Creating Custom Metrics](../deep-dives/metrics/creating-metrics.md#metric-categories) for details on choosing the right output type.
 
 ## Metric Categories
 
-### Composite Metrics (LLM-based)
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Composite (LLM-based)</p>
+<p class="rule-card__desc">Nuanced evaluation requiring reasoning. Faithfulness, AnswerRelevancy, FactualAccuracy, AnswerCompleteness, AnswerCriteria.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Heuristic (Non-LLM)</p>
+<p class="rule-card__desc">Fast, deterministic checks. ExactStringMatch, CitationPresence, Latency, ContainsMatch.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Retrieval</p>
+<p class="rule-card__desc">RAG pipeline evaluation. HitRateAtK, MeanReciprocalRank, ContextualRelevancy, ContextualSufficiency.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">4</span>
+<p class="rule-card__title">Conversational</p>
+<p class="rule-card__desc">Multi-turn agent evaluation. GoalCompletion, ConversationEfficiency, ConversationFlow.</p>
+</div>
+</div>
 
-For nuanced evaluation requiring reasoning:
+### Composite Metrics (LLM-based)
 
 | Metric | What it Measures |
 |--------|-----------------|
@@ -47,8 +78,6 @@ For nuanced evaluation requiring reasoning:
 
 ### Heuristic Metrics (Non-LLM)
 
-Fast, deterministic checks:
-
 | Metric | What it Measures |
 |--------|-----------------|
 | `ExactStringMatch` | Exact match between actual and expected |
@@ -58,8 +87,6 @@ Fast, deterministic checks:
 
 ### Retrieval Metrics
 
-For RAG pipeline evaluation:
-
 | Metric | What it Measures |
 |--------|-----------------|
 | `HitRateAtK` | Is the right doc in top K results? |
@@ -68,8 +95,6 @@ For RAG pipeline evaluation:
 | `ContextualSufficiency` | Do chunks contain the answer? |
 
 ### Conversational Metrics
-
-For multi-turn agents:
 
 | Metric | What it Measures |
 |--------|-----------------|
@@ -107,8 +132,8 @@ metric = AnswerCriteria(
 )
 ```
 
-## Next Steps
+---
 
-- [Running Evaluations](evaluation.md) - Scale up with evaluation runners
-- [Creating Custom Metrics](../deep-dives/metrics/creating-metrics.md) - Build your own metrics
-- [API Reference: Metrics](../reference/metrics.md) - Full API documentation
+[Running Evaluations :octicons-arrow-right-24:](evaluation.md){ .md-button .md-button--primary }
+[Creating Custom Metrics :octicons-arrow-right-24:](../deep-dives/metrics/creating-metrics.md){ .md-button }
+[Metrics Reference :octicons-arrow-right-24:](../reference/metrics.md){ .md-button }

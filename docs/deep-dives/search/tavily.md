@@ -29,5 +29,10 @@ results = await api_client.crawl('https://www.espn.com/')
 results = await api_client.extract('https://www.espn.com/')
 ```
 
-## API Reference
-::: axion.search.tavily_retriever
+---
+
+<div class="ref-nav" markdown="1">
+
+[Search API Reference :octicons-arrow-right-24:](../../reference/search.md){ .md-button .md-button--primary }
+
+</div>

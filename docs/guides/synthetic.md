@@ -9,74 +9,80 @@ Manual dataset curation is essential but doesn't scale. Axion provides synthetic
 1. **Document Q&A Generation** - Create question-answer pairs from your knowledge base
 2. **Session-based Generation** - Generate Q&A from conversation transcripts
 
-## Document Q&A Generation
+## Generation Methods
 
-Generate evaluation data from your documents using `DocumentQAGenerator`:
+=== ":material-file-document: Document Q&A"
 
-```python
-from axion.synthetic import DocumentQAGenerator, GenerationParams
+    Generate evaluation data from your documents using `DocumentQAGenerator`:
 
-# Initialize with your LLM
-generator = DocumentQAGenerator(
-    llm=your_llm,  # LLMRunnable-compatible object
-    params=GenerationParams(
-        num_pairs=10,
-        question_types=["factual", "conceptual", "application"],
+    ```python
+    from axion.synthetic import DocumentQAGenerator, GenerationParams
+
+    # Initialize with your LLM
+    generator = DocumentQAGenerator(
+        llm=your_llm,  # LLMRunnable-compatible object
+        params=GenerationParams(
+            num_pairs=10,
+            question_types=["factual", "conceptual", "application"],
+            difficulty="medium",
+            answer_length="medium",
+            validation_threshold=0.7,
+        ),
+    )
+
+    # Generate from a directory of documents
+    results = await generator.generate_from_directory("./documents")
+
+    # Convert to Dataset for evaluation
+    dataset = generator.to_dataset(results, dataset_name="my_synthetic_dataset")
+    ```
+
+    **Direct Workflow Usage**
+
+    For more control, use `QAWorkflowGraph` directly:
+
+    ```python
+    from axion.synthetic.workflow import QAWorkflowGraph
+
+    workflow = QAWorkflowGraph(llm=your_llm)
+
+    # Run with document content
+    result = await workflow.run_from_documents(
+        content="Your document text here...",
+        num_pairs=5,
+        question_types=["factual", "analytical"],
         difficulty="medium",
-        answer_length="medium",
-        validation_threshold=0.7,
-    ),
-)
+        splitter_type="sentence",
+        chunk_size=2048,
+        statements_per_chunk=5,
+        validation_threshold=0.8,
+        max_reflection_iterations=3,
+    )
 
-# Generate from a directory of documents
-results = await generator.generate_from_directory("./documents")
+    # Access results
+    qa_pairs = result["validated_qa_pairs"]
+    statements = result["statements"]
+    quality = result["average_quality"]
+    ```
 
-# Convert to Dataset for evaluation
-dataset = generator.to_dataset(results, dataset_name="my_synthetic_dataset")
-```
+=== ":material-forum: Session-based"
 
-### Direct Workflow Usage
+    Generate Q&A pairs from conversation transcripts:
 
-For more control, use `QAWorkflowGraph` directly:
+    ```python
+    from axion.synthetic.workflow import QAWorkflowGraph
 
-```python
-from axion.synthetic.workflow import QAWorkflowGraph
+    workflow = QAWorkflowGraph(llm=your_llm)
 
-workflow = QAWorkflowGraph(llm=your_llm)
-
-# Run with document content
-result = await workflow.run_from_documents(
-    content="Your document text here...",
-    num_pairs=5,
-    question_types=["factual", "analytical"],
-    difficulty="medium",
-    splitter_type="sentence",
-    chunk_size=2048,
-    statements_per_chunk=5,
-    validation_threshold=0.8,
-    max_reflection_iterations=3,
-)
-
-# Access results
-qa_pairs = result["validated_qa_pairs"]
-statements = result["statements"]
-quality = result["average_quality"]
-```
-
-### Session-based Generation
-
-Generate Q&A pairs from conversation transcripts:
-
-```python
-result = await workflow.run_from_sessions(
-    session_messages=[
-        {"role": "user", "content": "How do I reset my password?"},
-        {"role": "assistant", "content": "Go to Settings > Security > Reset Password"},
-    ],
-    session_metadata={"topic": "account_management"},
-    num_pairs=3,
-)
-```
+    result = await workflow.run_from_sessions(
+        session_messages=[
+            {"role": "user", "content": "How do I reset my password?"},
+            {"role": "assistant", "content": "Go to Settings > Security > Reset Password"},
+        ],
+        session_metadata={"topic": "account_management"},
+        num_pairs=3,
+    )
+    ```
 
 ## How It Works
 
@@ -148,11 +154,8 @@ result = await workflow.run_from_documents(
 
 ## Key Considerations
 
-### Quality Over Quantity
-
-- Synthetic data quality varies significantly
-- Always review a sample before using at scale
-- Use `validation_threshold` to filter aggressively
+!!! warning "Quality Over Quantity"
+    Synthetic data quality varies significantly. Always review a sample before using at scale, and use `validation_threshold` to filter aggressively.
 
 ### Iterative Refinement
 
@@ -201,7 +204,12 @@ workflow = QAWorkflowGraph(llm=your_llm)
 workflow.visualize_graph()  # Displays mermaid diagram
 ```
 
-## Next Steps
+---
 
-- [Agent Evaluation Playbook](../agent_playbook.md) - Dataset best practices
-- [Metrics Guide](metrics.md) - Evaluate your synthetic data quality
+<div class="ref-nav" markdown="1">
+
+[Agent Evaluation Playbook :octicons-arrow-right-24:](../agent_playbook.md){ .md-button .md-button--primary }
+[Metrics Guide :octicons-arrow-right-24:](metrics.md){ .md-button }
+[Synthetic Data Reference :octicons-arrow-right-24:](../reference/synthetic.md){ .md-button }
+
+</div>

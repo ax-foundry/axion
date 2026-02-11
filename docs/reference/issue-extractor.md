@@ -2,7 +2,7 @@
 
 API reference for the issue extraction and signal analysis module.
 
-## Module: `axion.reporting`
+<div class="ref-import" markdown>
 
 ```python
 from axion.reporting import (
@@ -15,6 +15,8 @@ from axion.reporting import (
     SignalAdapterRegistry,
 )
 ```
+
+</div>
 
 ---
 
@@ -409,8 +411,10 @@ The following adapters are pre-registered:
 
 ---
 
-## See Also
+<div class="ref-nav" markdown>
 
-- [Issue Extraction Guide](../guides/issue-extraction.md) - Usage examples and best practices
-- [Running Evaluations](../guides/evaluation.md) - How to run evaluations
-- [Creating Custom Metrics](../deep-dives/metrics/creating-metrics.md) - Build your own metrics
+[Issue Extraction Guide :octicons-arrow-right-24:](../guides/issue-extraction.md){ .md-button .md-button--primary }
+[Running Evaluations :octicons-arrow-right-24:](../guides/evaluation.md){ .md-button }
+[Creating Custom Metrics :octicons-arrow-right-24:](../deep-dives/metrics/creating-metrics.md){ .md-button }
+
+</div>

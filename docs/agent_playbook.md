@@ -1,29 +1,42 @@
 # Agent Evaluation Playbook
 
-This playbook is a practical guide to evaluating AI agents without the ceremony. The goal isn’t “more dashboards” — it’s **making the agent better in the real world**, on the things your users actually do.
+This playbook is a practical guide to evaluating AI agents without the ceremony. The goal isn't "more dashboards" — it's **making the agent better in the real world**, on the things your users actually do.
 
-!!! danger "The boring thing that keeps you alive"
-    If agents are sports cars, **evals are seatbelts** — the thing you use *every time*, not the thing you brag about.
+<div class="seatbelt-hero" markdown="0">
+<div class="seatbelt-hero__text">
+<span class="seatbelt-hero__label">Philosophy</span>
+<p class="seatbelt-hero__quote">Agents are sports cars.<br><em>Evals are the seatbelt.</em></p>
+<p class="seatbelt-hero__sub">Seatbelts don't steer. They don't tune the engine. They don't make you "better." They just keep you from eating the steering wheel when something goes wrong. If your stance is "we don't need evals because we're careful," you're confusing confidence with safety.</p>
+</div>
+<div class="seatbelt-hero__text" style="background: linear-gradient(160deg, #162030 0%, #1a2840 100%);">
+<span class="seatbelt-hero__label">Mindset</span>
+<p class="seatbelt-hero__quote">This is just <em>data science.</em></p>
+<p class="seatbelt-hero__sub">Same fundamentals as traditional ML &mdash; dataset, labels, error analysis, iteration. If you're paying $100/seat for an eval tool and still not looking at your data, you're doing it wrong. Expensive tools don't solve the problem &mdash; they just scale whatever process you already have.</p>
+</div>
+</div>
 
-    Seatbelts don’t steer. They don’t tune the engine. They don’t make you “better.”
-    They just keep you from eating the steering wheel when something goes wrong.
-
-    If your stance is “we don’t need evals because we’re careful,” you’re confusing confidence with safety.
-
-    And yes: this is mostly **data science**. Same fundamentals as traditional ML — dataset, labels, error analysis, iteration.
-    The only “new” part is the mindset: messier outputs, more ambiguity, more failure modes.
-
-    If you’re paying **$100/seat** for an eval tool and still not looking at your data, you’re doing it wrong.
-    If you’re looking at real examples, labeling failures, and iterating, you’re doing it right.
-
-    Agent evaluation is patience and first principles. Expensive tools don’t solve the problem — they just scale whatever process you already have.
-
-!!! tip "Rules of thumb (common sense, not rocket science)"
-    - **Evals aren’t rocket science. They’re adult supervision.**
-    - **If you can’t describe “good” in a sentence, no framework will save you.**
-    - **Start with pass/fail. Add nuance only after you’ve earned it.**
-    - **If you’re reaching for eval graphs before you have 25 real failure cases, you’re procrastinating with architecture.**
-    - **LLM judges are useful. They’re also liars with confidence — calibrate them against humans or don’t pretend you measured anything.**
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Evals are adult supervision</p>
+<p class="rule-card__desc">Not rocket science. Simple checks that prevent simple disasters. Start here, stay here, expand only when the basics are solid.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Define "good" in one sentence</p>
+<p class="rule-card__desc">If you can't describe success, no framework will save you. Clarity first, tooling second.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Start with pass/fail</p>
+<p class="rule-card__desc">Add nuance only after you've earned it. A binary gate catches more failures than a sophisticated rubric you never run.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">4</span>
+<p class="rule-card__title">Calibrate your judges</p>
+<p class="rule-card__desc">LLM judges are useful. They're also liars with confidence. Calibrate them against humans or don't pretend you measured anything.</p>
+</div>
+</div>
 
 ---
 
@@ -41,13 +54,36 @@ A customer support agent and an onboarding agent may share similarities, but gra
 
 !!! warning "Stop confusing activity with progress"
     Shipping a new dashboard is not the same as shipping reliability.
-    If you can’t point to **specific failure modes that got better**, you didn’t “improve the agent” — you just looked at it differently.
+    If you can't point to **specific failure modes that got better**, you didn't "improve the agent" — you just looked at it differently.
 
 ---
 
 ## Four Common Mistakes
 
 Before diving into the process, avoid these common pitfalls:
+
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Not Looking at Your Data</p>
+<p class="rule-card__desc">The most common and most damaging mistake. Without reviewing raw examples, you're not truly evaluating.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Frameworks Before Fundamentals</p>
+<p class="rule-card__desc">If your first question is "What framework?", you're starting in the wrong place.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Overreliance on Generic Evals</p>
+<p class="rule-card__desc">Generic metrics are not a shortcut. If your evals aren't grounded in known errors, you're wasting time.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">4</span>
+<p class="rule-card__title">Misusing LLM-as-a-Judge</p>
+<p class="rule-card__desc">LLMs can assist evaluation, but relying on them without human validation is a recipe for false confidence.</p>
+</div>
+</div>
 
 ### 1. Not Looking at Your Data
 
@@ -57,9 +93,9 @@ Effective evaluation begins with frictionless, high-quality data exploration and
 
 **If you haven't spent time reviewing raw examples, you're not truly evaluating.**
 
-!!! info "If this feels “manual,” good"
+!!! info "If this feels "manual," good"
     Start manually. Use spreadsheets. Label failures.
-    If you can’t do it by hand for 30 examples, you’re not ready to automate it for 30,000.
+    If you can't do it by hand for 30 examples, you're not ready to automate it for 30,000.
 
 ### 2. Frameworks Before Fundamentals
 
@@ -87,9 +123,9 @@ Relying on LLMs without first validating them against domain expert feedback is 
 
 **Until you achieve strong agreement between human and model judgment, LLM outputs should be treated as advisory—not definitive.**
 
-!!! warning "Don’t confuse “a score” with “truth”"
-    LLM judges are great at sounding right. That’s the problem.
-    If you didn’t calibrate against humans, you’re just grading your homework with the same model class.
+!!! warning "Don't confuse "a score" with "truth""
+    LLM judges are great at sounding right. That's the problem.
+    If you didn't calibrate against humans, you're just grading your homework with the same model class.
 
 ---
 
@@ -103,24 +139,23 @@ If you approach evaluation as a simple side-by-side comparison or a table of res
     The best agent eval workflows look suspiciously like **traditional ML evaluation**, because they are.
 
     Data scientists have been doing this for years:
+
     - Curate a representative dataset
     - Label outcomes (often binary)
     - Do error analysis and slice breakdowns
     - Set thresholds, ship changes, measure regressions
 
-    What’s “new” with agents is mostly the **mindset shift**:
+    What's "new" with agents is mostly the **mindset shift**:
+
     - Outputs are messier and more subjective
     - Failures are multi-causal (prompt, retrieval, tools, policy)
-    - You need to write down “good” explicitly, or your metrics will quietly drift into vibes
+    - You need to write down "good" explicitly, or your metrics will quietly drift into vibes
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│    ANALYZE ──────► MEASURE ──────► IMPROVE ──────┐         │
-│        ▲                                          │         │
-│        └──────────────────────────────────────────┘         │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    A["ANALYZE"] -->|"Map what's broken"| M["MEASURE"]
+    M -->|"Quantify impact"| I["IMPROVE"]
+    I -->|"Validate & iterate"| A
 ```
 
 Most AI agent problems aren't solved with a single tweak—they're solved with a disciplined, repeatable process. The AMI lifecycle replaces one-off troubleshooting with a data-driven, continuous improvement loop that:
@@ -155,7 +190,7 @@ Most AI agent problems aren't solved with a single tweak—they're solved with a
 3. Roll out changes in controlled environments and validate improvements with metrics
 
 **And do it again, and again, and again.**
-Once you can run this loop on purpose, then (and only then) scale it with tooling. Don’t stop looking at the data just because you hired a dashboard.
+Once you can run this loop on purpose, then (and only then) scale it with tooling. Don't stop looking at the data just because you hired a dashboard.
 
 ---
 
@@ -175,7 +210,7 @@ Start with ~30 examples. Continue adding until no new failure modes appear. Stop
 
 !!! tip "Treat your dataset like a crash report backlog"
     Every new failure case is a free bug report. Collect them. Name them. Fix them.
-    If you can’t describe the failure in plain English, you can’t evaluate it.
+    If you can't describe the failure in plain English, you can't evaluate it.
 
 ### Coverage Dimensions
 
@@ -220,7 +255,7 @@ The critique should be detailed enough to use in a few-shot prompt for an LLM ju
 
 !!! info "Pass/fail is the seatbelt latch"
     Pass/fail gives you clarity and velocity.
-    Critiques tell you what to change so tomorrow’s run is better than today’s.
+    Critiques tell you what to change so tomorrow's run is better than today's.
 
 ---
 
@@ -273,7 +308,7 @@ The most common failure mode is "Metric Spaghetti"—throwing every metric at ev
 
 !!! tip "Pick the few that matter"
     Start with 2–5 metrics that directly map to real failures.
-    If you can’t explain why a metric exists in one sentence, delete it.
+    If you can't explain why a metric exists in one sentence, delete it.
 
 ### Selection by Dimension
 
@@ -363,9 +398,13 @@ You cannot evaluate a GPT-4o agent using a GPT-3.5-Turbo judge. The judge must h
 
 **Key principle:** "Cheap on generation, expensive on evaluation."
 
-
-
+---
 
 ## Summary
 
-The goal is not to automate evaluation away—it's to build resilient, domain-aware evaluation systems that measure what truly matters and drive meaningful, measurable improvement.
+<div style="background: linear-gradient(135deg, #2a3320 0%, #1e2618 100%); padding: 24px; border-radius: 8px; color: white; margin: 20px 0;" markdown="0">
+<p style="margin: 0; font-size: 14px; line-height: 1.7;">The goal is not to automate evaluation away &mdash; it's to build resilient, domain-aware evaluation systems that measure what truly matters and drive meaningful, measurable improvement. Start simple. Look at your data. Define "good." Then iterate.</p>
+</div>
+
+[Evaluation Flywheel :octicons-arrow-right-24:](evaluation_flywheel.md){ .md-button .md-button--primary }
+[Hierarchical Scoring :octicons-arrow-right-24:](guides/hierarchical-scoring.md){ .md-button }

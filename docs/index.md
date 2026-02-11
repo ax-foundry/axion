@@ -5,34 +5,54 @@
 </figure>
 
 
-<div style="background: linear-gradient(135deg, #8B9F4F 0%, #6B7A3A 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
+<div style="background: linear-gradient(135deg, #2a3320 0%, #1e2618 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
 
 <p style="margin: 0; font-size: 16px; line-height: 1.6;">
 <strong>White-box evaluation</strong>—Axion empowers builders with <strong>actionable signals</strong>, <strong>automated pipelines</strong>, and <strong>fully transparent metrics</strong>. See exactly why your agent succeeds or fails.
 </p>
 </div>
 
-## **Seatbelts for agents**
+<div class="seatbelt-hero">
+  <div class="seatbelt-hero__text">
+    <span class="seatbelt-hero__label">Philosophy</span>
+    <p class="seatbelt-hero__quote">
+      Agents are sports cars.<br>
+      <em>Evals are the seatbelt.</em>
+    </p>
+    <p class="seatbelt-hero__sub">
+      It won't make you faster. It won't win you anything. But it will keep a bad release from turning into a public incident. If you skip evals because you're a "good driver," you're not a serious person.
+    </p>
+  </div>
+  <div class="seatbelt-hero__visual">
+    <img src="assets/seatbelt.png" alt="Safety gear, not horsepower" loading="lazy">
+  </div>
+</div>
 
-!!! danger "Safety gear, not horsepower"
-    Agents are sports cars. **Evals are the seatbelt.**
+<div class="rule-grid">
+  <div class="rule-card">
+    <span class="rule-card__number">1</span>
+    <p class="rule-card__title">Evals are adult supervision</p>
+    <p class="rule-card__desc">Not rocket science. Simple checks that prevent simple disasters. Start here, stay here, and expand only when the basics are solid.</p>
+  </div>
+  <div class="rule-card">
+    <span class="rule-card__number">2</span>
+    <p class="rule-card__title">Define "good" in one sentence</p>
+    <p class="rule-card__desc">If you can't articulate what success looks like, no framework will save you. Clarity first, tooling second.</p>
+  </div>
+  <div class="rule-card">
+    <span class="rule-card__number">3</span>
+    <p class="rule-card__title">Start with pass/fail</p>
+    <p class="rule-card__desc">Add nuance only after you've earned it. A binary gate catches more failures than a sophisticated rubric you never run.</p>
+  </div>
+  <div class="rule-card">
+    <span class="rule-card__number">4</span>
+    <p class="rule-card__title">Calibrate your judges</p>
+    <p class="rule-card__desc">LLM judges are useful. They're also liars with confidence. Calibrate them against humans or don't pretend you measured anything.</p>
+  </div>
+</div>
 
-    It won’t make you faster.
-    It won’t win you anything.
-    It won’t look cool in a screenshot.
-
-    But it *will* keep a bad release from turning into a public incident.
-
-    If you skip evals because you’re a “good driver,” you’re not a serious person.
-
-!!! tip "Common-sense rules (that actually ship products)"
-    - **Evals aren’t rocket science. They’re adult supervision.**
-    - **If you can’t describe “good” in a sentence, no framework will save you.**
-    - **Start with pass/fail. Add nuance only after you’ve earned it.**
-    - **LLM judges are useful. They’re also liars with confidence — calibrate them against humans or don’t pretend you measured anything.**
-
-[Go deeper → Evaluation Flywheel](evaluation_flywheel.md){ .md-button .md-button--primary }
-[Go deeper → Why Ground Truth Matters](why_ground_truth_matters.md){ .md-button }
+[Evaluation Flywheel :octicons-arrow-right-24:](evaluation_flywheel.md){ .md-button .md-button--primary }
+[Why Ground Truth Matters :octicons-arrow-right-24:](why_ground_truth_matters.md){ .md-button }
 
 ---
 
@@ -209,10 +229,37 @@ results.to_scorecard()
 
 ---
 
-## Why "Axion"?
-
-**A**gent **X**-Ray **I**nspection & **O**ptimization **N**etwork
-
-The name draws inspiration from the [axion](https://en.wikipedia.org/wiki/Axion)—a hypothetical particle in physics proposed to solve the "strong CP problem" in quantum chromodynamics. Physicists Frank Wilczek and Steven Weinberg named it after a laundry detergent, hoping it would "clean up" their theoretical mess.
-
-Like its namesake, this toolkit provides lightweight, modular components that work together to solve complex problems. Axions in physics are characterized by being incredibly small yet potentially accounting for much of the universe's dark matter through sheer numbers. Similarly, Axion the toolkit offers small, focused tools that combine to tackle the substantial challenge of AI agent evaluation.
+<div class="etymology" markdown="0">
+<div class="etymology__text">
+<span class="etymology__label">Origin</span>
+<h2 class="etymology__heading">Why "Axion"?</h2>
+<p class="etymology__acronym"><strong>A</strong>gent <strong>X</strong>-Ray <strong>I</strong>nspection &amp; <strong>O</strong>ptimization <strong>N</strong>etwork</p>
+<p class="etymology__body">The name draws inspiration from the <a href="https://en.wikipedia.org/wiki/Axion">axion</a>&mdash;a hypothetical particle in physics proposed to solve the "strong CP problem" in quantum chromodynamics. Physicists Frank Wilczek and Steven Weinberg named it after a laundry detergent, hoping it would "clean up" their theoretical mess.</p>
+</div>
+<div class="etymology__aside">
+<span class="etymology__parallel-label">Particle &harr; Toolkit</span>
+<table class="etymology__table">
+<tr>
+<td class="etymology__parallel-icon">&#x2736;</td>
+<td>
+<p class="etymology__parallel-title">Incredibly small, immensely powerful</p>
+<p class="etymology__parallel-desc">Axions may account for the universe's dark matter through sheer numbers. This toolkit offers small, focused tools that combine to tackle AI evaluation at scale.</p>
+</td>
+</tr>
+<tr>
+<td class="etymology__parallel-icon">&#x2727;</td>
+<td>
+<p class="etymology__parallel-title">Designed to clean things up</p>
+<p class="etymology__parallel-desc">Named after a detergent to "clean up" a theoretical mess. Built to bring clarity and structure to the messy problem of agent evaluation.</p>
+</td>
+</tr>
+<tr>
+<td class="etymology__parallel-icon">&#x2B22;</td>
+<td>
+<p class="etymology__parallel-title">Modular by nature</p>
+<p class="etymology__parallel-desc">Lightweight components that work together to solve complex problems. Composable building blocks, not a monolithic framework.</p>
+</td>
+</tr>
+</table>
+</div>
+</div>

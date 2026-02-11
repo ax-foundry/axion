@@ -4,10 +4,18 @@ After running evaluations, publish results back to Langfuse. Axion provides two 
 
 ## Two Publishing Paths
 
-| Method | Use Case | Requires Existing Traces? |
-|--------|----------|---------------------------|
-| `publish_to_observability()` | Attach scores to **existing** production traces | Yes - `trace_id` required |
-| `publish_as_experiment()` | Create a complete experiment from scratch | No - creates everything |
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">publish_to_observability()</p>
+<p class="rule-card__desc">Attach scores to <strong>existing</strong> production traces. Requires <code>trace_id</code> on each item.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">publish_as_experiment()</p>
+<p class="rule-card__desc">Create a complete experiment from scratch &mdash; datasets, items, runs, and scores. No existing traces needed.</p>
+</div>
+</div>
 
 ---
 
@@ -124,33 +132,17 @@ print(f"Scores uploaded: {stats['scores_uploaded']}")
 
 ### How It Works
 
-```
-+---------------------------------------------------------------------+
-|                        publish_as_experiment()                       |
-+---------------------------------------------------------------------+
-|                                                                     |
-|  1. DETERMINE NAMES                                                 |
-|     +- dataset_name: provided OR evaluation_name OR auto-generated  |
-|     +- run_name: provided OR "{dataset_name}-{run_id[:8]}"          |
-|                                                                     |
-|  2. CREATE/GET DATASET (upserts - safe if exists)                   |
-|     +- client.create_dataset(name=dataset_name)                     |
-|                                                                     |
-|  3. PHASE 1: CREATE DATASET ITEMS                                   |
-|     For each TestResult:                                            |
-|     +- Serialize input (query, retrieved_content, etc.)             |
-|     +- Serialize expected_output                                    |
-|     +- create_dataset_item(id=item.id, ...)                         |
-|                                                                     |
-|  4. PHASE 2: CREATE EXPERIMENT RUNS                                 |
-|     For each dataset_item:                                          |
-|     +- Create trace with input/output                               |
-|     +- Link trace to dataset item                                   |
-|     +- Attach scores to trace                                       |
-|                                                                     |
-|  5. FINAL FLUSH                                                     |
-|                                                                     |
-+---------------------------------------------------------------------+
+```mermaid
+graph TD
+    N["1. Determine Names"] --> D["2. Create/Get Dataset"]
+    D --> P1["3. Create Dataset Items"]
+    P1 --> P2["4. Create Experiment Runs"]
+    P2 --> F["5. Final Flush"]
+    N -.- N1["dataset_name: provided OR evaluation_name OR auto-generated"]
+    N -.- N2["run_name: provided OR dataset_name-run_id[:8]"]
+    D -.- D1["client.create_dataset() &mdash; upserts, safe if exists"]
+    P1 -.- P1a["Serialize input, expected_output, create_dataset_item()"]
+    P2 -.- P2a["Create trace, link to dataset item, attach scores"]
 ```
 
 ### Parameters
@@ -420,9 +412,8 @@ stats = result.publish_to_observability(loader=loader)
 
 ---
 
-## Next Steps
+---
 
-- **[Overview](overview.md)**: Complete workflow example
-- **[Tracing](tracing.md)**: Creating traces to score
-- **[Configuration](configuration.md)**: Advanced configuration
-- **[Evaluation Guide](../evaluation.md)**: Running evaluations
+[Overview :octicons-arrow-right-24:](overview.md){ .md-button .md-button--primary }
+[Tracing :octicons-arrow-right-24:](tracing.md){ .md-button }
+[Evaluation Guide :octicons-arrow-right-24:](../evaluation.md){ .md-button }

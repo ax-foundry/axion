@@ -4,12 +4,30 @@ Extract and analyze low-score signals from evaluation results for debugging, rep
 
 ## Overview
 
-After running evaluations, you often need to understand **why** certain test cases failed. The `IssueExtractor` automatically identifies failing signals across all metrics and provides:
+After running evaluations, you often need to understand **why** certain test cases failed. The `IssueExtractor` automatically identifies failing signals across all metrics.
 
-- **Unified extraction** - Works with any metric, built-in or custom
-- **Grouped analysis** - Similar issues consolidated for pattern detection
-- **LLM-ready prompts** - Generate summaries with optional AI analysis
-- **Extensible adapters** - Register custom signal detection for your metrics
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Unified Extraction</p>
+<p class="rule-card__desc">Works with any metric, built-in or custom.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Grouped Analysis</p>
+<p class="rule-card__desc">Similar issues consolidated for pattern detection.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">LLM-Ready Prompts</p>
+<p class="rule-card__desc">Generate summaries with optional AI analysis.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Extensible Adapters</p>
+<p class="rule-card__desc">Register custom signal detection for your metrics.</p>
+</div>
+</div>
 
 ## Quick Start
 
@@ -531,8 +549,25 @@ class MetricSignalAdapter:
 
 ## Best Practices
 
-1. **Start with defaults** - `IssueExtractor()` works well for most cases
-2. **Use grouped prompts for large evals** - Reduces tokens by 50-90%
-3. **Register adapters for custom metrics** - Enables value-based detection
-4. **Include relevant context fields** - Helps LLM understand issues
-5. **Sample for very large datasets** - Use `sample_rate` to manage volume
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Start with Defaults</p>
+<p class="rule-card__desc"><code>IssueExtractor()</code> works well for most cases out of the box.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Grouped Prompts</p>
+<p class="rule-card__desc">Use grouped prompts for large evals &mdash; reduces tokens by 50&ndash;90%.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Register Adapters</p>
+<p class="rule-card__desc">Custom adapters enable value-based detection for your metrics.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">4</span>
+<p class="rule-card__title">Sample Large Datasets</p>
+<p class="rule-card__desc">Use <code>sample_rate</code> to manage volume on very large evaluations.</p>
+</div>
+</div>

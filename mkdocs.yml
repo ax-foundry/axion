@@ -1,6 +1,8 @@
 site_name: Axion
 site_description: A modular evaluation framework for AI agents
+site_url: https://ax-foundry.github.io/axion/
 repo_url: https://github.com/ax-foundry/axion
+repo_name: ax-foundry/axion
 
 nav:
   - Home:
@@ -97,41 +99,49 @@ theme:
   logo: assets/ax_icon.png
   favicon: assets/ax_icon.png
   custom_dir: docs/overrides
+  icon:
+    repo: fontawesome/brands/github
   font:
     text: Inter
-    code: Fira Code
+    code: JetBrains Mono
   features:
-    - navigation.tabs
-    - navigation.tabs.sticky
-    - navigation.sections
-    - navigation.indexes
     - navigation.instant
     - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
     - navigation.top
-    - toc.integrate
-    - content.code.copy
-    - content.tabs.link
+    - navigation.indexes
     - search.suggest
     - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
   language: en
   palette:
-    - scheme: slate
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: custom
       accent: custom
       toggle:
-        icon: material/weather-night
-        name: Switch to light mode
-    - scheme: default
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-sunny
+        icon: material/brightness-7
         name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
 
 extra_css:
   - stylesheets/extra.css
 
-extra: {}
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ax-foundry/axion
 
 plugins:
   - search
@@ -159,6 +169,8 @@ plugins:
             # Filter internals
             filters: ["!^_"]
 
+copyright: Copyright &copy; 2026 AX Foundry. All rights reserved.
+
 markdown_extensions:
   - admonition
   - pymdownx.details
@@ -167,15 +179,24 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
   - pymdownx.tabbed:
       alternate_style: true
-  - codehilite
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - attr_list
   - md_in_html
+  - tables
   - toc:
       permalink: true
       title: On this page
       toc_depth: 3
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - def_list
+  - footnotes

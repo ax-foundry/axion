@@ -121,6 +121,11 @@ YAML metrics don't define field mappings in the YAML file yet, but you can pass
 `field_mapping` when creating the metric instance to map canonical fields to nested
 paths or alternate field names.
 
-## API Reference
+---
 
-::: axion.metrics.base
+<div class="ref-nav" markdown="1">
+
+[Metrics API Reference :octicons-arrow-right-24:](../../reference/metrics.md){ .md-button .md-button--primary }
+[Creating Custom Metrics :octicons-arrow-right-24:](creating-metrics.md){ .md-button }
+
+</div>

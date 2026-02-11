@@ -1,32 +1,41 @@
 # Building Composite Evaluation Metrics
 
-Building custom evaluation metrics is easy to do without external libraries.
-Below is an example of re-creating the "faithfulness" metric from [RAGAS](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/?h=faith) or [DeepEval](https://docs.confident-ai.com/docs/metrics-faithfulness).
+Composite metrics chain multiple LLM calls together to evaluate complex properties that no single prompt can capture well. Each sub-metric handles one focused task, and an orchestrator combines their outputs into a final score.
+
+This pattern is how Axion implements metrics like **Faithfulness**, **AnswerRelevancy**, and **FactualAccuracy** internally. Below, we re-create the [Faithfulness metric](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/?h=faith) from scratch to show the technique.
 
 ## Faithfulness Metric
-The Faithfulness metric evaluates how factually consistent a response is with the retrieved context. It is scored between 0 and 1, where higher values indicate greater consistency.
 
-A response is considered faithful if every claim it makes is fully supported by the retrieved context.
+The Faithfulness metric evaluates how factually consistent a response is with the retrieved context. It is scored between 0 and 1, where higher values indicate greater consistency. A response is considered faithful if every claim it makes is fully supported by the retrieved context.
 
-#### Calculation Steps:
-- Extract all claims from the response.
-- Verify whether each claim is directly supported by the retrieved context.
-- Compute the faithfulness score using a simple formula.
+### How It Works
 
-> A higher faithfulness score signifies stronger factual alignment with the retrieved context, ensuring more reliable and trustworthy responses.
+```mermaid
+graph LR
+    A["LLM Response"] --> B["1. Extract Statements"]
+    B --> C["Atomic claims"]
+    C --> D["2. Evaluate against Context"]
+    D --> E["Per-claim verdicts"]
+    E --> F["3. Compute Score"]
+    F --> G["supported / total"]
+```
 
-## Code Examples
-```py title="Faithfulness Example"
+| Step | Sub-metric | Input | Output |
+|------|-----------|-------|--------|
+| **1. Extract** | `StatementGenerator` | Question + Answer | List of atomic statements |
+| **2. Evaluate** | `NLIStatement` | Statements + Context | Per-statement verdict (0 or 1) |
+| **3. Score** | `Faithfulness` | Verdicts | `supported_count / total_count` |
+
+## Step 1: Statement Generator
+
+The first sub-metric breaks an answer into atomic, self-contained claims. Each statement should be understandable on its own without pronouns or ambiguous references.
+
+```python title="Statement Generator"
 from pydantic import Field
-from typing import List, Union, Any
-import numpy as np
+from typing import List
 
-from axion.metrics.base import BaseMetric, MetricEvaluationResult
-from axion.dataset import DatasetItem
+from axion.metrics.base import BaseMetric
 from axion.schema import RichBaseModel
-from axion._core.logging import get_logger
-
-logger = get_logger(__name__)
 
 
 class StatementGeneratorInput(RichBaseModel):
@@ -59,8 +68,15 @@ class StatementGenerator(BaseMetric[StatementGeneratorInput, StatementGeneratorO
             ),
         )
     ]
+```
 
+The `instruction` and `examples` are all you need — `BaseMetric` handles the LLM call and response parsing automatically.
 
+## Step 2: NLI Statement Evaluator
+
+The second sub-metric judges each statement against the retrieved context using Natural Language Inference (NLI). Each statement gets a binary verdict: `1` if supported, `0` if not.
+
+```python title="NLI Statement Evaluator"
 class StatementFaithfulnessAnswer(RichBaseModel):
     statement: str = Field(..., description='the original statement, word-by-word')
     reason: str = Field(..., description='the reason of the verdict')
@@ -137,6 +153,23 @@ class NLIStatement(BaseMetric[NLIStatementInput, NLIStatementOutput]):
             ),
         ),
     ]
+```
+
+Few-shot examples are critical here — they calibrate the LLM to apply consistent judgment criteria across different contexts.
+
+## Step 3: Faithfulness Orchestrator
+
+The main `Faithfulness` class composes the two sub-metrics and adds the scoring logic. It doesn't define its own `instruction` — instead, it overrides `execute()` to orchestrate the pipeline.
+
+```python title="Faithfulness Orchestrator"
+from typing import Union, Any
+import numpy as np
+
+from axion.metrics.base import MetricEvaluationResult
+from axion.dataset import DatasetItem
+from axion._core.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class Faithfulness(BaseMetric):
@@ -206,8 +239,11 @@ class Faithfulness(BaseMetric):
         score = self._compute_score(evaluation_results)
 
         return MetricEvaluationResult(score=score)
+```
 
+## Running the Metric
 
+```python
 metric = Faithfulness()
 
 data_item = DatasetItem(
@@ -220,3 +256,13 @@ data_item = DatasetItem(
 result = await metric.execute(data_item)
 print(result.pretty())
 ```
+
+---
+
+<div class="ref-nav" markdown="1">
+
+[Creating Custom Metrics :octicons-arrow-right-24:](creating-metrics.md){ .md-button .md-button--primary }
+[Metrics Guide :octicons-arrow-right-24:](../../guides/metrics.md){ .md-button }
+[Metrics Reference :octicons-arrow-right-24:](../../reference/metrics.md){ .md-button }
+
+</div>

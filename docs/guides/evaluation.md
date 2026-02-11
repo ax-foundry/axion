@@ -25,6 +25,19 @@ results.to_scorecard(display_in_notebook=True)
 
 ## Evaluation Runners
 
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">evaluation_runner</p>
+<p class="rule-card__desc">Main entry point for batch evaluations with caching, concurrency, and full result aggregation.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">MetricRunner</p>
+<p class="rule-card__desc">Run individual metrics with fine-grained control over single dataset items.</p>
+</div>
+</div>
+
 ### evaluation_runner
 
 The main entry point for running evaluations:
@@ -149,13 +162,23 @@ merged_df = metrics_df.merge(dataset_df, on='id', how='left')
 
 ### Summary Classes
 
-Axion provides summary classes for different reporting needs:
-
-| Class | Description |
-|-------|-------------|
-| `MetricSummary` | Detailed metric analysis with performance insights and distribution charts |
-| `SimpleSummary` | High-level KPIs and business impact dashboard |
-| `HierarchicalSummary` | Summary for hierarchical evaluation trees |
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">M</span>
+<p class="rule-card__title">MetricSummary</p>
+<p class="rule-card__desc">Detailed metric analysis with performance insights and distribution charts.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">S</span>
+<p class="rule-card__title">SimpleSummary</p>
+<p class="rule-card__desc">High-level KPIs and business impact dashboard.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">H</span>
+<p class="rule-card__title">HierarchicalSummary</p>
+<p class="rule-card__desc">Summary for hierarchical evaluation trees with layered breakdowns.</p>
+</div>
+</div>
 
 ```python
 from axion.runners.summary import MetricSummary, SimpleSummary
@@ -169,13 +192,31 @@ SimpleSummary().execute(results.results, total_time=100)
 
 ## Best Practices
 
-1. **Start small** - Test with a few items before running full dataset
-2. **Enable caching** - Avoid re-running on unchanged inputs
-3. **Use appropriate concurrency** - Balance speed vs. API rate limits
-4. **Review failures** - Low scores need human analysis, not just numbers
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Start Small</p>
+<p class="rule-card__desc">Test with a few items before running the full dataset.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Enable Caching</p>
+<p class="rule-card__desc">Avoid re-running expensive LLM evaluations on unchanged inputs.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Tune Concurrency</p>
+<p class="rule-card__desc">Balance speed vs. API rate limits for your provider.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">4</span>
+<p class="rule-card__title">Review Failures</p>
+<p class="rule-card__desc">Low scores need human analysis, not just numbers.</p>
+</div>
+</div>
 
-## Next Steps
+---
 
-- [Metric Runner Deep Dive](../deep-dives/runners/metric-runner.md) - Advanced runner usage
-- [Evaluation Runner Deep Dive](../deep-dives/runners/evaluation-runner.md) - Configuration options
-- [API Reference: Runners](../reference/runners.md) - Full API documentation
+[Metric Runner Deep Dive :octicons-arrow-right-24:](../deep-dives/runners/metric-runner.md){ .md-button .md-button--primary }
+[Evaluation Runner Deep Dive :octicons-arrow-right-24:](../deep-dives/runners/evaluation-runner.md){ .md-button }
+[Runners Reference :octicons-arrow-right-24:](../reference/runners.md){ .md-button }

@@ -24,47 +24,49 @@ for result in results:
     print(f"{result.title}: {result.url}")
 ```
 
-## Google Search
+## Retrievers
 
-```python
-from axion.search import GoogleRetriever
+=== ":material-google: Google Search"
 
-retriever = GoogleRetriever(
-    api_key="your-serpapi-key",
-    num_results=10
-)
+    ```python
+    from axion.search import GoogleRetriever
 
-results = await retriever.search(query)
-```
+    retriever = GoogleRetriever(
+        api_key="your-serpapi-key",
+        num_results=10
+    )
 
-## Tavily Search
+    results = await retriever.search(query)
+    ```
 
-AI-optimized search with relevance filtering:
+=== ":material-brain: Tavily Search"
 
-```python
-from axion.search import TavilyRetriever
+    AI-optimized search with relevance filtering:
 
-retriever = TavilyRetriever(
-    api_key="your-tavily-key",
-    search_depth="advanced"
-)
+    ```python
+    from axion.search import TavilyRetriever
 
-results = await retriever.search(query)
-```
+    retriever = TavilyRetriever(
+        api_key="your-tavily-key",
+        search_depth="advanced"
+    )
 
-## You.com Search
+    results = await retriever.search(query)
+    ```
 
-Real-time web data with snippet extraction:
+=== ":material-web: You.com Search"
 
-```python
-from axion.search import YouRetriever
+    Real-time web data with snippet extraction:
 
-retriever = YouRetriever(
-    api_key="your-you-key"
-)
+    ```python
+    from axion.search import YouRetriever
 
-results = await retriever.search(query)
-```
+    retriever = YouRetriever(
+        api_key="your-you-key"
+    )
+
+    results = await retriever.search(query)
+    ```
 
 ## Using with Evaluation
 
@@ -90,8 +92,12 @@ metric = ContextualRelevancy()
 score = await metric.evaluate(item)
 ```
 
-## Next Steps
+---
 
-- [Google Search Deep Dive](../deep-dives/search/google.md) - Full configuration options
-- [Tavily Search Deep Dive](../deep-dives/search/tavily.md) - Advanced features
-- [API Reference: Search](../reference/search.md) - Full API documentation
+<div class="ref-nav" markdown="1">
+
+[Google Search Deep Dive :octicons-arrow-right-24:](../deep-dives/search/google.md){ .md-button .md-button--primary }
+[Tavily Search Deep Dive :octicons-arrow-right-24:](../deep-dives/search/tavily.md){ .md-button }
+[API Reference: Search :octicons-arrow-right-24:](../reference/search.md){ .md-button }
+
+</div>
