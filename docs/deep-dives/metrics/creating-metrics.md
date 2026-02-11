@@ -336,8 +336,8 @@ The three tabs below walk through each approach — pick the one that fits your 
 === ":material-merge: Hybrid (LLM + Algorithm)"
 
     **Hybrid metrics** combine algorithmic pre-processing with LLM judgment and
-    algorithmic post-processing. This is the pattern used by most metrics in Axion, 
-    as it is the bread and butter — extract structured data deterministically, 
+    algorithmic post-processing. This is the pattern used by most metrics in Axion,
+    as it is the bread and butter — extract structured data deterministically,
     let the LLM judge nuanced aspects, then aggregate the verdicts into a final score.
 
     The example below — `SourceVerification` — checks whether URLs cited in a
