@@ -48,47 +48,48 @@ Configuration is handled via environment variables or by calling `configure_logg
 
 Call `configure_logging()` once at application startup, or let it auto-configure on first use.
 
-#### Example 1: Zero-Config (Recommended)
+=== ":material-auto-fix: Zero-Config (Recommended)"
 
-Just use `get_logger()` - it auto-configures from environment variables on first use.
+    Just use `get_logger()` - it auto-configures from environment variables on first use.
 
-```python
-from axion.logging import get_logger
+    ```python
+    from axion.logging import get_logger
 
-# Auto-configures from LOG_LEVEL, LOG_USE_RICH, etc.
-logger = get_logger(__name__)
-logger.info("Using the configuration from the environment.")
-```
+    # Auto-configures from LOG_LEVEL, LOG_USE_RICH, etc.
+    logger = get_logger(__name__)
+    logger.info("Using the configuration from the environment.")
+    ```
 
-#### Example 2: Explicit Configuration
+=== ":material-cog: Explicit Configuration"
 
-Call `configure_logging()` before getting loggers to override defaults.
+    Call `configure_logging()` before getting loggers to override defaults.
 
-```python
-from axion.logging import configure_logging, get_logger
+    ```python
+    from axion.logging import configure_logging, get_logger
 
-# Configure first, then get logger
-configure_logging(level="DEBUG", use_rich=True)
-logger = get_logger(__name__)
+    # Configure first, then get logger
+    configure_logging(level="DEBUG", use_rich=True)
+    logger = get_logger(__name__)
 
-logger.debug("This debug message is now visible.")
-```
+    logger.debug("This debug message is now visible.")
+    ```
 
-#### Example 3: Reconfiguration
+=== ":material-refresh: Reconfiguration"
 
-Call `configure_logging()` with new parameters - it applies immediately.
+    Call `configure_logging()` with new parameters - it applies immediately.
 
-```python
-from axion.logging import configure_logging, get_logger
+    ```python
+    from axion.logging import configure_logging, get_logger
 
-logger = get_logger(__name__)  # Auto-configures to INFO
+    logger = get_logger(__name__)  # Auto-configures to INFO
 
-# Change level on the fly
-configure_logging(level="DEBUG")  # Now DEBUG
-configure_logging(level="ERROR")  # Now ERROR
-```
+    # Change level on the fly
+    configure_logging(level="DEBUG")  # Now DEBUG
+    configure_logging(level="ERROR")  # Now ERROR
+    ```
 
-> **Note:** Calling `configure_logging()` with explicit parameters always applies them. Calling with no parameters skips if already configured.
+!!! note
+    Calling `configure_logging()` with explicit parameters always applies them. Calling with no parameters skips if already configured.
 
 ## RichLogger Methods
 
@@ -157,71 +158,71 @@ logger.log_json(config, title="Model Configuration")
 
 ## Advanced Usage
 
-### Module-Specific Loggers
+=== ":material-folder-multiple: Module-Specific Loggers"
 
-For better organization and debugging, create module-specific loggers:
+    For better organization and debugging, create module-specific loggers:
 
-```python
-from axion.logging import get_logger
+    ```python
+    from axion.logging import get_logger
 
-# Each module gets its own logger
-logger = get_logger(__name__)
+    # Each module gets its own logger
+    logger = get_logger(__name__)
 
-class MyService:
-    def __init__(self):
-        self.logger = get_logger(f"{__name__}.{self.__class__.__name__}")
+    class MyService:
+        def __init__(self):
+            self.logger = get_logger(f"{__name__}.{self.__class__.__name__}")
 
-    def process_data(self):
-        self.logger.info("Starting data processing...")
-        # Processing logic here
-        self.logger.success("Data processing completed!")
-```
+        def process_data(self):
+            self.logger.info("Starting data processing...")
+            # Processing logic here
+            self.logger.success("Data processing completed!")
+    ```
 
-### Error Handling
+=== ":material-alert-circle: Error Handling"
 
-```python
-from axion.logging import logger
+    ```python
+    from axion.logging import logger
 
-try:
-    risky_operation()
-except Exception as e:
-    logger.error_highlight(f"Operation failed: {e}")
-    # Rich automatically formats the traceback beautifully
-    logger.exception("Full traceback:")
-```
+    try:
+        risky_operation()
+    except Exception as e:
+        logger.error_highlight(f"Operation failed: {e}")
+        # Rich automatically formats the traceback beautifully
+        logger.exception("Full traceback:")
+    ```
 
-### Conditional Logging
+=== ":material-toggle-switch: Conditional Logging"
 
-```python
-import logging
-from axion.logging import logger
+    ```python
+    import logging
+    from axion.logging import logger
 
-def debug_intensive_operation(data):
-    if logger.isEnabledFor(logging.DEBUG):
-        logger.debug(f"Processing {len(data)} items")
-        logger.log_json(data[:5])  # Log first 5 items as JSON
-```
+    def debug_intensive_operation(data):
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"Processing {len(data)} items")
+            logger.log_json(data[:5])  # Log first 5 items as JSON
+    ```
 
-### Logging Summary
+=== ":material-chart-box: Summary"
 
-Get a summary of all logging activity during the session:
+    Get a summary of all logging activity during the session:
 
-```python
-from axion.logging import log_summary
+    ```python
+    from axion.logging import log_summary
 
-# At the end of your application
-log_summary()
+    # At the end of your application
+    log_summary()
 
-# Output:
-# --- Logging Summary ---
-# Total Session Runtime: 45.32 seconds
-# Logger 'axion': 25 messages
-#     - INFO: 20
-#     - WARNING: 3
-#     - ERROR: 2
-# Grand Total Messages: 25
-# -----------------------
-```
+    # Output:
+    # --- Logging Summary ---
+    # Total Session Runtime: 45.32 seconds
+    # Logger 'axion': 25 messages
+    #     - INFO: 20
+    #     - WARNING: 3
+    #     - ERROR: 2
+    # Grand Total Messages: 25
+    # -----------------------
+    ```
 
 ## Configuration State Management
 
@@ -296,3 +297,12 @@ if is_logging_configured():
 |-------|-------------|
 | `RichLogger` | Custom logger class with enhanced logging methods. |
 | `LoguruHandler` | Bridge handler for forwarding logs to loguru (if available). |
+
+---
+
+<div class="ref-nav" markdown="1">
+
+[Environment & Settings :octicons-arrow-right-24:](environment.md){ .md-button .md-button--primary }
+[Installation :octicons-arrow-right-24:](../../getting-started/installation.md){ .md-button }
+
+</div>

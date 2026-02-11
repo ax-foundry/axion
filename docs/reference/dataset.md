@@ -1,6 +1,29 @@
 # Dataset API Reference
 
-Core data structures for evaluation datasets.
+Core data structures for building and managing evaluation datasets.
+
+<div class="ref-import" markdown>
+
+```python
+from axion import Dataset, DatasetItem
+```
+
+</div>
+
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">D</span>
+<p class="rule-card__title">Dataset</p>
+<p class="rule-card__desc">Container for evaluation items. Supports JSON/CSV/DataFrame I/O, filtering, merging, and synthetic generation.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">I</span>
+<p class="rule-card__title">DatasetItem</p>
+<p class="rule-card__desc">Individual test case with query, expected/actual output, context, metadata, and conversation history.</p>
+</div>
+</div>
+
+---
 
 ## Dataset
 
@@ -26,6 +49,8 @@ Core data structures for evaluation datasets.
         - merge_response_into_dataset_items
         - synthetic_generate_from_directory
         - items
+
+---
 
 ## DatasetItem
 
@@ -70,3 +95,12 @@ Core data structures for evaluation datasets.
         - update_runtime
         - merge_metadata
         - from_dict
+
+---
+
+<div class="ref-nav" markdown>
+
+[Working with Datasets Guide :octicons-arrow-right-24:](../guides/datasets.md){ .md-button .md-button--primary }
+[Running Evaluations :octicons-arrow-right-24:](../guides/evaluation.md){ .md-button }
+
+</div>

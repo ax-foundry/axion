@@ -1,77 +1,126 @@
 # Why Ground Truth Matters
 
-Unlike traditional machine learning—where labeled data fuels both training and
-validation—AI agents often operate without predefined answers. That is why
-curating a high-quality "golden" test set is not just important, it is
-essential. Ground truth turns subjective performance into an objective,
-repeatable benchmark for accuracy, relevance, and response quality.
+<div class="seatbelt-hero" markdown="0">
+<div class="seatbelt-hero__text">
+<span class="seatbelt-hero__label">Principle</span>
+<p class="seatbelt-hero__quote">Without ground truth,<br><em>you're grading on vibes.</em></p>
+<p class="seatbelt-hero__sub">Unlike traditional ML &mdash; where labeled data fuels both training and validation &mdash; AI agents often operate without predefined answers. Curating a high-quality "golden" test set isn't just important, it's essential. Ground truth turns subjective performance into an objective, repeatable benchmark.</p>
+</div>
+<div class="seatbelt-hero__text" style="background: linear-gradient(160deg, #162030 0%, #1a2840 100%);">
+<span class="seatbelt-hero__label">Why It Matters</span>
+<p class="seatbelt-hero__quote">Approximation<br><em>is not enough.</em></p>
+<p class="seatbelt-hero__sub">Language models can approximate quality, but in high-stakes and domain-specific environments, approximation is not enough. Ground truth anchors evaluation to a consistent standard: the expected answer (and, when applicable, the expected evidence).</p>
+</div>
+</div>
 
-Language models can approximate quality, but in high-stakes and domain-specific
-environments, approximation is not enough. Ground truth anchors evaluation to a
-consistent standard: the expected answer (and, when applicable, the expected
-evidence).
+---
 
 ## What Goes Wrong Without Ground Truth
 
-Even strong evaluation frameworks can fail if they are not anchored to expected
-outcomes. Three common failure modes:
+Even strong evaluation frameworks can fail if they are not anchored to expected outcomes. Three common failure modes:
 
-- **Plausible but wrong**: The answer sounds correct, but is outdated,
-  incomplete, or subtly incorrect for the domain.
-- **The gullible judge**: LLM-as-a-judge systems can over-reward "safe" answers
-  (e.g., "I don't know") or fluent answers, because they are scoring linguistic
-  plausibility rather than correctness.
-- **The helpful liar**: Retrieval returns noisy or topically related context.
-  The model synthesizes a convincing answer from the noise. Evaluators that only
-  check semantic similarity can still pass it—even when it is not grounded in
-  the right source.
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Plausible but wrong</p>
+<p class="rule-card__desc">The answer sounds correct, but is outdated, incomplete, or subtly incorrect for the domain.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">The gullible judge</p>
+<p class="rule-card__desc">LLM judges over-reward "safe" answers or fluent answers, scoring linguistic plausibility rather than correctness.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">The helpful liar</p>
+<p class="rule-card__desc">Retrieval returns noisy context. The model synthesizes a convincing answer from noise. Similarity-based evals still pass it.</p>
+</div>
+</div>
 
-## The Core Reasons Ground Truth Matters (RAG + Agents)
+---
 
-- **Factual accuracy**
-  - Ground truth reveals whether an answer is actually correct—not merely
-    plausible or well-written.
-- **Relevance and completeness**
-  - It clarifies what *must* be covered in the answer and what is irrelevant,
-    preventing "good-sounding" partial responses from passing.
-- **Retrieval correctness**
-  - It enables objective checks that the system found (and cited) the right
-    documents—separating retrieval failure from generation failure.
-- **Determinism**
-  - LLM judging is inherently variable; ground truth reduces subjectivity and
-    makes scoring repeatable across runs, models, and prompt iterations.
-- **Benchmarking and iteration**
-  - A fixed test set lets you run fair A/B tests, track regressions, and measure
-    improvements with confidence.
+## The Core Reasons Ground Truth Matters
 
-## Ground Truth Dataset Lifecycle (High-Level)
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Factual Accuracy</p>
+<p class="rule-card__desc">Reveals whether an answer is actually correct &mdash; not merely plausible or well-written.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Relevance & Completeness</p>
+<p class="rule-card__desc">Clarifies what must be covered and what is irrelevant, preventing "good-sounding" partial responses from passing.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Retrieval Correctness</p>
+<p class="rule-card__desc">Enables objective checks that the system found and cited the right documents &mdash; separating retrieval failure from generation failure.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Determinism</p>
+<p class="rule-card__desc">LLM judging is inherently variable. Ground truth reduces subjectivity and makes scoring repeatable across runs, models, and prompt iterations.</p>
+</div>
+</div>
 
-- **Formation**: curate high-value, real-world utterances; validate expected
-  outcomes with domain experts.
-- **Maintenance**: establish review cycles and governance to keep answers
-  current as products, policies, and knowledge evolve.
-- **Expansion**: grow coverage intentionally (edge cases, failure clusters,
-  controlled synthetic generation) without compromising quality.
+<div class="rule-grid" style="grid-template-columns: 1fr; max-width: 50%;" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Benchmarking & Iteration</p>
+<p class="rule-card__desc">A fixed test set lets you run fair A/B tests, track regressions, and measure improvements with confidence.</p>
+</div>
+</div>
+
+---
+
+## Ground Truth Dataset Lifecycle
+
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Formation</p>
+<p class="rule-card__desc">Curate high-value, real-world utterances. Validate expected outcomes with domain experts.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Maintenance</p>
+<p class="rule-card__desc">Establish review cycles and governance to keep answers current as products, policies, and knowledge evolve.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Expansion</p>
+<p class="rule-card__desc">Grow coverage intentionally &mdash; edge cases, failure clusters, controlled synthetic generation &mdash; without compromising quality.</p>
+</div>
+</div>
+
+---
 
 ## A Practical Evaluation Approach
 
 For reliable evaluation, structure matters:
 
-- **Decompose the workflow** into discrete steps (e.g., routing, retrieval,
-  tool-use, generation).
-- **Build test cases per step**, not just end-to-end: you want to isolate where
-  failures occur.
+- **Decompose the workflow** into discrete steps (e.g., routing, retrieval, tool-use, generation).
+- **Build test cases per step**, not just end-to-end: you want to isolate where failures occur.
 - **Use hierarchical gates**:
-  - Retrieval correctness (did we find the right info?)
-  - Generation quality (did we use it correctly?)
-  - Overall correctness (only meaningful if the prior gates pass)
 
-## Inconsistent Scoring (Why LLM-Only Evaluation Fails)
+```mermaid
+graph TD
+    R["Retrieval Correctness"] -->|"Did we find the right info?"| G["Generation Quality"]
+    G -->|"Did we use it correctly?"| O["Overall Correctness"]
+    O -->|"Only meaningful if prior gates pass"| V["Validated Result"]
+```
 
-LLMs are non-deterministic, and LLM judges can disagree—even on the same answer.
-Without ground truth, evaluations drift toward subjective heuristics like
-fluency, verbosity, or "sounds right." Ground truth is the only way to anchor
-evaluation to objective, expected outcomes.
+---
 
-Authored by Matt Evanoff
-Last Updated Jan 29, 2025
+## Inconsistent Scoring
+
+!!! warning "Why LLM-Only Evaluation Fails"
+    LLMs are non-deterministic, and LLM judges can disagree—even on the same answer. Without ground truth, evaluations drift toward subjective heuristics like fluency, verbosity, or "sounds right."
+
+<div style="background: linear-gradient(135deg, #2a3320 0%, #1e2618 100%); padding: 24px; border-radius: 8px; color: white; margin: 20px 0;" markdown="0">
+<p style="margin: 0; font-size: 14px; line-height: 1.7;">Ground truth is the only way to anchor evaluation to objective, expected outcomes. Without it, you're measuring style. With it, you're measuring substance.</p>
+</div>
+
+[Evaluation Flywheel :octicons-arrow-right-24:](evaluation_flywheel.md){ .md-button .md-button--primary }
+[Agent Evaluation Playbook :octicons-arrow-right-24:](agent_playbook.md){ .md-button }

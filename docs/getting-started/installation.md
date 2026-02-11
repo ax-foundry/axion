@@ -30,47 +30,47 @@ pip install -e ".[dev]"
 
 Axion uses optional dependencies to keep the core installation lightweight. Install extras based on what you need:
 
-### Tracing Providers
+=== ":material-radar: Tracing Providers"
 
-```bash
-# Logfire (OpenTelemetry-based)
-pip install -e ".[logfire]"
+    ```bash
+    # Logfire (OpenTelemetry-based)
+    pip install -e ".[logfire]"
 
-# Langfuse (LLM-specific observability)
-pip install -e ".[langfuse]"
+    # Langfuse (LLM-specific observability)
+    pip install -e ".[langfuse]"
 
-# Opik
-pip install -e ".[opik]"
+    # Opik
+    pip install -e ".[opik]"
 
-# All tracing providers
-pip install -e ".[tracing]"
-```
+    # All tracing providers
+    pip install -e ".[tracing]"
+    ```
 
-### Search Integrations
+=== ":material-magnify: Search Integrations"
 
-```bash
-# Google Search via SerpAPI
-pip install -e ".[search]"
-```
+    ```bash
+    # Google Search via SerpAPI
+    pip install -e ".[search]"
+    ```
 
-Requires `SERPAPI_KEY` environment variable.
+    Requires `SERPAPI_KEY` environment variable.
 
-### LlamaIndex Extensions
+=== ":material-puzzle: LlamaIndex Extensions"
 
-```bash
-# HuggingFace embeddings and LLMs
-pip install -e ".[huggingface]"
+    ```bash
+    # HuggingFace embeddings and LLMs
+    pip install -e ".[huggingface]"
 
-# Docling document reader (PDF, DOCX, HTML, images)
-pip install -e ".[docling]"
-```
+    # Docling document reader (PDF, DOCX, HTML, images)
+    pip install -e ".[docling]"
+    ```
 
-### Visualization
+=== ":material-chart-bar: Visualization"
 
-```bash
-# Matplotlib and Seaborn for plotting
-pip install -e ".[plotting]"
-```
+    ```bash
+    # Matplotlib and Seaborn for plotting
+    pip install -e ".[plotting]"
+    ```
 
 ### Combining Extras
 
@@ -83,39 +83,41 @@ pip install -e ".[search,tracing,plotting]"
 
 ## Configuration
 
-Create a `.env` file in your project root:
+=== ":material-file-cog: .env File"
 
-```bash
-# Required for LLM-based metrics
-OPENAI_API_KEY=<your-key>
+    Create a `.env` file in your project root:
 
-# Optional: Logging settings
-LOG_LEVEL="INFO"
-LOG_RICH="true"
+    ```bash
+    # Required for LLM-based metrics
+    OPENAI_API_KEY=<your-key>
 
-# Optional: Tracing (auto-detects if credentials present)
-TRACING_MODE="langfuse"  # or: noop, logfire, otel, opik
-LANGFUSE_SECRET_KEY=<your-key>
-LANGFUSE_PUBLIC_KEY=<your-key>
-```
+    # Optional: Logging settings
+    LOG_LEVEL="INFO"
+    LOG_RICH="true"
 
-### Programmatic Configuration
+    # Optional: Tracing (auto-detects if credentials present)
+    TRACING_MODE="langfuse"  # or: noop, logfire, otel, opik
+    LANGFUSE_SECRET_KEY=<your-key>
+    LANGFUSE_PUBLIC_KEY=<your-key>
+    ```
 
-Use `axion.init()` to configure both logging and tracing at once:
+=== ":material-language-python: Programmatic"
 
-```python
-import axion
+    Use `axion.init()` to configure both logging and tracing at once:
 
-# Initialize with custom settings
-axion.init(
-    tracing='langfuse',  # or: noop, logfire, otel, opik
-    log_level='DEBUG',
-    log_rich=True,
-)
+    ```python
+    import axion
 
-# Or just let it auto-configure from environment variables
-# (no init() call needed - works automatically)
-```
+    # Initialize with custom settings
+    axion.init(
+        tracing='langfuse',  # or: noop, logfire, otel, opik
+        log_level='DEBUG',
+        log_rich=True,
+    )
+
+    # Or just let it auto-configure from environment variables
+    # (no init() call needed - works automatically)
+    ```
 
 ## Verify Installation
 
@@ -126,8 +128,12 @@ from axion import Dataset, metric_registry
 print(metric_registry.list_metrics())
 ```
 
-## Next Steps
+---
 
-- [Working with Datasets](../guides/datasets.md) - Learn how to create evaluation datasets
-- [Metrics & Evaluation](../guides/metrics.md) - Understand the metrics system
-- [Agent Evaluation Playbook](../agent_playbook.md) - Best practices for agent evaluation
+<div class="ref-nav" markdown="1">
+
+[Working with Datasets :octicons-arrow-right-24:](../guides/datasets.md){ .md-button .md-button--primary }
+[Metrics & Evaluation :octicons-arrow-right-24:](../guides/metrics.md){ .md-button }
+[Agent Evaluation Playbook :octicons-arrow-right-24:](../agent_playbook.md){ .md-button }
+
+</div>

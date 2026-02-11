@@ -14,29 +14,37 @@ When an AI agent scores 0.72, what does that mean? Is it struggling with relevan
 - Weighting each dimension to reflect business priorities
 - Enabling drill-down from overall score to root cause
 
-```
-                    ┌─────────────────┐
-                    │  Overall Score  │
-                    │      0.82       │
-                    └────────┬────────┘
-                             │
-          ┌──────────────────┼──────────────────┐
-          ▼                  ▼                  ▼
-   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-   │  Relevance  │    │  Accuracy   │    │    Tone     │
-   │    0.91     │    │    0.78     │    │    0.85     │
-   └─────────────┘    └─────────────┘    └─────────────┘
+```mermaid
+graph TD
+    O["Overall Score: 0.82"] --> R["Relevance: 0.91"]
+    O --> A["Accuracy: 0.78"]
+    O --> T["Tone: 0.85"]
 ```
 
 ## Key Advantages
 
-| Advantage | Description |
-|-----------|-------------|
-| **Instant Root Cause Diagnosis** | Drill down to pinpoint whether issues stem from relevance, accuracy, tone, or other dimensions |
-| **Strategic Prioritization** | Forces clarity on what matters—break quality into layers that reflect business value |
-| **Actionable Feedback Loop** | Each layer maps to specific actions: retraining, prompt adjustments, alignment tuning |
-| **Customizable to Business Goals** | Weight dimensions to match your KPIs—define what "good AI" means for you |
-| **Scales with Complexity** | Add dimensions as use cases grow while keeping evaluation consistent |
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Instant Root Cause Diagnosis</p>
+<p class="rule-card__desc">Drill down to pinpoint whether issues stem from relevance, accuracy, tone, or other dimensions.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Strategic Prioritization</p>
+<p class="rule-card__desc">Forces clarity on what matters &mdash; break quality into layers that reflect business value.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Actionable Feedback Loop</p>
+<p class="rule-card__desc">Each layer maps to specific actions: retraining, prompt adjustments, alignment tuning.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Customizable to Business Goals</p>
+<p class="rule-card__desc">Weight dimensions to match your KPIs &mdash; define what "good AI" means for you.</p>
+</div>
+</div>
 
 ## Quick Start
 
@@ -176,22 +184,15 @@ config = {
 
 This produces:
 
-```
-                    ┌─────────────────┐
-                    │  Overall Score  │
-                    └────────┬────────┘
-                             │
-              ┌──────────────┴──────────────┐
-              ▼                             ▼
-       ┌─────────────┐               ┌─────────────┐
-       │  GROUNDING  │               │  RESPONSE   │
-       │   (50%)     │               │   (50%)     │
-       └──────┬──────┘               └──────┬──────┘
-              │                             │
-       ┌──────┴──────┐            ┌─────────┼─────────┐
-       ▼             ▼            ▼         ▼         ▼
-  Faithfulness   Accuracy    Relevance  Complete   Tone
-    (60%)         (40%)       (50%)      (30%)    (20%)
+```mermaid
+graph TD
+    O["Overall Score"] --> G["GROUNDING (50%)"]
+    O --> R["RESPONSE (50%)"]
+    G --> F["Faithfulness (60%)"]
+    G --> A["Accuracy (40%)"]
+    R --> Re["Relevance (50%)"]
+    R --> C["Completeness (30%)"]
+    R --> T["Tone (20%)"]
 ```
 
 ## Accessing Results
@@ -217,14 +218,31 @@ results.to_scorecard()
 
 ## Best Practices
 
-1. **Start Simple** — Begin with 2-3 key dimensions, expand as needed
-2. **Align to Business** — Weights should reflect actual business priorities
-3. **Review Failures** — Low-scoring dimensions indicate where to focus improvement
-4. **Iterate** — Refine weights based on correlation with real-world outcomes
-5. **Version Control** — Use YAML configs to track scoring criteria over time
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Start Simple</p>
+<p class="rule-card__desc">Begin with 2-3 key dimensions. Expand as you learn what matters.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Align to Business</p>
+<p class="rule-card__desc">Weights should reflect actual business priorities, not theoretical ideals.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Review Failures</p>
+<p class="rule-card__desc">Low-scoring dimensions indicate where to focus improvement efforts.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">4</span>
+<p class="rule-card__title">Iterate & Version</p>
+<p class="rule-card__desc">Refine weights based on outcomes. Use YAML configs to track scoring criteria over time.</p>
+</div>
+</div>
 
-## Next Steps
+---
 
-- [Metrics Reference](../reference/metrics.md) — Full catalog of available metrics
-- [Creating Custom Metrics](../deep-dives/metrics/creating-metrics.md) — Build domain-specific metrics
-- [Eval Tree API](../reference/eval-tree.md) — API reference for hierarchical evaluation
+[Metrics Reference :octicons-arrow-right-24:](../reference/metrics.md){ .md-button .md-button--primary }
+[Creating Custom Metrics :octicons-arrow-right-24:](../deep-dives/metrics/creating-metrics.md){ .md-button }
+[Eval Tree API :octicons-arrow-right-24:](../reference/eval-tree.md){ .md-button }

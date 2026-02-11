@@ -194,59 +194,59 @@ providers = list_tracing_providers()
 
 ## Environment Variable Examples
 
-### Basic Configuration
+=== ":material-cog: Basic"
 
-```bash
-# .env file
-DEBUG=false
-LOG_LEVEL=INFO
-LLM_PROVIDER=openai
-LLM_MODEL_NAME=gpt-4o
-OPENAI_API_KEY=sk-your-api-key
-```
+    ```bash
+    # .env file
+    DEBUG=false
+    LOG_LEVEL=INFO
+    LLM_PROVIDER=openai
+    LLM_MODEL_NAME=gpt-4o
+    OPENAI_API_KEY=sk-your-api-key
+    ```
 
-### With Tracing (Langfuse)
+=== ":material-chart-timeline: Langfuse"
 
-```bash
-# .env file
-OPENAI_API_KEY=sk-your-api-key
-LANGFUSE_PUBLIC_KEY=pk-lf-xxx
-LANGFUSE_SECRET_KEY=sk-lf-xxx
-# TRACING_MODE is auto-detected from LANGFUSE_SECRET_KEY
-```
+    ```bash
+    # .env file
+    OPENAI_API_KEY=sk-your-api-key
+    LANGFUSE_PUBLIC_KEY=pk-lf-xxx
+    LANGFUSE_SECRET_KEY=sk-lf-xxx
+    # TRACING_MODE is auto-detected from LANGFUSE_SECRET_KEY
+    ```
 
-### With Tracing (Logfire)
+=== ":material-fire: Logfire"
 
-```bash
-# .env file
-OPENAI_API_KEY=sk-your-api-key
-LOGFIRE_TOKEN=your-logfire-token
-LOGFIRE_SERVICE_NAME=my-app
-# TRACING_MODE is auto-detected from LOGFIRE_TOKEN
-```
+    ```bash
+    # .env file
+    OPENAI_API_KEY=sk-your-api-key
+    LOGFIRE_TOKEN=your-logfire-token
+    LOGFIRE_SERVICE_NAME=my-app
+    # TRACING_MODE is auto-detected from LOGFIRE_TOKEN
+    ```
 
-### Multiple LLM Providers
+=== ":material-swap-horizontal: Multi-Provider"
 
-```bash
-# .env file
-OPENAI_API_KEY=sk-your-openai-key
-ANTHROPIC_API_KEY=sk-ant-your-anthropic-key
-GOOGLE_API_KEY=your-google-key
+    ```bash
+    # .env file
+    OPENAI_API_KEY=sk-your-openai-key
+    ANTHROPIC_API_KEY=sk-ant-your-anthropic-key
+    GOOGLE_API_KEY=your-google-key
 
-# Vertex AI
-VERTEXAI_PROJECT=my-gcp-project
-VERTEXAI_LOCATION=us-central1
-GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json
-```
+    # Vertex AI
+    VERTEXAI_PROJECT=my-gcp-project
+    VERTEXAI_LOCATION=us-central1
+    GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json
+    ```
 
-### With Search APIs
+=== ":material-magnify: Search"
 
-```bash
-# .env file
-TAVILY_API_KEY=tvly-xxx
-SERPAPI_KEY=xxx
-YDC_API_KEY=xxx
-```
+    ```bash
+    # .env file
+    TAVILY_API_KEY=tvly-xxx
+    SERPAPI_KEY=xxx
+    YDC_API_KEY=xxx
+    ```
 
 ## User Extension Namespace
 
@@ -258,3 +258,13 @@ from axion._core.environment import settings
 # Access custom settings
 custom_value = settings.ext.get('my_custom_setting', 'default')
 ```
+
+---
+
+<div class="ref-nav" markdown="1">
+
+[Logging :octicons-arrow-right-24:](logging.md){ .md-button .md-button--primary }
+[Installation :octicons-arrow-right-24:](../../getting-started/installation.md){ .md-button }
+[LLM Providers :octicons-arrow-right-24:](../../guides/llm-providers.md){ .md-button }
+
+</div>

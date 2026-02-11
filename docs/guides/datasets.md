@@ -21,6 +21,29 @@ dataset = Dataset.create(name="my-eval-dataset", items=[item])
 
 ## DatasetItem Fields
 
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Core Fields</p>
+<p class="rule-card__desc">Query, actual/expected output, conversation history, and unique identifiers.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Retrieval & RAG</p>
+<p class="rule-card__desc">Retrieved content, actual/expected rankings for IR evaluation.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Tool & Agent</p>
+<p class="rule-card__desc">Tool calls made, expected tool calls, and custom user tags.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">4</span>
+<p class="rule-card__title">Evaluation & Metadata</p>
+<p class="rule-card__desc">Judgments, critiques, acceptance criteria, latency, traces, and metadata.</p>
+</div>
+</div>
+
 ### Core Fields
 
 | Field | Description | Required |
@@ -398,7 +421,7 @@ dataset.synthetic_generate_from_directory(
 raw_data = dataset.synthetic_data
 ```
 
-## Next Steps
+---
 
-- [Metrics & Evaluation](metrics.md) - Learn how to evaluate your dataset
-- [API Reference: Dataset](../reference/dataset.md) - Full API documentation
+[Metrics & Evaluation :octicons-arrow-right-24:](metrics.md){ .md-button .md-button--primary }
+[Dataset Reference :octicons-arrow-right-24:](../reference/dataset.md){ .md-button }

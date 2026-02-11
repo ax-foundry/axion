@@ -19,13 +19,28 @@ llm_claude = registry.get_llm('claude-3-5-sonnet-20241022', provider='anthropic'
 
 ## Built-in Providers
 
-| Provider | Models | Embeddings | Auth |
-|----------|--------|------------|------|
-| `openai` | GPT-4o, GPT-4, o1, o3, etc. | Yes | `OPENAI_API_KEY` |
-| `anthropic` | Claude 3.5, Claude 3, etc. | No | `ANTHROPIC_API_KEY` |
-| `gemini` | Gemini 1.5 Pro/Flash, etc. | Yes | `GOOGLE_API_KEY` |
-| `vertex_ai` | Gemini, Claude on Vertex | Yes | GCP Service Account |
-| `huggingface` | Any HF Hub model | Yes | `HF_TOKEN` (optional) |
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">OpenAI</p>
+<p class="rule-card__desc">GPT-4o, GPT-4, o1, o3, etc. Embeddings supported. Auth: <code>OPENAI_API_KEY</code></p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Anthropic</p>
+<p class="rule-card__desc">Claude 3.5, Claude 3, etc. No embeddings. Auth: <code>ANTHROPIC_API_KEY</code></p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Gemini</p>
+<p class="rule-card__desc">Gemini 1.5 Pro/Flash, etc. Embeddings supported. Auth: <code>GOOGLE_API_KEY</code></p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Vertex AI / HuggingFace</p>
+<p class="rule-card__desc">Gemini &amp; Claude on Vertex (GCP auth) + any HF Hub model (local inference).</p>
+</div>
+</div>
 
 ### OpenAI
 
@@ -275,8 +290,8 @@ from axion.llm_registry import LLMRegistry
 LLMRegistry.display()
 ```
 
-## Next Steps
+---
 
-- [Environment Configuration](../deep-dives/internals/environment.md) - Configure API keys and settings
-- [Tracing](../deep-dives/internals/tracing.md) - Monitor LLM calls with observability
-- [API Reference: LLM Registry](../reference/llm-registry.md) - Full API documentation
+[Environment Configuration :octicons-arrow-right-24:](../deep-dives/internals/environment.md){ .md-button .md-button--primary }
+[Tracing :octicons-arrow-right-24:](../deep-dives/internals/tracing.md){ .md-button }
+[LLM Registry Reference :octicons-arrow-right-24:](../reference/llm-registry.md){ .md-button }
