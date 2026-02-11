@@ -62,6 +62,75 @@
       const nowCollapsed = document.body.classList.contains('toc-collapsed');
       localStorage.setItem('axion-toc-collapsed', nowCollapsed);
     });
+
+    // Screenshot carousel
+    const track = document.getElementById('carousel-track');
+    const dotsContainer = document.getElementById('carousel-dots');
+    const captionText = document.getElementById('carousel-caption-text');
+    if (track && dotsContainer) {
+      const slides = track.querySelectorAll('.carousel-slide');
+      const captions = [];
+      slides.forEach(function(s) {
+        var img = s.querySelector('img');
+        captions.push(img ? img.alt : '');
+      });
+      var current = 0;
+
+      // Build dots
+      slides.forEach(function(_, i) {
+        var dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+        dot.addEventListener('click', function() { goTo(i); });
+        dotsContainer.appendChild(dot);
+      });
+
+      function goTo(idx) {
+        current = idx;
+        track.scrollTo({ left: slides[idx].offsetLeft, behavior: 'smooth' });
+        updateUI();
+      }
+
+      function updateUI() {
+        dotsContainer.querySelectorAll('.carousel-dot').forEach(function(d, i) {
+          d.classList.toggle('active', i === current);
+        });
+        if (captionText) captionText.textContent = captions[current] || '';
+      }
+
+      // Arrow buttons
+      var prevBtn = track.parentElement.querySelector('.carousel-prev');
+      var nextBtn = track.parentElement.querySelector('.carousel-next');
+      if (prevBtn) prevBtn.addEventListener('click', function() {
+        goTo(current > 0 ? current - 1 : slides.length - 1);
+      });
+      if (nextBtn) nextBtn.addEventListener('click', function() {
+        goTo(current < slides.length - 1 ? current + 1 : 0);
+      });
+
+      // Sync on scroll (for touch/drag)
+      var scrollTimer;
+      track.addEventListener('scroll', function() {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function() {
+          var scrollLeft = track.scrollLeft;
+          var width = track.offsetWidth;
+          current = Math.round(scrollLeft / width);
+          updateUI();
+        }, 60);
+      });
+
+      // Auto-advance every 5s, pause on hover
+      var autoplay = setInterval(function() {
+        goTo(current < slides.length - 1 ? current + 1 : 0);
+      }, 5000);
+      track.parentElement.addEventListener('mouseenter', function() { clearInterval(autoplay); });
+      track.parentElement.addEventListener('mouseleave', function() {
+        autoplay = setInterval(function() {
+          goTo(current < slides.length - 1 ? current + 1 : 0);
+        }, 5000);
+      });
+    }
   });
 </script>
 {% endblock %}

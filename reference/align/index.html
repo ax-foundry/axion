@@ -10,6 +10,8 @@
       
       
       
+        <link rel="canonical" href="https://ax-foundry.github.io/axion/reference/align/">
+      
       
         <link rel="prev" href="../../deep-dives/internals/logging/">
       
@@ -46,8 +48,8 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CFira+Code:400,400i,700,700i&display=fallback">
-        <style>:root{--md-text-font:"Inter";--md-code-font:"Fira Code"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
       
     
     
@@ -76,7 +78,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -122,9 +124,7 @@
     
       
 
-  
-
-<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+<header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Axion" class="md-header__button md-logo" aria-label="Axion" data-md-component="logo">
       
@@ -158,20 +158,20 @@
     
     
     
-    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
     
-      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
       </label>
     
   
     
     
     
-    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
     
-      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
       </label>
     
   
@@ -230,18 +230,24 @@
         <a href="https://github.com/ax-foundry/axion" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
-    GitHub
+    ax-foundry/axion
   </div>
 </a>
       </div>
     
   </nav>
   
+</header>
     
+    <div class="md-container" data-md-component="container">
       
+      
+        
+          
+            
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
   <div class="md-grid">
     <ul class="md-tabs__list">
@@ -403,13 +409,7 @@
     </ul>
   </div>
 </nav>
-    
-  
-</header>
-    
-    <div class="md-container" data-md-component="container">
-      
-      
+          
         
       
       <main class="md-main" data-md-component="main">
@@ -426,9 +426,7 @@
   
 
 
-  
-
-<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Axion" class="md-nav__button md-logo" aria-label="Axion" data-md-component="logo">
       
@@ -442,10 +440,10 @@
       <a href="https://github.com/ax-foundry/axion" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
   </div>
   <div class="md-source__repository">
-    GitHub
+    ax-foundry/axion
   </div>
 </a>
     </div>
@@ -484,7 +482,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -640,7 +640,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -749,7 +751,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -979,7 +983,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_7" >
         
           
           <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
@@ -1252,7 +1258,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
@@ -1338,7 +1346,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_1" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -1823,7 +1833,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -2150,7 +2162,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -2222,7 +2236,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_4" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -2340,7 +2356,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -2400,7 +2418,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_1" >
         
           
           <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
@@ -2552,7 +2572,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
         
           
           <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
@@ -2700,7 +2722,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
         
           
           <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
@@ -2792,7 +2816,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
         
           
           <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
@@ -2888,7 +2914,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
         
           
           <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
@@ -3040,7 +3068,9 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" >
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_6" >
         
           
           <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
@@ -4496,6 +4526,907 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#calibermetric" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CaliberMetric
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.CaliberMetric" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CaliberMetric
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Selection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Example Selection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exampleselector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ExampleSelector
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.ExampleSelector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ExampleSelector
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ExampleSelector">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.ExampleSelector--simple-balanced-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simple balanced selection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.ExampleSelector--misalignment-guided-requires-eval-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Misalignment-guided (requires eval results)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.ExampleSelector--pattern-aware-requires-pattern-discovery-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern-aware (requires Pattern Discovery results)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.ExampleSelector.select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        select
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#selectionstrategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SelectionStrategy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.SelectionStrategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SelectionStrategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="SelectionStrategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#selectionresult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SelectionResult
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.SelectionResult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SelectionResult
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pattern-discovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pattern Discovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pattern Discovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#patterndiscovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PatternDiscovery
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.PatternDiscovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PatternDiscovery
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PatternDiscovery">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.PatternDiscovery--using-model_nameprovider-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using model_name/provider (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.PatternDiscovery--or-with-pre-configured-llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Or with pre-configured LLM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.PatternDiscovery.discover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        discover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discoveredpattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DiscoveredPattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.DiscoveredPattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DiscoveredPattern
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DiscoveredPattern">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#patterndiscoveryresult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PatternDiscoveryResult
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.PatternDiscoveryResult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PatternDiscoveryResult
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PatternDiscoveryResult">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#annotateditem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AnnotatedItem
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.AnnotatedItem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AnnotatedItem
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="AnnotatedItem">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clusteringmethod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ClusteringMethod
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.ClusteringMethod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ClusteringMethod
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#misalignment-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Misalignment Analysis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Misalignment Analysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#misalignmentanalyzer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MisalignmentAnalyzer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.MisalignmentAnalyzer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MisalignmentAnalyzer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MisalignmentAnalyzer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.MisalignmentAnalyzer--using-model_nameprovider-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using model_name/provider (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.MisalignmentAnalyzer.analyze" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        analyze
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#misalignmentanalysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MisalignmentAnalysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.MisalignmentAnalysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MisalignmentAnalysis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MisalignmentAnalysis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#misalignmentpattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MisalignmentPattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.MisalignmentPattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MisalignmentPattern
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompt Optimization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prompt Optimization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#promptoptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PromptOptimizer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.PromptOptimizer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PromptOptimizer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="PromptOptimizer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.PromptOptimizer.optimize" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        optimize
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimizedprompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OptimizedPrompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.OptimizedPrompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OptimizedPrompt
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OptimizedPrompt">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#promptsuggestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PromptSuggestion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.PromptSuggestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PromptSuggestion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#renderers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Renderers
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Renderers">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#caliberrenderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CaliberRenderer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.CaliberRenderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CaliberRenderer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CaliberRenderer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.CaliberRenderer.render_record" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_record
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.CaliberRenderer.render_annotation_progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_annotation_progress
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.CaliberRenderer.render_evaluation_result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_evaluation_result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.CaliberRenderer.render_misalignment_analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_misalignment_analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notebookcaliberrenderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NotebookCaliberRenderer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.NotebookCaliberRenderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NotebookCaliberRenderer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NotebookCaliberRenderer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.NotebookCaliberRenderer.render_record" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_record
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.NotebookCaliberRenderer.render_annotation_progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_annotation_progress
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.NotebookCaliberRenderer.render_evaluation_result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_evaluation_result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.NotebookCaliberRenderer.render_misalignment_analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_misalignment_analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#consolecaliberrenderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ConsoleCaliberRenderer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.ConsoleCaliberRenderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ConsoleCaliberRenderer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ConsoleCaliberRenderer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.ConsoleCaliberRenderer.render_record" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_record
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.ConsoleCaliberRenderer.render_annotation_progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_annotation_progress
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.ConsoleCaliberRenderer.render_evaluation_result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_evaluation_result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.ConsoleCaliberRenderer.render_misalignment_analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_misalignment_analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#jsoncaliberrenderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JsonCaliberRenderer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.caliber.JsonCaliberRenderer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JsonCaliberRenderer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JsonCaliberRenderer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.JsonCaliberRenderer.render_record" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_record
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.JsonCaliberRenderer.render_annotation_progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_annotation_progress
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.JsonCaliberRenderer.render_evaluation_result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_evaluation_result
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.caliber.JsonCaliberRenderer.render_misalignment_analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_misalignment_analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           
             <div class="md-content" data-md-component="content">
@@ -4510,7 +5441,43 @@
 
 
 <h1 id="caliber-api-reference">Caliber API Reference<a class="headerlink" href="#caliber-api-reference" title="Permanent link">&para;</a></h1>
-<p>LLM-as-judge calibration and alignment tools.</p>
+<p>LLM-as-judge calibration and alignment tools for improving evaluation quality.</p>
+<div class="ref-import">
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">CaliberMetric</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">ExampleSelector</span><span class="p">,</span> <span class="n">SelectionStrategy</span><span class="p">,</span> <span class="n">SelectionResult</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">PatternDiscovery</span><span class="p">,</span> <span class="n">DiscoveredPattern</span><span class="p">,</span> <span class="n">PatternDiscoveryResult</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">MisalignmentAnalyzer</span><span class="p">,</span> <span class="n">MisalignmentAnalysis</span><span class="p">,</span> <span class="n">MisalignmentPattern</span><span class="p">,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">PromptOptimizer</span><span class="p">,</span> <span class="n">OptimizedPrompt</span><span class="p">,</span> <span class="n">PromptSuggestion</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">CaliberRenderer</span><span class="p">,</span> <span class="n">NotebookCaliberRenderer</span><span class="p">,</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">ConsoleCaliberRenderer</span><span class="p">,</span> <span class="n">JsonCaliberRenderer</span><span class="p">,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">C</span>
+<p class="rule-card__title">CaliberMetric</p>
+<p class="rule-card__desc">Core metric for measuring LLM judge alignment against human ground truth scores.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">P</span>
+<p class="rule-card__title">Pattern Discovery</p>
+<p class="rule-card__desc">Discover scoring patterns and clusters in evaluation data using embedding-based analysis.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">M</span>
+<p class="rule-card__title">Misalignment Analysis</p>
+<p class="rule-card__desc">Identify systematic disagreements between human and LLM judges and surface root causes.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">O</span>
+<p class="rule-card__title">Prompt Optimization</p>
+<p class="rule-card__desc">Automatically generate improved evaluation prompts that better align with human judgment.</p>
+</div>
+</div>
+
+<hr />
 <h2 id="calibermetric">CaliberMetric<a class="headerlink" href="#calibermetric" title="Permanent link">&para;</a></h2>
 
 
@@ -4526,7 +5493,7 @@
 
     <div class="doc doc-contents first">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, metric_category: Optional[MetricCategory] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="../../deep-dives/metrics/yaml-metrics/#axion.metrics.base.BaseMetric">BaseMetric</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="axion.metrics.base.BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, metric_category: Optional[MetricCategory] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="../metrics/#axion.metrics.base.BaseMetric">BaseMetric</a></code></p>
 
 
 
@@ -4615,7 +5582,8 @@
 
     </div>
 
-</div><h2 id="example-selection">Example Selection<a class="headerlink" href="#example-selection" title="Permanent link">&para;</a></h2>
+</div><hr />
+<h2 id="example-selection">Example Selection<a class="headerlink" href="#example-selection" title="Permanent link">&para;</a></h2>
 <h3 id="exampleselector">ExampleSelector<a class="headerlink" href="#exampleselector" title="Permanent link">&para;</a></h3>
 
 
@@ -4902,7 +5870,8 @@
 
     </div>
 
-</div><h2 id="pattern-discovery">Pattern Discovery<a class="headerlink" href="#pattern-discovery" title="Permanent link">&para;</a></h2>
+</div><hr />
+<h2 id="pattern-discovery">Pattern Discovery<a class="headerlink" href="#pattern-discovery" title="Permanent link">&para;</a></h2>
 <h3 id="patterndiscovery">PatternDiscovery<a class="headerlink" href="#patterndiscovery" title="Permanent link">&para;</a></h3>
 
 
@@ -5315,7 +6284,8 @@ result = await discovery.discover(annotations)</p>
 
     </div>
 
-</div><h2 id="misalignment-analysis">Misalignment Analysis<a class="headerlink" href="#misalignment-analysis" title="Permanent link">&para;</a></h2>
+</div><hr />
+<h2 id="misalignment-analysis">Misalignment Analysis<a class="headerlink" href="#misalignment-analysis" title="Permanent link">&para;</a></h2>
 <h3 id="misalignmentanalyzer">MisalignmentAnalyzer<a class="headerlink" href="#misalignmentanalyzer" title="Permanent link">&para;</a></h3>
 
 
@@ -5603,7 +6573,8 @@ print(f'Recommendations: {analysis.recommendations}')</p>
 
     </div>
 
-</div><h2 id="prompt-optimization">Prompt Optimization<a class="headerlink" href="#prompt-optimization" title="Permanent link">&para;</a></h2>
+</div><hr />
+<h2 id="prompt-optimization">Prompt Optimization<a class="headerlink" href="#prompt-optimization" title="Permanent link">&para;</a></h2>
 <h3 id="promptoptimizer">PromptOptimizer<a class="headerlink" href="#promptoptimizer" title="Permanent link">&para;</a></h3>
 
 
@@ -5898,7 +6869,8 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
     </div>
 
-</div><h2 id="renderers">Renderers<a class="headerlink" href="#renderers" title="Permanent link">&para;</a></h2>
+</div><hr />
+<h2 id="renderers">Renderers<a class="headerlink" href="#renderers" title="Permanent link">&para;</a></h2>
 <h3 id="caliberrenderer">CaliberRenderer<a class="headerlink" href="#caliberrenderer" title="Permanent link">&para;</a></h3>
 
 
@@ -6469,6 +7441,10 @@ as JSON rather than displayed.</p>
 
     </div>
 
+</div><hr />
+<div class="ref-nav">
+<p><a class="md-button md-button--primary" href="../../guides/caliberhq/">CaliberHQ Guide <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a>
+<a class="md-button" href="../../deep-dives/align/example-selector/">Example Selector Deep Dive <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a></p>
 </div>
 
 
@@ -6492,7 +7468,7 @@ as JSON rather than displayed.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 1, 2026 17:40:49 UTC">February 1, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 11, 2026 19:02:03 UTC">February 11, 2026</span>
   </span>
 
     
@@ -6553,10 +7529,30 @@ as JSON rather than displayed.</p>
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
   
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 AX Foundry. All rights reserved.
+    </div>
+  
   
     Made with
     <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
       Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/ax-foundry/axion" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
     </a>
   
 </div>
@@ -6574,7 +7570,7 @@ as JSON rather than displayed.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "navigation.instant", "navigation.tracking", "navigation.top", "toc.integrate", "content.code.copy", "content.tabs.link", "search.suggest", "search.highlight"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
 
@@ -6608,6 +7604,75 @@ as JSON rather than displayed.</p>
       const nowCollapsed = document.body.classList.contains('toc-collapsed');
       localStorage.setItem('axion-toc-collapsed', nowCollapsed);
     });
+
+    // Screenshot carousel
+    const track = document.getElementById('carousel-track');
+    const dotsContainer = document.getElementById('carousel-dots');
+    const captionText = document.getElementById('carousel-caption-text');
+    if (track && dotsContainer) {
+      const slides = track.querySelectorAll('.carousel-slide');
+      const captions = [];
+      slides.forEach(function(s) {
+        var img = s.querySelector('img');
+        captions.push(img ? img.alt : '');
+      });
+      var current = 0;
+
+      // Build dots
+      slides.forEach(function(_, i) {
+        var dot = document.createElement('button');
+        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+        dot.addEventListener('click', function() { goTo(i); });
+        dotsContainer.appendChild(dot);
+      });
+
+      function goTo(idx) {
+        current = idx;
+        track.scrollTo({ left: slides[idx].offsetLeft, behavior: 'smooth' });
+        updateUI();
+      }
+
+      function updateUI() {
+        dotsContainer.querySelectorAll('.carousel-dot').forEach(function(d, i) {
+          d.classList.toggle('active', i === current);
+        });
+        if (captionText) captionText.textContent = captions[current] || '';
+      }
+
+      // Arrow buttons
+      var prevBtn = track.parentElement.querySelector('.carousel-prev');
+      var nextBtn = track.parentElement.querySelector('.carousel-next');
+      if (prevBtn) prevBtn.addEventListener('click', function() {
+        goTo(current > 0 ? current - 1 : slides.length - 1);
+      });
+      if (nextBtn) nextBtn.addEventListener('click', function() {
+        goTo(current < slides.length - 1 ? current + 1 : 0);
+      });
+
+      // Sync on scroll (for touch/drag)
+      var scrollTimer;
+      track.addEventListener('scroll', function() {
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function() {
+          var scrollLeft = track.scrollLeft;
+          var width = track.offsetWidth;
+          current = Math.round(scrollLeft / width);
+          updateUI();
+        }, 60);
+      });
+
+      // Auto-advance every 5s, pause on hover
+      var autoplay = setInterval(function() {
+        goTo(current < slides.length - 1 ? current + 1 : 0);
+      }, 5000);
+      track.parentElement.addEventListener('mouseenter', function() { clearInterval(autoplay); });
+      track.parentElement.addEventListener('mouseleave', function() {
+        autoplay = setInterval(function() {
+          goTo(current < slides.length - 1 ? current + 1 : 0);
+        }, 5000);
+      });
+    }
   });
 </script>
 
