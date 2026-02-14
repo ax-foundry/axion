@@ -9,10 +9,10 @@ class UsageButton(BaseModalButton):
     def __init__(
         self,
         template: Callable[[str, Any], str],
-        button_background_color: str = '#64748b',  # Slate Gray
-        button_hover_color: str = '#475569',  # Darker Slate Gray
-        action_primary_color: str = '#64748b',  # Match button color for consistency
-        action_primary_hover: str = '#475569',  # Match hover color
+        button_background_color: str = '#2D5F8A',  # Navy light
+        button_hover_color: str = '#1E3A5F',  # Deep navy
+        action_primary_color: str = '#2D5F8A',  # Match button color for consistency
+        action_primary_hover: str = '#1E3A5F',  # Match hover color
         use_dark_theme: bool = False,
     ):
         """
@@ -77,8 +77,8 @@ class UsageButton(BaseModalButton):
             # Dark theme styles
             return """
                 .usage-code {
-                    background: #1f2937;
-                    color: #f9fafb;
+                    background: #1e2428;
+                    color: #e8eaed;
                     padding: 24px;
                     border-radius: 8px;
                     overflow-x: auto;
@@ -86,7 +86,7 @@ class UsageButton(BaseModalButton):
                     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
                     font-size: 14px;
                     line-height: 1.6;
-                    border: 1px solid #374151;
+                    border: 1px solid rgba(74, 144, 201, 0.25);
                     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
                 }
 
@@ -100,12 +100,12 @@ class UsageButton(BaseModalButton):
 
                 /* Dark theme syntax highlighting colors */
                 .usage-code .comment {
-                    color: #6b7280;
+                    color: #7F8C8D;
                     font-style: italic;
                 }
 
                 .usage-code .keyword {
-                    color: #8b5cf6;
+                    color: #4A90C9;
                     font-weight: 600;
                 }
 
@@ -118,7 +118,7 @@ class UsageButton(BaseModalButton):
                 }
 
                 .usage-code .function {
-                    color: #3b82f6;
+                    color: #4A90C9;
                 }
             """
         else:
@@ -148,17 +148,17 @@ class UsageButton(BaseModalButton):
 
                 /* Light theme syntax highlighting colors */
                 .usage-code .comment {
-                    color: #64748b;
+                    color: #7F8C8D;
                     font-style: italic;
                 }
 
                 .usage-code .keyword {
-                    color: #7c3aed;
+                    color: #1E3A5F;
                     font-weight: 600;
                 }
 
                 .usage-code .string {
-                    color: #059669;
+                    color: #10b981;
                 }
 
                 .usage-code .number {
@@ -166,7 +166,7 @@ class UsageButton(BaseModalButton):
                 }
 
                 .usage-code .function {
-                    color: #2563eb;
+                    color: #2D5F8A;
                 }
             """
 
@@ -195,7 +195,7 @@ class UsageButton(BaseModalButton):
                     const originalText = btn.textContent;
                     const originalBg = btn.style.background;
                     btn.textContent = '✅ Copied!';
-                    btn.style.background = '#059669';
+                    btn.style.background = '#10b981';
                     setTimeout(() => {{
                         btn.textContent = originalText;
                         btn.style.background = originalBg;

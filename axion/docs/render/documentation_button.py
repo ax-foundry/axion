@@ -10,10 +10,10 @@ class DocumentationButton(BaseModalButton):
     def __init__(
         self,
         documentation: Union[str, Callable[[str, Any], str]],
-        button_background_color: str = '#3b82f6',  # Blue
-        button_hover_color: str = '#2563eb',  # Darker Blue
-        action_primary_color: str = '#3b82f6',  # Match button color
-        action_primary_hover: str = '#2563eb',  # Match hover color
+        button_background_color: str = '#1E3A5F',  # Navy
+        button_hover_color: str = '#0F2440',  # Darker Navy
+        action_primary_color: str = '#1E3A5F',  # Match button color
+        action_primary_hover: str = '#0F2440',  # Match hover color
     ):
         """
         Initialize with documentation content or template function.
@@ -79,59 +79,59 @@ class DocumentationButton(BaseModalButton):
         """Get documentation-specific CSS styles."""
         return """
             .doc-content {
-                color: #374151;
+                color: #34495E;
                 line-height: 1.7;
             }
 
             .doc-content h1 {
                 font-size: 28px;
                 font-weight: 700;
-                color: #111827;
+                color: #1E3A5F;
                 margin: 0 0 24px 0;
-                border-bottom: 2px solid #e5e7eb;
+                border-bottom: 2px solid #e2e8f0;
                 padding-bottom: 12px;
             }
 
             .doc-content h2 {
                 font-size: 24px;
                 font-weight: 600;
-                color: #111827;
+                color: #1E3A5F;
                 margin: 32px 0 16px 0;
-                border-bottom: 1px solid #e5e7eb;
+                border-bottom: 1px solid #e2e8f0;
                 padding-bottom: 8px;
             }
 
             .doc-content h3 {
                 font-size: 20px;
                 font-weight: 600;
-                color: #111827;
+                color: #2C3E50;
                 margin: 28px 0 14px 0;
             }
 
             .doc-content h4 {
                 font-size: 18px;
                 font-weight: 600;
-                color: #374151;
+                color: #34495E;
                 margin: 24px 0 12px 0;
             }
 
             .doc-content h5, .doc-content h6 {
                 font-size: 16px;
                 font-weight: 600;
-                color: #374151;
+                color: #34495E;
                 margin: 20px 0 10px 0;
             }
 
             .doc-content p {
                 margin: 16px 0;
-                color: #4b5563;
+                color: #34495E;
                 line-height: 1.7;
             }
 
             .doc-content ul, .doc-content ol {
                 margin: 16px 0;
                 padding-left: 24px;
-                color: #4b5563;
+                color: #34495E;
             }
 
             .doc-content li {
@@ -140,26 +140,26 @@ class DocumentationButton(BaseModalButton):
             }
 
             .doc-content code {
-                background: #f3f4f6;
+                background: rgba(30, 58, 95, 0.1);
                 padding: 3px 8px;
                 border-radius: 4px;
                 font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
                 font-size: 0.9em;
-                color: #dc2626;
-                border: 1px solid #e5e7eb;
+                color: #2D5F8A;
+                border: 1px solid #e2e8f0;
             }
 
             .doc-content pre {
-                background: #f9fafb;
+                background: #1e2428;
                 padding: 24px;
                 border-radius: 8px;
                 overflow-x: auto;
                 margin: 20px 0;
-                border: 1px solid #e5e7eb;
+                border: 1px solid #e2e8f0;
                 font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
                 font-size: 14px;
                 line-height: 1.6;
-                color: #374151;
+                color: #e8eaed;
             }
 
             .doc-content pre code {
@@ -171,8 +171,8 @@ class DocumentationButton(BaseModalButton):
             }
 
             .doc-content blockquote {
-                border-left: 4px solid #3b82f6;
-                background: #eff6ff;
+                border-left: 4px solid #1E3A5F;
+                background: rgba(30, 58, 95, 0.06);
                 margin: 20px 0;
                 padding: 16px 24px;
                 border-radius: 0 6px 6px 0;
@@ -180,7 +180,7 @@ class DocumentationButton(BaseModalButton):
 
             .doc-content blockquote p {
                 margin: 0;
-                color: #1e40af;
+                color: #1E3A5F;
                 font-style: italic;
             }
 
@@ -188,42 +188,42 @@ class DocumentationButton(BaseModalButton):
                 width: 100%;
                 border-collapse: collapse;
                 margin: 20px 0;
-                border: 1px solid #e5e7eb;
+                border: 1px solid #e2e8f0;
                 border-radius: 6px;
                 overflow: hidden;
             }
 
             .doc-content th, .doc-content td {
-                border: 1px solid #e5e7eb;
+                border: 1px solid #e2e8f0;
                 padding: 12px 16px;
                 text-align: left;
             }
 
             .doc-content th {
-                background: #f9fafb;
+                background: #f8fafc;
                 font-weight: 600;
-                color: #111827;
+                color: #1E3A5F;
             }
 
             .doc-content strong {
                 font-weight: 600;
-                color: #111827;
+                color: #2C3E50;
             }
 
             .doc-content em {
                 font-style: italic;
-                color: #4b5563;
+                color: #34495E;
             }
 
             .doc-content a {
-                color: #3b82f6;
+                color: #2D5F8A;
                 text-decoration: none;
                 border-bottom: 1px solid transparent;
                 transition: border-color 0.15s;
             }
 
             .doc-content a:hover {
-                border-bottom-color: #3b82f6;
+                border-bottom-color: #2D5F8A;
             }
         """
 

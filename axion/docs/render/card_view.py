@@ -13,7 +13,7 @@ class ModalButtonCard:
         card_title: str = '',
         card_description: str = '',
         card_background: str = '#ffffff',
-        card_border_color: str = '#e5e7eb',
+        card_border_color: str = '#e2e8f0',
         card_shadow: str = '0 4px 6px rgba(0, 0, 0, 0.05)',
         max_width: str = '600px',
     ):
@@ -185,7 +185,7 @@ class ModalButtonCard:
 
             .modal-card-title {{
                 margin: 0 0 8px 0;
-                color: #111827;
+                color: #1E3A5F;
                 font-size: 20px;
                 font-weight: 700;
                 line-height: 1.3;
@@ -193,7 +193,7 @@ class ModalButtonCard:
 
             .modal-card-description {{
                 margin: 0;
-                color: #6b7280;
+                color: #7F8C8D;
                 font-size: 14px;
                 line-height: 1.5;
             }}
@@ -252,17 +252,17 @@ class ModalButtonCard:
             /* Dark mode support */
             @media (prefers-color-scheme: dark) {{
                 .modal-card {{
-                    background: #1f2937;
-                    border-color: #374151;
-                    color: #f9fafb;
+                    background: #111827;
+                    border-color: rgba(74, 144, 201, 0.25);
+                    color: #e8eaed;
                 }}
 
                 .modal-card-title {{
-                    color: #f9fafb;
+                    color: #e8eaed;
                 }}
 
                 .modal-card-description {{
-                    color: #9ca3af;
+                    color: #8a9199;
                 }}
             }}
         """
