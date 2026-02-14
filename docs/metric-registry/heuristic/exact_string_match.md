@@ -3,7 +3,7 @@
 <div style="border-left: 4px solid #f59e0b; padding-left: 1rem; margin-bottom: 1.5rem;">
 <strong style="font-size: 1.1rem;">Check if output exactly matches expected text</strong><br>
 <span class="badge" style="margin-top: 0.5rem; background: #f59e0b;">Heuristic</span>
-<span class="badge" style="background: #6B7A3A;">Single Turn</span>
+<span class="badge" style="background: #0F2440;">Single Turn</span>
 <span class="badge" style="background: #ec4899;">Binary</span>
 </div>
 

@@ -1,4 +1,4 @@
-site_name: Axion
+site_name: Documentation
 site_description: A modular evaluation framework for AI agents
 site_url: https://ax-foundry.github.io/axion/
 repo_url: https://github.com/ax-foundry/axion
@@ -96,8 +96,8 @@ nav:
 
 theme:
   name: material
-  logo: assets/ax_icon.png
-  favicon: assets/ax_icon.png
+  logo: assets/axion_main_transparent.png
+  favicon: assets/ax-icon.png
   custom_dir: docs/overrides
   icon:
     repo: fontawesome/brands/github

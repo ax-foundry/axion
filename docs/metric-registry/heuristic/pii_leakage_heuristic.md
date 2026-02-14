@@ -3,7 +3,7 @@
 <div style="border-left: 4px solid #f59e0b; padding-left: 1rem; margin-bottom: 1.5rem;">
 <strong style="font-size: 1.1rem;">Detect personally identifiable information using regex patterns</strong><br>
 <span class="badge" style="margin-top: 0.5rem; background: #f59e0b;">Heuristic</span>
-<span class="badge" style="background: #6B7A3A;">Single Turn</span>
+<span class="badge" style="background: #0F2440;">Single Turn</span>
 <span class="badge" style="background: #ef4444;">Safety</span>
 </div>
 

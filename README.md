@@ -20,7 +20,7 @@
 <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.12+-blue.svg" alt="Python 3.12+"></a>
 </p>
 
-<div style="background: linear-gradient(135deg, #8B9F4F 0%, #6B7A3A 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
+<div style="background: #1E3A5F; padding: 24px; border-radius: 12px; color: white; margin: 20px 0; border-top: 3px solid #6B9DC2;">
 
 Moving from passive, black-box observation to active, white-box evaluation—Axion empowers builders with **actionable signals**, **automated pipelines**, and **fully transparent metrics**. See exactly why your agent succeeds or fails.
 </div>

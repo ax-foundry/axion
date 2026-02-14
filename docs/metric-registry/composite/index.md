@@ -1,6 +1,6 @@
 # Composite Metrics
 
-<div style="border-left: 4px solid #8B9F4F; padding-left: 1rem; margin-bottom: 1.5rem;">
+<div style="border-left: 4px solid #1E3A5F; padding-left: 1rem; margin-bottom: 1.5rem;">
 <strong style="font-size: 1.1rem;">LLM-powered evaluation metrics for comprehensive AI response analysis</strong><br>
 <span class="badge" style="margin-top: 0.5rem;">14 Metrics</span>
 <span class="badge" style="background: #667eea;">LLM-Powered</span>

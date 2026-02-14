@@ -4,7 +4,7 @@
 <strong style="font-size: 1.1rem;">Evaluate whether AI agents call the correct tools with proper parameters</strong><br>
 <span class="badge" style="margin-top: 0.5rem; background: #8b5cf6;">Tool</span>
 <span class="badge" style="background: #667eea;">Agent</span>
-<span class="badge" style="background: #6B7A3A;">Single Turn</span>
+<span class="badge" style="background: #0F2440;">Single Turn</span>
 </div>
 
 ## At a Glance
