@@ -85,7 +85,7 @@ A model leaves this loop only when it:
 
 ## The Release Gate
 
-<div style="background: linear-gradient(135deg, #2a3320 0%, #1e2618 100%); padding: 24px; border-radius: 8px; color: white; margin: 20px 0;" markdown="0">
+<div style="background: linear-gradient(135deg, #1E3A5F 0%, #0F2440 100%); padding: 24px; border-radius: 8px; color: white; margin: 20px 0;" markdown="0">
 <p style="margin: 0 0 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.8;">Deployment Decision</p>
 <p style="margin: 0; font-size: 14px; line-height: 1.7;">Between the two loops sits a mandatory checkpoint. Models cannot move to production unless they meet all Loop 1 criteria. Failed models return to the design phase. Passing models get promoted.</p>
 </div>
@@ -170,7 +170,7 @@ graph LR
 !!! tip "Failures Are Assets"
     Every production failure gets added to your golden datasets. This ensures the next model version is specifically tested against that scenario—preventing the same mistake twice.
 
-<div style="background: linear-gradient(135deg, #2a3320 0%, #1e2618 100%); padding: 24px; border-radius: 8px; color: white; margin: 20px 0;" markdown="0">
+<div style="background: linear-gradient(135deg, #1E3A5F 0%, #0F2440 100%); padding: 24px; border-radius: 8px; color: white; margin: 20px 0;" markdown="0">
 <p style="margin: 0; font-size: 14px; line-height: 1.7;">This continuous feedback loop drives constant improvement. Each cycle through the flywheel makes your evaluation more comprehensive and your models more robust.</p>
 </div>
 

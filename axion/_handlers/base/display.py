@@ -205,7 +205,7 @@ def display_pydantic(
             left: 0;
             right: 0;
             height: 6px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+            background: #1E3A5F;
             z-index: 1;
         }
 
@@ -221,23 +221,19 @@ def display_pydantic(
         .pydantic-title {
             font-size: 22px;
             font-weight: 700;
-            color: #1e293b;
+            color: #1E3A5F;
             margin: 0;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         .pydantic-count {
-            background-color: #3b82f6;
+            background-color: #1E3A5F;
             color: white;
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
             letter-spacing: 0.5px;
-            box-shadow: 0 2px 5px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 2px 5px rgba(30, 58, 95, 0.2);
         }
 
         .topics-grid {
@@ -263,7 +259,7 @@ def display_pydantic(
 
         .topic-card-header {
             padding: 20px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: #1E3A5F;
             color: white;
         }
 
@@ -333,23 +329,21 @@ def display_pydantic(
             right: 0;
             width: 100px;
             height: 100px;
-            background: radial-gradient(circle at bottom right,
-                                       rgba(59, 130, 246, 0.04),
-                                       transparent 70%);
+            background-color: rgba(30, 58, 95, 0.02);
             z-index: 0;
             opacity: 0.5;
         }
 
         .item-name {
             font-weight: 600;
-            color: #334155;
+            color: #34495E;
             display: block;
             margin-bottom: 10px;
             font-size: 1rem;
         }
 
         .instruction-name {
-            color: #1e293b;
+            color: #2C3E50;
             display: flex;
             align-items: center;
         }
@@ -362,12 +356,12 @@ def display_pydantic(
 
         .item-description {
             font-size: 0.9rem;
-            color: #64748b;
+            color: #7F8C8D;
             margin-bottom: 8px;
         }
 
         .empty-note {
-            color: #94a3b8;
+            color: #8a9199;
             font-style: italic;
             padding: 10px;
         }
@@ -384,7 +378,7 @@ def display_pydantic(
         }
 
         .string-value {
-            color: #0369a1;
+            color: #2D5F8A;
         }
 
         .number-value {
@@ -392,20 +386,20 @@ def display_pydantic(
         }
 
         .boolean-value {
-            color: #4f46e5;
+            color: #1E3A5F;
         }
 
         .null-value {
-            color: #9ca3af;
+            color: #8a9199;
             font-style: italic;
         }
 
         .complex-value {
-            color: #1e293b;
+            color: #2C3E50;
         }
 
         .model-reference {
-            color: #047857;
+            color: #10b981;
             font-weight: bold;
         }
 
@@ -424,8 +418,8 @@ def display_pydantic(
             margin: 0;
             max-height: 500px;
             overflow-y: auto;
-            background-color: #272822;
-            color: #f8f8f2;
+            background-color: #1e2428;
+            color: #e8eaed;
             padding: 12px;
             border-radius: 6px;
             font-size: 14px;
@@ -524,13 +518,13 @@ def display_execution_metadata(execution_data):
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         .metadata-header {
-            border-bottom: 1px solid #eaeaea;
+            border-bottom: 1px solid #e2e8f0;
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
         .metadata-title {
             font-size: 1.5em;
-            color: #2c3e50;
+            color: #1E3A5F;
             margin: 0;
         }
         .metadata-id {
@@ -543,10 +537,10 @@ def display_execution_metadata(execution_data):
         }
         .section-title {
             font-weight: bold;
-            color: #2c3e50;
+            color: #1E3A5F;
             font-size: 1.2em;
             margin-bottom: 10px;
-            border-bottom: 1px solid #eaeaea;
+            border-bottom: 1px solid #e2e8f0;
             padding-bottom: 5px;
         }
         .property-row {
@@ -565,7 +559,7 @@ def display_execution_metadata(execution_data):
         }
         .trace-item {
             background-color: #f8f9fa;
-            border-left: 3px solid #3498db;
+            border-left: 3px solid #4A90C9;
             padding: 12px;
             margin-bottom: 10px;
             border-radius: 4px;
@@ -577,7 +571,7 @@ def display_execution_metadata(execution_data):
         }
         .trace-type {
             font-weight: bold;
-            color: #2c3e50;
+            color: #1E3A5F;
         }
         .trace-message {
             margin: 5px 0;
@@ -591,34 +585,34 @@ def display_execution_metadata(execution_data):
             margin-top: 5px;
         }
         .status-started {
-            color: #f39c12;
+            color: #f59e0b;
             font-weight: bold;
         }
         .status-completed {
-            color: #2ecc71;
+            color: #10b981;
             font-weight: bold;
         }
         .status-failed {
-            color: #e74c3c;
+            color: #ef4444;
             font-weight: bold;
         }
         .llm-call {
-            background-color: #eafaf1;
-            border-left: 3px solid #2ecc71;
+            background-color: rgba(16, 185, 129, 0.08);
+            border-left: 3px solid #10b981;
             padding: 12px;
             margin-bottom: 10px;
             border-radius: 4px;
         }
         .retrieval-call {
-            background-color: #ebf5fb;
-            border-left: 3px solid #3498db;
+            background-color: rgba(74, 144, 201, 0.08);
+            border-left: 3px solid #4A90C9;
             padding: 12px;
             margin-bottom: 10px;
             border-radius: 4px;
         }
         .db-call {
-            background-color: #fef9e7;
-            border-left: 3px solid #f1c40f;
+            background-color: rgba(245, 158, 11, 0.08);
+            border-left: 3px solid #f59e0b;
             padding: 12px;
             margin-bottom: 10px;
             border-radius: 4px;
@@ -704,7 +698,7 @@ def display_execution_metadata(execution_data):
         html_content += f"""
                 <div class="property-row">
                     <div class="property-name">Error</div>
-                    <div class="property-value" style="color: #e74c3c;">{execution_data.get('error')}</div>
+                    <div class="property-value" style="color: #ef4444;">{execution_data.get('error')}</div>
                 </div>
         """
 
@@ -1001,7 +995,7 @@ def display_prompt(prompt: str, query: str | BaseModel):
                 left: 0;
                 right: 0;
                 height: 6px;
-                background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+                background: #1E3A5F;
                 z-index: 1;
             }}
 
@@ -1025,14 +1019,14 @@ def display_prompt(prompt: str, query: str | BaseModel):
                 width: 42px;
                 height: 42px;
                 margin-right: 16px;
-                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                background: #1E3A5F;
                 color: white;
                 border-radius: 12px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-weight: bold;
-                box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+                box-shadow: 0 4px 10px rgba(30, 58, 95, 0.3);
             }}
 
             .prompt-icon-inner {{
@@ -1042,35 +1036,31 @@ def display_prompt(prompt: str, query: str | BaseModel):
             .prompt-title {{
                 font-size: 22px;
                 font-weight: 700;
-                color: #1e293b;
+                color: #1E3A5F;
                 margin: 0;
-                background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
             }}
 
             .prompt-subtitle {{
                 font-size: 14px;
-                color: #475569;
+                color: #7F8C8D;
                 margin: 4px 0 0 0;
             }}
 
             .prompt-badge {{
-                background-color: #3b82f6;
+                background-color: #1E3A5F;
                 color: white;
                 padding: 6px 12px;
                 border-radius: 20px;
                 font-size: 13px;
                 font-weight: 600;
                 letter-spacing: 0.5px;
-                box-shadow: 0 2px 5px rgba(59, 130, 246, 0.2);
+                box-shadow: 0 2px 5px rgba(30, 58, 95, 0.2);
             }}
 
             /* Query section */
             .query-section {{
                 background-color: #f1f5f9;
-                border-left: 4px solid #3b82f6;
+                border-left: 4px solid #1E3A5F;
                 padding: 16px;
                 margin-bottom: 24px;
                 border-radius: 0 12px 12px 0;
@@ -1086,16 +1076,14 @@ def display_prompt(prompt: str, query: str | BaseModel):
                 right: 0;
                 width: 150px;
                 height: 150px;
-                background: radial-gradient(circle at bottom right,
-                                           rgba(59, 130, 246, 0.08),
-                                           transparent 70%);
+                background-color: rgba(30, 58, 95, 0.04);
                 z-index: 0;
                 opacity: 0.5;
             }}
 
             .query-label {{
                 font-weight: 600;
-                color: #3b82f6;
+                color: #1E3A5F;
                 margin-bottom: 10px;
                 display: flex;
                 align-items: center;
@@ -1109,7 +1097,7 @@ def display_prompt(prompt: str, query: str | BaseModel):
 
             .query-text {{
                 margin: 0;
-                color: #1e293b;
+                color: #2C3E50;
                 position: relative;
                 z-index: 1;
             }}
@@ -1155,8 +1143,8 @@ def display_prompt(prompt: str, query: str | BaseModel):
             }}
 
             .json-data pre {{
-                background-color: #272822;
-                color: #f8f8f2;
+                background-color: #1e2428;
+                color: #e8eaed;
                 padding: 16px;
                 border-radius: 8px;
                 font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
@@ -1176,7 +1164,7 @@ def display_prompt(prompt: str, query: str | BaseModel):
             .section-title {{
                 font-weight: 600;
                 margin-bottom: 10px;
-                color: #1e293b;
+                color: #2C3E50;
                 display: flex;
                 align-items: center;
                 font-size: 18px;  /* Increased font size */
@@ -1190,7 +1178,7 @@ def display_prompt(prompt: str, query: str | BaseModel):
             }}
 
             .copy-indicator {{
-                color: #64748b;
+                color: #7F8C8D;
                 font-size: 14px;
                 background-color: #e2e8f0;
                 padding: 4px 10px;
@@ -1207,8 +1195,8 @@ def display_prompt(prompt: str, query: str | BaseModel):
 
             /* Code block styles */
             .code-block {{
-                background-color: #272822;
-                color: #f8f8f2;
+                background-color: #1e2428;
+                color: #e8eaed;
                 padding: 25px;  /* Increased padding */
                 border-radius: 10px;
                 overflow-x: auto;
@@ -1230,7 +1218,7 @@ def display_prompt(prompt: str, query: str | BaseModel):
                 padding-top: 16px;
                 border-top: 2px solid #e2e8f0;
                 font-size: 13px;
-                color: #64748b;
+                color: #7F8C8D;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;

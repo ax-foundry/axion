@@ -1,10 +1,10 @@
 # Contextual Sufficiency
 
-<div style="border-left: 4px solid #8B9F4F; padding-left: 1rem; margin-bottom: 1.5rem;">
+<div style="border-left: 4px solid #1E3A5F; padding-left: 1rem; margin-bottom: 1.5rem;">
 <strong style="font-size: 1.1rem;">Evaluate if retrieved context contains enough information to answer the query</strong><br>
 <span class="badge" style="margin-top: 0.5rem;">LLM-Powered</span>
 <span class="badge" style="background: #667eea;">Knowledge</span>
-<span class="badge" style="background: #6B7A3A;">Single Turn</span>
+<span class="badge" style="background: #0F2440;">Single Turn</span>
 <span class="badge" style="background: #06b6d4;">Retrieval</span>
 </div>
 
@@ -112,10 +112,10 @@
         E --> F & G
         F & G --> H
 
-        style INPUT stroke:#8B9F4F,stroke-width:2px
+        style INPUT stroke:#1E3A5F,stroke-width:2px
         style JUDGE stroke:#f59e0b,stroke-width:2px
         style OUTPUT stroke:#10b981,stroke-width:2px
-        style E fill:#8B9F4F,stroke:#6B7A3A,stroke-width:3px,color:#fff
+        style E fill:#1E3A5F,stroke:#0F2440,stroke-width:3px,color:#fff
     ```
 
 === ":material-scale-balance: Verdict System"

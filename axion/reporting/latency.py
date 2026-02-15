@@ -42,17 +42,17 @@ class LatencyAnalyzer:
 
         # Default color palette
         self.default_colors = {
-            'primary': '#1e3a8a',  # Deep navy
-            'secondary': '#3b82f6',  # Bright blue
-            'accent': '#8b5cf6',  # Purple
+            'primary': '#1E3A5F',  # Deep navy
+            'secondary': '#4A90C9',  # Steel blue
+            'accent': '#2D5F8A',  # Navy accent
             'success': '#10b981',  # Emerald
             'warning': '#f59e0b',  # Amber
             'danger': '#ef4444',  # Red
-            'background': '#f8fafc',  # Soft gray
+            'background': '#FEFEFE',  # Page background
             'grid': '#e2e8f0',  # Light gray
-            'text': '#1e293b',  # Dark slate
-            'text_light': '#64748b',  # Medium slate
-            'shadow': '#1e293b',  # Shadow color
+            'text': '#2C3E50',  # Primary text
+            'text_light': '#7F8C8D',  # Muted text
+            'shadow': '#2C3E50',  # Shadow color
         }
 
         # Merge user colors with defaults

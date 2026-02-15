@@ -7,13 +7,13 @@ class BaseModalButton:
 
     def __init__(
         self,
-        button_background_color: str = '#2563eb',
-        button_hover_color: str = '#1d4ed8',
+        button_background_color: str = '#1E3A5F',
+        button_hover_color: str = '#0F2440',
         modal_type: str = 'generic',
-        action_primary_color: str = '#64748b',  # Match button color for consistency
-        action_primary_hover: str = '#475569',  # Match hover color
-        action_secondary_color: str = '#6b7280',  # Gray for secondary actions
-        action_secondary_hover: str = '#4b5563',  # Dark gray for secondary hover
+        action_primary_color: str = '#1E3A5F',  # Match button color for consistency
+        action_primary_hover: str = '#0F2440',  # Match hover color
+        action_secondary_color: str = '#7F8C8D',  # Muted for secondary actions
+        action_secondary_hover: str = '#34495E',  # Secondary text for hover
     ):
         """
         Initialize the base modal button.
@@ -128,17 +128,17 @@ class BaseModalButton:
 
             .base-modal-header {{
                 padding: 24px 32px 20px;
-                border-bottom: 1px solid #e5e7eb;
+                border-bottom: 1px solid #e2e8f0;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                background: #f9fafb;
+                background: #f8fafc;
                 flex-shrink: 0;
             }}
 
             .base-modal-header h3 {{
                 margin: 0;
-                color: #111827;
+                color: #1E3A5F;
                 font-size: 20px;
                 font-weight: 700;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -149,7 +149,7 @@ class BaseModalButton:
                 border: none;
                 font-size: 24px;
                 cursor: pointer;
-                color: #6b7280;
+                color: #7F8C8D;
                 padding: 8px;
                 width: 40px;
                 height: 40px;
@@ -161,8 +161,8 @@ class BaseModalButton:
             }}
 
             .base-modal-close:hover {{
-                background: #e5e7eb;
-                color: #374151;
+                background: #e2e8f0;
+                color: #34495E;
             }}
 
             .base-modal-body {{
@@ -176,8 +176,8 @@ class BaseModalButton:
                 display: flex;
                 gap: 12px;
                 padding: 20px 32px 24px;
-                border-top: 1px solid #e5e7eb;
-                background: #f9fafb;
+                border-top: 1px solid #e2e8f0;
+                background: #f8fafc;
                 flex-shrink: 0;
             }}
 

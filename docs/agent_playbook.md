@@ -402,7 +402,7 @@ You cannot evaluate a GPT-4o agent using a GPT-3.5-Turbo judge. The judge must h
 
 ## Summary
 
-<div style="background: linear-gradient(135deg, #2a3320 0%, #1e2618 100%); padding: 24px; border-radius: 8px; color: white; margin: 20px 0;" markdown="0">
+<div style="background: linear-gradient(135deg, #1E3A5F 0%, #0F2440 100%); padding: 24px; border-radius: 8px; color: white; margin: 20px 0;" markdown="0">
 <p style="margin: 0; font-size: 14px; line-height: 1.7;">The goal is not to automate evaluation away &mdash; it's to build resilient, domain-aware evaluation systems that measure what truly matters and drive meaningful, measurable improvement. Start simple. Look at your data. Define "good." Then iterate.</p>
 </div>
 

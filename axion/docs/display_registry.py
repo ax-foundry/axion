@@ -637,18 +637,18 @@ class GenericRegistryDisplay:
             + self.config.max_width
             + """;
                 margin: 0 auto;
-                background: #ffffff;
-                border: 1px solid #e1e5e9;
+                background: #FEFEFE;
+                border: 1px solid #e2e8f0;
                 border-radius: 8px;
                 overflow: hidden;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             }
 
             .registry-header {
-                background: linear-gradient(135deg, #6B7A3A 0%, #8B9F4F 100%);
+                background: #0F2440;
                 color: white;
                 padding: 24px 32px;
-                border-bottom: 1px solid #e1e5e9;
+                border-bottom: 1px solid rgba(74, 144, 201, 0.25);
             }
 
             .registry-icon {
@@ -681,12 +681,12 @@ class GenericRegistryDisplay:
 
             .filter-section {
                 padding: 20px 32px;
-                background: #f8f9fa;
-                border-bottom: 1px solid #e1e5e9;
+                background: #f8fafc;
+                border-bottom: 1px solid #e2e8f0;
             }
 
             .filter-label {
-                font-weight: 600; color: #495057; margin-bottom: 12px;
+                font-weight: 600; color: #2C3E50; margin-bottom: 12px;
                 font-size: 14px;
             }
 
@@ -695,28 +695,28 @@ class GenericRegistryDisplay:
             }
 
             .filter-tag {
-                padding: 6px 12px; border: 1px solid #dee2e6;
+                padding: 6px 12px; border: 1px solid #e2e8f0;
                 background: white; border-radius: 4px;
                 cursor: pointer; transition: all 0.15s;
                 font-size: 13px; font-weight: 500;
-                color: #495057;
+                color: #34495E;
             }
 
             .filter-tag:hover {
-                background: #e9ecef; border-color: #adb5bd;
+                background: rgba(30, 58, 95, 0.08); border-color: #2D5F8A;
             }
 
             .filter-tag.active {
-                background: #8B9F4F; color: white; border-color: #8B9F4F;
+                background: #1E3A5F; color: white; border-color: #1E3A5F;
             }
 
             .filter-clear {
-                background: #6c757d !important; color: white !important;
-                border-color: #6c757d !important;
+                background: #7F8C8D !important; color: white !important;
+                border-color: #7F8C8D !important;
             }
 
             .filter-clear:hover {
-                background: #5a6268 !important; border-color: #545b62 !important;
+                background: #34495E !important; border-color: #34495E !important;
             }
 
             .metrics-grid {
@@ -726,13 +726,14 @@ class GenericRegistryDisplay:
             + """, 1fr));
                 gap: 0;
                 padding: 32px;
-                background: #f8f9fa;
+                background: #f8fafc;
             }
 
 
             .metric-card {
-                background: white;
-                border: 1px solid #e1e5e9;
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-top: 3px solid #1E3A5F;
                 border-radius: 6px;
                 margin-bottom: 20px;
                 overflow: hidden;
@@ -740,13 +741,14 @@ class GenericRegistryDisplay:
             }
 
             .metric-card:hover {
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                box-shadow: 0 4px 16px rgba(30, 58, 95, 0.12);
+                border-color: #cbd5e1;
             }
 
             .metric-card-header {
                 padding: 20px;
                 background: #ffffff;
-                border-bottom: 1px solid #e1e5e9;
+                border-bottom: 1px solid #f1f5f9;
             }
 
             .metric-header-top {
@@ -755,7 +757,7 @@ class GenericRegistryDisplay:
             }
 
             .metric-title {
-                font-weight: 600; font-size: 16px; color: #2d3748;
+                font-weight: 600; font-size: 16px; color: #1E3A5F;
                 margin: 0; line-height: 1.3;
             }
 
@@ -766,15 +768,17 @@ class GenericRegistryDisplay:
             .score-badge, .threshold-badge {
                 font-size: 11px; padding: 3px 8px; border-radius: 3px;
                 font-weight: 600; white-space: nowrap;
+                text-transform: uppercase; letter-spacing: 0.5px;
             }
 
             .score-badge {
-                background: #D4E0B8; color: #6B7A3A;
+                background: #eff6ff; color: #1E3A5F;
+                border: 1px solid #bfdbfe;
             }
 
-            .threshold-low { background: #e8f5e8; color: #2e7d32; }
-            .threshold-medium { background: #fff3e0; color: #f57c00; }
-            .threshold-high { background: #ffebee; color: #d32f2f; }
+            .threshold-low { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+            .threshold-medium { background: #fffbeb; color: #d97706; border: 1px solid #fde68a; }
+            .threshold-high { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
 
             .metric-key-container {
                 display: flex; align-items: center; gap: 8px;
@@ -782,35 +786,35 @@ class GenericRegistryDisplay:
 
             .metric-key {
                 font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-                font-size: 12px; color: #6c757d;
-                background: #f8f9fa; padding: 4px 8px;
-                border-radius: 3px; border: 1px solid #e9ecef;
+                font-size: 12px; color: #2D5F8A;
+                background: #f0f5fa; padding: 4px 8px;
+                border-radius: 3px; border: 1px solid #e2e8f0;
                 flex: 1;
             }
 
             .copy-btn {
-                border: 1px solid #dee2e6; background: white;
+                border: 1px solid #e2e8f0; background: #ffffff;
                 padding: 4px 8px; border-radius: 3px; cursor: pointer;
-                font-size: 11px; color: #6c757d;
+                font-size: 11px; color: #2D5F8A;
                 transition: all 0.15s;
             }
 
             .copy-btn:hover {
-                background: #f8f9fa; border-color: #adb5bd;
+                background: #f0f5fa; border-color: #4A90C9;
             }
 
             .metric-card-body {
                 padding: 20px;
-                background: white;
+                background: #ffffff;
             }
 
             .metric-description {
-                color: #495057; font-size: 14px;
+                color: #4a5568; font-size: 14px;
                 line-height: 1.5; margin-bottom: 20px;
                 padding: 12px 16px;
-                background: #f8f9fa;
+                background: #f8fafc;
                 border-radius: 4px;
-                border-left: 3px solid #8B9F4F;
+                border-left: 3px solid #4A90C9;
             }
 
             .fields-container {
@@ -823,7 +827,7 @@ class GenericRegistryDisplay:
 
             .fields-header {
                 display: flex; align-items: center; gap: 6px;
-                font-size: 13px; font-weight: 600; color: #495057;
+                font-size: 13px; font-weight: 600; color: #1E3A5F;
                 margin-bottom: 8px;
             }
 
@@ -844,15 +848,15 @@ class GenericRegistryDisplay:
             }
 
             .required-field {
-                background: #fff5f5; color: #c53030; border-color: #fed7d7;
+                background: #fef2f2; color: #dc2626; border-color: #fecaca;
             }
 
             .optional-field {
-                background: #D4E0B8; color: #6B7A3A; border-color: #B8C78A;
+                background: #eff6ff; color: #1E3A5F; border-color: #bfdbfe;
             }
 
             .default-field {
-                background: #f7fafc; color: #4a5568; border-color: #e2e8f0;
+                background: #f9fafb; color: #6b7280; border-color: #e5e7eb;
             }
 
             .tags-section {
@@ -861,7 +865,7 @@ class GenericRegistryDisplay:
 
             .tags-header {
                 display: flex; align-items: center; gap: 6px;
-                font-size: 13px; font-weight: 600; color: #495057;
+                font-size: 13px; font-weight: 600; color: #1E3A5F;
                 margin-bottom: 8px;
             }
 
@@ -872,34 +876,34 @@ class GenericRegistryDisplay:
             .metric-tag {
                 font-size: 11px; padding: 4px 8px; border-radius: 12px;
                 font-weight: 500;
-                background: #e9ecef; color: #495057;
-                border: 1px solid #dee2e6;
+                background: #f1f5f9; color: #475569;
+                border: 1px solid #e2e8f0;
             }
 
-            .tag-agent { background: #D4E0B8; color: #6B7A3A; border-color: #B8C78A; }
-            .tag-knowledge { background: #e8f0d8; color: #5a6930; border-color: #c5d6a0; }
-            .tag-retrieval { background: #f0f4e6; color: #6B7A3A; border-color: #d4e0b8; }
+            .tag-agent { background: #ecfdf5; color: #059669; border-color: #a7f3d0; }
+            .tag-knowledge { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+            .tag-retrieval { background: #fffbeb; color: #d97706; border-color: #fde68a; }
 
             .metric-footer {
                 display: flex; gap: 8px; padding-top: 16px;
-                border-top: 1px solid #f1f3f4;
+                border-top: 1px solid #f1f5f9;
             }
 
             .info-btn, .use-btn {
                 flex: 1; padding: 8px 12px;
-                border: 1px solid #dee2e6;
-                background: white; border-radius: 4px; cursor: pointer;
+                border: 1px solid #e2e8f0;
+                background: #ffffff; border-radius: 4px; cursor: pointer;
                 font-size: 12px; font-weight: 500;
                 transition: all 0.15s;
-                color: #495057;
+                color: #1E3A5F;
             }
 
             .info-btn:hover {
-                background: #f8f9fa; border-color: #adb5bd;
+                background: #f0f5fa; border-color: #4A90C9;
             }
 
             .use-btn:hover {
-                background: #8B9F4F; color: white; border-color: #8B9F4F;
+                background: #1E3A5F; color: white; border-color: #1E3A5F;
             }
 
             .empty-state {
@@ -907,10 +911,10 @@ class GenericRegistryDisplay:
                 display: flex; flex-direction: column;
                 align-items: center; justify-content: center;
                 padding: 60px 20px;
-                background: white;
-                border: 2px dashed #dee2e6;
+                background: #ffffff;
+                border: 2px dashed #cbd5e1;
                 border-radius: 6px;
-                color: #6c757d;
+                color: #64748b;
             }
 
             .empty-icon {
@@ -933,39 +937,39 @@ class GenericRegistryDisplay:
                 animation: fadeIn 0.2s ease;
             }
             .metric-modal .modal-content {
-                background: white; border-radius: 8px; max-width: 700px; width: 90%;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3); max-height: 80vh; overflow-y: auto;
+                background: #111827; border-radius: 8px; max-width: 700px; width: 90%;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); max-height: 80vh; overflow-y: auto;
                 animation: slideIn 0.2s ease;
             }
             .metric-modal .modal-header {
-                padding: 20px; border-bottom: 1px solid #e1e5e9;
+                padding: 20px; border-bottom: 1px solid rgba(74, 144, 201, 0.2);
                 display: flex; justify-content: space-between; align-items: center;
             }
             .metric-modal .modal-header h3 {
-                margin: 0; color: #2d3748; font-size: 18px; font-weight: 600;
+                margin: 0; color: #ffffff; font-size: 18px; font-weight: 600;
             }
             .metric-modal .modal-close {
                 background: none; border: none; font-size: 24px; cursor: pointer;
-                color: #6c757d; padding: 0; width: 30px; height: 30px;
+                color: #7F8C8D; padding: 0; width: 30px; height: 30px;
                 display: flex; align-items: center; justify-content: center;
             }
-            .metric-modal .modal-close:hover { color: #495057; }
+            .metric-modal .modal-close:hover { color: #e8eaed; }
             .metric-modal .modal-body {
-                padding: 20px; color: #4a5568; line-height: 1.6;
+                padding: 20px; color: #b0bec5; line-height: 1.6;
             }
             .metric-modal .modal-footer {
-                padding: 20px; border-top: 1px solid #e1e5e9;
+                padding: 20px; border-top: 1px solid rgba(74, 144, 201, 0.2);
                 display: flex; justify-content: flex-end; gap: 10px;
             }
             .metric-modal .btn-secondary {
-                padding: 8px 16px; background: #6c757d; color: white;
+                padding: 8px 16px; background: #1E3A5F; color: white;
                 border: none; border-radius: 4px; cursor: pointer; font-weight: 500;
             }
-            .metric-modal .btn-secondary:hover { background: #5a6268; }
-            .details-content h4 { color: #2d3748; margin: 20px 0 10px 0; }
-            .details-content h5 { color: #4a5568; margin: 15px 0 8px 0; }
+            .metric-modal .btn-secondary:hover { background: #2D5F8A; }
+            .details-content h4 { color: #e8eaed; margin: 20px 0 10px 0; }
+            .details-content h5 { color: #6B9DC2; margin: 15px 0 8px 0; }
             .details-content ul { margin: 0 0 15px 20px; }
-            .details-content code { background: #f8f9fa; padding: 2px 4px; border-radius: 3px; }
+            .details-content code { background: rgba(74, 144, 201, 0.1); padding: 2px 4px; border-radius: 3px; }
             @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
             @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         </style>
@@ -977,9 +981,9 @@ class GenericRegistryDisplay:
 
         # Define code themes
         if self.config.code_theme == 'dark':
-            code_style = 'background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 4px; overflow-x: auto; margin: 0; border: 1px solid #3c3c3c;'
+            code_style = 'background: #1e2428; color: #e8eaed; padding: 16px; border-radius: 4px; overflow-x: auto; margin: 0; border: 1px solid rgba(74, 144, 201, 0.25);'
         else:  # light theme (default)
-            code_style = 'background: #f8f9fa; padding: 16px; border-radius: 4px; overflow-x: auto; margin: 0; border: 1px solid #e1e5e9;'
+            code_style = 'background: #1e2428; color: #e8eaed; padding: 16px; border-radius: 4px; overflow-x: auto; margin: 0; border: 1px solid rgba(74, 144, 201, 0.25);'
 
         return f"""
         <script>
@@ -1026,7 +1030,7 @@ class GenericRegistryDisplay:
                         const btn = event.target;
                         const originalText = btn.textContent;
                         btn.textContent = '✓';
-                        btn.style.background = '#8B9F4F';
+                        btn.style.background = '#10b981';
                         btn.style.color = 'white';
                         setTimeout(() => {{
                             btn.textContent = originalText;
@@ -1056,7 +1060,7 @@ class GenericRegistryDisplay:
                     const btn = event.target;
                     const originalText = btn.textContent;
                     btn.textContent = '✓';
-                    btn.style.background = '#8B9F4F';
+                    btn.style.background = '#10b981';
                     btn.style.color = 'white';
                     setTimeout(() => {{
                         btn.textContent = originalText;
@@ -1549,7 +1553,7 @@ def create_metric_display():
     """Create a metric registry display."""
     extractor = MetricRegistryExtractor()
     config = DisplayConfig(
-        title='Metrics Registry', icon='📊', description='Available evaluation metrics'
+        title='Metrics Registry', icon='◆', description='Available evaluation metrics'
     )
     return GenericRegistryDisplay(extractor, config)
 
@@ -1559,7 +1563,7 @@ def create_api_runner_display():
     extractor = APIRunnerRegistryExtractor()
     config = DisplayConfig(
         title='API Runner Registry',
-        icon='🔌',
+        icon='◇',
         description='Available API runner for different services',
         show_badges=True,
         show_tags=True,
@@ -1583,7 +1587,7 @@ def prepare_api_runner_registry(registry: Dict) -> Dict:
 
 def display_table(registry: Dict) -> None:
     """Prints a formatted table of all registered metrics."""
-    print(f'📊 Found {len(registry)} available metrics:\n')
+    print(f'◆ Found {len(registry)} available metrics:\n')
 
     # Enhanced table with more columns
     header = f'{"Key":<25} | {"Name":<25} | {"Threshold":<9} | {"Range":<8} | {"Req Fields":<12} | {"Opt Fields":<12} | {"Tags"}'
@@ -1901,7 +1905,7 @@ def create_metric_runner_display(
     extractor = MetricRunnerRegistryExtractor(show_helper_methods, show_init_params)
     config = DisplayConfig(
         title='Metric Runner Registry',
-        icon='⚙️',
+        icon='▸',
         description='Available metric execution engines for different frameworks',
         show_badges=True,
         show_tags=True,
@@ -2333,7 +2337,7 @@ def create_llm_registry_display():
     extractor = LLMRegistryExtractor()
     config = DisplayConfig(
         title='LLM Provider Registry',
-        icon='🤖',
+        icon='◈',
         description='Available language model and embedding providers',
         show_badges=True,
         show_tags=True,
@@ -2489,7 +2493,7 @@ def create_settings_display():
     extractor = SettingsDisplayExtractor()
     config = DisplayConfig(
         title='LLM Registry Settings',
-        icon='⚙️',
+        icon='◎',
         description='Global configuration and environment settings',
         show_badges=True,
         show_tags=False,
@@ -2604,7 +2608,7 @@ def create_tracer_registry_display():
     extractor = TracerRegistryExtractor()
     config = DisplayConfig(
         title='Tracer Registry',
-        icon='🔍',
+        icon='◉',
         description='Available tracing providers for observability',
         show_badges=True,
         show_tags=True,

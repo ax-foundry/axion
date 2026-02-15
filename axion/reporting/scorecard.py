@@ -650,13 +650,13 @@ class ScoreCard:
             scores,
             bins=bins,
             range=(0, 1),
-            color='#4a7ba7',
+            color='#4A90C9',
             alpha=0.7,
-            edgecolor='#2c5f8d',
+            edgecolor='#2D5F8A',
             linewidth=0.5,
         )
 
-        ax.axvline(mean_score, color='#d32f2f', linewidth=2, linestyle='--', alpha=0.9)
+        ax.axvline(mean_score, color='#ef4444', linewidth=2, linestyle='--', alpha=0.9)
 
         ax.set_xlim(0, 1)
         if len(n) > 0:
@@ -697,9 +697,9 @@ class ScoreCard:
             type_val = tree_df.loc[s.name, 'Type']
             base_colors = {
                 'CATEGORY': '#1e3a5f',
-                'COMPONENT': '#2c5f8d',
-                'SUB-COMPONENT': '#4a7ba7',
-                'METRIC': '#e3f2fd',
+                'COMPONENT': '#2D5F8A',
+                'SUB-COMPONENT': '#4A90C9',
+                'METRIC': '#D1E3F0',
             }
             bg_color = base_colors.get(type_val, '#e3f2fd')
             text_color = 'white' if type_val != 'METRIC' else 'black'
@@ -736,13 +736,13 @@ class ScoreCard:
                     {
                         'selector': 'th',
                         'props': [
-                            ('background-color', '#0d1b2a'),
+                            ('background-color', '#0F2440'),
                             ('color', 'white'),
                             ('padding', '12px'),
                             ('text-align', 'center'),
                             ('font-weight', 'bold'),
                             ('font-size', '14px'),
-                            ('border', '1px solid #0d1b2a'),
+                            ('border', '1px solid #0F2440'),
                         ],
                     },
                     # Cell styling
@@ -750,7 +750,7 @@ class ScoreCard:
                         'selector': 'td',
                         'props': [
                             ('padding', '10px'),
-                            ('border', '1px solid #dee2e6'),
+                            ('border', '1px solid #e2e8f0'),
                             ('text-align', 'center'),
                             ('vertical-align', 'middle'),
                         ],
@@ -806,9 +806,9 @@ class ScoreCard:
             type_val = tree_df.loc[s.name, 'Type']
             base_colors = {
                 'CATEGORY': '#1e3a5f',
-                'COMPONENT': '#2c5f8d',
-                'SUB-COMPONENT': '#4a7ba7',
-                'METRIC': '#e3f2fd',
+                'COMPONENT': '#2D5F8A',
+                'SUB-COMPONENT': '#4A90C9',
+                'METRIC': '#D1E3F0',
             }
             bg_color = base_colors.get(type_val, '#e3f2fd')
             text_color = 'white' if type_val != 'METRIC' else 'black'
@@ -842,7 +842,7 @@ class ScoreCard:
                     {
                         'selector': 'th',
                         'props': [
-                            ('background-color', '#0d1b2a'),
+                            ('background-color', '#0F2440'),
                             ('color', 'white'),
                             ('padding', '12px'),
                         ],
@@ -874,7 +874,7 @@ class ScoreCard:
             <meta charset="utf-8">
             <title>Scorecard Report</title>
             <style>
-                body {{ font-family: 'Segoe UI', sans-serif; padding: 40px; background: #f0f2f5; }}
+                body {{ font-family: 'Segoe UI', sans-serif; padding: 40px; background: #FEFEFE; }}
                 .container {{ background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 1400px; margin: 0 auto; }}
                 h1 {{ color: #1e3a5f; }}
             </style>

@@ -5,7 +5,7 @@
 </figure>
 
 
-<div style="background: linear-gradient(135deg, #2a3320 0%, #1e2618 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
+<div style="background: linear-gradient(135deg, #1E3A5F 0%, #0F2440 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
 
 <p style="margin: 0; font-size: 16px; line-height: 1.6;">
 <strong>White-box evaluation</strong>—Axion empowers builders with <strong>actionable signals</strong>, <strong>automated pipelines</strong>, and <strong>fully transparent metrics</strong>. See exactly why your agent succeeds or fails.
@@ -128,7 +128,7 @@
 
 ## **Hierarchical Scoring**
 
-<div style="background: rgba(139, 159, 79, 0.1); border-left: 3px solid #8B9F4F; padding: 16px; margin: 20px 0;">
+<div style="background: rgba(30, 58, 95, 0.1); border-left: 3px solid #1E3A5F; padding: 16px; margin: 20px 0;">
 <strong>What sets Axion apart:</strong> Our scoring framework is hierarchical by design—moving from a single overall score down into layered sub-scores. This delivers a <em>diagnostic map</em> of quality, not just a number.
 </div>
 
@@ -146,40 +146,24 @@
 └───────────┘      └───────────┘      └───────────┘
 ```
 
-<table>
-<tr>
-<td width="50%" valign="top">
-
-**Instant Root Cause Diagnosis**
-
-Drill down to pinpoint whether issues stem from relevance, accuracy, tone, or other dimensions—no more guessing from flat scores.
-
-</td>
-<td width="50%" valign="top">
-
-**Strategic Prioritization**
-
-Forces clarity on what really matters for your business by breaking quality into weighted layers.
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-**Actionable Feedback Loop**
-
-Each layer translates directly into actions—retraining, prompt adjustments, or alignment tuning.
-
-</td>
-<td width="50%" valign="top">
-
-**Customizable to Business Goals**
-
-Weight and expand dimensions to match your unique KPIs. Define what "good AI" means for you.
-
-</td>
-</tr>
-</table>
+<div class="rule-grid" markdown="0">
+  <div class="rule-card">
+    <p class="rule-card__title">Instant Root Cause Diagnosis</p>
+    <p class="rule-card__desc">Drill down to pinpoint whether issues stem from relevance, accuracy, tone, or other dimensions—no more guessing from flat scores.</p>
+  </div>
+  <div class="rule-card">
+    <p class="rule-card__title">Strategic Prioritization</p>
+    <p class="rule-card__desc">Forces clarity on what really matters for your business by breaking quality into weighted layers.</p>
+  </div>
+  <div class="rule-card">
+    <p class="rule-card__title">Actionable Feedback Loop</p>
+    <p class="rule-card__desc">Each layer translates directly into actions—retraining, prompt adjustments, or alignment tuning.</p>
+  </div>
+  <div class="rule-card">
+    <p class="rule-card__title">Customizable to Business Goals</p>
+    <p class="rule-card__desc">Weight and expand dimensions to match your unique KPIs. Define what "good AI" means for you.</p>
+  </div>
+</div>
 
 ```python
 from axion.runners import evaluation_runner
@@ -220,10 +204,10 @@ results.to_scorecard()
 
 <div align="center" markdown="1">
 
-[![Modular](https://img.shields.io/badge/-Modular-8B9F4F?style=for-the-badge)](#)
-[![Composable](https://img.shields.io/badge/-Composable-6B7A3A?style=for-the-badge)](#)
-[![Production Ready](https://img.shields.io/badge/-Production%20Ready-A4B86C?style=for-the-badge)](#)
-[![Open Source](https://img.shields.io/badge/-Open%20Source-B8C78A?style=for-the-badge)](#)
+[![Modular](https://img.shields.io/badge/-Modular-1E3A5F?style=for-the-badge)](#)
+[![Composable](https://img.shields.io/badge/-Composable-0F2440?style=for-the-badge)](#)
+[![Production Ready](https://img.shields.io/badge/-Production%20Ready-2D5F8A?style=for-the-badge)](#)
+[![Open Source](https://img.shields.io/badge/-Open%20Source-6B9DC2?style=for-the-badge)](#)
 
 </div>
 

@@ -1,10 +1,10 @@
 # Contextual Precision
 
-<div style="border-left: 4px solid #8B9F4F; padding-left: 1rem; margin-bottom: 1.5rem;">
+<div style="border-left: 4px solid #1E3A5F; padding-left: 1rem; margin-bottom: 1.5rem;">
 <strong style="font-size: 1.1rem;">Evaluate if useful context chunks are ranked higher</strong><br>
 <span class="badge" style="margin-top: 0.5rem;">LLM-Powered</span>
 <span class="badge" style="background: #667eea;">Knowledge</span>
-<span class="badge" style="background: #6B7A3A;">Single Turn</span>
+<span class="badge" style="background: #0F2440;">Single Turn</span>
 <span class="badge" style="background: #06b6d4;">Retrieval</span>
 </div>
 
@@ -119,10 +119,10 @@
         G --> H
         H --> I
 
-        style INPUT stroke:#8B9F4F,stroke-width:2px
+        style INPUT stroke:#1E3A5F,stroke-width:2px
         style EVALUATE stroke:#f59e0b,stroke-width:2px
         style MAP stroke:#10b981,stroke-width:2px
-        style I fill:#8B9F4F,stroke:#6B7A3A,stroke-width:3px,color:#fff
+        style I fill:#1E3A5F,stroke:#0F2440,stroke-width:3px,color:#fff
     ```
 
 === ":material-calculator: MAP Calculation"
