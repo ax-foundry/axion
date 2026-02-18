@@ -164,6 +164,53 @@ class DatasetItem(RichDatasetBaseModel):
 
     model_config = ConfigDict(arbitrary_types_allowed=True, populate_by_name=True)
 
+    # Fields to always exclude from clean model dump (prompt serialization).
+    _clean_dump_exclude_keys: List[str] = [
+        # Internal ID fields
+        'id',
+        'dataset_id',
+        # Internal storage fields (exposed via computed fields: query, expected_output, conversation)
+        'single_turn_query',
+        'single_turn_expected_output',
+        'multi_turn_conversation',
+        # Internal config
+        'conversation_extraction_strategy',
+        # Derived metadata — not evaluation input
+        'conversation_stats',
+        'has_errors',
+    ]
+
+    # Fields redundant when a conversation is present (they're extracted from it).
+    _conversation_redundant_keys: List[str] = ['query', 'actual_output']
+
+    # Preferred field ordering for prompt serialization (unlisted fields follow after).
+    _clean_dump_field_order: List[str] = [
+        'query',
+        'conversation',
+        'actual_output',
+        'expected_output',
+        'retrieved_content',
+    ]
+
+    def clean_model_dump(
+        self, exclude_keys: List[str] = None
+    ) -> Union[Dict[str, Any], List[Any]]:
+        """Return a cleaned dump with stable field ordering."""
+        exclude_keys = list(exclude_keys or self._clean_dump_exclude_keys)
+        if self.multi_turn_conversation:
+            exclude_keys += self._conversation_redundant_keys
+        cleaned = super().clean_model_dump(exclude_keys=exclude_keys)
+        if not isinstance(cleaned, dict):
+            return cleaned
+
+        ordered = {
+            key: cleaned[key] for key in self._clean_dump_field_order if key in cleaned
+        }
+        for key, value in cleaned.items():
+            if key not in ordered:
+                ordered[key] = value
+        return ordered
+
     @field_validator(
         'actual_ranking',
         'expected_ranking',
