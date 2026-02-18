@@ -164,6 +164,47 @@ class DatasetItem(RichDatasetBaseModel):
 
     model_config = ConfigDict(arbitrary_types_allowed=True, populate_by_name=True)
 
+    # Fields redundant when a conversation is present (they're extracted from it).
+    _conversation_redundant_keys: List[str] = [
+        FieldNames.QUERY,
+        FieldNames.ACTUAL_OUTPUT,
+    ]
+
+    # Preferred field ordering for prompt serialization (unlisted fields follow after).
+    _clean_dump_field_order: List[str] = [
+        FieldNames.QUERY,
+        FieldNames.CONVERSATION,
+        FieldNames.ACTUAL_OUTPUT,
+        FieldNames.EXPECTED_OUTPUT,
+        FieldNames.RETRIEVED_CONTENT,
+    ]
+
+    def clean_model_dump(
+        self, exclude_keys: List[str] = None
+    ) -> Union[Dict[str, Any], List[Any]]:
+        """Return a cleaned dump with stable field ordering."""
+        if exclude_keys is None:
+            exclude_keys = [
+                FieldNames.ID,
+                FieldNames.DATASET_ID,
+                *FieldNames.get_aliased_model_field_keys(),
+                *FieldNames.config_fields(),
+                *FieldNames.get_computed_field_keys(),
+            ]
+        if self.multi_turn_conversation:
+            exclude_keys = [*exclude_keys, *self._conversation_redundant_keys]
+        cleaned = super().clean_model_dump(exclude_keys=exclude_keys)
+        if not isinstance(cleaned, dict):
+            return cleaned
+
+        ordered = {
+            key: cleaned[key] for key in self._clean_dump_field_order if key in cleaned
+        }
+        for key, value in cleaned.items():
+            if key not in ordered:
+                ordered[key] = value
+        return ordered
+
     @field_validator(
         'actual_ranking',
         'expected_ranking',

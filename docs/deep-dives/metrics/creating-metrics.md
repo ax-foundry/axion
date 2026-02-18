@@ -408,7 +408,7 @@ The three tabs below walk through each approach — pick the one that fits your 
 
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
-            self.judge = SourceJudge()
+            self.judge = SourceJudge(**kwargs)
 
         # Step 1 — Algorithmic: extract citations from text
         @staticmethod

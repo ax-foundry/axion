@@ -1,4 +1,5 @@
 import json
+import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Protocol
@@ -107,8 +108,8 @@ class DisplayConfig:
     usage_button_text: str = '▸ Example'
 
     # Grid configuration
-    min_card_width: str = '300px'
-    max_width: str = '1250px'
+    grid_columns: int = 3
+    max_width: str = '1400px'
 
     # Code theme configuration
     code_theme: str = 'light'  # "light" or "dark"
@@ -411,7 +412,7 @@ class GenericRegistryDisplay:
         self.extractor = extractor
         self.config = display_config or DisplayConfig()
 
-    def _generate_header_html(self, registry: Dict) -> str:
+    def _generate_header_html(self, registry: Dict, container_id: str = '') -> str:
         """Generate the header section."""
         total_items = len(registry)
         all_tags = set()
@@ -442,8 +443,9 @@ class GenericRegistryDisplay:
             else self.config.icon
         )
 
+        id_attr = f' id="{container_id}"' if container_id else ''
         return f"""
-        <div class="registry-container">
+        <div class="registry-container"{id_attr}>
             <div class="registry-header">
                 <div class="registry-icon">{icon_html}</div>
                 <div class="header-content">
@@ -461,14 +463,16 @@ class GenericRegistryDisplay:
 
         filter_tags_html = ''
         for tag in sorted(all_tags):
-            filter_tags_html += f'<button class="filter-tag" onclick="filterByTag(\'{tag}\')">{tag}</button>'
+            filter_tags_html += (
+                f'<button class="filter-tag" data-tag="{tag}">{tag}</button>'
+            )
 
         return f"""
         <div class="filter-section">
             <div class="filter-label">Filter by tags:</div>
             <div class="filter-tags">
                 {filter_tags_html}
-                <button class="filter-tag filter-clear" onclick="clearFilter()">Clear All</button>
+                <button class="filter-tag filter-clear">Clear All</button>
             </div>
         </div>
         """
@@ -528,9 +532,9 @@ class GenericRegistryDisplay:
         # Generate footer buttons
         footer_buttons = ''
         if self.config.show_details_button:
-            footer_buttons += f'<button class="info-btn" onclick="showItemDetails(\'{key}\')">{self.config.details_button_text}</button>'
+            footer_buttons += f'<button class="info-btn" data-action="details" data-key="{key}">{self.config.details_button_text}</button>'
         if self.config.show_usage_button:
-            footer_buttons += f'<button class="use-btn" onclick="showUsageExample(\'{key}\')">{self.config.usage_button_text}</button>'
+            footer_buttons += f'<button class="use-btn" data-action="usage" data-key="{key}">{self.config.usage_button_text}</button>'
 
         return f"""
         <div class="metric-card" data-tags="{tag_data}">
@@ -541,7 +545,7 @@ class GenericRegistryDisplay:
                 </div>
                 <div class="metric-key-container">
                     <code class="metric-key">{subtitle}</code>
-                    <button class="copy-btn" onclick="copyToClipboard('{subtitle}')" title="Copy key">⧉</button>
+                    <button class="copy-btn" data-action="copy" data-value="{subtitle}" title="Copy key">⧉</button>
                 </div>
             </div>
 
@@ -721,10 +725,10 @@ class GenericRegistryDisplay:
 
             .metrics-grid {
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax("""
-            + self.config.min_card_width
-            + """, 1fr));
-                gap: 0;
+                grid-template-columns: repeat("""
+            + str(self.config.grid_columns)
+            + """, 1fr);
+                gap: 16px;
                 padding: 32px;
                 background: #f8fafc;
             }
@@ -976,7 +980,7 @@ class GenericRegistryDisplay:
         """
         )
 
-    def _generate_javascript(self) -> str:
+    def _generate_javascript(self, container_id: str, js_data: dict) -> str:
         """Generate the JavaScript for interactivity."""
 
         # Define code themes
@@ -985,203 +989,157 @@ class GenericRegistryDisplay:
         else:  # light theme (default)
             code_style = 'background: #1e2428; color: #e8eaed; padding: 16px; border-radius: 4px; overflow-x: auto; margin: 0; border: 1px solid rgba(74, 144, 201, 0.25);'
 
+        js_data_json = json.dumps(js_data)
+
         return f"""
         <script>
-            // Store registry data for JavaScript access
-            window.registryData = {{}};
+        (function() {{
+            var C = document.getElementById('{container_id}');
+            if (!C) return;
 
-            function setRegistryData(data) {{
-                window.registryData = data;
+            var registryData = {js_data_json};
+
+            // --- helpers ---------------------------------------------------
+
+            function flashCopied(btn) {{
+                var orig = btn.textContent;
+                btn.textContent = '✓';
+                btn.style.background = '#10b981';
+                btn.style.color = 'white';
+                setTimeout(function() {{
+                    btn.textContent = orig;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }}, 1500);
             }}
 
-            function filterByTag(tag) {{
-                const cards = document.querySelectorAll('.metric-card');
-                const filterBtns = document.querySelectorAll('.filter-tag');
-
-                // Reset filter buttons
-                filterBtns.forEach(btn => btn.classList.remove('active'));
-                document.querySelector(`[onclick="filterByTag('${{tag}}')"]`).classList.add('active');
-
-                cards.forEach(card => {{
-                    const cardTags = card.getAttribute('data-tags');
-                    if (cardTags.includes(tag)) {{
-                        card.style.display = 'block';
-                        card.style.opacity = '1';
-                    }} else {{
-                        card.style.display = 'none';
-                    }}
-                }});
-            }}
-
-            function clearFilter() {{
-                const cards = document.querySelectorAll('.metric-card');
-                const filterBtns = document.querySelectorAll('.filter-tag');
-
-                filterBtns.forEach(btn => btn.classList.remove('active'));
-                cards.forEach(card => {{
-                    card.style.display = 'block';
-                    card.style.opacity = '1';
-                }});
-            }}
-
-            function copyToClipboard(text) {{
+            function copyText(text, btn) {{
                 if (navigator.clipboard && navigator.clipboard.writeText) {{
-                    navigator.clipboard.writeText(text).then(() => {{
-                        const btn = event.target;
-                        const originalText = btn.textContent;
-                        btn.textContent = '✓';
-                        btn.style.background = '#10b981';
-                        btn.style.color = 'white';
-                        setTimeout(() => {{
-                            btn.textContent = originalText;
-                            btn.style.background = '';
-                            btn.style.color = '';
-                        }}, 1500);
-                    }}).catch(() => {{
-                        fallbackCopyTextToClipboard(text);
-                    }});
+                    navigator.clipboard.writeText(text).then(function() {{
+                        flashCopied(btn);
+                    }}).catch(function() {{ fallbackCopy(text, btn); }});
                 }} else {{
-                    fallbackCopyTextToClipboard(text);
+                    fallbackCopy(text, btn);
                 }}
             }}
 
-            function fallbackCopyTextToClipboard(text) {{
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-999999px";
-                textArea.style.top = "-999999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-
-                try {{
-                    document.execCommand('copy');
-                    const btn = event.target;
-                    const originalText = btn.textContent;
-                    btn.textContent = '✓';
-                    btn.style.background = '#10b981';
-                    btn.style.color = 'white';
-                    setTimeout(() => {{
-                        btn.textContent = originalText;
-                        btn.style.background = '';
-                        btn.style.color = '';
-                    }}, 1500);
-                }} catch (err) {{
-                    console.error('Fallback: Oops, unable to copy', err);
-                }}
-
-                document.body.removeChild(textArea);
+            function fallbackCopy(text, btn) {{
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try {{ document.execCommand('copy'); flashCopied(btn); }}
+                catch(e) {{ console.error('Copy failed', e); }}
+                document.body.removeChild(ta);
             }}
 
-            function showItemDetails(key) {{
-                closeExistingModals();
+            function closeModal(el) {{
+                var modal = el.closest ? el.closest('.metric-modal') : el;
+                if (!modal || !modal.classList.contains('metric-modal')) return;
+                modal.style.opacity = '0';
+                setTimeout(function() {{
+                    if (modal.parentNode) modal.parentNode.removeChild(modal);
+                }}, 200);
+            }}
 
-                const item = window.registryData[key];
-                if (!item) {{
-                    console.error('Item not found:', key);
-                    return;
-                }}
+            function closeAllModals() {{
+                document.querySelectorAll('.metric-modal').forEach(function(m) {{
+                    if (m.parentNode) m.parentNode.removeChild(m);
+                }});
+            }}
 
-                const modal = document.createElement('div');
-                modal.className = 'metric-modal';
-                modal.innerHTML = `
-                    <div class="modal-backdrop">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h3>Details: ${{key}}</h3>
-                                <button class="modal-close" onclick="closeModal(this)">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                ${{item.detailsContent}}
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn-secondary" onclick="closeModal(this)">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                document.body.appendChild(modal);
-
+            function attachModalListeners(modal) {{
                 modal.querySelector('.modal-backdrop').addEventListener('click', function(e) {{
-                    if (e.target === this) {{
-                        closeModal(modal);
-                    }}
+                    if (e.target === this) closeModal(modal);
+                }});
+                modal.querySelectorAll('.modal-close, .btn-close-modal').forEach(function(btn) {{
+                    btn.addEventListener('click', function() {{ closeModal(modal); }});
                 }});
             }}
 
-            function showUsageExample(key) {{
-                closeExistingModals();
+            // --- filter buttons -------------------------------------------
 
-                const item = window.registryData[key];
-                if (!item) {{
-                    console.error('Item not found:', key);
-                    return;
-                }}
-
-                const modal = document.createElement('div');
-                modal.className = 'metric-modal';
-                modal.innerHTML = `
-                    <div class="modal-backdrop">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h3>Usage Example: ${{key}}</h3>
-                                <button class="modal-close" onclick="closeModal(this)">&times;</button>
-                            </div>
-                            <div class="modal-body">
-                                <pre style="{code_style}"><code>${{item.usageExample}}</code></pre>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn-secondary" onclick="copyExampleCode('${{key}}')">Copy Code</button>
-                                <button class="btn-secondary" onclick="closeModal(this)">Close</button>
-                            </div>
-                        </div>
-                    </div>
-            `   ;
-
-                document.body.appendChild(modal);
-
-                modal.querySelector('.modal-backdrop').addEventListener('click', function(e) {{
-                    if (e.target === this) {{
-                        closeModal(modal);
-                    }}
+            C.querySelectorAll('.filter-tag[data-tag]').forEach(function(btn) {{
+                btn.addEventListener('click', function() {{
+                    var tag = this.getAttribute('data-tag');
+                    C.querySelectorAll('.filter-tag').forEach(function(b) {{ b.classList.remove('active'); }});
+                    this.classList.add('active');
+                    C.querySelectorAll('.metric-card').forEach(function(card) {{
+                        var tags = card.getAttribute('data-tags').split(' ');
+                        card.style.display = tags.indexOf(tag) !== -1 ? '' : 'none';
+                    }});
                 }});
-            }}
+            }});
 
-            function copyExampleCode(key) {{
-                const item = window.registryData[key];
-                if (item && item.usageExample) {{
-                    copyToClipboard(item.usageExample);
-                }}
-            }}
-
-            function closeModal(element) {{
-                const modal = element.closest('.metric-modal');
-                if (modal) {{
-                    modal.style.opacity = '0';
-                    setTimeout(() => {{
-                        if (modal.parentNode) {{
-                            modal.parentNode.removeChild(modal);
-                        }}
-                    }}, 200);
-                }}
-            }}
-
-            function closeExistingModals() {{
-                const existingModals = document.querySelectorAll('.metric-modal');
-                existingModals.forEach(modal => {{
-                    if (modal.parentNode) {{
-                        modal.parentNode.removeChild(modal);
-                    }}
+            C.querySelectorAll('.filter-clear').forEach(function(btn) {{
+                btn.addEventListener('click', function() {{
+                    C.querySelectorAll('.filter-tag').forEach(function(b) {{ b.classList.remove('active'); }});
+                    C.querySelectorAll('.metric-card').forEach(function(card) {{ card.style.display = ''; }});
                 }});
-            }}
+            }});
+
+            // --- card buttons (copy / details / usage) --------------------
+
+            C.querySelectorAll('[data-action="copy"]').forEach(function(btn) {{
+                btn.addEventListener('click', function() {{
+                    copyText(this.getAttribute('data-value'), this);
+                }});
+            }});
+
+            C.querySelectorAll('[data-action="details"]').forEach(function(btn) {{
+                btn.addEventListener('click', function() {{
+                    closeAllModals();
+                    var key = this.getAttribute('data-key');
+                    var item = registryData[key];
+                    if (!item) return;
+                    var modal = document.createElement('div');
+                    modal.className = 'metric-modal';
+                    modal.innerHTML =
+                        '<div class="modal-backdrop"><div class="modal-content">' +
+                        '<div class="modal-header"><h3>Details: ' + key + '</h3>' +
+                        '<button class="modal-close">&times;</button></div>' +
+                        '<div class="modal-body">' + item.detailsContent + '</div>' +
+                        '<div class="modal-footer"><button class="btn-secondary btn-close-modal">Close</button></div>' +
+                        '</div></div>';
+                    document.body.appendChild(modal);
+                    attachModalListeners(modal);
+                }});
+            }});
+
+            C.querySelectorAll('[data-action="usage"]').forEach(function(btn) {{
+                btn.addEventListener('click', function() {{
+                    closeAllModals();
+                    var key = this.getAttribute('data-key');
+                    var item = registryData[key];
+                    if (!item) return;
+                    var modal = document.createElement('div');
+                    modal.className = 'metric-modal';
+                    modal.innerHTML =
+                        '<div class="modal-backdrop"><div class="modal-content">' +
+                        '<div class="modal-header"><h3>Usage Example: ' + key + '</h3>' +
+                        '<button class="modal-close">&times;</button></div>' +
+                        '<div class="modal-body"><pre style="{code_style}"><code>' +
+                        item.usageExample + '</code></pre></div>' +
+                        '<div class="modal-footer">' +
+                        '<button class="btn-secondary btn-copy-example" data-key="' + key + '">Copy Code</button>' +
+                        '<button class="btn-secondary btn-close-modal">Close</button>' +
+                        '</div></div></div>';
+                    document.body.appendChild(modal);
+                    attachModalListeners(modal);
+                    modal.querySelector('.btn-copy-example').addEventListener('click', function() {{
+                        copyText(item.usageExample, this);
+                    }});
+                }});
+            }});
+
+            // --- keyboard shortcut ----------------------------------------
 
             document.addEventListener('keydown', function(e) {{
-                if (e.key === 'Escape') {{
-                    closeExistingModals();
-                }}
+                if (e.key === 'Escape') closeAllModals();
             }});
+        }})();
         </script>
         """
 
@@ -1195,6 +1153,10 @@ class GenericRegistryDisplay:
             )
             self._simple_display(registry)
             return
+
+        # Unique ID so multiple displays don't collide and
+        # event listeners are scoped correctly.
+        container_id = f'reg-{uuid.uuid4().hex[:8]}'
 
         js_data = {}
         for key, item in registry.items():
@@ -1226,20 +1188,13 @@ class GenericRegistryDisplay:
             }
 
         html = self._get_base_styles()
-        html += self._generate_header_html(registry)
+        html += self._generate_header_html(registry, container_id)
 
         if self.config.show_filters:
             html += self._generate_filter_html(registry)
 
         html += self._generate_grid_html(registry)
-        html += self._generate_javascript()
-
-        # Add the data injection
-        html += f"""
-        <script>
-            setRegistryData({json.dumps(js_data)});
-        </script>
-        """
+        html += self._generate_javascript(container_id, js_data)
 
         display(HTML(html))
 

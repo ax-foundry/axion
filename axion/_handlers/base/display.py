@@ -936,9 +936,14 @@ def display_prompt(prompt: str, query: str | BaseModel):
         # Handle Pydantic model (both v1 and v2)
         try:
             # Try to get model as dict - works for both Pydantic v1 and v2
-            query_dict = (
-                query.model_dump() if hasattr(query, 'model_dump') else query.dict()
-            )
+            # Use clean_model_dump if available to exclude internal fields
+            clean_dump = getattr(query, 'clean_model_dump', None)
+            if callable(clean_dump):
+                query_dict = clean_dump()
+            elif hasattr(query, 'model_dump'):
+                query_dict = query.model_dump()
+            else:
+                query_dict = query.dict()
 
             # Convert to JSON with indentation
             json_str = json.dumps(query_dict, indent=2)
