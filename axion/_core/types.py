@@ -69,6 +69,7 @@ class MetricCategory(RichEnum):
 
 class FieldNames:
     ID = 'id'
+    DATASET_ID = 'dataset_id'
     QUERY = 'query'
     EXPECTED_OUTPUT = 'expected_output'
     ACTUAL_OUTPUT = 'actual_output'

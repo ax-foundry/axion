@@ -299,10 +299,10 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 return inner.strip()
         return s
 
-    def _build_openai_messages(
+    def _build_message_dicts(
         self, data: Optional[InputModel] = None
     ) -> List[Dict[str, str]]:
-        """Build messages in OpenAI format for raw API calls."""
+        """Build messages as role/content dicts for LLM API calls."""
         messages = [{'role': 'system', 'content': self._system_instruction()}]
         # Add examples as conversation pairs
         for idx, (input_example, output_example) in enumerate[
@@ -792,7 +792,7 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             try:
                 if self.as_structured_llm:
                     # Unified path via LiteLLM (handles all providers)
-                    messages = self._build_openai_messages(processed_data)
+                    messages = self._build_message_dicts(processed_data)
                     try:
                         result = await self._execute_structured_call(
                             messages, attempt=attempt + 1, input_data=processed_data
@@ -993,8 +993,8 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
             query_input = self.format_input_data(query_input)
 
         if self.as_structured_llm:
-            # LiteLLM structured mode - uses OpenAI message format
-            messages = self._build_openai_messages(query_input)
+            # LiteLLM structured mode
+            messages = self._build_message_dicts(query_input)
             prompt_text = '\n---\n'.join(
                 [f'## {m["role"].upper()}\n\n{m["content"]}' for m in messages]
             )
