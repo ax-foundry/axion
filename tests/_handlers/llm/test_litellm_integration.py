@@ -14,7 +14,11 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from pydantic import BaseModel
 
+from axion._core.tracing import clear_tracing_config, configure_tracing
 from axion._handlers.llm.handler import LLMHandler
+
+clear_tracing_config()
+configure_tracing('noop')
 
 
 class SimpleInput(BaseModel):
@@ -212,6 +216,7 @@ class TestLiteLLMExceptionMapping:
             output_model = SimpleOutput
             llm = MockLLM(model='gpt-4o')
             max_retries = 1  # Reduce retries for faster test
+            max_rate_limit_retries = 1  # Also reduce rate limit retries
 
         handler = TestHandler()
 
@@ -552,3 +557,160 @@ class TestRateLimitRetryBehavior:
 
             call_kwargs = mock_acompletion.call_args.kwargs
             assert call_kwargs['num_retries'] == 0
+
+
+class TestPromptCaching:
+    """Test prompt caching injection points and span logging."""
+
+    def _make_handler(self, enable_prompt_caching=False, examples=None):
+        """Create a test handler with optional prompt caching."""
+
+        class TestHandler(LLMHandler):
+            instruction = 'Answer the question.'
+            input_model = SimpleInput
+            output_model = SimpleOutput
+            llm = MockLLM(model='gpt-4o')
+
+        handler = TestHandler(enable_prompt_caching=enable_prompt_caching)
+        if examples is not None:
+            handler.examples = examples
+        return handler
+
+    def test_injection_points_disabled(self):
+        """Returns None when prompt caching is disabled."""
+        handler = self._make_handler(enable_prompt_caching=False)
+        messages = handler._build_message_dicts()
+        assert handler._get_cache_control_injection_points(messages) is None
+
+    def test_injection_points_no_examples(self):
+        """Only system message point when no examples exist."""
+        handler = self._make_handler(enable_prompt_caching=True)
+        messages = handler._build_message_dicts()
+        points = handler._get_cache_control_injection_points(messages)
+        assert points == [{'location': 'message', 'role': 'system'}]
+
+    def test_injection_points_with_examples(self):
+        """System + last assistant point when examples exist."""
+        handler = self._make_handler(enable_prompt_caching=True)
+        handler.examples = [
+            (
+                SimpleInput(query='What is AI?'),
+                SimpleOutput(answer='AI is...', confidence=0.9),
+            ),
+        ]
+        messages = handler._build_message_dicts()
+        points = handler._get_cache_control_injection_points(messages)
+        assert len(points) == 2
+        assert points[0] == {'location': 'message', 'role': 'system'}
+        assert points[1] == {'location': 'message', 'role': 'assistant', 'index': -1}
+
+    def test_injection_points_with_fake_sample(self):
+        """System + last assistant point when generation_fake_sample is used."""
+        handler = self._make_handler(enable_prompt_caching=True)
+        handler.generation_fake_sample = True
+        messages = handler._build_message_dicts()
+        points = handler._get_cache_control_injection_points(messages)
+        assert len(points) == 2
+        assert points[1]['role'] == 'assistant'
+
+    @pytest.mark.asyncio
+    async def test_acompletion_receives_injection_points(self):
+        """Verify litellm.acompletion receives cache_control_injection_points when enabled."""
+        handler = self._make_handler(enable_prompt_caching=True)
+
+        with patch('litellm.acompletion', new_callable=AsyncMock) as mock_acompletion:
+            mock_acompletion.return_value = create_mock_response()
+
+            with patch('litellm.completion_cost', return_value=0.001):
+                await handler.execute({'query': 'Test query'})
+
+            call_kwargs = mock_acompletion.call_args.kwargs
+            assert 'cache_control_injection_points' in call_kwargs
+            assert isinstance(call_kwargs['cache_control_injection_points'], list)
+
+    @pytest.mark.asyncio
+    async def test_acompletion_no_injection_points_when_disabled(self):
+        """Verify litellm.acompletion does NOT receive cache_control_injection_points when disabled."""
+        handler = self._make_handler(enable_prompt_caching=False)
+
+        with patch('litellm.acompletion', new_callable=AsyncMock) as mock_acompletion:
+            mock_acompletion.return_value = create_mock_response()
+
+            with patch('litellm.completion_cost', return_value=0.001):
+                await handler.execute({'query': 'Test query'})
+
+            call_kwargs = mock_acompletion.call_args.kwargs
+            assert 'cache_control_injection_points' not in call_kwargs
+
+    @pytest.mark.asyncio
+    async def test_cached_tokens_span_attribute(self):
+        """Verify cached_tokens is logged on span when present in response."""
+        handler = self._make_handler(enable_prompt_caching=True)
+
+        mock_response = create_mock_response()
+        # Add prompt_tokens_details with cached_tokens
+        mock_response.usage.prompt_tokens_details = MagicMock()
+        mock_response.usage.prompt_tokens_details.cached_tokens = 512
+
+        with patch('litellm.acompletion', new_callable=AsyncMock) as mock_acompletion:
+            mock_acompletion.return_value = mock_response
+
+            with patch('litellm.completion_cost', return_value=0.001):
+                await handler.execute({'query': 'Test query'})
+
+    @pytest.mark.asyncio
+    async def test_no_cached_tokens_when_absent(self):
+        """Verify no error when prompt_tokens_details is absent."""
+        handler = self._make_handler(enable_prompt_caching=True)
+
+        mock_response = create_mock_response()
+        # Ensure prompt_tokens_details is None (default)
+        mock_response.usage.prompt_tokens_details = None
+
+        with patch('litellm.acompletion', new_callable=AsyncMock) as mock_acompletion:
+            mock_acompletion.return_value = mock_response
+
+            with patch('litellm.completion_cost', return_value=0.001):
+                # Should not raise
+                await handler.execute({'query': 'Test query'})
+
+
+class TestPromptCachingPropagation:
+    """Test runner-level prompt caching propagation to metrics."""
+
+    def test_propagation_sets_flag_on_metrics(self):
+        """Verify enable_prompt_caching propagates to metric instances."""
+        from axion.runners.evaluate import EvaluationRunner
+
+        # Create a mock metric with enable_prompt_caching attribute
+        mock_metric = MagicMock()
+        mock_metric.enable_prompt_caching = False
+
+        runner = MagicMock(spec=EvaluationRunner)
+        runner._set_prompt_caching_recursive = (
+            EvaluationRunner._set_prompt_caching_recursive.__get__(runner)
+        )
+
+        runner._set_prompt_caching_recursive(mock_metric)
+        assert mock_metric.enable_prompt_caching is True
+
+    def test_propagation_recursive_sub_metrics(self):
+        """Verify propagation walks into sub-metric attributes."""
+        from axion.runners.evaluate import EvaluationRunner
+
+        class FakeMetric:
+            def __init__(self):
+                self.enable_prompt_caching = False
+
+        sub_metric = FakeMetric()
+        parent_metric = FakeMetric()
+        parent_metric.sub = sub_metric
+
+        runner = MagicMock(spec=EvaluationRunner)
+        runner._set_prompt_caching_recursive = (
+            EvaluationRunner._set_prompt_caching_recursive.__get__(runner)
+        )
+
+        runner._set_prompt_caching_recursive(parent_metric)
+        assert parent_metric.enable_prompt_caching is True
+        assert sub_metric.enable_prompt_caching is True

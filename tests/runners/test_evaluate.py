@@ -11,6 +11,7 @@ from axion.runners import (
     EvaluationRunner,
     evaluation_runner,
 )
+from axion.runners.strategies import FlatScoringStrategy
 from axion.runners.summary import MetricSummary
 from axion.schema import ErrorConfig, EvaluationResult
 
@@ -276,3 +277,142 @@ class TestExperimentRunnerFunction:
         )
 
         assert isinstance(result, EvaluationResult)
+
+
+class TestPromptCachingPropagation:
+    """Test that enable_prompt_caching propagates through the runner stack."""
+
+    def test_config_accepts_enable_prompt_caching(self):
+        """EvaluationConfig stores the flag."""
+        config = EvaluationConfig(
+            evaluation_name='cache_test',
+            evaluation_inputs=[],
+            scoring_metrics=[Mock()],
+            enable_prompt_caching=True,
+        )
+        assert config.enable_prompt_caching is True
+
+    def test_config_defaults_to_false(self):
+        """enable_prompt_caching defaults to False."""
+        config = EvaluationConfig(
+            evaluation_name='cache_test',
+            evaluation_inputs=[],
+            scoring_metrics=[Mock()],
+        )
+        assert config.enable_prompt_caching is False
+
+    @patch('axion._core.asyncio.run_async_function')
+    @patch('axion._core.tracing.init_tracer')
+    def test_evaluation_runner_passes_flag_to_config(
+        self, mock_init_tracer, mock_run_async
+    ):
+        """evaluation_runner() passes enable_prompt_caching to EvaluationConfig."""
+        mock_run_async.return_value = Mock(spec=EvaluationResult)
+
+        with patch(
+            'axion.runners.evaluate.EvaluationConfig', wraps=EvaluationConfig
+        ) as mock_config_cls:
+            evaluation_runner(
+                evaluation_inputs=[DatasetItem(id='test', query='test')],
+                scoring_metrics=[Mock()],
+                evaluation_name='cache_test',
+                enable_prompt_caching=True,
+            )
+
+            call_kwargs = mock_config_cls.call_args.kwargs
+            assert call_kwargs['enable_prompt_caching'] is True
+
+    def test_runner_propagates_to_flat_strategy_metrics(self):
+        """EvaluationRunner propagates flag to metrics in FlatScoringStrategy."""
+
+        class FakeMetric:
+            """Minimal metric-like object with enable_prompt_caching."""
+
+            enable_prompt_caching = False
+
+        metric_a = FakeMetric()
+        metric_b = FakeMetric()
+
+        async def mock_task(item):
+            return {'actual_output': 'test'}
+
+        config = EvaluationConfig(
+            evaluation_name='cache_test',
+            evaluation_inputs=[],
+            scoring_metrics=[metric_a, metric_b],
+            task=mock_task,
+            enable_prompt_caching=True,
+        )
+
+        with (
+            patch('axion._core.tracing.init_tracer'),
+            patch('axion._core.cache.manager.CacheManager'),
+        ):
+            runner = EvaluationRunner(config)
+
+            # Verify both metrics got the flag set
+            strategy = runner.scoring_strategy
+            assert isinstance(strategy, FlatScoringStrategy)
+            for metric in strategy._runner.metrics:
+                assert metric.enable_prompt_caching is True
+
+    def test_runner_propagates_to_nested_sub_metrics(self):
+        """EvaluationRunner propagates flag to nested sub-metric attributes."""
+
+        class FakeJudge:
+            enable_prompt_caching = False
+
+        class FakeMetric:
+            enable_prompt_caching = False
+
+            def __init__(self):
+                self.judge = FakeJudge()
+
+        metric = FakeMetric()
+
+        async def mock_task(item):
+            return {'actual_output': 'test'}
+
+        config = EvaluationConfig(
+            evaluation_name='cache_test',
+            evaluation_inputs=[],
+            scoring_metrics=[metric],
+            task=mock_task,
+            enable_prompt_caching=True,
+        )
+
+        with (
+            patch('axion._core.tracing.init_tracer'),
+            patch('axion._core.cache.manager.CacheManager'),
+        ):
+            EvaluationRunner(config)
+
+            assert metric.enable_prompt_caching is True
+            assert metric.judge.enable_prompt_caching is True
+
+    def test_no_propagation_when_disabled(self):
+        """Metrics are unchanged when enable_prompt_caching is False."""
+
+        class FakeMetric:
+            enable_prompt_caching = False
+
+        metric = FakeMetric()
+
+        async def mock_task(item):
+            return {'actual_output': 'test'}
+
+        config = EvaluationConfig(
+            evaluation_name='cache_test',
+            evaluation_inputs=[],
+            scoring_metrics=[metric],
+            task=mock_task,
+            enable_prompt_caching=False,
+        )
+
+        with (
+            patch('axion._core.tracing.init_tracer'),
+            patch('axion._core.cache.manager.CacheManager'),
+        ):
+            EvaluationRunner(config)
+
+            assert metric.enable_prompt_caching is False

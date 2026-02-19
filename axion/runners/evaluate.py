@@ -114,6 +114,11 @@ class EvaluationConfig:
             Controls trace granularity during evaluation. Accepts enum or string values:
             - 'single_trace' / 'single' / SINGLE_TRACE (default): All evaluations under one parent trace
             - 'separate' / SEPARATE: Each metric execution gets its own independent trace
+
+        enable_prompt_caching (bool, optional):
+            Enables provider-level prompt caching for all metrics. When True, propagates
+            to all metrics and their sub-judges to mark system/few-shot prefixes as cacheable.
+            Supports Anthropic (explicit caching) and OpenAI (automatic). Defaults to False.
     """
 
     evaluation_name: str
@@ -139,6 +144,7 @@ class EvaluationConfig:
     enable_internal_caching: bool = True
     trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SINGLE_TRACE
     flush_per_metric: bool = False
+    enable_prompt_caching: bool = False
 
     def __post_init__(self):
         """Validate and finalize scoring configuration."""
@@ -221,10 +227,48 @@ class EvaluationRunner(RunnerMixin):
 
         self.scoring_strategy = self._initialize_scoring_strategy(config)
 
+        if config.enable_prompt_caching:
+            self._propagate_prompt_caching()
+
         if not config.task:
             EvaluationValidation.validate_evaluation_task_inputs(
                 config.evaluation_inputs
             )
+
+    def _propagate_prompt_caching(self):
+        """Propagate enable_prompt_caching=True to all metrics and their sub-judges."""
+        metrics = self._extract_metrics_from_strategy()
+        for metric in metrics:
+            self._set_prompt_caching_recursive(metric)
+
+    def _set_prompt_caching_recursive(self, obj):
+        """Recursively set enable_prompt_caching on an object and its sub-metrics."""
+        if hasattr(obj, 'enable_prompt_caching'):
+            obj.enable_prompt_caching = True
+        for attr_val in vars(obj).values():
+            if hasattr(attr_val, 'enable_prompt_caching'):
+                self._set_prompt_caching_recursive(attr_val)
+            elif hasattr(attr_val, 'judges') and isinstance(
+                getattr(attr_val, 'judges', None), dict
+            ):
+                for judge in attr_val.judges.values():
+                    self._set_prompt_caching_recursive(judge)
+
+    def _extract_metrics_from_strategy(self) -> list:
+        """Extract the list of metrics from the current scoring strategy."""
+        strategy = self.scoring_strategy
+        if isinstance(strategy, FlatScoringStrategy) and hasattr(strategy, '_runner'):
+            return getattr(strategy._runner, 'metrics', [])
+        if isinstance(strategy, HierarchicalScoringStrategy) and hasattr(
+            strategy, '_tree'
+        ):
+            tree = strategy._tree
+            return (
+                list(getattr(tree, 'metrics', {}).values())
+                if hasattr(tree, 'metrics')
+                else []
+            )
+        return []
 
     def _create_metric_instance(self, name: str, cfg: Dict[str, Any]) -> Any:
         """
@@ -807,6 +851,7 @@ def evaluation_runner(
     run_id: Optional[str] = None,
     trace_granularity: Union[TraceGranularity, str] = TraceGranularity.SINGLE_TRACE,
     flush_per_metric: bool = False,
+    enable_prompt_caching: bool = False,
 ) -> Optional[EvaluationResult]:
     """
     Synchronously runs an evaluation experiment to evaluate metrics over a given dataset,
@@ -867,6 +912,10 @@ def evaluation_runner(
         flush_per_metric (bool, optional):
             When trace_granularity='separate', controls whether each metric trace is flushed
             immediately (slower, but more \"live\" in the UI) vs batched (faster). Defaults to False.
+        enable_prompt_caching (bool, optional):
+            Enables provider-level prompt caching for all metrics. When True, propagates
+            to all metrics and their sub-judges to mark system/few-shot prefixes as cacheable.
+            Supports Anthropic (explicit caching) and OpenAI (automatic). Defaults to False.
 
     Returns:
         EvaluationResult:
@@ -904,5 +953,6 @@ def evaluation_runner(
         run_id=run_id,
         trace_granularity=trace_granularity,
         flush_per_metric=flush_per_metric,
+        enable_prompt_caching=enable_prompt_caching,
     )
     return run_async_function(_run_evaluation_async, config, tracer)

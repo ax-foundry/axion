@@ -348,6 +348,53 @@ Each `TestResult` contains the same structure as described in the [Metric Runner
     )
     ```
 
+=== ":material-lightning-bolt: Prompt Caching"
+
+    Enable provider-level prompt caching to reduce cost and latency when evaluating
+    many items. When enabled, the system prompt and few-shot examples prefix is marked
+    as cacheable — providers reuse the cached prefix across items instead of
+    re-processing it on every call.
+
+    ```python
+    from axion.runners import evaluation_runner
+    from axion.metrics import Faithfulness, AnswerRelevancy
+
+    # Option 1: Runner-level (applies to all metrics)
+    results = evaluation_runner(
+        evaluation_inputs=dataset,
+        scoring_metrics=[Faithfulness(), AnswerRelevancy()],
+        evaluation_name="Cached Evaluation",
+        enable_prompt_caching=True,
+    )
+
+    # Option 2: Per-metric (granular control)
+    results = evaluation_runner(
+        evaluation_inputs=dataset,
+        scoring_metrics=[
+            Faithfulness(enable_prompt_caching=True),
+            AnswerRelevancy(),  # caching disabled for this metric
+        ],
+        evaluation_name="Selective Caching",
+    )
+    ```
+
+    **Provider behavior:**
+
+    | Provider | Behavior |
+    |----------|----------|
+    | Anthropic | Explicit caching with 5-min TTL; ~90% savings on cached reads |
+    | OpenAI | Automatic caching for prompts >1024 tokens; markers are harmless |
+    | Others | LiteLLM silently ignores markers for unsupported providers |
+
+    !!! note "Minimum prefix length"
+        Caching requires the shared prefix (system prompt + few-shot examples) to
+        exceed the provider's minimum: **1024 tokens** for most Anthropic/OpenAI models,
+        **2048 tokens** for Claude Haiku. Metrics with short prompts and no examples
+        may not benefit.
+
+    When tracing is enabled, each LLM span includes a `cached_tokens` attribute
+    for observability.
+
 === ":material-tag: Metadata & Tracking"
 
     Attach metadata to evaluation runs for experiment tracking and reproducibility.

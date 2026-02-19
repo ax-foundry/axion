@@ -106,6 +106,9 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         5.0  # Max random jitter (seconds) to stagger concurrent retries
     )
 
+    # Prompt caching configuration
+    enable_prompt_caching: bool = False
+
     def __init__(self, **kwargs):
         """Initialize LLM handler."""
         super().__init__(**kwargs)
@@ -345,6 +348,28 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
 
         return messages
 
+    def _get_cache_control_injection_points(
+        self, messages: List[Dict[str, str]]
+    ) -> Optional[List[Dict[str, Any]]]:
+        """Return LiteLLM cache_control injection points when prompt caching is enabled.
+
+        This enables provider-level prompt caching (Anthropic explicit, OpenAI automatic)
+        by marking the system message and the last assistant message (few-shot boundary)
+        as cache breakpoints.
+        """
+        if not self.enable_prompt_caching:
+            return None
+
+        points: List[Dict[str, Any]] = [{'location': 'message', 'role': 'system'}]
+
+        # If there are assistant messages (from examples), mark the last one
+        # to cache the entire prefix through all few-shot examples
+        has_assistant = any(m['role'] == 'assistant' for m in messages)
+        if has_assistant:
+            points.append({'location': 'message', 'role': 'assistant', 'index': -1})
+
+        return points
+
     async def _execute_structured_call(
         self,
         messages: List[Dict[str, str]],
@@ -391,14 +416,20 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                     # Make the LiteLLM API call - routes to correct provider based on model name
                     # Extract API key from LLM wrapper to ensure provider-agnostic auth
                     api_key = getattr(self.llm, '_api_key', None)
-                    response = await litellm.acompletion(
-                        model=model_name,
-                        messages=messages,
-                        response_format=response_format,
-                        temperature=getattr(self.llm, 'temperature', 0.0),
-                        api_key=api_key,
-                        num_retries=0,  # Disable LiteLLM's internal retry; Axion handles retries
-                    )
+                    call_kwargs = {
+                        'model': model_name,
+                        'messages': messages,
+                        'response_format': response_format,
+                        'temperature': getattr(self.llm, 'temperature', 0.0),
+                        'api_key': api_key,
+                        'num_retries': 0,  # Disable LiteLLM's internal retry; Axion handles retries
+                    }
+
+                    cache_points = self._get_cache_control_injection_points(messages)
+                    if cache_points is not None:
+                        call_kwargs['cache_control_injection_points'] = cache_points
+
+                    response = await litellm.acompletion(**call_kwargs)
 
                 # Extract the JSON response
                 response_text = response.choices[0].message.content
@@ -436,6 +467,15 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
                 span.set_attribute('total_tokens', prompt_tokens + completion_tokens)
                 span.set_attribute('latency', timer.elapsed_time)
                 span.set_attribute('cost_estimate', self.cost_estimate)
+
+                # Log cached tokens for prompt caching observability
+                cached_tokens = getattr(
+                    getattr(usage, 'prompt_tokens_details', None),
+                    'cached_tokens',
+                    None,
+                )
+                if cached_tokens is not None:
+                    span.set_attribute('cached_tokens', cached_tokens)
 
                 try:
                     # Log the call to tracer
