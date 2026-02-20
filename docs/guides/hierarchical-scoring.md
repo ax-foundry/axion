@@ -1,3 +1,6 @@
+---
+icon: custom/layers
+---
 # Hierarchical Scoring
 
 Axion's hierarchical scoring framework moves beyond flat metrics to provide a diagnostic map of AI quality—from a single overall score down into layered, weighted dimensions.

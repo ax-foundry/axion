@@ -1,3 +1,6 @@
+---
+icon: custom/layers
+---
 # Building Composite Evaluation Metrics
 
 Composite metrics chain multiple LLM calls together to evaluate complex properties that no single prompt can capture well. Each sub-metric handles one focused task, and an orchestrator combines their outputs into a final score.

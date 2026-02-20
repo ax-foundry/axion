@@ -1,3 +1,6 @@
+---
+icon: custom/git-branch
+---
 # Eval Tree API Reference
 
 Hierarchical evaluation orchestration for composing complex evaluation workflows.
@@ -10,6 +13,19 @@ from axion.eval_tree import EvalTree
 
 </div>
 
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">T</span>
+<p class="rule-card__title">EvalTree</p>
+<p class="rule-card__desc">Hierarchical scoring model that builds a tree from a configuration and executes metrics using an optimized two-phase batch process.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">C</span>
+<p class="rule-card__title">Config-Driven</p>
+<p class="rule-card__desc">Define scoring trees via YAML, dict, or Config objects. Supports weighted aggregation, strategy overrides, and nested component hierarchies.</p>
+</div>
+</div>
+
 ---
 
 ## EvalTree
@@ -17,6 +33,16 @@ from axion.eval_tree import EvalTree
 ::: axion.eval_tree.EvalTree
     options:
       show_root_heading: true
+      show_source: false
+      members:
+        - __init__
+        - execute
+        - batch_execute
+        - get_node
+        - get_metric_summary
+        - elapsed_time
+        - summary
+        - display
 
 ---
 

@@ -1,3 +1,6 @@
+---
+icon: custom/monitor
+---
 # Langfuse Integration
 
 Integrate Axion evaluation with Langfuse observability to close the feedback loop between production LLM operations and quality metrics.

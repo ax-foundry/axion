@@ -1,3 +1,6 @@
+---
+icon: custom/calibration
+---
 # Caliber API Reference
 
 LLM-as-judge calibration and alignment tools for improving evaluation quality.

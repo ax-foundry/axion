@@ -1,3 +1,6 @@
+---
+icon: custom/play
+---
 # Running Evaluations
 
 Axion provides evaluation runners for batch processing with caching and parallel execution.

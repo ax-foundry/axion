@@ -1,3 +1,6 @@
+---
+icon: custom/play
+---
 # Evaluation Runner
 
 The Evaluation Runner orchestrates end-to-end evaluation experiments — from generating model predictions to scoring them with multiple metrics. It unifies task execution, metric evaluation, and result aggregation into a single workflow with built-in caching, error handling, tracing, and key remapping.

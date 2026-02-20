@@ -1,3 +1,6 @@
+---
+icon: custom/tool
+---
 # Tool Correctness
 
 <div style="border-left: 4px solid #8b5cf6; padding-left: 1rem; margin-bottom: 1.5rem;">

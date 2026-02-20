@@ -1,3 +1,6 @@
+---
+icon: custom/sliders
+---
 # Contains Match
 
 <div style="border-left: 4px solid #f59e0b; padding-left: 1rem; margin-bottom: 1.5rem;">

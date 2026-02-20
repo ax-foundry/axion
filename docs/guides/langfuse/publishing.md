@@ -1,3 +1,6 @@
+---
+icon: custom/globe
+---
 # Publishing Evaluation Results
 
 After running evaluations, publish results back to Langfuse. Axion provides two methods depending on whether you're scoring existing traces or creating new experiments.

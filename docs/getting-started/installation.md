@@ -1,3 +1,6 @@
+---
+icon: custom/installation
+---
 # Installation
 
 Get started with Axion in minutes.
@@ -9,7 +12,7 @@ Get started with Axion in minutes.
 git clone https://github.com/ax-foundry/axion.git
 cd axion
 
-# Create virtual environment (recommended)
+# Create virtual environment (optional)
 python -m venv venv
 source venv/bin/activate  # On Windows: .\venv\Scripts\activate
 

@@ -1,3 +1,6 @@
+---
+icon: custom/yaml
+---
 # Creating YAML-Based Metrics
 
 Axion supports creating evaluation metrics directly from YAML configuration files, providing a simple alternative to defining metrics as code. YAML metrics support both LLM-powered evaluation and custom heuristic functions.

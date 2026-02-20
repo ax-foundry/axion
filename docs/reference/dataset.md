@@ -1,3 +1,6 @@
+---
+icon: custom/database
+---
 # Dataset API Reference
 
 Core data structures for building and managing evaluation datasets.

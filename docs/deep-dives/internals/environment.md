@@ -1,3 +1,6 @@
+---
+icon: custom/env-vars
+---
 # Axion Environment & Settings
 
 This guide details the configuration management system for Axion, powered by pydantic-settings.

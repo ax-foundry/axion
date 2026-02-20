@@ -1,3 +1,6 @@
+---
+icon: custom/analytics
+---
 # Tracer Registry API Reference
 
 Registry pattern for tracing providers with support for NoOp, Logfire, Langfuse, and Opik backends.
@@ -44,6 +47,8 @@ from axion._core.tracing.opik.tracer import OpikTracer
 ::: axion._core.tracing.registry.TracerRegistry
     options:
       show_root_heading: true
+
+---
 
 ## BaseTracer
 

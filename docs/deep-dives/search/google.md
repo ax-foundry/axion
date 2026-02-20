@@ -1,3 +1,6 @@
+---
+icon: custom/globe
+---
 # SerpAPI Web Search
 
 ## Overview

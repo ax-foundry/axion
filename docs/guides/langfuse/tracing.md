@@ -1,3 +1,6 @@
+---
+icon: custom/analytics
+---
 # Creating Traces
 
 This guide covers how to create and manage traces in Langfuse using Axion's tracing system.

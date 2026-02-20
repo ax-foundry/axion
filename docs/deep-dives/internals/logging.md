@@ -1,3 +1,6 @@
+---
+icon: custom/terminal
+---
 # Axion Logging
 
 The Axion logging module provides a rich, informative logging experience with beautiful console output powered by the **rich** library.

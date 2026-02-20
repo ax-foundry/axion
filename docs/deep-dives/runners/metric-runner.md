@@ -1,3 +1,6 @@
+---
+icon: custom/play
+---
 # Metric Runner
 
 The Metric Runner orchestrates evaluation metrics across multiple frameworks — Axion, Ragas, and DeepEval — through a single interface. It handles concurrency, caching, error recovery, and progress tracking so you can focus on choosing the right metrics.

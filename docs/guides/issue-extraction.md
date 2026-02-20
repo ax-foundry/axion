@@ -1,3 +1,6 @@
+---
+icon: custom/search
+---
 # Issue Extraction & Analysis
 
 Extract and analyze low-score signals from evaluation results for debugging, reporting, and LLM-powered issue summarization.

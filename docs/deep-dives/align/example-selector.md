@@ -1,3 +1,6 @@
+---
+icon: custom/calibration
+---
 # Example Selector
 
 The `ExampleSelector` provides intelligent selection of few-shot examples for LLM-as-judge calibration. Instead of naive slicing (`examples[:n]`), it offers strategies that improve calibration quality by balancing accept/reject cases, prioritizing misaligned examples, or covering discovered patterns.

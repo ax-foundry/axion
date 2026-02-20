@@ -1,3 +1,6 @@
+---
+icon: custom/rest-api
+---
 # API Runner
 
 The API Runner manages multiple API clients through a single registry — register any endpoint with a decorator, then execute single queries or batches with built-in retry, concurrency control, and standardized response formatting.
