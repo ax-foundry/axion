@@ -94,31 +94,6 @@
     </div>
     <div data-md-component="announce">
       
-        <aside class="md-banner">
-          <div class="md-banner__inner md-grid md-typeset">
-            
-            
-<div class="announcement-banner" id="announcement-banner">
-  <span>Axion is beta. Under active development!</span>
-  <a href="https://github.com/ax-foundry/axion">View on GitHub &rarr;</a>
-  <button class="close-btn" onclick="dismissBanner()" aria-label="Dismiss">&times;</button>
-</div>
-<script>
-  // Check if banner was previously dismissed
-  if (localStorage.getItem('axion-banner-dismissed') === 'true') {
-    document.getElementById('announcement-banner').classList.add('hidden');
-  }
-
-  function dismissBanner() {
-    document.getElementById('announcement-banner').classList.add('hidden');
-    localStorage.setItem('axion-banner-dismissed', 'true');
-  }
-</script>
-
-          </div>
-          
-        </aside>
-      
     </div>
     
     
@@ -126,34 +101,30 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Documentation" class="md-header__button md-logo" aria-label="Documentation" data-md-component="logo">
-      
-  <img src="../../assets/axion_main_transparent.png" alt="logo">
 
-    </a>
+    
     <label class="md-header__button md-icon" for="__drawer">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
-            Documentation
-          </span>
-        </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
-            
-              Caliber
-            
-          </span>
-        </div>
-      </div>
-    </div>
+
     
+    <a href="../.."
+       title="Documentation"
+       class="md-header__button md-logo"
+       aria-label="Documentation"
+       data-md-component="logo">
       
-        <form class="md-header__option" data-md-component="palette">
+  <img src="../../assets/axion_main_transparent.png" alt="logo">
+
+      <span class="md-header__logo-text">Docs</span>
+    </a>
+
+    
+    <div class="md-header__search">
+      
+        
+          <form class="md-header__option" data-md-component="palette">
   
     
     
@@ -176,13 +147,10 @@
     
   
 </form>
+        
       
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
-    
-    
-    
+      
+        <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
       
       
         <label class="md-header__button md-icon" for="__search">
@@ -224,10 +192,59 @@
   </div>
 </div>
       
+    </div>
+
     
     
-      <div class="md-header__source">
-        <a href="https://github.com/ax-foundry/axion" title="Go to repository" class="md-source" data-md-component="source">
+    
+    
+    <div class="md-header__sections">
+      
+        
+      
+        
+        <a href="../../getting-started/installation/"
+           class="md-header__section-link">
+          Getting Started
+        </a>
+        
+      
+        
+        <a href="../../guides/hierarchical-scoring/"
+           class="md-header__section-link">
+          Guides
+        </a>
+        
+      
+        
+        <a href="../../metric-registry/composite/"
+           class="md-header__section-link">
+          Metric Registry
+        </a>
+        
+      
+        
+        <a href="../../deep-dives/metrics/creating-metrics/"
+           class="md-header__section-link">
+          Deep Dives
+        </a>
+        
+      
+        
+        <a href="./"
+           class="md-header__section-link md-header__section-link--active">
+          Reference
+        </a>
+        
+      
+    </div>
+
+    
+    <div class="md-header__actions">
+      
+      
+        <div class="md-header__source">
+          <a href="https://github.com/ax-foundry/axion" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
@@ -236,9 +253,13 @@
     ax-foundry/axion
   </div>
 </a>
-      </div>
-    
+        </div>
+      
+    </div>
+
   </nav>
+
+  
   
 </header>
     
@@ -264,6 +285,8 @@
           
   
   
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
     
   
   Home
@@ -337,6 +360,8 @@
           
   
   
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
     
   
   Metric Registry
@@ -492,6 +517,8 @@
               
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -536,6 +563,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -564,6 +593,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -591,6 +622,8 @@
       <a href="../../why_ground_truth_matters/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
   
   <span class="md-ellipsis">
     
@@ -684,6 +717,12 @@
       <a href="../../getting-started/installation/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+  <polyline points="7 10 12 15 17 10"/>
+  <line x1="12" y1="15" x2="12" y2="3"/>
+</svg>
   
   <span class="md-ellipsis">
     
@@ -796,6 +835,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -823,6 +864,8 @@
       <a href="../../guides/datasets/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
   
   <span class="md-ellipsis">
     
@@ -852,6 +895,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -879,6 +924,8 @@
       <a href="../../guides/evaluation/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
   
   <span class="md-ellipsis">
     
@@ -908,6 +955,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -935,6 +984,8 @@
       <a href="../../guides/caliberhq/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1028,6 +1079,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1055,6 +1108,8 @@
       <a href="../../guides/langfuse/configuration/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1084,6 +1139,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1111,6 +1168,8 @@
       <a href="../../guides/langfuse/publishing/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1148,6 +1207,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1176,6 +1237,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1203,6 +1266,8 @@
       <a href="../../guides/search/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1356,6 +1421,8 @@
               
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1400,6 +1467,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1427,6 +1496,8 @@
       <a href="../../metric-registry/composite/answer_relevancy/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1456,6 +1527,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1483,6 +1556,8 @@
       <a href="../../metric-registry/composite/answer_completeness/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1512,6 +1587,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1539,6 +1616,8 @@
       <a href="../../metric-registry/composite/tone_style_consistency/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1568,6 +1647,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1595,6 +1676,8 @@
       <a href="../../metric-registry/composite/pii_leakage/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1624,6 +1707,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1651,6 +1736,8 @@
       <a href="../../metric-registry/composite/contextual_recall/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1680,6 +1767,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1707,6 +1796,8 @@
       <a href="../../metric-registry/composite/contextual_ranking/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1736,6 +1827,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1763,6 +1856,8 @@
       <a href="../../metric-registry/composite/contextual_utilization/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1843,6 +1938,8 @@
               
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1887,6 +1984,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1914,6 +2013,8 @@
       <a href="../../metric-registry/heuristic/contains_match/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1943,6 +2044,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1970,6 +2073,8 @@
       <a href="../../metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1999,6 +2104,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2026,6 +2133,8 @@
       <a href="../../metric-registry/heuristic/citation_presence/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2055,6 +2164,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2083,6 +2194,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2110,6 +2223,8 @@
       <a href="../../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2171,6 +2286,8 @@
             <a href="../../metric-registry/conversational/" class="md-nav__link ">
               
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2246,6 +2363,8 @@
               
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2289,6 +2408,8 @@
       <a href="../../metric-registry/tool/tool_correctness/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2463,6 +2584,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2491,6 +2614,13 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+  <polyline points="14 2 14 8 20 8"/>
+  <path d="M10 13l-2 2 2 2"/>
+  <path d="M14 17l2-2-2-2"/>
+</svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2518,6 +2648,8 @@
       <a href="../../deep-dives/metrics/composite-metrics/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2617,6 +2749,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2645,6 +2779,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2672,6 +2808,12 @@
       <a href="../../deep-dives/runners/api-runner/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="10"/>
+  <line x1="2" y1="12" x2="22" y2="12"/>
+  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+</svg>
   
   <span class="md-ellipsis">
     
@@ -2767,6 +2909,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2860,6 +3004,8 @@
       <a href="../../deep-dives/synthetic/document-qa/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2959,6 +3105,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2987,6 +3135,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3014,6 +3164,8 @@
       <a href="../../deep-dives/search/you/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
   
   <span class="md-ellipsis">
     
@@ -3113,6 +3265,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3141,6 +3295,11 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="4 17 10 11 4 5"/>
+  <line x1="12" y1="19" x2="20" y2="19"/>
+</svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3168,6 +3327,8 @@
       <a href="../../deep-dives/internals/logging/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
   
   <span class="md-ellipsis">
     
@@ -3302,6 +3463,8 @@
           
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3319,6 +3482,8 @@
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
   
   <span class="md-ellipsis">
     
@@ -4243,6 +4408,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -4270,6 +4437,8 @@
       <a href="../schema/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="4" height="12" rx="1"/><rect x="10" y="2" width="4" height="8" rx="1"/><rect x="18" y="14" width="4" height="8" rx="1"/><rect x="10" y="14" width="4" height="8" rx="1"/><path d="M6 12h4"/><path d="M14 6h4v10h-4"/><path d="M14 18h4"/></svg>
   
   <span class="md-ellipsis">
     
@@ -4299,6 +4468,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -4326,6 +4497,8 @@
       <a href="../runners/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
   
   <span class="md-ellipsis">
     
@@ -4355,6 +4528,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -4382,6 +4557,8 @@
       <a href="../issue-extractor/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   
   <span class="md-ellipsis">
     
@@ -4411,6 +4588,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -4438,6 +4617,8 @@
       <a href="../search/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
   
   <span class="md-ellipsis">
     
@@ -4467,6 +4648,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -4494,6 +4677,8 @@
       <a href="../tracer-registry/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
   
   <span class="md-ellipsis">
     
@@ -5486,14 +5671,16 @@
 
 
 <h2 id="axion.caliber.CaliberMetric" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">CaliberMetric</span><span class="p">(</span><span class="n">instruction</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm_provider</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">examples</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">required_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.CaliberMetric</span>
+
 
 <a href="#axion.caliber.CaliberMetric" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">CaliberMetric</span><span class="p">(</span><span class="n">instruction</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm_provider</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">examples</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Dict">Dict</span></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">required_fields</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="axion.metrics.base.BaseMetric(model_name: Optional[str] = None, llm: Optional[LLMRunnable] = None, embed_model_name: Optional[str] = None, embed_model: Optional[EmbeddingRunnable] = None, threshold: float = None, llm_provider: Optional[str] = None, required_fields: Optional[List[str]] = None, optional_fields: Optional[List[str]] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, name: Optional[str] = None, field_mapping: Optional[Dict[str, str]] = None, metric_category: Optional[MetricCategory] = None, **kwargs: Any) (axion.metrics.base.BaseMetric)" href="../metrics/#axion.metrics.base.BaseMetric">BaseMetric</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="axion.metrics.base.BaseMetric" href="../metrics/#axion.metrics.base.BaseMetric">BaseMetric</a></code></p>
 
 
 
@@ -5592,10 +5779,12 @@
 
 
 <h2 id="axion.caliber.ExampleSelector" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">ExampleSelector</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.ExampleSelector</span>
+
 
 <a href="#axion.caliber.ExampleSelector" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">ExampleSelector</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -5670,10 +5859,22 @@
 
 
 <h3 id="axion.caliber.ExampleSelector.select" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">select</span><span class="p">(</span><span class="n">records</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n">SelectionStrategy</span> <span class="o">=</span> <span class="n">SelectionStrategy</span><span class="o">.</span><span class="n">BALANCED</span><span class="p">,</span> <span class="n">eval_results</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">patterns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DiscoveredPattern</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SelectionResult</span></code>
+            <span class="doc doc-object-name doc-function-name">select</span>
+
 
 <a href="#axion.caliber.ExampleSelector.select" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">select</span><span class="p">(</span><span class="n">records</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]],</span> <span class="n">annotations</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="int">int</span></span><span class="p">],</span> <span class="n">count</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.SelectionStrategy (axion.caliber.example_selector.SelectionStrategy)" href="#axion.caliber.SelectionStrategy">SelectionStrategy</a></span> <span class="o">=</span> <span class="n"><span title="axion.caliber.example_selector.SelectionStrategy.BALANCED">BALANCED</span></span><span class="p">,</span> <span class="n">eval_results</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">patterns</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.DiscoveredPattern
 
+
+  
+      dataclass
+   (axion.caliber.pattern_discovery.DiscoveredPattern)" href="#axion.caliber.DiscoveredPattern">DiscoveredPattern</a></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.SelectionResult
+
+
+  
+      dataclass
+   (axion.caliber.example_selector.SelectionResult)" href="#axion.caliber.SelectionResult">SelectionResult</a></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -5730,7 +5931,8 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>patterns</code></b>
-              (<code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="axion.caliber.DiscoveredPattern(category: str, description: str, count: int, record_ids: List[str], examples: List[str] = list(), confidence: Optional[float] = None)
+              (<code><span title="typing.Optional">Optional</span>[<span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="axion.caliber.DiscoveredPattern
+
 
   
       dataclass
@@ -5748,7 +5950,8 @@
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="axion.caliber.SelectionResult(examples: List[Dict[str, Any]], strategy_used: SelectionStrategy, metadata: Dict[str, Any])
+              <code><a class="autorefs autorefs-internal" title="axion.caliber.SelectionResult
+
 
   
       dataclass
@@ -5779,7 +5982,7 @@
 
 
 <h2 id="axion.caliber.SelectionStrategy" class="doc doc-heading">
-            <code>axion.caliber.SelectionStrategy</code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.SelectionStrategy</span>
 
 
 <a href="#axion.caliber.SelectionStrategy" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -5828,14 +6031,16 @@
 
 
 <h2 id="axion.caliber.SelectionResult" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">SelectionResult</span><span class="p">(</span><span class="n">examples</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">strategy_used</span><span class="p">:</span> <span class="n">SelectionStrategy</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.SelectionResult</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
   </span>
 
 <a href="#axion.caliber.SelectionResult" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">SelectionResult</span><span class="p">(</span><span class="n">examples</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]],</span> <span class="n">strategy_used</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.SelectionStrategy (axion.caliber.example_selector.SelectionStrategy)" href="#axion.caliber.SelectionStrategy">SelectionStrategy</a></span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">])</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -5880,10 +6085,12 @@
 
 
 <h2 id="axion.caliber.PatternDiscovery" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">PatternDiscovery</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LLMRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm_provider</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_notes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">min_category_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">bertopic_embedding_model</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s1">&#39;all-MiniLM-L6-v2&#39;</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.PatternDiscovery</span>
+
 
 <a href="#axion.caliber.PatternDiscovery" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">PatternDiscovery</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion._core.schema.LLMRunnable">LLMRunnable</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm_provider</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_notes</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">min_category_size</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">bertopic_embedding_model</span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span> <span class="o">=</span> <span class="s1">&#39;all-MiniLM-L6-v2&#39;</span><span class="p">)</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -6018,14 +6225,26 @@ result = await discovery.discover(annotations)</p>
 
 
 <h3 id="axion.caliber.PatternDiscovery.discover" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">discover</span><span class="p">(</span><span class="n">annotations</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AnnotatedItem</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]],</span> <span class="n">method</span><span class="p">:</span> <span class="n">ClusteringMethod</span> <span class="o">=</span> <span class="n">ClusteringMethod</span><span class="o">.</span><span class="n">LLM</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PatternDiscoveryResult</span></code>
+            <span class="doc doc-object-name doc-function-name">discover</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 <a href="#axion.caliber.PatternDiscovery.discover" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">discover</span><span class="p">(</span><span class="n">annotations</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.AnnotatedItem
 
+
+  
+      dataclass
+   (axion.caliber.pattern_discovery.AnnotatedItem)" href="#axion.caliber.AnnotatedItem">AnnotatedItem</a></span><span class="p">],</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">]],</span> <span class="n">method</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.ClusteringMethod (axion.caliber.pattern_discovery.ClusteringMethod)" href="#axion.caliber.ClusteringMethod">ClusteringMethod</a></span> <span class="o">=</span> <span class="n"><span title="axion.caliber.pattern_discovery.ClusteringMethod.LLM">LLM</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.PatternDiscoveryResult
+
+
+  
+      dataclass
+   (axion.caliber.pattern_discovery.PatternDiscoveryResult)" href="#axion.caliber.PatternDiscoveryResult">PatternDiscoveryResult</a></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -6036,7 +6255,8 @@ result = await discovery.discover(annotations)</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>annotations</code></b>
-              (<code><span title="typing.Union">Union</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <a class="autorefs autorefs-internal" title="axion.caliber.AnnotatedItem(record_id: str, score: int, notes: Optional[str] = None, timestamp: Optional[str] = None, query: Optional[str] = None, actual_output: Optional[str] = None)
+              (<code><span title="typing.Union">Union</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <a class="autorefs autorefs-internal" title="axion.caliber.AnnotatedItem
+
 
   
       dataclass
@@ -6062,7 +6282,8 @@ result = await discovery.discover(annotations)</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="axion.caliber.PatternDiscoveryResult(patterns: List[DiscoveredPattern], uncategorized: List[str], total_analyzed: int, method: ClusteringMethod, metadata: Dict[str, Any] = dict())
+              <code><a class="autorefs autorefs-internal" title="axion.caliber.PatternDiscoveryResult
+
 
   
       dataclass
@@ -6093,14 +6314,16 @@ result = await discovery.discover(annotations)</p>
 
 
 <h2 id="axion.caliber.DiscoveredPattern" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">DiscoveredPattern</span><span class="p">(</span><span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">record_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">examples</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(),</span> <span class="n">confidence</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.DiscoveredPattern</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
   </span>
 
 <a href="#axion.caliber.DiscoveredPattern" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">DiscoveredPattern</span><span class="p">(</span><span class="n">category</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">record_ids</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span> <span class="n">examples</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="list">list</span></span><span class="p">(),</span> <span class="n">confidence</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -6143,14 +6366,21 @@ result = await discovery.discover(annotations)</p>
 
 
 <h2 id="axion.caliber.PatternDiscoveryResult" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">PatternDiscoveryResult</span><span class="p">(</span><span class="n">patterns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DiscoveredPattern</span><span class="p">],</span> <span class="n">uncategorized</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">total_analyzed</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">ClusteringMethod</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">())</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.PatternDiscoveryResult</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
   </span>
 
 <a href="#axion.caliber.PatternDiscoveryResult" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">PatternDiscoveryResult</span><span class="p">(</span><span class="n">patterns</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.DiscoveredPattern
 
+
+  
+      dataclass
+   (axion.caliber.pattern_discovery.DiscoveredPattern)" href="#axion.caliber.DiscoveredPattern">DiscoveredPattern</a></span><span class="p">],</span> <span class="n">uncategorized</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span> <span class="n">total_analyzed</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.ClusteringMethod (axion.caliber.pattern_discovery.ClusteringMethod)" href="#axion.caliber.ClusteringMethod">ClusteringMethod</a></span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="dict">dict</span></span><span class="p">())</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -6193,14 +6423,16 @@ result = await discovery.discover(annotations)</p>
 
 
 <h2 id="axion.caliber.AnnotatedItem" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">AnnotatedItem</span><span class="p">(</span><span class="n">record_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">notes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">actual_output</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.AnnotatedItem</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
   </span>
 
 <a href="#axion.caliber.AnnotatedItem" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">AnnotatedItem</span><span class="p">(</span><span class="n">record_id</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">notes</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">actual_output</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -6243,7 +6475,7 @@ result = await discovery.discover(annotations)</p>
 
 
 <h2 id="axion.caliber.ClusteringMethod" class="doc doc-heading">
-            <code>axion.caliber.ClusteringMethod</code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.ClusteringMethod</span>
 
 
 <a href="#axion.caliber.ClusteringMethod" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -6294,10 +6526,12 @@ result = await discovery.discover(annotations)</p>
 
 
 <h2 id="axion.caliber.MisalignmentAnalyzer" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">MisalignmentAnalyzer</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LLMRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm_provider</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_examples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.MisalignmentAnalyzer</span>
+
 
 <a href="#axion.caliber.MisalignmentAnalyzer" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">MisalignmentAnalyzer</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion._core.schema.LLMRunnable">LLMRunnable</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm_provider</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_examples</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -6412,14 +6646,21 @@ print(f'Recommendations: {analysis.recommendations}')</p>
 
 
 <h3 id="axion.caliber.MisalignmentAnalyzer.analyze" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">analyze</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">evaluation_criteria</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MisalignmentAnalysis</span></code>
+            <span class="doc doc-object-name doc-function-name">analyze</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 <a href="#axion.caliber.MisalignmentAnalyzer.analyze" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">analyze</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]],</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]],</span> <span class="n">evaluation_criteria</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.MisalignmentAnalysis
 
+
+  
+      dataclass
+   (axion.caliber.analysis.MisalignmentAnalysis)" href="#axion.caliber.MisalignmentAnalysis">MisalignmentAnalysis</a></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -6450,7 +6691,8 @@ print(f'Recommendations: {analysis.recommendations}')</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="axion.caliber.MisalignmentAnalysis(total_misaligned: int, false_positives: int, false_negatives: int, patterns: List[MisalignmentPattern], summary: str, recommendations: List[str], metadata: Dict[str, Any] = dict())
+              <code><a class="autorefs autorefs-internal" title="axion.caliber.MisalignmentAnalysis
+
 
   
       dataclass
@@ -6481,14 +6723,21 @@ print(f'Recommendations: {analysis.recommendations}')</p>
 
 
 <h2 id="axion.caliber.MisalignmentAnalysis" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">MisalignmentAnalysis</span><span class="p">(</span><span class="n">total_misaligned</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">false_positives</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">false_negatives</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">patterns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MisalignmentPattern</span><span class="p">],</span> <span class="n">summary</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">recommendations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">())</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.MisalignmentAnalysis</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
   </span>
 
 <a href="#axion.caliber.MisalignmentAnalysis" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">MisalignmentAnalysis</span><span class="p">(</span><span class="n">total_misaligned</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">false_positives</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">false_negatives</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">patterns</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.MisalignmentPattern
 
+
+  
+      dataclass
+   (axion.caliber.analysis.MisalignmentPattern)" href="#axion.caliber.MisalignmentPattern">MisalignmentPattern</a></span><span class="p">],</span> <span class="n">summary</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">recommendations</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span> <span class="n">metadata</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="dict">dict</span></span><span class="p">())</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -6531,14 +6780,16 @@ print(f'Recommendations: {analysis.recommendations}')</p>
 
 
 <h2 id="axion.caliber.MisalignmentPattern" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">MisalignmentPattern</span><span class="p">(</span><span class="n">pattern_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">example_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.MisalignmentPattern</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
   </span>
 
 <a href="#axion.caliber.MisalignmentPattern" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">MisalignmentPattern</span><span class="p">(</span><span class="n">pattern_type</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">example_ids</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">])</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -6583,10 +6834,12 @@ print(f'Recommendations: {analysis.recommendations}')</p>
 
 
 <h2 id="axion.caliber.PromptOptimizer" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">PromptOptimizer</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LLMRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm_provider</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_examples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.PromptOptimizer</span>
+
 
 <a href="#axion.caliber.PromptOptimizer" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">PromptOptimizer</span><span class="p">(</span><span class="n">model_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion._core.schema.LLMRunnable">LLMRunnable</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">llm_provider</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">instruction</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_examples</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -6698,14 +6951,21 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.PromptOptimizer.optimize" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">optimize</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">current_criteria</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">system_prompt</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OptimizedPrompt</span></code>
+            <span class="doc doc-object-name doc-function-name">optimize</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 <a href="#axion.caliber.PromptOptimizer.optimize" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">optimize</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]],</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]],</span> <span class="n">current_criteria</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">system_prompt</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.OptimizedPrompt
 
+
+  
+      dataclass
+   (axion.caliber.prompt_optimizer.OptimizedPrompt)" href="#axion.caliber.OptimizedPrompt">OptimizedPrompt</a></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -6746,7 +7006,8 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="axion.caliber.OptimizedPrompt(original_criteria: str, optimized_criteria: str, suggestions: List[PromptSuggestion], expected_improvement: str, metadata: Dict[str, Any] = dict())
+              <code><a class="autorefs autorefs-internal" title="axion.caliber.OptimizedPrompt
+
 
   
       dataclass
@@ -6777,14 +7038,21 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h2 id="axion.caliber.OptimizedPrompt" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">OptimizedPrompt</span><span class="p">(</span><span class="n">original_criteria</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optimized_criteria</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suggestions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PromptSuggestion</span><span class="p">],</span> <span class="n">expected_improvement</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">())</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.OptimizedPrompt</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
   </span>
 
 <a href="#axion.caliber.OptimizedPrompt" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">OptimizedPrompt</span><span class="p">(</span><span class="n">original_criteria</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">optimized_criteria</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">suggestions</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.caliber.PromptSuggestion
 
+
+  
+      dataclass
+   (axion.caliber.prompt_optimizer.PromptSuggestion)" href="#axion.caliber.PromptSuggestion">PromptSuggestion</a></span><span class="p">],</span> <span class="n">expected_improvement</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="dict">dict</span></span><span class="p">())</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -6827,14 +7095,16 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h2 id="axion.caliber.PromptSuggestion" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">caliber</span><span class="o">.</span><span class="n">PromptSuggestion</span><span class="p">(</span><span class="n">aspect</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suggestion</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rationale</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.PromptSuggestion</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
   </span>
 
 <a href="#axion.caliber.PromptSuggestion" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">PromptSuggestion</span><span class="p">(</span><span class="n">aspect</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">suggestion</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">rationale</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">)</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -6879,7 +7149,7 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h2 id="axion.caliber.CaliberRenderer" class="doc doc-heading">
-            <code>axion.caliber.CaliberRenderer</code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.CaliberRenderer</span>
 
 
 <a href="#axion.caliber.CaliberRenderer" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -6922,14 +7192,16 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.CaliberRenderer.render_record" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_record</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">UploadedRecord</span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_record</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
 <a href="#axion.caliber.CaliberRenderer.render_record" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_record</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.UploadedRecord">UploadedRecord</span></span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion.caliber.schema.Annotation">Annotation</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -6967,14 +7239,16 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.CaliberRenderer.render_annotation_progress" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_annotation_progress</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AnnotationState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_annotation_progress</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
 <a href="#axion.caliber.CaliberRenderer.render_annotation_progress" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_annotation_progress</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.AnnotationState">AnnotationState</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7002,14 +7276,16 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.CaliberRenderer.render_evaluation_result" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_evaluation_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">EvaluationResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_evaluation_result</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
 <a href="#axion.caliber.CaliberRenderer.render_evaluation_result" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_evaluation_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.EvaluationResult">EvaluationResult</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7037,14 +7313,16 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.CaliberRenderer.render_misalignment_analysis" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_misalignment_analysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">:</span> <span class="s1">&#39;MisalignmentAnalysis&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_misalignment_analysis</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
 <a href="#axion.caliber.CaliberRenderer.render_misalignment_analysis" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_misalignment_analysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">:</span> <span class="s1">&#39;MisalignmentAnalysis&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7082,7 +7360,7 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h2 id="axion.caliber.NotebookCaliberRenderer" class="doc doc-heading">
-            <code>axion.caliber.NotebookCaliberRenderer</code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.NotebookCaliberRenderer</span>
 
 
 <a href="#axion.caliber.NotebookCaliberRenderer" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -7122,10 +7400,12 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.NotebookCaliberRenderer.render_record" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_record</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">UploadedRecord</span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_record</span>
+
 
 <a href="#axion.caliber.NotebookCaliberRenderer.render_record" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_record</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.UploadedRecord">UploadedRecord</span></span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion.caliber.schema.Annotation">Annotation</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7140,10 +7420,12 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.NotebookCaliberRenderer.render_annotation_progress" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_annotation_progress</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AnnotationState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_annotation_progress</span>
+
 
 <a href="#axion.caliber.NotebookCaliberRenderer.render_annotation_progress" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_annotation_progress</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.AnnotationState">AnnotationState</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7158,10 +7440,12 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.NotebookCaliberRenderer.render_evaluation_result" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_evaluation_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">EvaluationResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_evaluation_result</span>
+
 
 <a href="#axion.caliber.NotebookCaliberRenderer.render_evaluation_result" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_evaluation_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.EvaluationResult">EvaluationResult</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7176,10 +7460,12 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.NotebookCaliberRenderer.render_misalignment_analysis" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_misalignment_analysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">:</span> <span class="s1">&#39;MisalignmentAnalysis&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_misalignment_analysis</span>
+
 
 <a href="#axion.caliber.NotebookCaliberRenderer.render_misalignment_analysis" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_misalignment_analysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">:</span> <span class="s1">&#39;MisalignmentAnalysis&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7204,7 +7490,7 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h2 id="axion.caliber.ConsoleCaliberRenderer" class="doc doc-heading">
-            <code>axion.caliber.ConsoleCaliberRenderer</code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.ConsoleCaliberRenderer</span>
 
 
 <a href="#axion.caliber.ConsoleCaliberRenderer" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -7244,10 +7530,12 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.ConsoleCaliberRenderer.render_record" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_record</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">UploadedRecord</span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_record</span>
+
 
 <a href="#axion.caliber.ConsoleCaliberRenderer.render_record" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_record</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.UploadedRecord">UploadedRecord</span></span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion.caliber.schema.Annotation">Annotation</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7262,10 +7550,12 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.ConsoleCaliberRenderer.render_annotation_progress" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_annotation_progress</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AnnotationState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_annotation_progress</span>
+
 
 <a href="#axion.caliber.ConsoleCaliberRenderer.render_annotation_progress" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_annotation_progress</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.AnnotationState">AnnotationState</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7280,10 +7570,12 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.ConsoleCaliberRenderer.render_evaluation_result" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_evaluation_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">EvaluationResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_evaluation_result</span>
+
 
 <a href="#axion.caliber.ConsoleCaliberRenderer.render_evaluation_result" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_evaluation_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.EvaluationResult">EvaluationResult</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7298,10 +7590,12 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h3 id="axion.caliber.ConsoleCaliberRenderer.render_misalignment_analysis" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_misalignment_analysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">:</span> <span class="s1">&#39;MisalignmentAnalysis&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_misalignment_analysis</span>
+
 
 <a href="#axion.caliber.ConsoleCaliberRenderer.render_misalignment_analysis" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_misalignment_analysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">:</span> <span class="s1">&#39;MisalignmentAnalysis&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7326,7 +7620,7 @@ optimized = await optimizer.optimize(results, criteria, system_prompt)</p>
 
 
 <h2 id="axion.caliber.JsonCaliberRenderer" class="doc doc-heading">
-            <code>axion.caliber.JsonCaliberRenderer</code>
+            <span class="doc doc-object-name doc-class-name">axion.caliber.JsonCaliberRenderer</span>
 
 
 <a href="#axion.caliber.JsonCaliberRenderer" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -7367,10 +7661,12 @@ as JSON rather than displayed.</p>
 
 
 <h3 id="axion.caliber.JsonCaliberRenderer.render_record" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_record</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n">UploadedRecord</span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_record</span>
+
 
 <a href="#axion.caliber.JsonCaliberRenderer.render_record" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_record</span><span class="p">(</span><span class="n">record</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.UploadedRecord">UploadedRecord</span></span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion.caliber.schema.Annotation">Annotation</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7385,10 +7681,12 @@ as JSON rather than displayed.</p>
 
 
 <h3 id="axion.caliber.JsonCaliberRenderer.render_annotation_progress" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_annotation_progress</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AnnotationState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_annotation_progress</span>
+
 
 <a href="#axion.caliber.JsonCaliberRenderer.render_annotation_progress" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_annotation_progress</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.AnnotationState">AnnotationState</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7403,10 +7701,12 @@ as JSON rather than displayed.</p>
 
 
 <h3 id="axion.caliber.JsonCaliberRenderer.render_evaluation_result" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_evaluation_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">EvaluationResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_evaluation_result</span>
+
 
 <a href="#axion.caliber.JsonCaliberRenderer.render_evaluation_result" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_evaluation_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><span title="axion.caliber.schema.EvaluationResult">EvaluationResult</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7421,10 +7721,12 @@ as JSON rather than displayed.</p>
 
 
 <h3 id="axion.caliber.JsonCaliberRenderer.render_misalignment_analysis" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">render_misalignment_analysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">:</span> <span class="s1">&#39;MisalignmentAnalysis&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+            <span class="doc doc-object-name doc-function-name">render_misalignment_analysis</span>
+
 
 <a href="#axion.caliber.JsonCaliberRenderer.render_misalignment_analysis" class="headerlink" title="Permanent link">&para;</a></h3>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">render_misalignment_analysis</span><span class="p">(</span><span class="n">analysis</span><span class="p">:</span> <span class="s1">&#39;MisalignmentAnalysis&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -7468,7 +7770,7 @@ as JSON rather than displayed.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 11, 2026 19:02:03 UTC">February 11, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 20, 2026 19:49:22 UTC">February 20, 2026</span>
   </span>
 
     
@@ -7493,7 +7795,7 @@ as JSON rather than displayed.</p>
     </span>
     <nav>
       
-        <a href="mailto:mevanoff24@gmail.com">mevanoff24</a>
+        <a href="mailto:mevanoff24@gmail.com">Matt Evanoff</a>
     </nav>
   </span>
 
@@ -7603,6 +7905,11 @@ as JSON rather than displayed.</p>
       document.body.classList.toggle('toc-collapsed');
       const nowCollapsed = document.body.classList.contains('toc-collapsed');
       localStorage.setItem('axion-toc-collapsed', nowCollapsed);
+    });
+
+    // Collapse Example/Note details in API reference docs by default
+    document.querySelectorAll('.doc-contents details[open]').forEach(function(el) {
+      el.removeAttribute('open');
     });
 
     // Screenshot carousel

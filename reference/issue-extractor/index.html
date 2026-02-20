@@ -94,31 +94,6 @@
     </div>
     <div data-md-component="announce">
       
-        <aside class="md-banner">
-          <div class="md-banner__inner md-grid md-typeset">
-            
-            
-<div class="announcement-banner" id="announcement-banner">
-  <span>Axion is beta. Under active development!</span>
-  <a href="https://github.com/ax-foundry/axion">View on GitHub &rarr;</a>
-  <button class="close-btn" onclick="dismissBanner()" aria-label="Dismiss">&times;</button>
-</div>
-<script>
-  // Check if banner was previously dismissed
-  if (localStorage.getItem('axion-banner-dismissed') === 'true') {
-    document.getElementById('announcement-banner').classList.add('hidden');
-  }
-
-  function dismissBanner() {
-    document.getElementById('announcement-banner').classList.add('hidden');
-    localStorage.setItem('axion-banner-dismissed', 'true');
-  }
-</script>
-
-          </div>
-          
-        </aside>
-      
     </div>
     
     
@@ -126,34 +101,30 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Documentation" class="md-header__button md-logo" aria-label="Documentation" data-md-component="logo">
-      
-  <img src="../../assets/axion_main_transparent.png" alt="logo">
 
-    </a>
+    
     <label class="md-header__button md-icon" for="__drawer">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
-    <div class="md-header__title" data-md-component="header-title">
-      <div class="md-header__ellipsis">
-        <div class="md-header__topic">
-          <span class="md-ellipsis">
-            Documentation
-          </span>
-        </div>
-        <div class="md-header__topic" data-md-component="header-topic">
-          <span class="md-ellipsis">
-            
-              Issue Extractor
-            
-          </span>
-        </div>
-      </div>
-    </div>
+
     
+    <a href="../.."
+       title="Documentation"
+       class="md-header__button md-logo"
+       aria-label="Documentation"
+       data-md-component="logo">
       
-        <form class="md-header__option" data-md-component="palette">
+  <img src="../../assets/axion_main_transparent.png" alt="logo">
+
+      <span class="md-header__logo-text">Docs</span>
+    </a>
+
+    
+    <div class="md-header__search">
+      
+        
+          <form class="md-header__option" data-md-component="palette">
   
     
     
@@ -176,13 +147,10 @@
     
   
 </form>
+        
       
-    
-    
-      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
-    
-    
-    
+      
+        <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
       
       
         <label class="md-header__button md-icon" for="__search">
@@ -224,10 +192,59 @@
   </div>
 </div>
       
+    </div>
+
     
     
-      <div class="md-header__source">
-        <a href="https://github.com/ax-foundry/axion" title="Go to repository" class="md-source" data-md-component="source">
+    
+    
+    <div class="md-header__sections">
+      
+        
+      
+        
+        <a href="../../getting-started/installation/"
+           class="md-header__section-link">
+          Getting Started
+        </a>
+        
+      
+        
+        <a href="../../guides/hierarchical-scoring/"
+           class="md-header__section-link">
+          Guides
+        </a>
+        
+      
+        
+        <a href="../../metric-registry/composite/"
+           class="md-header__section-link">
+          Metric Registry
+        </a>
+        
+      
+        
+        <a href="../../deep-dives/metrics/creating-metrics/"
+           class="md-header__section-link">
+          Deep Dives
+        </a>
+        
+      
+        
+        <a href="../align/"
+           class="md-header__section-link md-header__section-link--active">
+          Reference
+        </a>
+        
+      
+    </div>
+
+    
+    <div class="md-header__actions">
+      
+      
+        <div class="md-header__source">
+          <a href="https://github.com/ax-foundry/axion" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
@@ -236,9 +253,13 @@
     ax-foundry/axion
   </div>
 </a>
-      </div>
-    
+        </div>
+      
+    </div>
+
   </nav>
+
+  
   
 </header>
     
@@ -264,6 +285,8 @@
           
   
   
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
     
   
   Home
@@ -337,6 +360,8 @@
           
   
   
+    
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
     
   
   Metric Registry
@@ -492,6 +517,8 @@
               
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -536,6 +563,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -564,6 +593,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -591,6 +622,8 @@
       <a href="../../why_ground_truth_matters/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
   
   <span class="md-ellipsis">
     
@@ -684,6 +717,12 @@
       <a href="../../getting-started/installation/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+  <polyline points="7 10 12 15 17 10"/>
+  <line x1="12" y1="15" x2="12" y2="3"/>
+</svg>
   
   <span class="md-ellipsis">
     
@@ -796,6 +835,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -823,6 +864,8 @@
       <a href="../../guides/datasets/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
   
   <span class="md-ellipsis">
     
@@ -852,6 +895,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -879,6 +924,8 @@
       <a href="../../guides/evaluation/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
   
   <span class="md-ellipsis">
     
@@ -908,6 +955,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -935,6 +984,8 @@
       <a href="../../guides/caliberhq/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1028,6 +1079,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1055,6 +1108,8 @@
       <a href="../../guides/langfuse/configuration/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1084,6 +1139,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1111,6 +1168,8 @@
       <a href="../../guides/langfuse/publishing/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1148,6 +1207,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1176,6 +1237,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1203,6 +1266,8 @@
       <a href="../../guides/search/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1356,6 +1421,8 @@
               
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1400,6 +1467,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1427,6 +1496,8 @@
       <a href="../../metric-registry/composite/answer_relevancy/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1456,6 +1527,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1483,6 +1556,8 @@
       <a href="../../metric-registry/composite/answer_completeness/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1512,6 +1587,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1539,6 +1616,8 @@
       <a href="../../metric-registry/composite/tone_style_consistency/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1568,6 +1647,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1595,6 +1676,8 @@
       <a href="../../metric-registry/composite/pii_leakage/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1624,6 +1707,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1651,6 +1736,8 @@
       <a href="../../metric-registry/composite/contextual_recall/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1680,6 +1767,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1707,6 +1796,8 @@
       <a href="../../metric-registry/composite/contextual_ranking/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1736,6 +1827,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1763,6 +1856,8 @@
       <a href="../../metric-registry/composite/contextual_utilization/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1843,6 +1938,8 @@
               
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1887,6 +1984,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1914,6 +2013,8 @@
       <a href="../../metric-registry/heuristic/contains_match/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1943,6 +2044,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -1970,6 +2073,8 @@
       <a href="../../metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -1999,6 +2104,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2026,6 +2133,8 @@
       <a href="../../metric-registry/heuristic/citation_presence/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2055,6 +2164,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2083,6 +2194,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2110,6 +2223,8 @@
       <a href="../../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2171,6 +2286,8 @@
             <a href="../../metric-registry/conversational/" class="md-nav__link ">
               
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2246,6 +2363,8 @@
               
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2289,6 +2408,8 @@
       <a href="../../metric-registry/tool/tool_correctness/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2463,6 +2584,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2491,6 +2614,13 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+  <polyline points="14 2 14 8 20 8"/>
+  <path d="M10 13l-2 2 2 2"/>
+  <path d="M14 17l2-2-2-2"/>
+</svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2518,6 +2648,8 @@
       <a href="../../deep-dives/metrics/composite-metrics/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2617,6 +2749,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2645,6 +2779,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2672,6 +2808,12 @@
       <a href="../../deep-dives/runners/api-runner/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="10"/>
+  <line x1="2" y1="12" x2="22" y2="12"/>
+  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+</svg>
   
   <span class="md-ellipsis">
     
@@ -2767,6 +2909,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2860,6 +3004,8 @@
       <a href="../../deep-dives/synthetic/document-qa/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="m10 13-2 2 2 2"/><path d="m14 17 2-2-2-2"/></svg>
   
   <span class="md-ellipsis">
     
@@ -2959,6 +3105,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -2987,6 +3135,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3014,6 +3164,8 @@
       <a href="../../deep-dives/search/you/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
   
   <span class="md-ellipsis">
     
@@ -3113,6 +3265,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3141,6 +3295,11 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <polyline points="4 17 10 11 4 5"/>
+  <line x1="12" y1="19" x2="20" y2="19"/>
+</svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3168,6 +3327,8 @@
       <a href="../../deep-dives/internals/logging/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
   
   <span class="md-ellipsis">
     
@@ -3293,6 +3454,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3320,6 +3483,8 @@
       <a href="../dataset/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
   
   <span class="md-ellipsis">
     
@@ -3349,6 +3514,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="4" height="12" rx="1"/><rect x="10" y="2" width="4" height="8" rx="1"/><rect x="18" y="14" width="4" height="8" rx="1"/><rect x="10" y="14" width="4" height="8" rx="1"/><path d="M6 12h4"/><path d="M14 6h4v10h-4"/><path d="M14 18h4"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3376,6 +3543,8 @@
       <a href="../metrics/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
   
   <span class="md-ellipsis">
     
@@ -3405,6 +3574,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3432,6 +3603,8 @@
       <a href="../eval-tree/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
   
   <span class="md-ellipsis">
     
@@ -3470,6 +3643,8 @@
           
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3487,6 +3662,8 @@
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   
   <span class="md-ellipsis">
     
@@ -3640,28 +3817,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#constructor-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Constructor Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Methods
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -3676,14 +3831,58 @@
     </span>
   </a>
   
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.SignalAdapterRegistry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SignalAdapterRegistry
+      
+    </span>
+  </a>
+  
     <nav class="md-nav" aria-label="SignalAdapterRegistry">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#class-methods" class="md-nav__link">
+  <a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.register" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Class Methods
+        register
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.register_adapter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register_adapter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.get" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.list_adapters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list_adapters
       
     </span>
   </a>
@@ -3718,6 +3917,23 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.ExtractedIssue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ExtractedIssue
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ExtractedIssue">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#issueextractionresult" class="md-nav__link">
     <span class="md-ellipsis">
@@ -3728,6 +3944,23 @@
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.IssueExtractionResult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IssueExtractionResult
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IssueExtractionResult">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#issuegroup" class="md-nav__link">
@@ -3740,6 +3973,23 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.IssueGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IssueGroup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IssueGroup">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#issuesummary" class="md-nav__link">
     <span class="md-ellipsis">
@@ -3751,6 +4001,23 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.IssueSummary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IssueSummary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IssueSummary">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#llmsummaryinput" class="md-nav__link">
     <span class="md-ellipsis">
@@ -3761,6 +4028,23 @@
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.LLMSummaryInput" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLMSummaryInput
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="LLMSummaryInput">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#metricsignaladapter" class="md-nav__link">
@@ -3775,6 +4059,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.MetricSignalAdapter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MetricSignalAdapter
+      
+    </span>
+  </a>
   
 </li>
       
@@ -3809,6 +4104,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3836,6 +4133,8 @@
       <a href="../search/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
   
   <span class="md-ellipsis">
     
@@ -3865,6 +4164,8 @@
         
   
   
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+  
   <span class="md-ellipsis">
     
   
@@ -3892,6 +4193,8 @@
       <a href="../tracer-registry/" class="md-nav__link">
         
   
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
   
   <span class="md-ellipsis">
     
@@ -4067,28 +4370,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#constructor-parameters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Constructor Parameters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Methods
-      
-    </span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -4103,14 +4384,58 @@
     </span>
   </a>
   
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.SignalAdapterRegistry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SignalAdapterRegistry
+      
+    </span>
+  </a>
+  
     <nav class="md-nav" aria-label="SignalAdapterRegistry">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#class-methods" class="md-nav__link">
+  <a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.register" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Class Methods
+        register
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.register_adapter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        register_adapter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.get" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.list_adapters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list_adapters
       
     </span>
   </a>
@@ -4145,6 +4470,23 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.ExtractedIssue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ExtractedIssue
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ExtractedIssue">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#issueextractionresult" class="md-nav__link">
     <span class="md-ellipsis">
@@ -4155,6 +4497,23 @@
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.IssueExtractionResult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IssueExtractionResult
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IssueExtractionResult">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#issuegroup" class="md-nav__link">
@@ -4167,6 +4526,23 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.IssueGroup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IssueGroup
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IssueGroup">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#issuesummary" class="md-nav__link">
     <span class="md-ellipsis">
@@ -4178,6 +4554,23 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.IssueSummary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IssueSummary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="IssueSummary">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
   <a href="#llmsummaryinput" class="md-nav__link">
     <span class="md-ellipsis">
@@ -4188,6 +4581,23 @@
   </a>
   
 </li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.LLMSummaryInput" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LLMSummaryInput
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="LLMSummaryInput">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#metricsignaladapter" class="md-nav__link">
@@ -4202,6 +4612,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#axion.reporting.issue_extractor.MetricSignalAdapter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MetricSignalAdapter
+      
+    </span>
+  </a>
   
 </li>
       
@@ -4250,6 +4671,29 @@
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span>
 </span></code></pre></div>
 </div>
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">E</span>
+<p class="rule-card__title">IssueExtractor</p>
+<p class="rule-card__desc">Core engine for extracting low-score signals from evaluation results into structured, actionable issues.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">R</span>
+<p class="rule-card__title">SignalAdapterRegistry</p>
+<p class="rule-card__desc">Registry for metric signal adapters. Maps metric keys to extraction rules for pass/fail signals.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">A</span>
+<p class="rule-card__title">MetricSignalAdapter</p>
+<p class="rule-card__desc">Adapter defining how to extract issues from a specific metric's signals — headline signals, failure values, and context.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">D</span>
+<p class="rule-card__title">Data Classes</p>
+<p class="rule-card__desc">Structured types for extracted issues, groups, summaries, and LLM input — the output of the extraction pipeline.</p>
+</div>
+</div>
+
 <hr />
 <h2 id="issueextractor">IssueExtractor<a class="headerlink" href="#issueextractor" title="Permanent link">&para;</a></h2>
 
@@ -4259,10 +4703,12 @@
 
 
 <h2 id="axion.reporting.issue_extractor.IssueExtractor" class="doc doc-heading">
-              <code class="highlight language-python"><span class="n">axion</span><span class="o">.</span><span class="n">reporting</span><span class="o">.</span><span class="n">issue_extractor</span><span class="o">.</span><span class="n">IssueExtractor</span><span class="p">(</span><span class="n">score_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">include_nan</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">include_context_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sample_rate</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-class-name">axion.reporting.issue_extractor.IssueExtractor</span>
+
 
 <a href="#axion.reporting.issue_extractor.IssueExtractor" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">IssueExtractor</span><span class="p">(</span><span class="n">score_threshold</span><span class="p">:</span> <span class="n"><span title="float">float</span></span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">include_nan</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">include_context_fields</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">metric_names</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="int">int</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sample_rate</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="float">float</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents first">
 
@@ -4367,10 +4813,22 @@ all metrics are processed.</p>
 
 
 <h3 id="axion.reporting.issue_extractor.IssueExtractor.extract_from_evaluation" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">extract_from_evaluation</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">EvaluationResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IssueExtractionResult</span></code>
+            <span class="doc doc-object-name doc-function-name">extract_from_evaluation</span>
+
 
 <a href="#axion.reporting.issue_extractor.IssueExtractor.extract_from_evaluation" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">extract_from_evaluation</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.schema.EvaluationResult
 
+
+  
+      dataclass
+  " href="../schema/#axion.schema.EvaluationResult">EvaluationResult</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4381,11 +4839,12 @@ all metrics are processed.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>result</code></b>
-              (<code><a class="autorefs autorefs-internal" title="axion.schema.EvaluationResult(run_id: str, evaluation_name: Optional[str], timestamp: str, results: List[TestResult], summary: Dict[str, Any] = dict(), metadata: Dict[str, Any] = dict())
+              (<code><a class="autorefs autorefs-internal" title="axion.schema.EvaluationResult
+
 
   
       dataclass
-   (axion.schema.EvaluationResult)" href="../schema/#axion.schema.EvaluationResult">EvaluationResult</a></code>)
+  " href="../schema/#axion.schema.EvaluationResult">EvaluationResult</a></code>)
           –
           <div class="doc-md-description">
             <p>The EvaluationResult to analyze</p>
@@ -4397,7 +4856,12 @@ all metrics are processed.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</span></code>
+              <code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></code>
           –
           <div class="doc-md-description">
             <p>IssueExtractionResult with all extracted issues.</p>
@@ -4414,10 +4878,22 @@ all metrics are processed.</p>
 
 
 <h3 id="axion.reporting.issue_extractor.IssueExtractor.extract_from_test_result" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">extract_from_test_result</span><span class="p">(</span><span class="n">test_result</span><span class="p">:</span> <span class="n">TestResult</span><span class="p">,</span> <span class="n">result_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedIssue</span><span class="p">]</span></code>
+            <span class="doc doc-object-name doc-function-name">extract_from_test_result</span>
+
 
 <a href="#axion.reporting.issue_extractor.IssueExtractor.extract_from_test_result" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">extract_from_test_result</span><span class="p">(</span><span class="n">test_result</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.schema.TestResult
 
+
+  
+      dataclass
+  " href="../schema/#axion.schema.TestResult">TestResult</a></span><span class="p">,</span> <span class="n">result_index</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a></span><span class="p">]</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4428,11 +4904,12 @@ all metrics are processed.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>test_result</code></b>
-              (<code><a class="autorefs autorefs-internal" title="axion.schema.TestResult(test_case: Optional[DatasetItem], score_results: List[MetricScore], metadata: Optional[Dict[str, Any]] = dict())
+              (<code><a class="autorefs autorefs-internal" title="axion.schema.TestResult
+
 
   
       dataclass
-   (axion.schema.TestResult)" href="../schema/#axion.schema.TestResult">TestResult</a></code>)
+  " href="../schema/#axion.schema.TestResult">TestResult</a></code>)
           –
           <div class="doc-md-description">
             <p>The TestResult to analyze</p>
@@ -4452,7 +4929,12 @@ all metrics are processed.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="typing.List">List</span>[<span title="axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</span>]</code>
+              <code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a>]</code>
           –
           <div class="doc-md-description">
             <p>List of ExtractedIssue objects found in this TestResult.</p>
@@ -4469,10 +4951,17 @@ all metrics are processed.</p>
 
 
 <h3 id="axion.reporting.issue_extractor.IssueExtractor.extract_from_metric_score" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">extract_from_metric_score</span><span class="p">(</span><span class="n">metric_score</span><span class="p">:</span> <span class="n">MetricScore</span><span class="p">,</span> <span class="n">test_case_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">test_case</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">result_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">score_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedIssue</span><span class="p">]</span></code>
+            <span class="doc doc-object-name doc-function-name">extract_from_metric_score</span>
+
 
 <a href="#axion.reporting.issue_extractor.IssueExtractor.extract_from_metric_score" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">extract_from_metric_score</span><span class="p">(</span><span class="n">metric_score</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.schema.MetricScore" href="../schema/#axion.schema.MetricScore">MetricScore</a></span><span class="p">,</span> <span class="n">test_case_id</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">test_case</span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">,</span> <span class="n">result_index</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">score_index</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
 
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a></span><span class="p">]</span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4483,7 +4972,7 @@ all metrics are processed.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>metric_score</code></b>
-              (<code><a class="autorefs autorefs-internal" title="axion.schema.MetricScore(**data) (axion.schema.MetricScore)" href="../schema/#axion.schema.MetricScore">MetricScore</a></code>)
+              (<code><a class="autorefs autorefs-internal" title="axion.schema.MetricScore" href="../schema/#axion.schema.MetricScore">MetricScore</a></code>)
           –
           <div class="doc-md-description">
             <p>The MetricScore to analyze</p>
@@ -4527,7 +5016,12 @@ all metrics are processed.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="typing.List">List</span>[<span title="axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</span>]</code>
+              <code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a>]</code>
           –
           <div class="doc-md-description">
             <p>List of ExtractedIssue objects found in this MetricScore.</p>
@@ -4544,10 +5038,22 @@ all metrics are processed.</p>
 
 
 <h3 id="axion.reporting.issue_extractor.IssueExtractor.to_llm_input" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">to_llm_input</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LLMSummaryInput</span></code>
+            <span class="doc doc-object-name doc-function-name">to_llm_input</span>
+
 
 <a href="#axion.reporting.issue_extractor.IssueExtractor.to_llm_input" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">to_llm_input</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
 
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.LLMSummaryInput
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.LLMSummaryInput">LLMSummaryInput</a></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4558,7 +5064,12 @@ all metrics are processed.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>result</code></b>
-              (<code><span title="axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</span></code>)
+              (<code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></code>)
           –
           <div class="doc-md-description">
             <p>The IssueExtractionResult to convert</p>
@@ -4580,7 +5091,12 @@ all metrics are processed.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="axion.reporting.issue_extractor.LLMSummaryInput">LLMSummaryInput</span></code>
+              <code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.LLMSummaryInput
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.LLMSummaryInput">LLMSummaryInput</a></code>
           –
           <div class="doc-md-description">
             <p>LLMSummaryInput suitable for LLM processing.</p>
@@ -4597,10 +5113,17 @@ all metrics are processed.</p>
 
 
 <h3 id="axion.reporting.issue_extractor.IssueExtractor.to_prompt_text" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">to_prompt_text</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span></code>
+            <span class="doc doc-object-name doc-function-name">to_prompt_text</span>
+
 
 <a href="#axion.reporting.issue_extractor.IssueExtractor.to_prompt_text" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">to_prompt_text</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
 
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="str">str</span></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4611,7 +5134,12 @@ all metrics are processed.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>result</code></b>
-              (<code><span title="axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</span></code>)
+              (<code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></code>)
           –
           <div class="doc-md-description">
             <p>The IssueExtractionResult to convert</p>
@@ -4650,10 +5178,17 @@ all metrics are processed.</p>
 
 
 <h3 id="axion.reporting.issue_extractor.IssueExtractor.to_grouped_prompt_text" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">to_grouped_prompt_text</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LLMRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_groups</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">max_examples_per_group</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span></code>
+            <span class="doc doc-object-name doc-function-name">to_grouped_prompt_text</span>
+
 
 <a href="#axion.reporting.issue_extractor.IssueExtractor.to_grouped_prompt_text" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">to_grouped_prompt_text</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
 
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion._core.schema.LLMRunnable">LLMRunnable</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_groups</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">max_examples_per_group</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="str">str</span></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4666,7 +5201,12 @@ reducing context size while preserving signal quality.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>result</code></b>
-              (<code><span title="axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</span></code>)
+              (<code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></code>)
           –
           <div class="doc-md-description">
             <p>The IssueExtractionResult to convert</p>
@@ -4725,14 +5265,21 @@ reducing context size while preserving signal quality.</p>
 
 
 <h3 id="axion.reporting.issue_extractor.IssueExtractor.to_grouped_prompt_text_async" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">to_grouped_prompt_text_async</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LLMRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_groups</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">max_examples_per_group</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span></code>
+            <span class="doc doc-object-name doc-function-name">to_grouped_prompt_text_async</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 <a href="#axion.reporting.issue_extractor.IssueExtractor.to_grouped_prompt_text_async" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">to_grouped_prompt_text_async</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
 
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion._core.schema.LLMRunnable">LLMRunnable</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_groups</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">max_examples_per_group</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="str">str</span></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4745,7 +5292,12 @@ reducing context size while preserving signal quality.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>result</code></b>
-              (<code><span title="axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</span></code>)
+              (<code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></code>)
           –
           <div class="doc-md-description">
             <p>The IssueExtractionResult to convert</p>
@@ -4804,14 +5356,26 @@ reducing context size while preserving signal quality.</p>
 
 
 <h3 id="axion.reporting.issue_extractor.IssueExtractor.summarize" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">summarize</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">LLMRunnable</span><span class="p">,</span> <span class="n">prompt_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IssueSummary</span></code>
+            <span class="doc doc-object-name doc-function-name">summarize</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 <a href="#axion.reporting.issue_extractor.IssueExtractor.summarize" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">summarize</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
 
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n"><span title="axion._core.schema.LLMRunnable">LLMRunnable</span></span><span class="p">,</span> <span class="n">prompt_template</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueSummary
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueSummary">IssueSummary</a></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4824,7 +5388,12 @@ including failure categories, root causes, and recommendations.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>result</code></b>
-              (<code><span title="axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</span></code>)
+              (<code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></code>)
           –
           <div class="doc-md-description">
             <p>The IssueExtractionResult to summarize</p>
@@ -4865,7 +5434,12 @@ The template should include {overview} and {issue_data} placeholders.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="axion.reporting.issue_extractor.IssueSummary">IssueSummary</span></code>
+              <code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueSummary
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueSummary">IssueSummary</a></code>
           –
           <div class="doc-md-description">
             <p>IssueSummary containing the LLM's analysis.</p>
@@ -4912,10 +5486,22 @@ The template should include {overview} and {issue_data} placeholders.</p>
 
 
 <h3 id="axion.reporting.issue_extractor.IssueExtractor.summarize_sync" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">summarize_sync</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n">LLMRunnable</span><span class="p">,</span> <span class="n">prompt_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IssueSummary</span></code>
+            <span class="doc doc-object-name doc-function-name">summarize_sync</span>
+
 
 <a href="#axion.reporting.issue_extractor.IssueExtractor.summarize_sync" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">summarize_sync</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
 
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></span><span class="p">,</span> <span class="n">llm</span><span class="p">:</span> <span class="n"><span title="axion._core.schema.LLMRunnable">LLMRunnable</span></span><span class="p">,</span> <span class="n">prompt_template</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_issues</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueSummary
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueSummary">IssueSummary</a></span>
+</span></code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -4927,7 +5513,12 @@ The template should include {overview} and {issue_data} placeholders.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>result</code></b>
-              (<code><span title="axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</span></code>)
+              (<code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueExtractionResult
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueExtractionResult">IssueExtractionResult</a></code>)
           –
           <div class="doc-md-description">
             <p>The IssueExtractionResult to summarize</p>
@@ -4967,7 +5558,12 @@ The template should include {overview} and {issue_data} placeholders.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="axion.reporting.issue_extractor.IssueSummary">IssueSummary</span></code>
+              <code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.IssueSummary
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.IssueSummary">IssueSummary</a></code>
           –
           <div class="doc-md-description">
             <p>IssueSummary containing the LLM's analysis.</p>
@@ -4993,283 +5589,1015 @@ The template should include {overview} and {issue_data} placeholders.</p>
 
     </div>
 
-</div><h3 id="constructor-parameters">Constructor Parameters<a class="headerlink" href="#constructor-parameters" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>score_threshold</code></td>
-<td><code>float</code></td>
-<td><code>0.0</code></td>
-<td>Signals with scores at or below this threshold are considered issues</td>
-</tr>
-<tr>
-<td><code>include_nan</code></td>
-<td><code>bool</code></td>
-<td><code>False</code></td>
-<td>Whether to include signals with NaN scores as issues</td>
-</tr>
-<tr>
-<td><code>include_context_fields</code></td>
-<td><code>List[str]</code></td>
-<td><code>['query', 'actual_output', 'expected_output']</code></td>
-<td>Fields to include from test case context</td>
-</tr>
-<tr>
-<td><code>metric_filters</code></td>
-<td><code>List[str]</code></td>
-<td><code>None</code></td>
-<td>Only extract from these metrics. If None, all metrics are processed</td>
-</tr>
-<tr>
-<td><code>max_issues</code></td>
-<td><code>int</code></td>
-<td><code>None</code></td>
-<td>Hard limit on number of issues to return</td>
-</tr>
-<tr>
-<td><code>sample_rate</code></td>
-<td><code>float</code></td>
-<td><code>None</code></td>
-<td>Deterministic sampling rate (0.0-1.0) by test_case_id</td>
-</tr>
-</tbody>
-</table>
-<h3 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h3>
-<h4 id="extract_from_evaluation">extract_from_evaluation<a class="headerlink" href="#extract_from_evaluation" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">extract_from_evaluation</span><span class="p">(</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="bp">self</span><span class="p">,</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">result</span><span class="p">:</span> <span class="n">EvaluationResult</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IssueExtractionResult</span>
-</span></code></pre></div>
-<p>Extract all issues from an evaluation result.</p>
-<p><strong>Parameters:</strong>
-- <code>result</code>: The EvaluationResult from running an evaluation</p>
-<p><strong>Returns:</strong> <code>IssueExtractionResult</code> containing all extracted issues</p>
-<hr />
-<h4 id="to_prompt_text">to_prompt_text<a class="headerlink" href="#to_prompt_text" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">to_prompt_text</span><span class="p">(</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="bp">self</span><span class="p">,</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
-</span></code></pre></div>
-<p>Generate a text prompt for LLM-based issue summarization.</p>
-<p><strong>Parameters:</strong>
-- <code>result</code>: The extraction result to convert
-- <code>max_issues</code>: Maximum number of detailed issues to include</p>
-<p><strong>Returns:</strong> Formatted markdown prompt text</p>
-<hr />
-<h4 id="to_grouped_prompt_text">to_grouped_prompt_text<a class="headerlink" href="#to_grouped_prompt_text" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">to_grouped_prompt_text</span><span class="p">(</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="bp">self</span><span class="p">,</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">llm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LLMRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">max_groups</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">max_examples_per_group</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
-</span></code></pre></div>
-<p>Generate a grouped prompt with optional LLM summarization.</p>
-<p>Groups similar issues together and shows representative examples, reducing context size while preserving signal quality.</p>
-<p><strong>Parameters:</strong>
-- <code>result</code>: The extraction result to convert
-- <code>llm</code>: Optional LLM for generating group summaries
-- <code>max_groups</code>: Maximum number of issue groups to include
-- <code>max_examples_per_group</code>: Representative examples per group</p>
-<p><strong>Returns:</strong> Formatted prompt text with grouped issues</p>
-<hr />
-<h4 id="to_grouped_prompt_text_async">to_grouped_prompt_text_async<a class="headerlink" href="#to_grouped_prompt_text_async" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">to_grouped_prompt_text_async</span><span class="p">(</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="bp">self</span><span class="p">,</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">llm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LLMRunnable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">max_groups</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">max_examples_per_group</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
-</span></code></pre></div>
-<p>Async version of <code>to_grouped_prompt_text</code>. Use this when working with async LLMs.</p>
-<hr />
-<h4 id="summarize">summarize<a class="headerlink" href="#summarize" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">summarize</span><span class="p">(</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="bp">self</span><span class="p">,</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">llm</span><span class="p">:</span> <span class="n">LLMRunnable</span><span class="p">,</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">prompt_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IssueSummary</span>
-</span></code></pre></div>
-<p>Generate a complete LLM-powered summary of evaluation issues.</p>
-<p><strong>Parameters:</strong>
-- <code>result</code>: The IssueExtractionResult to summarize
-- <code>llm</code>: The LLM to use for generating the summary (must have <code>acomplete</code> method)
-- <code>prompt_template</code>: Custom prompt template. If None, uses <code>DEFAULT_SUMMARY_PROMPT</code>. Template must include <code>{overview}</code> and <code>{issue_data}</code> placeholders.
-- <code>max_issues</code>: Maximum number of issues to include in the prompt (default 100)</p>
-<p><strong>Returns:</strong> <code>IssueSummary</code> containing the LLM's analysis</p>
-<p><strong>Example:</strong>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">IssueExtractor</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.llm_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMRegistry</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">extractor</span> <span class="o">=</span> <span class="n">IssueExtractor</span><span class="p">()</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">issues</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">extract_from_evaluation</span><span class="p">(</span><span class="n">eval_result</span><span class="p">)</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">reg</span> <span class="o">=</span> <span class="n">LLMRegistry</span><span class="p">(</span><span class="s1">&#39;anthropic&#39;</span><span class="p">)</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">llm</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">get_llm</span><span class="p">(</span><span class="s1">&#39;claude-sonnet-4-20250514&#39;</span><span class="p">)</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="n">summary</span> <span class="o">=</span> <span class="k">await</span> <span class="n">extractor</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">issues</span><span class="p">,</span> <span class="n">llm</span><span class="o">=</span><span class="n">llm</span><span class="p">)</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-</span></code></pre></div></p>
-<hr />
-<h4 id="summarize_sync">summarize_sync<a class="headerlink" href="#summarize_sync" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">summarize_sync</span><span class="p">(</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="bp">self</span><span class="p">,</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">result</span><span class="p">:</span> <span class="n">IssueExtractionResult</span><span class="p">,</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">llm</span><span class="p">:</span> <span class="n">LLMRunnable</span><span class="p">,</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">prompt_template</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">max_issues</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IssueSummary</span>
-</span></code></pre></div>
-<p>Synchronous version of <code>summarize()</code>. Use this in non-async contexts.</p>
-<p><strong>Parameters:</strong> Same as <code>summarize()</code></p>
-<p><strong>Returns:</strong> <code>IssueSummary</code> containing the LLM's analysis</p>
-<hr />
+</div><hr />
 <h2 id="signaladapterregistry">SignalAdapterRegistry<a class="headerlink" href="#signaladapterregistry" title="Permanent link">&para;</a></h2>
-<p>Registry for metric signal adapters. Provides centralized registration and lookup of adapters.</p>
-<div class="admonition tip">
-<p class="admonition-title">Best Practice</p>
-<p>Define custom adapters in the same file as your metric class. This keeps the signal schema and adapter definition in sync. See the <a href="../../guides/issue-extraction/#register-a-custom-adapter">guide</a> for a complete example.</p>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="axion.reporting.issue_extractor.SignalAdapterRegistry" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">axion.reporting.issue_extractor.SignalAdapterRegistry</span>
+
+
+<a href="#axion.reporting.issue_extractor.SignalAdapterRegistry" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Registry for MetricSignalAdapter instances.</p>
+<p>Provides a centralized way to register and retrieve adapters for different metrics.
+Users can register custom adapters for their own metrics using the decorator or
+direct registration methods.</p>
+
+
+<details class="example-using-decorator" open>
+  <summary>Example using decorator</summary>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@SignalAdapterRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;my_custom_metric&#39;</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_adapter</span><span class="p">():</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">return</span> <span class="n">MetricSignalAdapter</span><span class="p">(</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="n">metric_key</span><span class="o">=</span><span class="s1">&#39;my_custom_metric&#39;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="n">headline_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;passed&#39;</span><span class="p">],</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="n">issue_values</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;passed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">]},</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">context_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reason&#39;</span><span class="p">],</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="p">)</span>
+</span></code></pre></div>
+</details>
+
+<details class="example-using-direct-registration" open>
+  <summary>Example using direct registration</summary>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SignalAdapterRegistry</span><span class="o">.</span><span class="n">register_adapter</span><span class="p">(</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s1">&#39;my_custom_metric&#39;</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">MetricSignalAdapter</span><span class="p">(</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="n">metric_key</span><span class="o">=</span><span class="s1">&#39;my_custom_metric&#39;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="n">headline_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;passed&#39;</span><span class="p">],</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="n">issue_values</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;passed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">]},</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">context_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reason&#39;</span><span class="p">],</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span>
+</span></code></pre></div>
+</details>
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="axion.reporting.issue_extractor.SignalAdapterRegistry.register" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">register</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.register" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">register</span><span class="p">(</span><span class="n">metric_key</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">)</span>
+</span></code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Decorator to register a signal adapter for a metric.</p>
+<p>The decorated function should return a MetricSignalAdapter instance.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>metric_key</code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The metric identifier (e.g., 'faithfulness', 'my_custom_metric')</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          –
+          <div class="doc-md-description">
+            <p>Decorator function</p>
+          </div>
+        </li>
+    </ul>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@SignalAdapterRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;custom_metric&#39;</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">custom_adapter</span><span class="p">():</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">return</span> <span class="n">MetricSignalAdapter</span><span class="p">(</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="n">metric_key</span><span class="o">=</span><span class="s1">&#39;custom_metric&#39;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="n">headline_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;is_valid&#39;</span><span class="p">],</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="n">issue_values</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;is_valid&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">]},</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">context_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reason&#39;</span><span class="p">],</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="p">)</span>
+</span></code></pre></div>
+</details>
+
+    </div>
+
 </div>
-<h3 id="class-methods">Class Methods<a class="headerlink" href="#class-methods" title="Permanent link">&para;</a></h3>
-<h4 id="register">register<a class="headerlink" href="#register" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nd">@classmethod</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="axion.reporting.issue_extractor.SignalAdapterRegistry.register_adapter" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">register_adapter</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.register_adapter" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">register_adapter</span><span class="p">(</span><span class="n">metric_key</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">adapter</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.MetricSignalAdapter
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.MetricSignalAdapter">MetricSignalAdapter</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
-<p>Decorator to register a signal adapter for a metric.</p>
-<p><strong>Parameters:</strong>
-- <code>metric_key</code>: The metric identifier (case-insensitive, spaces/hyphens normalized)</p>
-<p><strong>Example:</strong>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nd">@SignalAdapterRegistry</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;my_metric&#39;</span><span class="p">)</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_adapter</span><span class="p">():</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="k">return</span> <span class="n">MetricSignalAdapter</span><span class="p">(</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>        <span class="n">metric_key</span><span class="o">=</span><span class="s1">&#39;my_metric&#39;</span><span class="p">,</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>        <span class="n">headline_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;passed&#39;</span><span class="p">],</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>        <span class="n">issue_values</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;passed&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">]},</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>        <span class="n">context_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reason&#39;</span><span class="p">],</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="p">)</span>
-</span></code></pre></div></p>
-<hr />
-<h4 id="register_adapter">register_adapter<a class="headerlink" href="#register_adapter" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nd">@classmethod</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">register_adapter</span><span class="p">(</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="bp">cls</span><span class="p">,</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="n">adapter</span><span class="p">:</span> <span class="n">MetricSignalAdapter</span><span class="p">,</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+
+    <div class="doc doc-contents ">
+
+        <p>Directly register a MetricSignalAdapter for a metric.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>metric_key</code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The metric identifier</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+            <b><code>adapter</code></b>
+              (<code><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.MetricSignalAdapter
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.MetricSignalAdapter">MetricSignalAdapter</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The MetricSignalAdapter instance</p>
+          </div>
+        </li>
+    </ul>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SignalAdapterRegistry</span><span class="o">.</span><span class="n">register_adapter</span><span class="p">(</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s1">&#39;my_metric&#39;</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">MetricSignalAdapter</span><span class="p">(</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="n">metric_key</span><span class="o">=</span><span class="s1">&#39;my_metric&#39;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="n">headline_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">],</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="n">issue_values</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">]},</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">context_signals</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;explanation&#39;</span><span class="p">],</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="p">)</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span>
 </span></code></pre></div>
-<p>Directly register a MetricSignalAdapter for a metric.</p>
-<p><strong>Parameters:</strong>
-- <code>metric_key</code>: The metric identifier
-- <code>adapter</code>: The MetricSignalAdapter instance</p>
-<hr />
-<h4 id="get">get<a class="headerlink" href="#get" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nd">@classmethod</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MetricSignalAdapter</span><span class="p">]</span>
+</details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="axion.reporting.issue_extractor.SignalAdapterRegistry.get" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">get</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.get" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get</span><span class="p">(</span><span class="n">metric_name</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.MetricSignalAdapter
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.MetricSignalAdapter">MetricSignalAdapter</a></span><span class="p">]</span>
 </span></code></pre></div>
-<p>Get the adapter for a metric by name.</p>
-<p><strong>Parameters:</strong>
-- <code>metric_name</code>: The metric name (case-insensitive, spaces/hyphens normalized)</p>
-<p><strong>Returns:</strong> MetricSignalAdapter if found, None otherwise</p>
-<hr />
-<h4 id="list_adapters">list_adapters<a class="headerlink" href="#list_adapters" title="Permanent link">&para;</a></h4>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nd">@classmethod</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">list_adapters</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+    <div class="doc doc-contents ">
+
+        <p>Get the adapter for a metric by name.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+            <b><code>metric_name</code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The metric name (case-insensitive, spaces/hyphens normalized)</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.MetricSignalAdapter
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.MetricSignalAdapter">MetricSignalAdapter</a>]</code>
+          –
+          <div class="doc-md-description">
+            <p>MetricSignalAdapter if found, None otherwise.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="axion.reporting.issue_extractor.SignalAdapterRegistry.list_adapters" class="doc doc-heading">
+            <span class="doc doc-object-name doc-function-name">list_adapters</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.SignalAdapterRegistry.list_adapters" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">list_adapters</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span>
 </span></code></pre></div>
-<p>List all registered adapter keys.</p>
-<p><strong>Returns:</strong> List of registered metric keys</p>
-<hr />
+
+    <div class="doc doc-contents ">
+
+        <p>List all registered adapter keys.</p>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="typing.List">List</span>[<span title="str">str</span>]</code>
+          –
+          <div class="doc-md-description">
+            <p>List of registered metric keys.</p>
+          </div>
+        </li>
+    </ul>
+
+
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><hr />
 <h2 id="data-classes">Data Classes<a class="headerlink" href="#data-classes" title="Permanent link">&para;</a></h2>
 <h3 id="extractedissue">ExtractedIssue<a class="headerlink" href="#extractedissue" title="Permanent link">&para;</a></h3>
-<p>Represents a single low-score signal extracted from metric evaluation results.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nd">@dataclass</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">ExtractedIssue</span><span class="p">:</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="n">test_case_id</span><span class="p">:</span> <span class="nb">str</span>           <span class="c1"># Unique identifier for the test case</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span>            <span class="c1"># Name of the metric that produced this signal</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="n">signal_group</span><span class="p">:</span> <span class="nb">str</span>           <span class="c1"># Group name (e.g., &quot;claim_0&quot;, &quot;aspect_Coverage&quot;)</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    <span class="n">signal_name</span><span class="p">:</span> <span class="nb">str</span>            <span class="c1"># Name of the signal (e.g., &quot;is_covered&quot;)</span>
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="n">value</span><span class="p">:</span> <span class="n">Any</span>                  <span class="c1"># Original value (False, &quot;CONTRADICTORY&quot;, etc.)</span>
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="n">score</span><span class="p">:</span> <span class="nb">float</span>                <span class="c1"># Numeric score (0.0 for failures)</span>
-</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>  <span class="c1"># Optional description of the signal</span>
-</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    <span class="n">reasoning</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>    <span class="c1"># LLM reasoning from sibling signal</span>
-</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    <span class="n">item_context</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># Context from test case</span>
-</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="n">source_path</span><span class="p">:</span> <span class="nb">str</span>            <span class="c1"># Path for debugging</span>
-</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>    <span class="n">raw_signal</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># Original signal dict</span>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="axion.reporting.issue_extractor.ExtractedIssue" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">axion.reporting.issue_extractor.ExtractedIssue</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.ExtractedIssue" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">ExtractedIssue</span><span class="p">(</span><span class="n">test_case_id</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">signal_group</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">signal_name</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="n"><span title="float">float</span></span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">reasoning</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">item_context</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="dict">dict</span></span><span class="p">(),</span> <span class="n">source_path</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">raw_signal</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="dict">dict</span></span><span class="p">())</span>
 </span></code></pre></div>
-<hr />
-<h3 id="issueextractionresult">IssueExtractionResult<a class="headerlink" href="#issueextractionresult" title="Permanent link">&para;</a></h3>
-<p>Aggregated result of issue extraction from an evaluation run.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nd">@dataclass</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">IssueExtractionResult</span><span class="p">:</span>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="n">run_id</span><span class="p">:</span> <span class="nb">str</span>                                    <span class="c1"># Evaluation run ID</span>
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    <span class="n">evaluation_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                 <span class="c1"># Name of the evaluation</span>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    <span class="n">total_test_cases</span><span class="p">:</span> <span class="nb">int</span>                          <span class="c1"># Total test cases analyzed</span>
-</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    <span class="n">total_signals_analyzed</span><span class="p">:</span> <span class="nb">int</span>                    <span class="c1"># Total signals analyzed</span>
-</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>    <span class="n">issues_found</span><span class="p">:</span> <span class="nb">int</span>                              <span class="c1"># Total issues found</span>
-</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>    <span class="n">issues_by_metric</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedIssue</span><span class="p">]]</span>  <span class="c1"># Issues by metric name</span>
-</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>    <span class="n">issues_by_type</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedIssue</span><span class="p">]]</span>    <span class="c1"># Issues by signal type</span>
-</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>    <span class="n">all_issues</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedIssue</span><span class="p">]</span>               <span class="c1"># Flat list of all issues</span>
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Represents a single low-score signal extracted from metric evaluation results.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.test_case_id">test_case_id</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Unique identifier for the test case</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.metric_name">metric_name</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Name of the metric that produced this signal</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.signal_group">signal_group</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Group name for the signal (e.g., "claim_0", "aspect_Coverage")</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.signal_name">signal_name</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Name of the signal (e.g., "is_covered", "faithfulness_verdict")</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.value">value</span></code></b>
+              (<code><span title="typing.Any">Any</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Original value (False, "CONTRADICTORY", etc.)</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.score">score</span></code></b>
+              (<code><span title="float">float</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Numeric score (0.0 for failures)</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.description">description</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Optional description of the signal</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.reasoning">reasoning</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>LLM reasoning from sibling signal if available</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.item_context">item_context</span></code></b>
+              (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Context from the test case (query, actual_output, etc.)</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.source_path">source_path</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Path for debugging (e.g., "results[42].score_results[0].signals.claim_0")</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.ExtractedIssue.raw_signal">raw_signal</span></code></b>
+              (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Original signal dict for debugging</p>
+          </div>
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="issueextractionresult">IssueExtractionResult<a class="headerlink" href="#issueextractionresult" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="axion.reporting.issue_extractor.IssueExtractionResult" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">axion.reporting.issue_extractor.IssueExtractionResult</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.IssueExtractionResult" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">IssueExtractionResult</span><span class="p">(</span><span class="n">run_id</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">evaluation_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span> <span class="n">total_test_cases</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">total_signals_analyzed</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">issues_found</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">issues_by_metric</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a></span><span class="p">]],</span> <span class="n">issues_by_type</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a></span><span class="p">]],</span> <span class="n">all_issues</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a></span><span class="p">])</span>
 </span></code></pre></div>
-<hr />
-<h3 id="issuegroup">IssueGroup<a class="headerlink" href="#issuegroup" title="Permanent link">&para;</a></h3>
-<p>Represents a group of similar issues for summarization.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nd">@dataclass</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">IssueGroup</span><span class="p">:</span>
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span>                          <span class="c1"># The metric that produced these issues</span>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">signal_name</span><span class="p">:</span> <span class="nb">str</span>                          <span class="c1"># The signal name</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="n">total_count</span><span class="p">:</span> <span class="nb">int</span>                          <span class="c1"># Total issues in this group</span>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>    <span class="n">unique_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>                  <span class="c1"># Unique failure values</span>
-</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>    <span class="n">representative_issues</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ExtractedIssue</span><span class="p">]</span>  <span class="c1"># Sample issues with context</span>
-</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>    <span class="n">affected_test_cases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>            <span class="c1"># List of affected test case IDs</span>
-</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>    <span class="n">llm_summary</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                <span class="c1"># Optional LLM-generated summary</span>
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Aggregated result of issue extraction from an evaluation run.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueExtractionResult.run_id">run_id</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Unique identifier for the evaluation run</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueExtractionResult.evaluation_name">evaluation_name</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Optional name of the evaluation</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueExtractionResult.total_test_cases">total_test_cases</span></code></b>
+              (<code><span title="int">int</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Total number of test cases analyzed</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueExtractionResult.total_signals_analyzed">total_signals_analyzed</span></code></b>
+              (<code><span title="int">int</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Total number of signals analyzed</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueExtractionResult.issues_found">issues_found</span></code></b>
+              (<code><span title="int">int</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Total number of issues found</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueExtractionResult.issues_by_metric">issues_by_metric</span></code></b>
+              (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a>]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Issues grouped by metric name</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueExtractionResult.issues_by_type">issues_by_type</span></code></b>
+              (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a>]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Issues grouped by signal name (issue type)</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueExtractionResult.all_issues">all_issues</span></code></b>
+              (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Flat list of all extracted issues</p>
+          </div>
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="issuegroup">IssueGroup<a class="headerlink" href="#issuegroup" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="axion.reporting.issue_extractor.IssueGroup" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">axion.reporting.issue_extractor.IssueGroup</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.IssueGroup" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">IssueGroup</span><span class="p">(</span><span class="n">metric_name</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">signal_name</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">total_count</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">unique_values</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span> <span class="n">representative_issues</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a></span><span class="p">],</span> <span class="n">affected_test_cases</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span> <span class="n">llm_summary</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 </span></code></pre></div>
-<hr />
-<h3 id="issuesummary">IssueSummary<a class="headerlink" href="#issuesummary" title="Permanent link">&para;</a></h3>
-<p>LLM-generated summary of evaluation issues, returned by <code>summarize()</code>.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nd">@dataclass</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">IssueSummary</span><span class="p">:</span>
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span>                    <span class="c1"># The full LLM-generated analysis</span>
-</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="n">prompt_used</span><span class="p">:</span> <span class="nb">str</span>             <span class="c1"># The prompt that was sent to the LLM</span>
-</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="n">issues_analyzed</span><span class="p">:</span> <span class="nb">int</span>         <span class="c1"># Number of issues included in analysis</span>
-</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="n">evaluation_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>  <span class="c1"># Name of the evaluation</span>
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Represents a group of similar issues for summarization.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueGroup.metric_name">metric_name</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The metric that produced these issues</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueGroup.signal_name">signal_name</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The signal name (e.g., "is_covered", "faithfulness_verdict")</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueGroup.total_count">total_count</span></code></b>
+              (<code><span title="int">int</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Total number of issues in this group</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueGroup.unique_values">unique_values</span></code></b>
+              (<code><span title="typing.List">List</span>[<span title="typing.Any">Any</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Set of unique failure values</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueGroup.representative_issues">representative_issues</span></code></b>
+              (<code><span title="typing.List">List</span>[<a class="autorefs autorefs-internal" title="axion.reporting.issue_extractor.ExtractedIssue
+
+
+  
+      dataclass
+  " href="#axion.reporting.issue_extractor.ExtractedIssue">ExtractedIssue</a>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Sample issues with full context</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueGroup.affected_test_cases">affected_test_cases</span></code></b>
+              (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>List of affected test case IDs</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueGroup.llm_summary">llm_summary</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Optional LLM-generated summary of the pattern</p>
+          </div>
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="issuesummary">IssueSummary<a class="headerlink" href="#issuesummary" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="axion.reporting.issue_extractor.IssueSummary" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">axion.reporting.issue_extractor.IssueSummary</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.IssueSummary" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">IssueSummary</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">prompt_used</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">issues_analyzed</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">evaluation_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
 </span></code></pre></div>
-<hr />
-<h3 id="llmsummaryinput">LLMSummaryInput<a class="headerlink" href="#llmsummaryinput" title="Permanent link">&para;</a></h3>
-<p>Structured input for LLM-based issue summarization.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nd">@dataclass</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">LLMSummaryInput</span><span class="p">:</span>
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>    <span class="n">evaluation_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>        <span class="c1"># Name of the evaluation</span>
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>    <span class="n">total_test_cases</span><span class="p">:</span> <span class="nb">int</span>                 <span class="c1"># Total test cases analyzed</span>
-</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    <span class="n">issues_found</span><span class="p">:</span> <span class="nb">int</span>                     <span class="c1"># Total issues found</span>
-</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>    <span class="n">issues_by_metric</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>      <span class="c1"># Count by metric</span>
-</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="n">issues_by_type</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>        <span class="c1"># Count by issue type</span>
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>    <span class="n">detailed_issues</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="c1"># Detailed issue dicts</span>
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>LLM-generated summary of evaluation issues.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueSummary.text">text</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The full LLM-generated analysis and summary</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueSummary.prompt_used">prompt_used</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The prompt that was sent to the LLM</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueSummary.issues_analyzed">issues_analyzed</span></code></b>
+              (<code><span title="int">int</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Number of issues included in the analysis</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.IssueSummary.evaluation_name">evaluation_name</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Name of the evaluation that was analyzed</p>
+          </div>
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="llmsummaryinput">LLMSummaryInput<a class="headerlink" href="#llmsummaryinput" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="axion.reporting.issue_extractor.LLMSummaryInput" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">axion.reporting.issue_extractor.LLMSummaryInput</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.LLMSummaryInput" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">LLMSummaryInput</span><span class="p">(</span><span class="n">evaluation_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span> <span class="n">total_test_cases</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">issues_found</span><span class="p">:</span> <span class="n"><span title="int">int</span></span><span class="p">,</span> <span class="n">issues_by_metric</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="int">int</span></span><span class="p">],</span> <span class="n">issues_by_type</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="int">int</span></span><span class="p">],</span> <span class="n">detailed_issues</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">]])</span>
 </span></code></pre></div>
-<hr />
-<h3 id="metricsignaladapter">MetricSignalAdapter<a class="headerlink" href="#metricsignaladapter" title="Permanent link">&para;</a></h3>
-<p>Adapter defining how to extract issues from a specific metric's signals.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="nd">@dataclass</span>
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">MetricSignalAdapter</span><span class="p">:</span>
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>    <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span>                      <span class="c1"># Metric identifier</span>
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>    <span class="n">headline_signals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>          <span class="c1"># Signals that indicate pass/fail</span>
-</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>    <span class="n">issue_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span>   <span class="c1"># Signal name -&gt; failure values</span>
-</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>    <span class="n">context_signals</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>           <span class="c1"># Sibling signals for context</span>
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Structured input for LLM-based issue summarization.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.LLMSummaryInput.evaluation_name">evaluation_name</span></code></b>
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Name of the evaluation</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.LLMSummaryInput.total_test_cases">total_test_cases</span></code></b>
+              (<code><span title="int">int</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Total test cases analyzed</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.LLMSummaryInput.issues_found">issues_found</span></code></b>
+              (<code><span title="int">int</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Total issues found</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.LLMSummaryInput.issues_by_metric">issues_by_metric</span></code></b>
+              (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="int">int</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Summary counts by metric</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.LLMSummaryInput.issues_by_type">issues_by_type</span></code></b>
+              (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="int">int</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Summary counts by issue type</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.LLMSummaryInput.detailed_issues">detailed_issues</span></code></b>
+              (<code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>List of detailed issue dicts for the prompt</p>
+          </div>
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="metricsignaladapter">MetricSignalAdapter<a class="headerlink" href="#metricsignaladapter" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="axion.reporting.issue_extractor.MetricSignalAdapter" class="doc doc-heading">
+            <span class="doc doc-object-name doc-class-name">axion.reporting.issue_extractor.MetricSignalAdapter</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
+  </span>
+
+<a href="#axion.reporting.issue_extractor.MetricSignalAdapter" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">MetricSignalAdapter</span><span class="p">(</span><span class="n">metric_key</span><span class="p">:</span> <span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n">headline_signals</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">],</span> <span class="n">issue_values</span><span class="p">:</span> <span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">]],</span> <span class="n">context_signals</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">])</span>
 </span></code></pre></div>
-<hr />
+
+    <div class="doc doc-contents first">
+
+
+
+        <p>Adapter defining how to extract issues from a specific metric's signals.</p>
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.MetricSignalAdapter.metric_key">metric_key</span></code></b>
+              (<code><span title="str">str</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Metric identifier (e.g., "faithfulness")</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.MetricSignalAdapter.headline_signals">headline_signals</span></code></b>
+              (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Signals that indicate pass/fail</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.MetricSignalAdapter.issue_values">issue_values</span></code></b>
+              (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.List">List</span>[<span title="typing.Any">Any</span>]]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Mapping of signal names to failure values</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><span title="axion.reporting.issue_extractor.MetricSignalAdapter.context_signals">context_signals</span></code></b>
+              (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Sibling signals to include for context</p>
+          </div>
+        </li>
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div><hr />
 <h2 id="built-in-adapters">Built-in Adapters<a class="headerlink" href="#built-in-adapters" title="Permanent link">&para;</a></h2>
 <p>The following adapters are pre-registered:</p>
 <table>
@@ -5421,7 +6749,7 @@ The template should include {overview} and {issue_data} placeholders.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 11, 2026 19:02:03 UTC">February 11, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 20, 2026 19:49:22 UTC">February 20, 2026</span>
   </span>
 
     
@@ -5446,7 +6774,7 @@ The template should include {overview} and {issue_data} placeholders.</p>
     </span>
     <nav>
       
-        <a href="mailto:mevanoff24@gmail.com">mevanoff24</a>
+        <a href="mailto:mevanoff24@gmail.com">Matt Evanoff</a>
     </nav>
   </span>
 
@@ -5556,6 +6884,11 @@ The template should include {overview} and {issue_data} placeholders.</p>
       document.body.classList.toggle('toc-collapsed');
       const nowCollapsed = document.body.classList.contains('toc-collapsed');
       localStorage.setItem('axion-toc-collapsed', nowCollapsed);
+    });
+
+    // Collapse Example/Note details in API reference docs by default
+    document.querySelectorAll('.doc-contents details[open]').forEach(function(el) {
+      el.removeAttribute('open');
     });
 
     // Screenshot carousel
