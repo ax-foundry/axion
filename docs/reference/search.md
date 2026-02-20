@@ -1,3 +1,6 @@
+---
+icon: custom/globe
+---
 # Search API Reference
 
 Search and retrieval integrations for augmenting evaluation datasets.
@@ -36,11 +39,15 @@ from axion.search import GoogleRetriever, TavilyRetriever, YouRetriever
     options:
       show_root_heading: true
 
+---
+
 ## TavilyRetriever
 
 ::: axion.search.TavilyRetriever
     options:
       show_root_heading: true
+
+---
 
 ## YouRetriever
 

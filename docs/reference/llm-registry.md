@@ -1,3 +1,6 @@
+---
+icon: custom/cpu
+---
 # LLM Registry API Reference
 
 LLM model cost estimation and provider registry for 50+ models.

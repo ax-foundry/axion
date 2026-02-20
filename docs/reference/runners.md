@@ -1,3 +1,6 @@
+---
+icon: custom/play
+---
 # Runners API Reference
 
 Evaluation execution engines for parallel and batch processing.
@@ -37,11 +40,15 @@ from axion._core.cache import CacheManager, CacheConfig
     options:
       show_root_heading: true
 
+---
+
 ## EvaluationRunner
 
 ::: axion.runners.EvaluationRunner
     options:
       show_root_heading: true
+
+---
 
 ## EvaluationConfig
 
@@ -49,17 +56,23 @@ from axion._core.cache import CacheManager, CacheConfig
     options:
       show_root_heading: true
 
+---
+
 ## MetricRunner
 
 ::: axion.runners.MetricRunner
     options:
       show_root_heading: true
 
+---
+
 ## CacheManager
 
 ::: axion._core.cache.CacheManager
     options:
       show_root_heading: true
+
+---
 
 ## CacheConfig
 

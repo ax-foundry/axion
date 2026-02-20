@@ -1,3 +1,6 @@
+---
+icon: custom/search
+---
 # Search Integrations
 
 Axion provides retriever implementations for popular search APIs to integrate into evaluation pipelines.

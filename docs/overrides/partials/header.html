@@ -1,0 +1,90 @@
+{#-
+  Custom Axion header — dark topnav with section links.
+  Preserves all Material hooks: drawer, logo, palette, search, source.
+-#}
+{% set class = "md-header" %}
+{% if "navigation.tabs.sticky" in features %}
+  {% set class = class ~ " md-header--shadow md-header--lifted" %}
+{% elif "navigation.tabs" not in features %}
+  {% set class = class ~ " md-header--shadow" %}
+{% endif %}
+<header class="{{ class }}" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="{{ lang.t('header') }}">
+
+    {# 1 — Hamburger (mobile only) #}
+    <label class="md-header__button md-icon" for="__drawer">
+      {% set icon = config.theme.icon.menu or "material/menu" %}
+      {% include ".icons/" ~ icon ~ ".svg" %}
+    </label>
+
+    {# 2 — Logo + "Docs" text #}
+    <a href="{{ config.extra.homepage | d(nav.homepage.url, true) | url }}"
+       title="{{ config.site_name | e }}"
+       class="md-header__button md-logo"
+       aria-label="{{ config.site_name }}"
+       data-md-component="logo">
+      {% include "partials/logo.html" %}
+      <span class="md-header__logo-text">Docs</span>
+    </a>
+
+    {# 3 — Search + palette toggle (center) #}
+    <div class="md-header__search">
+      {% if config.theme.palette %}
+        {% if not config.theme.palette is mapping %}
+          {% include "partials/palette.html" %}
+        {% endif %}
+      {% endif %}
+      {% if not config.theme.palette is mapping %}
+        {% include "partials/javascripts/palette.html" %}
+      {% endif %}
+      {% if "search" in config.plugins or "material/search" in config.plugins %}
+        <label class="md-header__button md-icon" for="__search">
+          {% set icon = config.theme.icon.search or "material/magnify" %}
+          {% include ".icons/" ~ icon ~ ".svg" %}
+        </label>
+        {% include "partials/search.html" %}
+      {% endif %}
+    </div>
+
+    {# 4 — Section navigation links (desktop only, right-aligned) #}
+    {# Recursively find the first page URL in a nav tree (handles nested sections) #}
+    {% macro first_page_url(item) %}
+      {%- if item.url -%}
+        {{ item.url | url }}
+      {%- elif item.children -%}
+        {{ first_page_url(item.children | first) }}
+      {%- endif -%}
+    {% endmacro %}
+    {% set header_nav = ["Getting Started", "Guides", "Metric Registry", "Deep Dives", "Reference"] %}
+    <div class="md-header__sections">
+      {% for nav_item in nav %}
+        {% if nav_item.title in header_nav %}
+        <a href="{{ first_page_url(nav_item).strip() }}"
+           class="md-header__section-link{% if nav_item.active %} md-header__section-link--active{% endif %}">
+          {{ nav_item.title }}
+        </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {# 5 — Actions: alternate + repo #}
+    <div class="md-header__actions">
+      {% if config.extra.alternate %}
+        {% include "partials/alternate.html" %}
+      {% endif %}
+      {% if config.repo_url %}
+        <div class="md-header__source">
+          {% include "partials/source.html" %}
+        </div>
+      {% endif %}
+    </div>
+
+  </nav>
+
+  {# Sticky tabs (kept for Material compat) #}
+  {% if "navigation.tabs.sticky" in features %}
+    {% if "navigation.tabs" in features %}
+      {% include "partials/tabs.html" %}
+    {% endif %}
+  {% endif %}
+</header>

@@ -1,3 +1,6 @@
+---
+icon: custom/database
+---
 # Working with Datasets
 
 Axion uses `Dataset` and `DatasetItem` classes to manage evaluation data for both single-turn and multi-turn conversations.

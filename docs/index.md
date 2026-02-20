@@ -1,3 +1,6 @@
+---
+icon: custom/overview
+---
 # Axion
 
 <figure markdown="span">
@@ -5,11 +8,8 @@
 </figure>
 
 
-<div style="background: linear-gradient(135deg, #1E3A5F 0%, #0F2440 100%); padding: 24px; border-radius: 12px; color: white; margin: 20px 0;">
-
-<p style="margin: 0; font-size: 16px; line-height: 1.6;">
-<strong>White-box evaluation</strong>—Axion empowers builders with <strong>actionable signals</strong>, <strong>automated pipelines</strong>, and <strong>fully transparent metrics</strong>. See exactly why your agent succeeds or fails.
-</p>
+<div class="callout-dark" markdown="0">
+<p><strong>White-box evaluation</strong>—Axion empowers builders with <strong>actionable signals</strong>, <strong>automated pipelines</strong>, and <strong>fully transparent metrics</strong>. See exactly why your agent succeeds or fails.</p>
 </div>
 
 <div class="seatbelt-hero">
@@ -56,81 +56,47 @@
 
 ---
 
-<p align="center">
-<strong>White-Box Transparency</strong> |
-<strong>Modular by Design</strong> |
-<strong>Built for Scale</strong>
-</p>
+## Component Arsenal
 
-
-
-
-## **Component Arsenal**
-
-<table>
-<tr>
-<td width="50%" valign="top">
-
-<h3><strong>Core Primitives</strong></h3>
+<div class="feature-grid" markdown="0">
+<div class="feature-card">
+<h3>Core Primitives</h3>
 <strong>Structured Handlers & Tool Abstractions</strong>
-
 <p>Build composable toolchains with pre-defined base classes for structured LLMs, tools, and knowledge retrieval. Eliminate boilerplate, enforce consistency, and focus on your logic.</p>
-
-</td>
-<td width="50%" valign="top">
-
-<h3><strong>API Integrations</strong></h3>
+</div>
+<div class="feature-card">
+<h3>API Integrations</h3>
 <strong>Extensible Backend Access</strong>
-
 <p>Base API classes with built-in tracing and authentication support. Build your own API integrations with ease or extend the provided abstractions.</p>
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-<h3><strong>Evaluation Engine & Metric Suite</strong></h3>
+</div>
+<div class="feature-card">
+<h3>Evaluation Engine & Metric Suite</h3>
 <strong>Built-in & Open-Source Friendly</strong>
-
 <p>Define experiments, run batch evaluations, calibrate judges, and score using our native metrics—or integrate with open libraries for broader experimentation coverage.</p>
-
-</td>
-<td width="50%" valign="top">
-
-<h3><strong>RAG Toolbox</strong></h3>
+</div>
+<div class="feature-card">
+<h3>RAG Toolbox</h3>
 <strong>Everything Retrieval—Chunking, Grounding, Response Assembly</strong>
-
 <p>End-to-end support for grounding pipelines with modular components you can reuse across use cases.</p>
-
-</td>
-</tr>
-<tr>
-<td width="50%" valign="top">
-
-<h3><strong>Observability at Its Core</strong></h3>
+</div>
+<div class="feature-card">
+<h3>Observability at Its Core</h3>
 <strong>Trace, Log, Debug with Confidence</strong>
-
 <p>Native support for Logfire, structured logging, and run tracking gives you production-grade visibility across every step of your AI pipeline.</p>
-
-</td>
-<td width="50%" valign="top">
-
-<h3><strong>Designed for Scale</strong></h3>
+</div>
+<div class="feature-card">
+<h3>Designed for Scale</h3>
 <strong>Async-Native, Pydantic-Validated, Error Resilient</strong>
-
 <p>Async support everywhere. Predictable, structured I/O with Pydantic validation. Robust error handling out-of-the-box.</p>
-
-</td>
-</tr>
-</table>
+</div>
+</div>
 
 ---
 
 ## **Hierarchical Scoring**
 
-<div style="background: rgba(30, 58, 95, 0.1); border-left: 3px solid #1E3A5F; padding: 16px; margin: 20px 0;">
-<strong>What sets Axion apart:</strong> Our scoring framework is hierarchical by design—moving from a single overall score down into layered sub-scores. This delivers a <em>diagnostic map</em> of quality, not just a number.
-</div>
+!!! tip "What sets Axion apart"
+    Our scoring framework is hierarchical by design—moving from a single overall score down into layered sub-scores. This delivers a *diagnostic map* of quality, not just a number.
 
 ```
                 ┌─────────────────┐
@@ -193,23 +159,6 @@ results.to_scorecard()
 ```
 
 [Learn more about Hierarchical Scoring →](guides/hierarchical-scoring.md)
-
----
-
-<div align="center" markdown="1">
-
-### **Think of Axion as your Lego set for AI systems:**
-
-
-
-<div align="center" markdown="1">
-
-[![Modular](https://img.shields.io/badge/-Modular-1E3A5F?style=for-the-badge)](#)
-[![Composable](https://img.shields.io/badge/-Composable-0F2440?style=for-the-badge)](#)
-[![Production Ready](https://img.shields.io/badge/-Production%20Ready-2D5F8A?style=for-the-badge)](#)
-[![Open Source](https://img.shields.io/badge/-Open%20Source-6B9DC2?style=for-the-badge)](#)
-
-</div>
 
 ---
 

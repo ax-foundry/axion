@@ -1,3 +1,6 @@
+---
+icon: custom/code
+---
 # Creating Custom Metrics
 
 Axion provides a flexible framework for creating custom evaluation metrics. Whether you need an LLM to judge nuanced quality, a deterministic algorithm for fast checks, or a hybrid that combines both — every metric inherits from `BaseMetric` and plugs directly into the evaluation ecosystem.

@@ -1,3 +1,6 @@
+---
+icon: custom/sliders
+---
 # Metrics API Reference
 
 Evaluation metrics for AI agents — composable, LLM-powered and heuristic scoring.

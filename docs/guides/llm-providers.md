@@ -1,3 +1,6 @@
+---
+icon: custom/cpu
+---
 # LLM Providers
 
 Axion provides a unified interface for working with multiple LLM providers through the `LLMRegistry`. This guide covers using built-in providers and registering custom ones.

@@ -1,3 +1,6 @@
+---
+icon: custom/refresh
+---
 # Synthetic API Reference
 
 Synthetic data generation for building evaluation datasets from documents.
@@ -17,6 +20,8 @@ from axion.synthetic import DocumentQAGenerator, GenerationParams
 ::: axion.synthetic.DocumentQAGenerator
     options:
       show_root_heading: true
+
+---
 
 ## GenerationParams
 

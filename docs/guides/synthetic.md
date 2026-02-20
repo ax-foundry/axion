@@ -1,3 +1,6 @@
+---
+icon: custom/refresh
+---
 # Synthetic Data Generation
 
 Generate evaluation datasets from documents or sessions to scale your test coverage.

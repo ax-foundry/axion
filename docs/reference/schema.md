@@ -1,3 +1,6 @@
+---
+icon: custom/schema
+---
 # Schema API Reference
 
 Result types and evaluation schemas returned by runners and metrics.
@@ -24,11 +27,15 @@ from axion.schema import (
     options:
       show_root_heading: true
 
+---
+
 ## EvaluationResult
 
 ::: axion.schema.EvaluationResult
     options:
       show_root_heading: true
+
+---
 
 ## TestResult
 
@@ -36,11 +43,15 @@ from axion.schema import (
     options:
       show_root_heading: true
 
+---
+
 ## NormalizedDataFrames
 
 ::: axion.schema.NormalizedDataFrames
     options:
       show_root_heading: true
+
+---
 
 ## ErrorConfig
 

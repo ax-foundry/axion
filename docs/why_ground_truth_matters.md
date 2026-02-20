@@ -1,3 +1,6 @@
+---
+icon: custom/check-square
+---
 # Why Ground Truth Matters
 
 <div class="seatbelt-hero" markdown="0">
@@ -118,8 +121,8 @@ graph TD
 !!! warning "Why LLM-Only Evaluation Fails"
     LLMs are non-deterministic, and LLM judges can disagree—even on the same answer. Without ground truth, evaluations drift toward subjective heuristics like fluency, verbosity, or "sounds right."
 
-<div style="background: linear-gradient(135deg, #1E3A5F 0%, #0F2440 100%); padding: 24px; border-radius: 8px; color: white; margin: 20px 0;" markdown="0">
-<p style="margin: 0; font-size: 14px; line-height: 1.7;">Ground truth is the only way to anchor evaluation to objective, expected outcomes. Without it, you're measuring style. With it, you're measuring substance.</p>
+<div class="callout-dark" markdown="0">
+<p>Ground truth is the only way to anchor evaluation to objective, expected outcomes. Without it, you're measuring style. With it, you're measuring substance.</p>
 </div>
 
 [Evaluation Flywheel :octicons-arrow-right-24:](evaluation_flywheel.md){ .md-button .md-button--primary }

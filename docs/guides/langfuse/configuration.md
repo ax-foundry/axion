@@ -1,3 +1,6 @@
+---
+icon: custom/settings
+---
 # Langfuse Configuration
 
 This guide covers all setup and configuration options for integrating Axion with Langfuse.

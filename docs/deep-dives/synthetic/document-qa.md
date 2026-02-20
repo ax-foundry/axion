@@ -1,3 +1,6 @@
+---
+icon: custom/file-code
+---
 # Document Synthetic QA Generation
 
 The Synthetic QA Generation System provides a user flexible solution for creating question-answer pairs from unstructured documents. This system enables scalable generation of evaluation datasets for RAG models and other conversational systems through an intelligent, multi-stage workflow with built-in quality validation.

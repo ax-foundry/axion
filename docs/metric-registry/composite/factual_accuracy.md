@@ -1,3 +1,6 @@
+---
+icon: custom/sliders
+---
 # Factual Accuracy
 
 <div style="border-left: 4px solid #1E3A5F; padding-left: 1rem; margin-bottom: 1.5rem;">

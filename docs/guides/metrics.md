@@ -1,3 +1,6 @@
+---
+icon: custom/sliders
+---
 # Metrics & Evaluation
 
 Axion provides 30+ metrics for evaluating AI agents across multiple dimensions.

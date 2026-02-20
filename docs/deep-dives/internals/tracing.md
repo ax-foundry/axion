@@ -1,3 +1,6 @@
+---
+icon: custom/analytics
+---
 # Axion Tracing System
 
 Simple observability for AI applications with automatic context management. Supports multiple backends including Logfire (OpenTelemetry), Langfuse, and Opik (Comet) for LLM-specific observability.

@@ -157,6 +157,9 @@ plugins:
             show_signature: true
             show_signature_annotations: true
             signature_crossrefs: true
+            # Signature formatting — one param per line
+            separate_signature: true
+            line_length: 60
             # Better organization
             merge_init_into_class: true
             docstring_section_style: list

@@ -1,3 +1,6 @@
+---
+icon: custom/calibration
+---
 # CaliberHQ
 
 CaliberHQ is a toolkit for calibrating **LLM-as-a-judge** evaluators against a **human-labeled baseline**. Instead of writing rubrics in the abstract, you work backward from real outputs so the evaluator learns what actually matters for your use case.

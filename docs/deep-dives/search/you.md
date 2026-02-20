@@ -1,3 +1,6 @@
+---
+icon: custom/globe
+---
 #  You.com WebSearch
 
 ## Overview
