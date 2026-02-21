@@ -74,6 +74,7 @@ from axion._core.tracing import (
     trace_method,
 )
 from axion._core.tracing.collection import (
+    ObservationNode,
     PromptPatternsBase,
     Trace,
     TraceCollection,
@@ -125,5 +126,6 @@ __all__ = [
     'TraceCollection',
     'Trace',
     'TraceStep',
+    'ObservationNode',
     'PromptPatternsBase',
 ]

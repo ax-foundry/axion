@@ -209,6 +209,117 @@ collection[0].ruling.variables
 
 ---
 
+## Observation Tree
+
+While steps group observations by name, the **observation tree** reconstructs the parent/child hierarchy from `parent_observation_id` fields -- the same hierarchy visible in the Langfuse timeline UI.
+
+### Accessing the Tree
+
+```python
+trace = collection[0]
+
+# All root nodes (list, may have multiple roots)
+roots = trace.tree_roots
+
+# Convenience: single root when exactly one exists, else None
+root = trace.tree
+
+# Walk the entire tree (pre-order depth-first)
+for node in root.walk():
+    print("  " * node.depth + node.name)
+```
+
+### ObservationNode Properties
+
+Each node wraps an observation and adds tree structure:
+
+```python
+node = trace.tree
+
+# Tree structure
+node.parent          # Parent node (None for roots)
+node.children        # List of child nodes (sorted by start_time)
+node.is_root         # True if no parent
+node.is_leaf         # True if no children
+node.depth           # Distance from root (0 for roots)
+
+# Timing
+node.start_time      # datetime (parsed from ISO string if needed)
+node.end_time        # datetime
+node.duration        # timedelta (end_time - start_time)
+
+# Observation data (SmartAccess delegation)
+node.name            # Observation name
+node.type            # SPAN, GENERATION, etc.
+node.input           # Observation input
+node.output          # Observation output
+```
+
+### Searching and Navigating
+
+`find()` searches the subtree for the first matching descendant:
+
+```python
+root = trace.tree
+
+# Find by name
+gen = root.find(name='recommendation:ai.generateText')
+
+# Find by type
+first_gen = root.find(type='GENERATION')
+
+# Find by both (AND)
+specific = root.find(name='ruling', type='GENERATION')
+
+# Returns None when no match
+root.find(name='nonexistent')  # None
+```
+
+Bracket access searches descendants by name first, then falls back to observation field lookup:
+
+```python
+# Find a descendant node by name
+gen_node = root['recommendation:ai.generateText']
+
+# Falls back to observation field when no descendant matches
+trace_id = root['id']
+
+# Raises KeyError when neither found
+root['nonexistent']  # KeyError
+```
+
+### Iteration and Containment
+
+Nodes support standard Python iteration protocols:
+
+```python
+root = trace.tree
+
+# Iterate direct children
+for child in root:
+    print(child.name, child.type)
+
+# Number of direct children
+len(root)            # 3
+
+# Check if a name exists anywhere in the subtree
+'recommendation:ai.generateText' in root  # True
+```
+
+### Collection-Level Access
+
+```python
+# Get tree_roots for every trace in the collection
+for roots in collection.trees:
+    for root in roots:
+        print(root.name, [c.name for c in root.children])
+```
+
+!!! note "`from_langfuse()` filter behavior"
+    When using `from_langfuse()`, the `name=` filter parameter is ignored when `trace_ids` is provided. Trace IDs take precedence and bypass all other filters.
+
+---
+
 ## Filtering
 
 ### Lambda Filter
@@ -415,6 +526,8 @@ result.publish_to_observability()
 | `trace.steps` | Dict of step name to `TraceStep` |
 | `trace.observations` | Flat list of all observations |
 | `trace.raw` | Underlying raw trace object |
+| `trace.tree_roots` | List of root `ObservationNode`s (hierarchy) |
+| `trace.tree` | Single root node if exactly one root, else `None` |
 | `trace.<step_name>` | Access a step by name (fuzzy matching) |
 | `trace.<attribute>` | Access trace-level attributes (fuzzy matching) |
 
@@ -429,6 +542,26 @@ result.publish_to_observability()
 | `step.context` | SPAN observation (alias) |
 | `step.extract_variables()` | Extract prompt variables via patterns |
 | `step.variables` | Shorthand for `extract_variables()` |
+
+### ObservationNode
+
+| Property / Method | Description |
+|-------------------|-------------|
+| `node.observation` | Underlying `ObservationsView` |
+| `node.parent` | Parent node (`None` for roots) |
+| `node.children` | Child nodes (sorted by `start_time`) |
+| `node.is_root` | `True` if no parent |
+| `node.is_leaf` | `True` if no children |
+| `node.depth` | Distance from root |
+| `node.start_time` | Parsed `datetime` |
+| `node.end_time` | Parsed `datetime` |
+| `node.duration` | `timedelta` (end - start) |
+| `node.walk()` | Pre-order depth-first generator |
+| `node.find(name, type)` | First descendant matching name and/or type, or `None` |
+| `node['name']` | Descendant by name; falls back to observation field; raises `KeyError` |
+| `for child in node` | Iterate direct children |
+| `len(node)` | Number of direct children |
+| `'name' in node` | `True` if any descendant has that name |
 
 ### PromptPatternsBase
 

@@ -1,12 +1,24 @@
 from __future__ import annotations
 
 import re
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
+from axion._core.logging import get_logger
 from axion._core.tracing.collection.models import ObservationsView, TraceView
 from axion._core.tracing.collection.smart_access import SmartAccess, _normalize_key
 
+logger = get_logger(__name__)
+
 _MISSING = object()
+
+
+def _safe_get(obs: Any, field: str) -> Any:
+    """Safely extract a field from an ObservationsView or dict. Local to trace.py."""
+    try:
+        return obs._lookup(field)
+    except (KeyError, AttributeError, TypeError, NotImplementedError):
+        return getattr(obs, field, None)
 
 
 class TraceStep(SmartAccess):
@@ -143,6 +155,7 @@ class Trace(SmartAccess):
         self._grouped: dict[str, list[ObservationsView]] = {}
         self._prompt_patterns = prompt_patterns
         self._steps_cache: dict[str, TraceStep] = {}
+        self._tree_roots_cache: Optional[list] = None
         self._group_observations()
 
     @staticmethod
@@ -268,6 +281,82 @@ class Trace(SmartAccess):
 
         return _MISSING
 
+    @property
+    def tree_roots(self) -> list:
+        """
+        Root :class:`ObservationNode` instances reconstructed from
+        ``parent_observation_id`` fields.
+
+        Lazy-built and cached. Always returns a list (empty when there
+        are no observations).
+        """
+        if self._tree_roots_cache is None:
+            self._tree_roots_cache = self._build_tree_roots()
+        return self._tree_roots_cache
+
+    @property
+    def tree(self) -> Any:
+        """
+        Convenience accessor: the single root node when exactly one root
+        exists, otherwise ``None``.
+
+        Use :attr:`tree_roots` when you need to handle the multi-root case.
+        """
+        roots = self.tree_roots
+        if len(roots) == 1:
+            return roots[0]
+        return None
+
+    def _build_tree_roots(self) -> list:
+        from axion._core.tracing.collection.observation_node import (
+            ObservationNode,
+            _safe_obs_get,
+        )
+
+        if not self._raw_observations:
+            return []
+
+        # Create nodes, index by id.
+        nodes: dict[str, ObservationNode] = {}
+        obs_order: dict[str, int] = {}
+        for idx, obs in enumerate(self._raw_observations):
+            obs_id = _safe_get(obs, 'id') or f'__idx_{idx}'
+            if obs_id in nodes:
+                logger.debug(
+                    'Duplicate observation id %r at index %d, skipping.', obs_id, idx
+                )
+                continue
+            nodes[obs_id] = ObservationNode(obs)
+            obs_order[obs_id] = idx
+
+        # Wire parent/child relationships
+        roots: list[ObservationNode] = []
+        seen: set[str] = set()
+        for idx, obs in enumerate(self._raw_observations):
+            obs_id = _safe_get(obs, 'id') or f'__idx_{idx}'
+            if obs_id not in nodes or obs_id in seen:
+                continue  # was a duplicate, already skipped
+            seen.add(obs_id)
+            node = nodes[obs_id]
+            parent_id = _safe_get(obs, 'parent_observation_id')
+
+            if not parent_id or parent_id == obs_id or parent_id not in nodes:
+                roots.append(node)
+            else:
+                nodes[parent_id]._add_child(node)
+
+        # Sort roots and children by (start_time, original_index)
+        def _sort_key(n: ObservationNode) -> tuple:
+            t = n.start_time
+            oid = _safe_obs_get(n.observation, 'id') or ''
+            return (t or datetime.min, obs_order.get(str(oid), 0))
+
+        roots.sort(key=_sort_key)
+        for node in _all_nodes(roots):
+            node._children.sort(key=_sort_key)
+
+        return roots
+
     def __repr__(self):
         base = f'<Trace steps={list(self._grouped.keys())}'
         if self._trace_obj is not None:
@@ -275,3 +364,11 @@ class Trace(SmartAccess):
             base += f" id='{tid}'"
         base += '>'
         return base
+
+
+def _all_nodes(roots: list) -> list:
+    """Flatten a list of root ObservationNodes into all nodes (pre-order)."""
+    result: list = []
+    for root in roots:
+        result.extend(root.walk())
+    return result

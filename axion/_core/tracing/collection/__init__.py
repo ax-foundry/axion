@@ -5,6 +5,7 @@ from axion._core.tracing.collection.models import (
     TraceView,
     Usage,
 )
+from axion._core.tracing.collection.observation_node import ObservationNode
 from axion._core.tracing.collection.prompt_patterns import (
     PromptPatternsBase,
     create_extraction_pattern,
@@ -31,6 +32,8 @@ __all__ = [
     # Trace wrappers
     'Trace',
     'TraceStep',
+    # Observation tree
+    'ObservationNode',
     # Collection container
     'TraceCollection',
     # Prompt patterns
