@@ -10,31 +10,31 @@
       
       
       
-        <link rel="canonical" href="https://ax-foundry.github.io/axion/guides/synthetic/">
+        <link rel="canonical" href="https://ax-foundry.github.io/axion/guides/langfuse/trace-collection/">
       
       
-        <link rel="prev" href="../llm-providers/">
+        <link rel="prev" href="../tracing/">
       
       
-        <link rel="next" href="../search/">
+        <link rel="next" href="../publishing/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/ax-icon.png">
+      <link rel="icon" href="../../../assets/ax-icon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
     
     
       
-        <title>Synthetic Data - Documentation</title>
+        <title>Trace Collection - Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,11 +53,11 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#synthetic-data-generation" class="md-skip">
+        <a href="#trace-collection" class="md-skip">
           Skip to content
         </a>
       
@@ -109,13 +109,13 @@
     </label>
 
     
-    <a href="../.."
+    <a href="../../.."
        title="Documentation"
        class="md-header__button md-logo"
        aria-label="Documentation"
        data-md-component="logo">
       
-  <img src="../../assets/axion_main_transparent.png" alt="logo">
+  <img src="../../../assets/axion_main_transparent.png" alt="logo">
 
       <span class="md-header__logo-text">Docs</span>
     </a>
@@ -203,35 +203,35 @@
         
       
         
-        <a href="../../getting-started/installation/"
+        <a href="../../../getting-started/installation/"
            class="md-header__section-link">
           Getting Started
         </a>
         
       
         
-        <a href="../hierarchical-scoring/"
+        <a href="../../hierarchical-scoring/"
            class="md-header__section-link md-header__section-link--active">
           Guides
         </a>
         
       
         
-        <a href="../../metric-registry/composite/"
+        <a href="../../../metric-registry/composite/"
            class="md-header__section-link">
           Metric Registry
         </a>
         
       
         
-        <a href="../../deep-dives/metrics/creating-metrics/"
+        <a href="../../../deep-dives/metrics/creating-metrics/"
            class="md-header__section-link">
           Deep Dives
         </a>
         
       
         
-        <a href="../../reference/align/"
+        <a href="../../../reference/align/"
            class="md-header__section-link">
           Reference
         </a>
@@ -281,7 +281,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../.." class="md-tabs__link">
+        <a href="../../.." class="md-tabs__link">
           
   
   
@@ -305,7 +305,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../getting-started/installation/" class="md-tabs__link">
+        <a href="../../../getting-started/installation/" class="md-tabs__link">
           
   
   
@@ -329,7 +329,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../hierarchical-scoring/" class="md-tabs__link">
+        <a href="../../hierarchical-scoring/" class="md-tabs__link">
           
   
   
@@ -358,7 +358,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../metric-registry/composite/" class="md-tabs__link">
+        <a href="../../../metric-registry/composite/" class="md-tabs__link">
           
   
   
@@ -392,7 +392,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../deep-dives/metrics/creating-metrics/" class="md-tabs__link">
+        <a href="../../../deep-dives/metrics/creating-metrics/" class="md-tabs__link">
           
   
   
@@ -417,7 +417,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../reference/align/" class="md-tabs__link">
+        <a href="../../../reference/align/" class="md-tabs__link">
           
   
   
@@ -453,9 +453,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Documentation" class="md-nav__button md-logo" aria-label="Documentation" data-md-component="logo">
+    <a href="../../.." title="Documentation" class="md-nav__button md-logo" aria-label="Documentation" data-md-component="logo">
       
-  <img src="../../assets/axion_main_transparent.png" alt="logo">
+  <img src="../../../assets/axion_main_transparent.png" alt="logo">
 
     </a>
     Documentation
@@ -513,7 +513,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../.." class="md-nav__link ">
+            <a href="../../.." class="md-nav__link ">
               
   
   
@@ -559,7 +559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluation_flywheel/" class="md-nav__link">
+      <a href="../../../evaluation_flywheel/" class="md-nav__link">
         
   
   
@@ -589,7 +589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../agent_playbook/" class="md-nav__link">
+      <a href="../../../agent_playbook/" class="md-nav__link">
         
   
   
@@ -619,7 +619,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../why_ground_truth_matters/" class="md-nav__link">
+      <a href="../../../why_ground_truth_matters/" class="md-nav__link">
         
   
   
@@ -714,7 +714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/installation/" class="md-nav__link">
+      <a href="../../../getting-started/installation/" class="md-nav__link">
         
   
   
@@ -834,7 +834,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../hierarchical-scoring/" class="md-nav__link">
+      <a href="../../hierarchical-scoring/" class="md-nav__link">
         
   
   
@@ -864,7 +864,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../datasets/" class="md-nav__link">
+      <a href="../../datasets/" class="md-nav__link">
         
   
   
@@ -894,7 +894,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../metrics/" class="md-nav__link">
+      <a href="../../metrics/" class="md-nav__link">
         
   
   
@@ -924,7 +924,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluation/" class="md-nav__link">
+      <a href="../../evaluation/" class="md-nav__link">
         
   
   
@@ -954,7 +954,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../issue-extraction/" class="md-nav__link">
+      <a href="../../issue-extraction/" class="md-nav__link">
         
   
   
@@ -984,7 +984,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../caliberhq/" class="md-nav__link">
+      <a href="../../caliberhq/" class="md-nav__link">
         
   
   
@@ -1011,8 +1011,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -1038,13 +1040,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_7" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_7" checked>
         
           
           <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="">
@@ -1065,7 +1065,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_7">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1083,7 +1083,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../langfuse/overview/" class="md-nav__link">
+      <a href="../overview/" class="md-nav__link">
         
   
   
@@ -1113,7 +1113,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../langfuse/configuration/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
@@ -1143,7 +1143,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../langfuse/tracing/" class="md-nav__link">
+      <a href="../tracing/" class="md-nav__link">
         
   
   
@@ -1170,10 +1170,39 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../langfuse/trace-collection/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Trace Collection
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1191,6 +1220,389 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loading-traces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loading Traces
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Loading Traces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#from-langfuse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From Langfuse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-pre-fetched-traces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From Pre-fetched Traces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From JSON
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exploring-traces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exploring Traces
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Exploring Traces">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dot-notation-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dot-Notation Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step Navigation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fuzzy-step-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fuzzy Step Names
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompt-variable-extraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompt Variable Extraction
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prompt Variable Extraction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defining-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Defining Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using Patterns
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtering
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lambda-filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lambda Filter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attribute-filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attribute Filter
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#serialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serialization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Serialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#save-and-load-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Save and Load JSON
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raw-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Raw Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#converting-to-dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Converting to Dataset
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Converting to Dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default-conversion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Conversion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Transform
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#end-to-end-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        End-to-End Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tracecollection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TraceCollection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracestep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TraceStep
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#promptpatternsbase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PromptPatternsBase
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_extraction_pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create_extraction_pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1203,7 +1615,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../langfuse/publishing/" class="md-nav__link">
+      <a href="../publishing/" class="md-nav__link">
         
   
   
@@ -1241,7 +1653,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../llm-providers/" class="md-nav__link">
+      <a href="../../llm-providers/" class="md-nav__link">
         
   
   
@@ -1268,39 +1680,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-  
-  <span class="md-ellipsis">
-    
-  
-    Synthetic Data
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../synthetic/" class="md-nav__link">
         
   
   
@@ -1318,178 +1701,6 @@
   
 
       </a>
-      
-        
-
-  
-
-<nav class="md-nav md-nav--secondary" aria-label="On this page">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      On this page
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overview
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#generation-methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Generation Methods
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How It Works
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="How It Works">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#pipeline-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Pipeline Steps
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration Options
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Configuration Options">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#generationparams" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        GenerationParams
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#dimensional-generation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Dimensional Generation
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-considerations" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Considerations
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Key Considerations">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#iterative-refinement" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Iterative Refinement
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#coverage-strategy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Coverage Strategy
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#when-to-use-synthetic-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        When to Use Synthetic Data
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#graph-visualization" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Graph Visualization
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1502,7 +1713,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../search/" class="md-nav__link">
+      <a href="../../search/" class="md-nav__link">
         
   
   
@@ -1656,7 +1867,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../metric-registry/composite/" class="md-nav__link ">
+            <a href="../../../metric-registry/composite/" class="md-nav__link ">
               
   
   
@@ -1702,7 +1913,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/faithfulness/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/faithfulness/" class="md-nav__link">
         
   
   
@@ -1732,7 +1943,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/answer_relevancy/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/answer_relevancy/" class="md-nav__link">
         
   
   
@@ -1762,7 +1973,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/factual_accuracy/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/factual_accuracy/" class="md-nav__link">
         
   
   
@@ -1792,7 +2003,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/answer_completeness/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/answer_completeness/" class="md-nav__link">
         
   
   
@@ -1822,7 +2033,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/answer_criteria/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/answer_criteria/" class="md-nav__link">
         
   
   
@@ -1852,7 +2063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/tone_style_consistency/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/tone_style_consistency/" class="md-nav__link">
         
   
   
@@ -1882,7 +2093,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/citation_relevancy/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/citation_relevancy/" class="md-nav__link">
         
   
   
@@ -1912,7 +2123,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/pii_leakage/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/pii_leakage/" class="md-nav__link">
         
   
   
@@ -1942,7 +2153,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/contextual_relevancy/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/contextual_relevancy/" class="md-nav__link">
         
   
   
@@ -1972,7 +2183,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/contextual_recall/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/contextual_recall/" class="md-nav__link">
         
   
   
@@ -2002,7 +2213,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/contextual_precision/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/contextual_precision/" class="md-nav__link">
         
   
   
@@ -2032,7 +2243,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/contextual_ranking/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/contextual_ranking/" class="md-nav__link">
         
   
   
@@ -2062,7 +2273,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/contextual_sufficiency/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/contextual_sufficiency/" class="md-nav__link">
         
   
   
@@ -2092,7 +2303,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/composite/contextual_utilization/" class="md-nav__link">
+      <a href="../../../metric-registry/composite/contextual_utilization/" class="md-nav__link">
         
   
   
@@ -2173,7 +2384,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../metric-registry/heuristic/" class="md-nav__link ">
+            <a href="../../../metric-registry/heuristic/" class="md-nav__link ">
               
   
   
@@ -2219,7 +2430,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/heuristic/exact_string_match/" class="md-nav__link">
+      <a href="../../../metric-registry/heuristic/exact_string_match/" class="md-nav__link">
         
   
   
@@ -2249,7 +2460,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/heuristic/contains_match/" class="md-nav__link">
+      <a href="../../../metric-registry/heuristic/contains_match/" class="md-nav__link">
         
   
   
@@ -2279,7 +2490,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/heuristic/levenshtein_ratio/" class="md-nav__link">
+      <a href="../../../metric-registry/heuristic/levenshtein_ratio/" class="md-nav__link">
         
   
   
@@ -2309,7 +2520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
+      <a href="../../../metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
         
   
   
@@ -2339,7 +2550,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/heuristic/pii_leakage_heuristic/" class="md-nav__link">
+      <a href="../../../metric-registry/heuristic/pii_leakage_heuristic/" class="md-nav__link">
         
   
   
@@ -2369,7 +2580,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/heuristic/citation_presence/" class="md-nav__link">
+      <a href="../../../metric-registry/heuristic/citation_presence/" class="md-nav__link">
         
   
   
@@ -2399,7 +2610,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/heuristic/latency/" class="md-nav__link">
+      <a href="../../../metric-registry/heuristic/latency/" class="md-nav__link">
         
   
   
@@ -2429,7 +2640,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/heuristic/length_constraint/" class="md-nav__link">
+      <a href="../../../metric-registry/heuristic/length_constraint/" class="md-nav__link">
         
   
   
@@ -2459,7 +2670,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
+      <a href="../../../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
         
   
   
@@ -2522,7 +2733,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../metric-registry/conversational/" class="md-nav__link ">
+            <a href="../../../metric-registry/conversational/" class="md-nav__link ">
               
   
   
@@ -2598,7 +2809,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../metric-registry/tool/" class="md-nav__link ">
+            <a href="../../../metric-registry/tool/" class="md-nav__link ">
               
   
   
@@ -2644,7 +2855,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metric-registry/tool/tool_correctness/" class="md-nav__link">
+      <a href="../../../metric-registry/tool/tool_correctness/" class="md-nav__link">
         
   
   
@@ -2819,7 +3030,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/metrics/creating-metrics/" class="md-nav__link">
+      <a href="../../../deep-dives/metrics/creating-metrics/" class="md-nav__link">
         
   
   
@@ -2849,7 +3060,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/metrics/yaml-metrics/" class="md-nav__link">
+      <a href="../../../deep-dives/metrics/yaml-metrics/" class="md-nav__link">
         
   
   
@@ -2884,7 +3095,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/metrics/composite-metrics/" class="md-nav__link">
+      <a href="../../../deep-dives/metrics/composite-metrics/" class="md-nav__link">
         
   
   
@@ -2984,7 +3195,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/runners/metric-runner/" class="md-nav__link">
+      <a href="../../../deep-dives/runners/metric-runner/" class="md-nav__link">
         
   
   
@@ -3014,7 +3225,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/runners/evaluation-runner/" class="md-nav__link">
+      <a href="../../../deep-dives/runners/evaluation-runner/" class="md-nav__link">
         
   
   
@@ -3044,7 +3255,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/runners/api-runner/" class="md-nav__link">
+      <a href="../../../deep-dives/runners/api-runner/" class="md-nav__link">
         
   
   
@@ -3144,7 +3355,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/align/example-selector/" class="md-nav__link">
+      <a href="../../../deep-dives/align/example-selector/" class="md-nav__link">
         
   
   
@@ -3240,7 +3451,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/synthetic/document-qa/" class="md-nav__link">
+      <a href="../../../deep-dives/synthetic/document-qa/" class="md-nav__link">
         
   
   
@@ -3340,7 +3551,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/search/google/" class="md-nav__link">
+      <a href="../../../deep-dives/search/google/" class="md-nav__link">
         
   
   
@@ -3370,7 +3581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/search/tavily/" class="md-nav__link">
+      <a href="../../../deep-dives/search/tavily/" class="md-nav__link">
         
   
   
@@ -3400,7 +3611,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/search/you/" class="md-nav__link">
+      <a href="../../../deep-dives/search/you/" class="md-nav__link">
         
   
   
@@ -3500,7 +3711,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/internals/tracing/" class="md-nav__link">
+      <a href="../../../deep-dives/internals/tracing/" class="md-nav__link">
         
   
   
@@ -3530,7 +3741,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/internals/environment/" class="md-nav__link">
+      <a href="../../../deep-dives/internals/environment/" class="md-nav__link">
         
   
   
@@ -3563,7 +3774,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../deep-dives/internals/logging/" class="md-nav__link">
+      <a href="../../../deep-dives/internals/logging/" class="md-nav__link">
         
   
   
@@ -3686,7 +3897,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/align/" class="md-nav__link">
+      <a href="../../../reference/align/" class="md-nav__link">
         
   
   
@@ -3716,7 +3927,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/dataset/" class="md-nav__link">
+      <a href="../../../reference/dataset/" class="md-nav__link">
         
   
   
@@ -3746,7 +3957,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/schema/" class="md-nav__link">
+      <a href="../../../reference/schema/" class="md-nav__link">
         
   
   
@@ -3776,7 +3987,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/metrics/" class="md-nav__link">
+      <a href="../../../reference/metrics/" class="md-nav__link">
         
   
   
@@ -3806,7 +4017,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/runners/" class="md-nav__link">
+      <a href="../../../reference/runners/" class="md-nav__link">
         
   
   
@@ -3836,7 +4047,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/eval-tree/" class="md-nav__link">
+      <a href="../../../reference/eval-tree/" class="md-nav__link">
         
   
   
@@ -3866,7 +4077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/issue-extractor/" class="md-nav__link">
+      <a href="../../../reference/issue-extractor/" class="md-nav__link">
         
   
   
@@ -3896,7 +4107,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/synthetic/" class="md-nav__link">
+      <a href="../../../reference/synthetic/" class="md-nav__link">
         
   
   
@@ -3926,7 +4137,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/search/" class="md-nav__link">
+      <a href="../../../reference/search/" class="md-nav__link">
         
   
   
@@ -3956,7 +4167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/llm-registry/" class="md-nav__link">
+      <a href="../../../reference/llm-registry/" class="md-nav__link">
         
   
   
@@ -3986,7 +4197,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../reference/tracer-registry/" class="md-nav__link">
+      <a href="../../../reference/tracer-registry/" class="md-nav__link">
         
   
   
@@ -4045,10 +4256,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        Quick Start
       
     </span>
   </a>
@@ -4056,33 +4267,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#generation-methods" class="md-nav__link">
+  <a href="#loading-traces" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Generation Methods
+        Loading Traces
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#how-it-works" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        How It Works
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="How It Works">
+    <nav class="md-nav" aria-label="Loading Traces">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pipeline-steps" class="md-nav__link">
+  <a href="#from-langfuse" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pipeline Steps
+        From Langfuse
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-pre-fetched-traces" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From Pre-fetched Traces
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        From JSON
       
     </span>
   </a>
@@ -4095,22 +4317,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
+  <a href="#exploring-traces" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Configuration Options
+        Exploring Traces
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Configuration Options">
+    <nav class="md-nav" aria-label="Exploring Traces">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#generationparams" class="md-nav__link">
+  <a href="#dot-notation-access" class="md-nav__link">
     <span class="md-ellipsis">
       
-        GenerationParams
+        Dot-Notation Access
       
     </span>
   </a>
@@ -4118,10 +4340,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dimensional-generation" class="md-nav__link">
+  <a href="#step-navigation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dimensional Generation
+        Step Navigation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fuzzy-step-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fuzzy Step Names
       
     </span>
   </a>
@@ -4134,22 +4367,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-considerations" class="md-nav__link">
+  <a href="#prompt-variable-extraction" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key Considerations
+        Prompt Variable Extraction
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Key Considerations">
+    <nav class="md-nav" aria-label="Prompt Variable Extraction">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#iterative-refinement" class="md-nav__link">
+  <a href="#defining-patterns" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Iterative Refinement
+        Defining Patterns
       
     </span>
   </a>
@@ -4157,10 +4390,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#coverage-strategy" class="md-nav__link">
+  <a href="#using-patterns" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Coverage Strategy
+        Using Patterns
       
     </span>
   </a>
@@ -4173,10 +4406,127 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-to-use-synthetic-data" class="md-nav__link">
+  <a href="#filtering" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When to Use Synthetic Data
+        Filtering
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lambda-filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lambda Filter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attribute-filter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Attribute Filter
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#serialization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serialization
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Serialization">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#save-and-load-json" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Save and Load JSON
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#raw-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Raw Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#converting-to-dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Converting to Dataset
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Converting to Dataset">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#default-conversion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Default Conversion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-transform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Transform
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#end-to-end-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        End-to-End Example
       
     </span>
   </a>
@@ -4184,10 +4534,82 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#graph-visualization" class="md-nav__link">
+  <a href="#api-reference" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Graph Visualization
+        API Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="API Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tracecollection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TraceCollection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trace" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trace
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tracestep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TraceStep
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#promptpatternsbase" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PromptPatternsBase
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create_extraction_pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        create_extraction_pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Next Steps
       
     </span>
   </a>
@@ -4214,302 +4636,471 @@
   
 
 
-<h1 id="synthetic-data-generation">Synthetic Data Generation<a class="headerlink" href="#synthetic-data-generation" title="Permanent link">&para;</a></h1>
-<p>Generate evaluation datasets from documents or sessions to scale your test coverage.</p>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>Manual dataset curation is essential but doesn't scale. Axion provides synthetic generation methods powered by a graph-based workflow built on <code>pydantic_graph</code>:</p>
-<ol>
-<li><strong>Document Q&amp;A Generation</strong> - Create question-answer pairs from your knowledge base</li>
-<li><strong>Session-based Generation</strong> - Generate Q&amp;A from conversation transcripts</li>
-</ol>
-<h2 id="generation-methods">Generation Methods<a class="headerlink" href="#generation-methods" title="Permanent link">&para;</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9h5.5L13 3.5zM6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2m9 16v-2H6v2zm3-4v-2H6v2z"/></svg></span> Document Q&amp;A</label><label for="__tabbed_1_2"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 12V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v14l4-4h10a1 1 0 0 0 1-1m4-6h-2v9H6v2a1 1 0 0 0 1 1h11l4 4V7a1 1 0 0 0-1-1"/></svg></span> Session-based</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<p>Generate evaluation data from your documents using <code>DocumentQAGenerator</code>:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.synthetic</span><span class="w"> </span><span class="kn">import</span> <span class="n">DocumentQAGenerator</span><span class="p">,</span> <span class="n">GenerationParams</span>
+<h1 id="trace-collection">Trace Collection<a class="headerlink" href="#trace-collection" title="Permanent link">&para;</a></h1>
+<p><code>TraceCollection</code> provides a rich exploration layer between fetching raw traces and converting them to a <code>Dataset</code> for evaluation. It wraps raw Langfuse traces with dot-notation access, step-based navigation, filtering, serialization, and dataset conversion.</p>
+<ul>
+<li><strong>Dot-notation access</strong>: Navigate nested trace data with attribute syntax</li>
+<li><strong>Step-based navigation</strong>: Access named observations (spans, generations) as logical steps</li>
+<li><strong>Prompt variable extraction</strong>: Extract structured variables from generation prompts via regex patterns</li>
+<li><strong>Filtering and serialization</strong>: Filter traces by attributes, save/load JSON snapshots</li>
+<li><strong>Dataset conversion</strong>: Convert directly to an axion <code>Dataset</code> with custom extraction logic</li>
+</ul>
+<hr />
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TraceCollection</span><span class="p">,</span> <span class="n">LangfuseTraceLoader</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Initialize with your LLM</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">generator</span> <span class="o">=</span> <span class="n">DocumentQAGenerator</span><span class="p">(</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">llm</span><span class="o">=</span><span class="n">your_llm</span><span class="p">,</span>  <span class="c1"># LLMRunnable-compatible object</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">params</span><span class="o">=</span><span class="n">GenerationParams</span><span class="p">(</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">num_pairs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="n">question_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;factual&quot;</span><span class="p">,</span> <span class="s2">&quot;conceptual&quot;</span><span class="p">,</span> <span class="s2">&quot;application&quot;</span><span class="p">],</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="n">difficulty</span><span class="o">=</span><span class="s2">&quot;medium&quot;</span><span class="p">,</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="n">answer_length</span><span class="o">=</span><span class="s2">&quot;medium&quot;</span><span class="p">,</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="n">validation_threshold</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="p">),</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">)</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1"># Generate from a directory of documents</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">generator</span><span class="o">.</span><span class="n">generate_from_directory</span><span class="p">(</span><span class="s2">&quot;./documents&quot;</span><span class="p">)</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="c1"># Convert to Dataset for evaluation</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">generator</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">dataset_name</span><span class="o">=</span><span class="s2">&quot;my_synthetic_dataset&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-<p><strong>Direct Workflow Usage</strong></p>
-<p>For more control, use <code>QAWorkflowGraph</code> directly:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.synthetic.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">QAWorkflowGraph</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">workflow</span> <span class="o">=</span> <span class="n">QAWorkflowGraph</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">your_llm</span><span class="p">)</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Run with document content</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">workflow</span><span class="o">.</span><span class="n">run_from_documents</span><span class="p">(</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">content</span><span class="o">=</span><span class="s2">&quot;Your document text here...&quot;</span><span class="p">,</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">num_pairs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">question_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;factual&quot;</span><span class="p">,</span> <span class="s2">&quot;analytical&quot;</span><span class="p">],</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">difficulty</span><span class="o">=</span><span class="s2">&quot;medium&quot;</span><span class="p">,</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">splitter_type</span><span class="o">=</span><span class="s2">&quot;sentence&quot;</span><span class="p">,</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="n">chunk_size</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>    <span class="n">statements_per_chunk</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>    <span class="n">validation_threshold</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="n">max_reflection_iterations</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="p">)</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="c1"># Access results</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="n">qa_pairs</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;validated_qa_pairs&quot;</span><span class="p">]</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="n">statements</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;statements&quot;</span><span class="p">]</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="n">quality</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;average_quality&quot;</span><span class="p">]</span>
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<p>Generate Q&amp;A pairs from conversation transcripts:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.synthetic.workflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">QAWorkflowGraph</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">workflow</span> <span class="o">=</span> <span class="n">QAWorkflowGraph</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">your_llm</span><span class="p">)</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">workflow</span><span class="o">.</span><span class="n">run_from_sessions</span><span class="p">(</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">session_messages</span><span class="o">=</span><span class="p">[</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;How do I reset my password?&quot;</span><span class="p">},</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Go to Settings &gt; Security &gt; Reset Password&quot;</span><span class="p">},</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="p">],</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">session_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;topic&quot;</span><span class="p">:</span> <span class="s2">&quot;account_management&quot;</span><span class="p">},</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">num_pairs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">)</span>
-</span></code></pre></div>
-</div>
-</div>
-</div>
-<h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
-<p>The workflow is implemented as a directed graph with the following nodes:</p>
-<pre class="mermaid"><code>stateDiagram-v2
-    [*] --&gt; InitializeWorkflow
-    InitializeWorkflow --&gt; ProcessDocuments: documents
-    InitializeWorkflow --&gt; ProcessSessions: sessions
-    ProcessDocuments --&gt; ChunkContent
-    ProcessSessions --&gt; ChunkContent
-    ChunkContent --&gt; ExtractStatements
-    ExtractStatements --&gt; GenerateQuestions
-    GenerateQuestions --&gt; GenerateAnswers
-    GenerateAnswers --&gt; ValidateQAPairs
-    ValidateQAPairs --&gt; PrepareEnhancement: quality below threshold
-    ValidateQAPairs --&gt; [*]: quality met or max iterations
-    PrepareEnhancement --&gt; GenerateQuestions</code></pre>
-<h3 id="pipeline-steps">Pipeline Steps<a class="headerlink" href="#pipeline-steps" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Step</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Initialize</strong></td>
-<td>Validate inputs and configure processors</td>
-</tr>
-<tr>
-<td><strong>Process</strong></td>
-<td>Apply transformations to documents or sessions</td>
-</tr>
-<tr>
-<td><strong>Chunk</strong></td>
-<td>Split content using sentence or semantic chunking</td>
-</tr>
-<tr>
-<td><strong>Extract Statements</strong></td>
-<td>Parse content into factual claims with source indices</td>
-</tr>
-<tr>
-<td><strong>Generate Questions</strong></td>
-<td>Create diverse questions from statements</td>
-</tr>
-<tr>
-<td><strong>Generate Answers</strong></td>
-<td>Create ground-truth answers from source content</td>
-</tr>
-<tr>
-<td><strong>Validate</strong></td>
-<td>Score Q&amp;A pairs and filter low-quality results</td>
-</tr>
-<tr>
-<td><strong>Enhance</strong></td>
-<td>Iteratively improve questions below threshold</td>
-</tr>
-</tbody>
-</table>
-<h2 id="configuration-options">Configuration Options<a class="headerlink" href="#configuration-options" title="Permanent link">&para;</a></h2>
-<h3 id="generationparams">GenerationParams<a class="headerlink" href="#generationparams" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>num_pairs</code></td>
-<td>int</td>
-<td>1</td>
-<td>Number of Q&amp;A pairs to generate</td>
-</tr>
-<tr>
-<td><code>question_types</code></td>
-<td>list</td>
-<td>factual, conceptual, application, analysis</td>
-<td>Types of questions to generate</td>
-</tr>
-<tr>
-<td><code>difficulty</code></td>
-<td>str</td>
-<td>medium</td>
-<td>Question difficulty (easy, medium, hard)</td>
-</tr>
-<tr>
-<td><code>splitter_type</code></td>
-<td>str</td>
-<td>semantic</td>
-<td>Chunking strategy (semantic, sentence)</td>
-</tr>
-<tr>
-<td><code>chunk_size</code></td>
-<td>int</td>
-<td>4000</td>
-<td>Max chunk size for sentence splitter</td>
-</tr>
-<tr>
-<td><code>statements_per_chunk</code></td>
-<td>int</td>
-<td>5</td>
-<td>Statements to extract per chunk</td>
-</tr>
-<tr>
-<td><code>answer_length</code></td>
-<td>str</td>
-<td>medium</td>
-<td>Answer length (short, medium, long)</td>
-</tr>
-<tr>
-<td><code>validation_threshold</code></td>
-<td>float</td>
-<td>0.7</td>
-<td>Minimum quality score to accept</td>
-</tr>
-<tr>
-<td><code>max_reflection_iterations</code></td>
-<td>int</td>
-<td>3</td>
-<td>Max enhancement iterations</td>
-</tr>
-<tr>
-<td><code>custom_guidelines</code></td>
-<td>str</td>
-<td>None</td>
-<td>Custom instructions for generation</td>
-</tr>
-<tr>
-<td><code>example_question</code></td>
-<td>str</td>
-<td>None</td>
-<td>Example question for style guidance</td>
-</tr>
-<tr>
-<td><code>example_answer</code></td>
-<td>str</td>
-<td>None</td>
-<td>Example answer for style guidance</td>
-</tr>
-</tbody>
-</table>
-<h3 id="dimensional-generation">Dimensional Generation<a class="headerlink" href="#dimensional-generation" title="Permanent link">&para;</a></h3>
-<p>Guide generation with structured dimensions:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">workflow</span><span class="o">.</span><span class="n">run_from_documents</span><span class="p">(</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">num_pairs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">dimensions</span><span class="o">=</span><span class="p">{</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>        <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="s2">&quot;Product pricing, subscription tiers, enterprise features&quot;</span><span class="p">,</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="s2">&quot;persona&quot;</span><span class="p">:</span> <span class="s2">&quot;Technical decision maker evaluating SaaS solutions&quot;</span><span class="p">,</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>        <span class="s2">&quot;scenarios&quot;</span><span class="p">:</span> <span class="s2">&quot;Comparing vendor options during procurement process&quot;</span><span class="p">,</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="p">},</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="p">)</span>
-</span></code></pre></div>
-<h2 id="key-considerations">Key Considerations<a class="headerlink" href="#key-considerations" title="Permanent link">&para;</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Quality Over Quantity</p>
-<p>Synthetic data quality varies significantly. Always review a sample before using at scale, and use <code>validation_threshold</code> to filter aggressively.</p>
-</div>
-<h3 id="iterative-refinement">Iterative Refinement<a class="headerlink" href="#iterative-refinement" title="Permanent link">&para;</a></h3>
-<p>The workflow automatically refines low-quality Q&amp;A pairs:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">workflow</span><span class="o">.</span><span class="n">run_from_documents</span><span class="p">(</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">content</span><span class="o">=</span><span class="n">content</span><span class="p">,</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">validation_threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span>  <span class="c1"># High bar</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">max_reflection_iterations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>  <span class="c1"># More attempts to meet threshold</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="p">)</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final quality: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;average_quality&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Iterations used: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;current_iteration&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span></code></pre></div>
-<h3 id="coverage-strategy">Coverage Strategy<a class="headerlink" href="#coverage-strategy" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Phase</th>
-<th>Focus</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Formation</strong></td>
-<td>Curate real-world examples with expert validation</td>
-</tr>
-<tr>
-<td><strong>Expansion</strong></td>
-<td>Augment with synthetic data for edge cases</td>
-</tr>
-<tr>
-<td><strong>Maintenance</strong></td>
-<td>Continuously add new failure modes</td>
-</tr>
-</tbody>
-</table>
-<h2 id="when-to-use-synthetic-data">When to Use Synthetic Data<a class="headerlink" href="#when-to-use-synthetic-data" title="Permanent link">&para;</a></h2>
-<p><strong>Good for:</strong></p>
-<ul>
-<li>Expanding coverage of edge cases</li>
-<li>Testing rare scenarios</li>
-<li>Scaling regression testing</li>
-<li>Bootstrapping evaluation datasets</li>
-</ul>
-<p><strong>Not a replacement for:</strong></p>
-<ul>
-<li>Real user data</li>
-<li>Expert-labeled ground truth</li>
-<li>Domain-specific nuance</li>
-</ul>
-<h2 id="graph-visualization">Graph Visualization<a class="headerlink" href="#graph-visualization" title="Permanent link">&para;</a></h2>
-<p>View the workflow structure in notebooks:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">workflow</span> <span class="o">=</span> <span class="n">QAWorkflowGraph</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">your_llm</span><span class="p">)</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">workflow</span><span class="o">.</span><span class="n">visualize_graph</span><span class="p">()</span>  <span class="c1"># Displays mermaid diagram</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">loader</span> <span class="o">=</span> <span class="n">LangfuseTraceLoader</span><span class="p">()</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Fetch and wrap traces in one step</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abc123&#39;</span><span class="p">,</span> <span class="s1">&#39;def456&#39;</span><span class="p">],</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># Explore traces with dot-notation</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">trace</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="nb">print</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="nb">print</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="nb">print</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">step_names</span><span class="p">)</span>
 </span></code></pre></div>
 <hr />
-<div class="ref-nav">
-<p><a class="md-button md-button--primary" href="../../agent_playbook/">Agent Evaluation Playbook <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a>
-<a class="md-button" href="../metrics/">Metrics Guide <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a>
-<a class="md-button" href="../../reference/synthetic/">Synthetic Data Reference <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a></p>
+<h2 id="loading-traces">Loading Traces<a class="headerlink" href="#loading-traces" title="Permanent link">&para;</a></h2>
+<h3 id="from-langfuse">From Langfuse<a class="headerlink" href="#from-langfuse" title="Permanent link">&para;</a></h3>
+<p>The <code>from_langfuse()</code> factory fetches traces and wraps them in a single call:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TraceCollection</span><span class="p">,</span> <span class="n">LangfuseTraceLoader</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">loader</span> <span class="o">=</span> <span class="n">LangfuseTraceLoader</span><span class="p">(</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">public_key</span><span class="o">=</span><span class="s1">&#39;pk-lf-...&#39;</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">secret_key</span><span class="o">=</span><span class="s1">&#39;sk-lf-...&#39;</span><span class="p">,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">)</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># Fetch by trace IDs</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abc123&#39;</span><span class="p">,</span> <span class="s1">&#39;def456&#39;</span><span class="p">],</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">)</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="c1"># Or fetch by filters</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="n">days_back</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;production&#39;</span><span class="p">],</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my-workflow&#39;</span><span class="p">,</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="from-pre-fetched-traces">From Pre-fetched Traces<a class="headerlink" href="#from-pre-fetched-traces" title="Permanent link">&para;</a></h3>
+<p>If you already have raw traces from <code>loader.fetch_traces()</code> or <code>loader.fetch_trace()</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">traces</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">fetch_traces</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_raw_traces</span><span class="p">(</span><span class="n">traces</span><span class="p">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Or wrap a single trace</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">trace</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">fetch_trace</span><span class="p">(</span><span class="s1">&#39;abc123&#39;</span><span class="p">)</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="p">([</span><span class="n">trace</span><span class="p">])</span>
+</span></code></pre></div>
+<h3 id="from-json">From JSON<a class="headerlink" href="#from-json" title="Permanent link">&para;</a></h3>
+<p>Load a previously saved snapshot:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">load_json</span><span class="p">(</span><span class="s1">&#39;traces.json&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="exploring-traces">Exploring Traces<a class="headerlink" href="#exploring-traces" title="Permanent link">&para;</a></h2>
+<h3 id="dot-notation-access">Dot-Notation Access<a class="headerlink" href="#dot-notation-access" title="Permanent link">&para;</a></h3>
+<p><code>TraceCollection</code> wraps each trace in a <code>Trace</code> object that supports attribute-style access to both trace-level fields and named observation steps:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">trace</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># Trace-level attributes</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">trace</span><span class="o">.</span><span class="n">id</span>            <span class="c1"># Trace ID</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">trace</span><span class="o">.</span><span class="n">name</span>          <span class="c1"># Trace name</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">trace</span><span class="o">.</span><span class="n">tags</span>          <span class="c1"># Tags list</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">trace</span><span class="o">.</span><span class="n">latency</span>       <span class="c1"># Response latency</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># Fuzzy matching: snake_case and camelCase resolve to the same key</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="n">trace</span><span class="o">.</span><span class="n">created_at</span>    <span class="c1"># Resolves to &#39;createdAt&#39; if present</span>
+</span></code></pre></div>
+<h3 id="step-navigation">Step Navigation<a class="headerlink" href="#step-navigation" title="Permanent link">&para;</a></h3>
+<p>Observations are grouped by name into steps. Access them by name directly on the trace:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># List all step names</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">trace</span><span class="o">.</span><span class="n">step_names</span>    <span class="c1"># [&#39;recommendation&#39;, &#39;grounding&#39;, &#39;location-extraction&#39;]</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Access a step by name</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">step</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">recommendation</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Step properties</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="n">step</span><span class="o">.</span><span class="n">count</span>          <span class="c1"># Number of observations in this step</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="n">step</span><span class="o">.</span><span class="n">first</span>          <span class="c1"># First observation</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="n">step</span><span class="o">.</span><span class="n">last</span>           <span class="c1"># Last observation</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="c1"># Access specific observation types within a step</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="n">step</span><span class="o">.</span><span class="n">generation</span>     <span class="c1"># The GENERATION observation</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="n">step</span><span class="o">.</span><span class="n">context</span>        <span class="c1"># Alias for the SPAN observation</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="n">step</span><span class="o">.</span><span class="n">generation</span><span class="o">.</span><span class="n">input</span>   <span class="c1"># Generation prompt input</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="n">step</span><span class="o">.</span><span class="n">generation</span><span class="o">.</span><span class="n">output</span>  <span class="c1"># Generation output</span>
+</span></code></pre></div>
+<p>Bracket access also works, which is useful for step names with special characters:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">step</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="s1">&#39;location-extraction&#39;</span><span class="p">]</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">step</span><span class="o">.</span><span class="n">generation</span><span class="o">.</span><span class="n">output</span>
+</span></code></pre></div>
+<h3 id="fuzzy-step-names">Fuzzy Step Names<a class="headerlink" href="#fuzzy-step-names" title="Permanent link">&para;</a></h3>
+<p>Step name resolution is case and separator insensitive:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># All of these resolve to the same step</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">trace</span><span class="o">.</span><span class="n">recommendation</span>        <span class="c1"># Exact match</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">trace</span><span class="o">.</span><span class="n">Recommendation</span>        <span class="c1"># Case-insensitive</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">trace</span><span class="o">.</span><span class="n">case_assessment</span>       <span class="c1"># Matches &#39;caseAssessment&#39;</span>
+</span></code></pre></div>
+<hr />
+<h2 id="prompt-variable-extraction">Prompt Variable Extraction<a class="headerlink" href="#prompt-variable-extraction" title="Permanent link">&para;</a></h2>
+<p>For traces with structured prompts, <code>PromptPatternsBase</code> lets you define regex patterns to extract variables from generation inputs.</p>
+<h3 id="defining-patterns">Defining Patterns<a class="headerlink" href="#defining-patterns" title="Permanent link">&para;</a></h3>
+<p>Subclass <code>PromptPatternsBase</code> and define <code>_patterns_&lt;step_name&gt;()</code> methods:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">PromptPatternsBase</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.tracing.collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_extraction_pattern</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">MyPromptPatterns</span><span class="p">(</span><span class="n">PromptPatternsBase</span><span class="p">):</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="nd">@classmethod</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_patterns_recommendation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>        <span class="n">h_assessment</span> <span class="o">=</span> <span class="s1">&#39;CASE ASSESSMENT (from previous analysis)&#39;</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>        <span class="n">h_context</span> <span class="o">=</span> <span class="s1">&#39;FULL CONTEXT DATA&#39;</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>        <span class="n">h_flags</span> <span class="o">=</span> <span class="s1">&#39;UNDERWRITING FLAGS (Current Human Rules)&#39;</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        <span class="k">return</span> <span class="p">{</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>            <span class="s1">&#39;case_assessment&#39;</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>                <span class="n">h_assessment</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">h_context</span><span class="p">)</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>            <span class="p">),</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>            <span class="s1">&#39;context_data&#39;</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>                <span class="n">h_context</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">h_flags</span><span class="p">)</span>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>            <span class="p">),</span>
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>            <span class="s1">&#39;underwriting_flags&#39;</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>                <span class="n">h_flags</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span>
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>            <span class="p">),</span>
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>        <span class="p">}</span>
+</span></code></pre></div>
+<p><code>create_extraction_pattern(start_text, end_pattern)</code> builds a regex that captures text between a labelled start and a terminating pattern: <code>StartText:\s*(.*?)\s*(?:EndPattern)</code>.</p>
+<h3 id="using-patterns">Using Patterns<a class="headerlink" href="#using-patterns" title="Permanent link">&para;</a></h3>
+<p>Pass your patterns class when creating the collection:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abc123&#39;</span><span class="p">],</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="n">prompt_patterns</span><span class="o">=</span><span class="n">MyPromptPatterns</span><span class="p">,</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="p">)</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1"># Extract variables from a step</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">variables</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recommendation</span><span class="o">.</span><span class="n">extract_variables</span><span class="p">()</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="c1"># {&#39;case_assessment&#39;: &#39;patient is stable&#39;, &#39;context_data&#39;: &#39;...&#39;, ...}</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="c1"># Or access via dot-notation</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="n">collection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">recommendation</span><span class="o">.</span><span class="n">variables</span>
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Hyphenated Step Names</p>
+<p>Step names with hyphens or special characters are normalized when looking up pattern methods. For example, <code>location-extraction</code> maps to <code>_patterns_location_extraction()</code>.</p>
 </div>
+<hr />
+<h2 id="filtering">Filtering<a class="headerlink" href="#filtering" title="Permanent link">&para;</a></h2>
+<h3 id="lambda-filter">Lambda Filter<a class="headerlink" href="#lambda-filter" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Filter by any condition</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">prod_traces</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="s1">&#39;production&#39;</span> <span class="ow">in</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="p">[]))</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">long_traces</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">latency</span> <span class="o">&gt;</span> <span class="mf">5.0</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="attribute-filter">Attribute Filter<a class="headerlink" href="#attribute-filter" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># Simple attribute equality</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">by_name</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my-workflow&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Both methods return a new <code>TraceCollection</code>.</p>
+<hr />
+<h2 id="serialization">Serialization<a class="headerlink" href="#serialization" title="Permanent link">&para;</a></h2>
+<h3 id="save-and-load-json">Save and Load JSON<a class="headerlink" href="#save-and-load-json" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="c1"># Save to disk</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">collection</span><span class="o">.</span><span class="n">save_json</span><span class="p">(</span><span class="s1">&#39;traces/snapshot.json&#39;</span><span class="p">)</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="c1"># Load later (with optional patterns)</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="n">loaded</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">load_json</span><span class="p">(</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="s1">&#39;traces/snapshot.json&#39;</span><span class="p">,</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">prompt_patterns</span><span class="o">=</span><span class="n">MyPromptPatterns</span><span class="p">,</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="raw-access">Raw Access<a class="headerlink" href="#raw-access" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Get the underlying raw trace objects</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">raw_list</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+</span></code></pre></div>
+<hr />
+<h2 id="converting-to-dataset">Converting to Dataset<a class="headerlink" href="#converting-to-dataset" title="Permanent link">&para;</a></h2>
+<p><code>to_dataset()</code> converts a <code>TraceCollection</code> into an axion <code>Dataset</code> for evaluation.</p>
+<h3 id="default-conversion">Default Conversion<a class="headerlink" href="#default-conversion" title="Permanent link">&para;</a></h3>
+<p>Without a transform, <code>to_dataset()</code> extracts <code>query</code> from trace input and <code>actual_output</code> from trace output using standard key detection (<code>query</code>, <code>question</code>, <code>input</code>, <code>response</code>, <code>answer</code>, etc.):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my-eval&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="custom-transform">Custom Transform<a class="headerlink" href="#custom-transform" title="Permanent link">&para;</a></h3>
+<p>For complex trace structures, pass a transform function. The transform receives a <code>Trace</code> and returns either a <code>DatasetItem</code> or a <code>dict</code> of fields:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Returning DatasetItem</label><label for="__tabbed_1_2">Returning dict</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">extract_recommendation</span><span class="p">(</span><span class="n">trace</span><span class="p">):</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">step</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">recommendation</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="n">gen</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">generation</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>    <span class="k">return</span> <span class="n">DatasetItem</span><span class="p">(</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>        <span class="nb">id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>        <span class="n">query</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Assess risk for </span><span class="si">{</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+</span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>        <span class="n">actual_output</span><span class="o">=</span><span class="n">gen</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;brief_recommendation&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>        <span class="n">trace_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>        <span class="n">observation_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">gen</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>        <span class="n">additional_output</span><span class="o">=</span><span class="p">{</span>
+</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>            <span class="s1">&#39;detailed&#39;</span><span class="p">:</span> <span class="n">gen</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;detailed_recommendation&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+</span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a>        <span class="p">},</span>
+</span><span id="__span-15-16"><a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>    <span class="p">)</span>
+</span><span id="__span-15-17"><a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>
+</span><span id="__span-15-18"><a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span>
+</span><span id="__span-15-19"><a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;recommendations&#39;</span><span class="p">,</span>
+</span><span id="__span-15-20"><a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a>    <span class="n">transform</span><span class="o">=</span><span class="n">extract_recommendation</span><span class="p">,</span>
+</span><span id="__span-15-21"><a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">simple_transform</span><span class="p">(</span><span class="n">trace</span><span class="p">):</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    <span class="k">return</span> <span class="p">{</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>        <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">input</span><span class="p">),</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>        <span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">output</span><span class="p">),</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>        <span class="s1">&#39;trace_id&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="p">}</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;simple-eval&#39;</span><span class="p">,</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>    <span class="n">transform</span><span class="o">=</span><span class="n">simple_transform</span><span class="p">,</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="end-to-end-example">End-to-End Example<a class="headerlink" href="#end-to-end-example" title="Permanent link">&para;</a></h2>
+<p>This example demonstrates the full workflow: fetch traces, explore with patterns, convert to dataset, evaluate, and publish.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    <span class="n">LangfuseTraceLoader</span><span class="p">,</span>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>    <span class="n">PromptPatternsBase</span><span class="p">,</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="n">TraceCollection</span><span class="p">,</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="p">)</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.tracing.collection</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_extraction_pattern</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span><span class="p">,</span> <span class="n">Faithfulness</span>
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
+</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>
+</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>
+</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="c1"># 1. Define prompt patterns for variable extraction</span>
+</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a><span class="k">class</span><span class="w"> </span><span class="nc">WorkflowPatterns</span><span class="p">(</span><span class="n">PromptPatternsBase</span><span class="p">):</span>
+</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>    <span class="nd">@classmethod</span>
+</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_patterns_recommendation</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+</span><span id="__span-17-19"><a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>        <span class="n">h_assessment</span> <span class="o">=</span> <span class="s1">&#39;CASE ASSESSMENT&#39;</span>
+</span><span id="__span-17-20"><a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>        <span class="n">h_context</span> <span class="o">=</span> <span class="s1">&#39;CONTEXT DATA&#39;</span>
+</span><span id="__span-17-21"><a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>        <span class="k">return</span> <span class="p">{</span>
+</span><span id="__span-17-22"><a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>            <span class="s1">&#39;case_assessment&#39;</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
+</span><span id="__span-17-23"><a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>                <span class="n">h_assessment</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">h_context</span><span class="p">)</span>
+</span><span id="__span-17-24"><a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>            <span class="p">),</span>
+</span><span id="__span-17-25"><a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>            <span class="s1">&#39;context_data&#39;</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
+</span><span id="__span-17-26"><a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>                <span class="n">h_context</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span>
+</span><span id="__span-17-27"><a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>            <span class="p">),</span>
+</span><span id="__span-17-28"><a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>        <span class="p">}</span>
+</span><span id="__span-17-29"><a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>
+</span><span id="__span-17-30"><a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>
+</span><span id="__span-17-31"><a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a><span class="c1"># 2. Fetch traces</span>
+</span><span id="__span-17-32"><a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a><span class="n">loader</span> <span class="o">=</span> <span class="n">LangfuseTraceLoader</span><span class="p">()</span>
+</span><span id="__span-17-33"><a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
+</span><span id="__span-17-34"><a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abc123&#39;</span><span class="p">,</span> <span class="s1">&#39;def456&#39;</span><span class="p">],</span>
+</span><span id="__span-17-35"><a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
+</span><span id="__span-17-36"><a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a>    <span class="n">prompt_patterns</span><span class="o">=</span><span class="n">WorkflowPatterns</span><span class="p">,</span>
+</span><span id="__span-17-37"><a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a><span class="p">)</span>
+</span><span id="__span-17-38"><a id="__codelineno-17-38" name="__codelineno-17-38" href="#__codelineno-17-38"></a>
+</span><span id="__span-17-39"><a id="__codelineno-17-39" name="__codelineno-17-39" href="#__codelineno-17-39"></a><span class="c1"># 3. Explore</span>
+</span><span id="__span-17-40"><a id="__codelineno-17-40" name="__codelineno-17-40" href="#__codelineno-17-40"></a><span class="k">for</span> <span class="n">trace</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
+</span><span id="__span-17-41"><a id="__codelineno-17-41" name="__codelineno-17-41" href="#__codelineno-17-41"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">trace</span><span class="o">.</span><span class="n">step_names</span><span class="p">)</span>
+</span><span id="__span-17-42"><a id="__codelineno-17-42" name="__codelineno-17-42" href="#__codelineno-17-42"></a>    <span class="k">if</span> <span class="s1">&#39;recommendation&#39;</span> <span class="ow">in</span> <span class="n">trace</span><span class="o">.</span><span class="n">step_names</span><span class="p">:</span>
+</span><span id="__span-17-43"><a id="__codelineno-17-43" name="__codelineno-17-43" href="#__codelineno-17-43"></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  variables:&#39;</span><span class="p">,</span> <span class="n">trace</span><span class="o">.</span><span class="n">recommendation</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+</span><span id="__span-17-44"><a id="__codelineno-17-44" name="__codelineno-17-44" href="#__codelineno-17-44"></a>
+</span><span id="__span-17-45"><a id="__codelineno-17-45" name="__codelineno-17-45" href="#__codelineno-17-45"></a>
+</span><span id="__span-17-46"><a id="__codelineno-17-46" name="__codelineno-17-46" href="#__codelineno-17-46"></a><span class="c1"># 4. Define extraction transform</span>
+</span><span id="__span-17-47"><a id="__codelineno-17-47" name="__codelineno-17-47" href="#__codelineno-17-47"></a><span class="k">def</span><span class="w"> </span><span class="nf">extract</span><span class="p">(</span><span class="n">trace</span><span class="p">):</span>
+</span><span id="__span-17-48"><a id="__codelineno-17-48" name="__codelineno-17-48" href="#__codelineno-17-48"></a>    <span class="k">return</span> <span class="n">DatasetItem</span><span class="p">(</span>
+</span><span id="__span-17-49"><a id="__codelineno-17-49" name="__codelineno-17-49" href="#__codelineno-17-49"></a>        <span class="nb">id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><span id="__span-17-50"><a id="__codelineno-17-50" name="__codelineno-17-50" href="#__codelineno-17-50"></a>        <span class="n">query</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">input</span><span class="p">),</span>
+</span><span id="__span-17-51"><a id="__codelineno-17-51" name="__codelineno-17-51" href="#__codelineno-17-51"></a>        <span class="n">actual_output</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">output</span><span class="p">),</span>
+</span><span id="__span-17-52"><a id="__codelineno-17-52" name="__codelineno-17-52" href="#__codelineno-17-52"></a>        <span class="n">trace_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><span id="__span-17-53"><a id="__codelineno-17-53" name="__codelineno-17-53" href="#__codelineno-17-53"></a>    <span class="p">)</span>
+</span><span id="__span-17-54"><a id="__codelineno-17-54" name="__codelineno-17-54" href="#__codelineno-17-54"></a>
+</span><span id="__span-17-55"><a id="__codelineno-17-55" name="__codelineno-17-55" href="#__codelineno-17-55"></a>
+</span><span id="__span-17-56"><a id="__codelineno-17-56" name="__codelineno-17-56" href="#__codelineno-17-56"></a><span class="c1"># 5. Convert to Dataset and evaluate</span>
+</span><span id="__span-17-57"><a id="__codelineno-17-57" name="__codelineno-17-57" href="#__codelineno-17-57"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;workflow-eval&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">extract</span><span class="p">)</span>
+</span><span id="__span-17-58"><a id="__codelineno-17-58" name="__codelineno-17-58" href="#__codelineno-17-58"></a>
+</span><span id="__span-17-59"><a id="__codelineno-17-59" name="__codelineno-17-59" href="#__codelineno-17-59"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+</span><span id="__span-17-60"><a id="__codelineno-17-60" name="__codelineno-17-60" href="#__codelineno-17-60"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+</span><span id="__span-17-61"><a id="__codelineno-17-61" name="__codelineno-17-61" href="#__codelineno-17-61"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">(),</span> <span class="n">Faithfulness</span><span class="p">()],</span>
+</span><span id="__span-17-62"><a id="__codelineno-17-62" name="__codelineno-17-62" href="#__codelineno-17-62"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">&#39;Workflow Evaluation&#39;</span><span class="p">,</span>
+</span><span id="__span-17-63"><a id="__codelineno-17-63" name="__codelineno-17-63" href="#__codelineno-17-63"></a><span class="p">)</span>
+</span><span id="__span-17-64"><a id="__codelineno-17-64" name="__codelineno-17-64" href="#__codelineno-17-64"></a>
+</span><span id="__span-17-65"><a id="__codelineno-17-65" name="__codelineno-17-65" href="#__codelineno-17-65"></a><span class="c1"># 6. Publish scores back to Langfuse</span>
+</span><span id="__span-17-66"><a id="__codelineno-17-66" name="__codelineno-17-66" href="#__codelineno-17-66"></a><span class="n">result</span><span class="o">.</span><span class="n">publish_to_observability</span><span class="p">()</span>
+</span></code></pre></div>
+<hr />
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<h3 id="tracecollection">TraceCollection<a class="headerlink" href="#tracecollection" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>from_langfuse(trace_ids, limit, days_back, tags, name, loader, prompt_patterns)</code></td>
+<td>Fetch from Langfuse and wrap</td>
+</tr>
+<tr>
+<td><code>from_raw_traces(raw_traces, prompt_patterns)</code></td>
+<td>Wrap pre-fetched trace objects</td>
+</tr>
+<tr>
+<td><code>load_json(path, prompt_patterns)</code></td>
+<td>Load from a JSON file</td>
+</tr>
+<tr>
+<td><code>filter(condition)</code></td>
+<td>Filter by lambda, returns new <code>TraceCollection</code></td>
+</tr>
+<tr>
+<td><code>filter_by(**kwargs)</code></td>
+<td>Filter by attribute equality</td>
+</tr>
+<tr>
+<td><code>to_dataset(name, transform)</code></td>
+<td>Convert to axion <code>Dataset</code></td>
+</tr>
+<tr>
+<td><code>save_json(path)</code></td>
+<td>Serialize to JSON file</td>
+</tr>
+<tr>
+<td><code>to_list()</code></td>
+<td>Return raw trace objects</td>
+</tr>
+<tr>
+<td><code>len(collection)</code></td>
+<td>Number of traces</td>
+</tr>
+<tr>
+<td><code>collection[i]</code></td>
+<td>Access by index</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trace">Trace<a class="headerlink" href="#trace" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property / Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>trace.step_names</code></td>
+<td>List of observation group names</td>
+</tr>
+<tr>
+<td><code>trace.steps</code></td>
+<td>Dict of step name to <code>TraceStep</code></td>
+</tr>
+<tr>
+<td><code>trace.observations</code></td>
+<td>Flat list of all observations</td>
+</tr>
+<tr>
+<td><code>trace.raw</code></td>
+<td>Underlying raw trace object</td>
+</tr>
+<tr>
+<td><code>trace.&lt;step_name&gt;</code></td>
+<td>Access a step by name (fuzzy matching)</td>
+</tr>
+<tr>
+<td><code>trace.&lt;attribute&gt;</code></td>
+<td>Access trace-level attributes (fuzzy matching)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tracestep">TraceStep<a class="headerlink" href="#tracestep" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Property / Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>step.count</code></td>
+<td>Number of observations</td>
+</tr>
+<tr>
+<td><code>step.first</code></td>
+<td>First observation</td>
+</tr>
+<tr>
+<td><code>step.last</code></td>
+<td>Last observation</td>
+</tr>
+<tr>
+<td><code>step.generation</code></td>
+<td>GENERATION observation</td>
+</tr>
+<tr>
+<td><code>step.context</code></td>
+<td>SPAN observation (alias)</td>
+</tr>
+<tr>
+<td><code>step.extract_variables()</code></td>
+<td>Extract prompt variables via patterns</td>
+</tr>
+<tr>
+<td><code>step.variables</code></td>
+<td>Shorthand for <code>extract_variables()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="promptpatternsbase">PromptPatternsBase<a class="headerlink" href="#promptpatternsbase" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_for(step_name)</code></td>
+<td>Look up extraction patterns for a step</td>
+</tr>
+<tr>
+<td><code>_patterns_&lt;name&gt;()</code></td>
+<td>Override in subclass to define patterns</td>
+</tr>
+</tbody>
+</table>
+<h3 id="create_extraction_pattern">create_extraction_pattern<a class="headerlink" href="#create_extraction_pattern" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">create_extraction_pattern</span><span class="p">(</span><span class="n">start_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end_pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+</span></code></pre></div>
+<p>Builds a regex: <code>StartText:\s*(.*?)\s*(?:EndPattern)</code></p>
+<hr />
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><a href="../tracing/">Tracing</a></strong>: Creating traces with <code>@trace</code> and <code>fetch_traces()</code></li>
+<li><strong><a href="../publishing/">Publishing</a></strong>: Publish evaluation scores back to Langfuse</li>
+<li><strong><a href="../overview/">Overview</a></strong>: Complete evaluation workflow examples</li>
+</ul>
 
 
 
@@ -4532,7 +5123,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 20, 2026 19:49:22 UTC">February 20, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 21, 2026 02:13:50 UTC">February 21, 2026</span>
   </span>
 
     
@@ -4542,7 +5133,7 @@
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 10, 2026 18:58:38 UTC">January 10, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 21, 2026 02:13:50 UTC">February 21, 2026</span>
   </span>
 
     
@@ -4634,11 +5225,11 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
 
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
 <script>
