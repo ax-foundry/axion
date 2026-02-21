@@ -24,8 +24,6 @@ class ObservationNode(SmartAccess):
         self._parent: Optional[ObservationNode] = None
         self._children: List[ObservationNode] = []
 
-    # -- tree structure ------------------------------------------------------
-
     @property
     def observation(self) -> Any:
         """The underlying ObservationsView (or dict/object)."""
@@ -56,8 +54,6 @@ class ObservationNode(SmartAccess):
             node = node._parent
         return d
 
-    # -- timing --------------------------------------------------------------
-
     @property
     def start_time(self) -> Optional[datetime]:
         return _parse_datetime(_safe_obs_get(self._observation, 'start_time'))
@@ -73,15 +69,11 @@ class ObservationNode(SmartAccess):
             return e - s
         return None
 
-    # -- traversal -----------------------------------------------------------
-
     def walk(self) -> Generator[ObservationNode, None, None]:
         """Pre-order depth-first traversal of this subtree."""
         yield self
         for child in self._children:
             yield from child.walk()
-
-    # -- search / navigation -------------------------------------------------
 
     def find(
         self,
@@ -140,8 +132,6 @@ class ObservationNode(SmartAccess):
                 return True
         return False
 
-    # -- SmartAccess ---------------------------------------------------------
-
     def _lookup(self, key: str) -> Any:
         return self._observation._lookup(key)
 
@@ -154,8 +144,6 @@ class ObservationNode(SmartAccess):
                 return getattr(self._observation, attr)
         return None
 
-    # -- internal ------------------------------------------------------------
-
     def _add_child(self, child: ObservationNode) -> None:
         child._parent = self
         self._children.append(child)
@@ -165,11 +153,6 @@ class ObservationNode(SmartAccess):
         type_ = _safe_obs_get(self._observation, 'type') or 'unknown'
         n_children = len(self._children)
         return f"<ObservationNode name='{name}' type='{type_}' children={n_children}>"
-
-
-# ---------------------------------------------------------------------------
-# Module-level helpers
-# ---------------------------------------------------------------------------
 
 
 def _safe_obs_get(obs: Any, field: str) -> Any:
