@@ -297,7 +297,6 @@ class TraceCollection:
         return str(value)
 
 
-
 _QUERY_KEYS = ('query', 'question', 'input', 'message', 'prompt', 'user_input', 'text')
 _OUTPUT_KEYS = ('output', 'response', 'answer', 'result', 'content', 'text', 'message')
 
