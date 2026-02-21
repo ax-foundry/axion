@@ -60,7 +60,7 @@ collection = TraceCollection.from_langfuse(
     limit=100,
     days_back=7,
     tags=['production'],
-    name='my-workflow',
+    name='baseball-rules-agent',
     loader=loader,
 )
 ```
@@ -113,10 +113,10 @@ Observations are grouped by name into steps. Access them by name directly on the
 
 ```python
 # List all step names
-trace.step_names    # ['recommendation', 'grounding', 'location-extraction']
+trace.step_names    # ['rule-lookup', 'play-analysis', 'ruling']
 
 # Access a step by name
-step = trace.recommendation
+step = trace.ruling
 
 # Step properties
 step.count          # Number of observations in this step
@@ -133,7 +133,7 @@ step.generation.output  # Generation output
 Bracket access also works, which is useful for step names with special characters:
 
 ```python
-step = trace['location-extraction']
+step = trace['rule-lookup']
 step.generation.output
 ```
 
@@ -143,9 +143,9 @@ Step name resolution is case and separator insensitive:
 
 ```python
 # All of these resolve to the same step
-trace.recommendation        # Exact match
-trace.Recommendation        # Case-insensitive
-trace.case_assessment       # Matches 'caseAssessment'
+trace.ruling            # Exact match
+trace.Ruling            # Case-insensitive
+trace.play_analysis     # Matches 'playAnalysis'
 ```
 
 ---
@@ -164,21 +164,21 @@ from typing import Dict
 from axion.tracing import PromptPatternsBase
 from axion._core.tracing.collection import create_extraction_pattern
 
-class MyPromptPatterns(PromptPatternsBase):
+class BaseballRulesPatterns(PromptPatternsBase):
     @classmethod
-    def _patterns_recommendation(cls) -> Dict[str, str]:
-        h_assessment = 'CASE ASSESSMENT (from previous analysis)'
-        h_context = 'FULL CONTEXT DATA'
-        h_flags = 'UNDERWRITING FLAGS (Current Human Rules)'
+    def _patterns_ruling(cls) -> Dict[str, str]:
+        h_situation = 'GAME SITUATION'
+        h_rules = 'APPLICABLE RULES'
+        h_precedents = 'HISTORICAL PRECEDENTS'
         return {
-            'case_assessment': create_extraction_pattern(
-                h_assessment, re.escape(h_context)
+            'game_situation': create_extraction_pattern(
+                h_situation, re.escape(h_rules)
             ),
-            'context_data': create_extraction_pattern(
-                h_context, re.escape(h_flags)
+            'applicable_rules': create_extraction_pattern(
+                h_rules, re.escape(h_precedents)
             ),
-            'underwriting_flags': create_extraction_pattern(
-                h_flags, r'$'
+            'historical_precedents': create_extraction_pattern(
+                h_precedents, r'$'
             ),
         }
 ```
@@ -193,19 +193,19 @@ Pass your patterns class when creating the collection:
 collection = TraceCollection.from_langfuse(
     trace_ids=['abc123'],
     loader=loader,
-    prompt_patterns=MyPromptPatterns,
+    prompt_patterns=BaseballRulesPatterns,
 )
 
 # Extract variables from a step
-variables = collection[0].recommendation.extract_variables()
-# {'case_assessment': 'patient is stable', 'context_data': '...', ...}
+variables = collection[0].ruling.extract_variables()
+# {'game_situation': 'runners on first and second, one out', 'applicable_rules': '...', ...}
 
 # Or access via dot-notation
-collection[0].recommendation.variables
+collection[0].ruling.variables
 ```
 
 !!! note "Hyphenated Step Names"
-    Step names with hyphens or special characters are normalized when looking up pattern methods. For example, `location-extraction` maps to `_patterns_location_extraction()`.
+    Step names with hyphens or special characters are normalized when looking up pattern methods. For example, `rule-lookup` maps to `_patterns_rule_lookup()`.
 
 ---
 
@@ -223,7 +223,7 @@ long_traces = collection.filter(lambda t: t.latency > 5.0)
 
 ```python
 # Simple attribute equality
-by_name = collection.filter_by(name='my-workflow')
+by_name = collection.filter_by(name='baseball-rules-agent')
 ```
 
 Both methods return a new `TraceCollection`.
@@ -241,7 +241,7 @@ collection.save_json('traces/snapshot.json')
 # Load later (with optional patterns)
 loaded = TraceCollection.load_json(
     'traces/snapshot.json',
-    prompt_patterns=MyPromptPatterns,
+    prompt_patterns=BaseballRulesPatterns,
 )
 ```
 
@@ -275,24 +275,25 @@ For complex trace structures, pass a transform function. The transform receives 
     ```python
     from axion.dataset import DatasetItem
 
-    def extract_recommendation(trace):
-        step = trace.recommendation
+    def extract_ruling(trace):
+        step = trace.ruling
         gen = step.generation
 
         return DatasetItem(
             id=str(trace.id),
-            query=f'Assess risk for {trace.id}',
-            actual_output=gen.output.get('brief_recommendation', ''),
+            query=f'What is the correct ruling for play {trace.id}?',
+            actual_output=gen.output.get('ruling', ''),
             trace_id=str(trace.id),
             observation_id=str(gen.id),
             additional_output={
-                'detailed': gen.output.get('detailed_recommendation', ''),
+                'explanation': gen.output.get('explanation', ''),
+                'rule_citations': gen.output.get('rule_citations', []),
             },
         )
 
     dataset = collection.to_dataset(
-        name='recommendations',
-        transform=extract_recommendation,
+        name='rulings-eval',
+        transform=extract_ruling,
     )
     ```
 
@@ -316,7 +317,7 @@ For complex trace structures, pass a transform function. The transform receives 
 
 ## End-to-End Example
 
-This example demonstrates the full workflow: fetch traces, explore with patterns, convert to dataset, evaluate, and publish.
+This example demonstrates the full workflow: fetch traces from a baseball rules agent, explore with patterns, convert to dataset, evaluate, and publish.
 
 ```python
 import re
@@ -334,17 +335,17 @@ from axion.runners import evaluation_runner
 
 
 # 1. Define prompt patterns for variable extraction
-class WorkflowPatterns(PromptPatternsBase):
+class BaseballRulesPatterns(PromptPatternsBase):
     @classmethod
-    def _patterns_recommendation(cls) -> Dict[str, str]:
-        h_assessment = 'CASE ASSESSMENT'
-        h_context = 'CONTEXT DATA'
+    def _patterns_ruling(cls) -> Dict[str, str]:
+        h_situation = 'GAME SITUATION'
+        h_rules = 'APPLICABLE RULES'
         return {
-            'case_assessment': create_extraction_pattern(
-                h_assessment, re.escape(h_context)
+            'game_situation': create_extraction_pattern(
+                h_situation, re.escape(h_rules)
             ),
-            'context_data': create_extraction_pattern(
-                h_context, r'$'
+            'applicable_rules': create_extraction_pattern(
+                h_rules, r'$'
             ),
         }
 
@@ -354,18 +355,18 @@ loader = LangfuseTraceLoader()
 collection = TraceCollection.from_langfuse(
     trace_ids=['abc123', 'def456'],
     loader=loader,
-    prompt_patterns=WorkflowPatterns,
+    prompt_patterns=BaseballRulesPatterns,
 )
 
 # 3. Explore
 for trace in collection:
     print(trace.id, trace.step_names)
-    if 'recommendation' in trace.step_names:
-        print('  variables:', trace.recommendation.variables)
+    if 'ruling' in trace.step_names:
+        print('  variables:', trace.ruling.variables)
 
 
 # 4. Define extraction transform
-def extract(trace):
+def extract_ruling(trace):
     return DatasetItem(
         id=str(trace.id),
         query=str(trace.input),
@@ -375,12 +376,12 @@ def extract(trace):
 
 
 # 5. Convert to Dataset and evaluate
-dataset = collection.to_dataset(name='workflow-eval', transform=extract)
+dataset = collection.to_dataset(name='baseball-rules-eval', transform=extract_ruling)
 
 result = await evaluation_runner(
     evaluation_inputs=dataset,
     scoring_metrics=[AnswerRelevancy(), Faithfulness()],
-    evaluation_name='Workflow Evaluation',
+    evaluation_name='Baseball Rules Evaluation',
 )
 
 # 6. Publish scores back to Langfuse
