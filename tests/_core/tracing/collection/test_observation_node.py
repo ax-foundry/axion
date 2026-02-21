@@ -10,7 +10,6 @@ from axion._core.tracing.collection.models import ObservationsView
 from axion._core.tracing.collection.observation_node import ObservationNode
 from axion._core.tracing.collection.trace import Trace
 
-
 # ---------------------------------------------------------------------------
 # Fake trace data helpers
 # ---------------------------------------------------------------------------
@@ -111,7 +110,9 @@ class TestObservationNodeTime:
     def test_datetime_objects(self):
         t1 = datetime(2025, 1, 1, 12, 0, 0)
         t2 = datetime(2025, 1, 1, 12, 0, 5)
-        obs = ObservationsView(id='o1', name='s', type='SPAN', start_time=t1, end_time=t2)
+        obs = ObservationsView(
+            id='o1', name='s', type='SPAN', start_time=t1, end_time=t2
+        )
         node = ObservationNode(obs)
         assert node.start_time == t1
         assert node.end_time == t2
@@ -250,7 +251,10 @@ class TestTreeBuildFromTrace:
         raw = FakeRawTrace(
             observations=[
                 FakeObservation(
-                    id='r', name='root', type='SPAN', start_time=datetime(2025, 1, 1, 12, 0, 0)
+                    id='r',
+                    name='root',
+                    type='SPAN',
+                    start_time=datetime(2025, 1, 1, 12, 0, 0),
                 ),
                 FakeObservation(
                     id='late',
@@ -314,8 +318,12 @@ class TestTreeEdgeCases:
         """Observations without parent_observation_id are roots."""
         raw = FakeRawTrace(
             observations=[
-                FakeObservation(id='a', name='a', type='SPAN', parent_observation_id=None),
-                FakeObservation(id='b', name='b', type='SPAN', parent_observation_id=None),
+                FakeObservation(
+                    id='a', name='a', type='SPAN', parent_observation_id=None
+                ),
+                FakeObservation(
+                    id='b', name='b', type='SPAN', parent_observation_id=None
+                ),
             ],
         )
         t = Trace(raw)
@@ -338,7 +346,9 @@ class TestTreeEdgeCases:
         """parent_observation_id == own id -> treated as root, no cycle."""
         raw = FakeRawTrace(
             observations=[
-                FakeObservation(id='a', name='a', type='SPAN', parent_observation_id='a'),
+                FakeObservation(
+                    id='a', name='a', type='SPAN', parent_observation_id='a'
+                ),
             ],
         )
         t = Trace(raw)
@@ -370,9 +380,7 @@ class TestTreeEdgeCases:
         same_time = datetime(2025, 1, 1, 12, 0, 0)
         raw = FakeRawTrace(
             observations=[
-                FakeObservation(
-                    id='r', name='root', type='SPAN', start_time=same_time
-                ),
+                FakeObservation(id='r', name='root', type='SPAN', start_time=same_time),
                 FakeObservation(
                     id='first',
                     name='first',
@@ -448,7 +456,9 @@ class TestObservationNodeSearch:
         """
         root = ObservationNode(ObservationsView(id='r', name='root', type='SPAN'))
         c1 = ObservationNode(ObservationsView(id='c1', name='child1', type='SPAN'))
-        c2 = ObservationNode(ObservationsView(id='c2', name='child2', type='GENERATION'))
+        c2 = ObservationNode(
+            ObservationsView(id='c2', name='child2', type='GENERATION')
+        )
         gc = ObservationNode(
             ObservationsView(id='gc', name='grandchild', type='GENERATION')
         )
