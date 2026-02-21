@@ -73,6 +73,12 @@ from axion._core.tracing import (
     trace_function,
     trace_method,
 )
+from axion._core.tracing.collection import (
+    PromptPatternsBase,
+    Trace,
+    TraceCollection,
+    TraceStep,
+)
 from axion._core.tracing.loaders import (
     BaseTraceLoader,
     FetchedTraceData,
@@ -115,4 +121,9 @@ __all__ = [
     'LangfuseTraceLoader',
     'OpikTraceLoader',
     'LogfireTraceLoader',
+    # Trace collection
+    'TraceCollection',
+    'Trace',
+    'TraceStep',
+    'PromptPatternsBase',
 ]
