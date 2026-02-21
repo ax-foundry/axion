@@ -8,6 +8,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 from axion._core.logging import get_logger
 from axion._core.tracing.collection.models import ObservationsView, TraceView
+from axion._core.tracing.collection.observation_node import ObservationNode
 from axion._core.tracing.collection.smart_access import SmartAccess
 from axion._core.tracing.collection.trace import Trace
 
@@ -119,6 +120,11 @@ class TraceCollection:
 
     def __iter__(self):
         return iter(self._traces)
+
+    @property
+    def trees(self) -> List[List[ObservationNode]]:
+        """The tree_roots for each trace in the collection."""
+        return [t.tree_roots for t in self._traces]
 
     def __repr__(self):
         return f'<TraceCollection count={len(self._traces)}>'
