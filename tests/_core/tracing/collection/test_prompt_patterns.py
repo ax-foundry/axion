@@ -7,7 +7,6 @@ from axion._core.tracing.collection.prompt_patterns import (
     create_extraction_pattern,
 )
 
-
 # ---------------------------------------------------------------------------
 # create_extraction_pattern
 # ---------------------------------------------------------------------------

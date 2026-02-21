@@ -4,6 +4,7 @@ from typing import Any, Dict
 
 from axion._core.tracing.collection.smart_access import SmartAccess, _normalize_key
 
+
 class ModelUsageUnit(Enum):
     TOKENS = 'TOKENS'
     CHARACTERS = 'CHARACTERS'
@@ -80,7 +81,6 @@ class ObservationsView(SmartAccess):
             self._data = _obj_to_dict(data)
         else:
             self._data = kwargs
-
 
     def _lookup(self, key: str) -> Any:
         return self._data[key]

@@ -26,7 +26,6 @@ class TraceStep(SmartAccess):
         self.observations = observations
         self.prompt_patterns = prompt_patterns
 
-
     @property
     def count(self) -> int:
         return len(self.observations)
@@ -42,7 +41,6 @@ class TraceStep(SmartAccess):
     def extract_variables(self) -> Dict[str, str]:
         """Extract prompt variables using the configured prompt patterns."""
         return self._extract_variables()
-
 
     def _lookup(self, key: str) -> Any:
         if key == 'variables':
@@ -156,7 +154,9 @@ class Trace(SmartAccess):
             return trace_data, trace_data.observations
 
         # Dict payload style
-        if isinstance(trace_data, dict) and isinstance(trace_data.get('observations'), list):
+        if isinstance(trace_data, dict) and isinstance(
+            trace_data.get('observations'), list
+        ):
             return TraceView(data=trace_data), trace_data.get('observations', [])
 
         # Raw observations list style

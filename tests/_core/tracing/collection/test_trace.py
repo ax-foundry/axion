@@ -5,13 +5,12 @@ from typing import Any, Dict, List, Optional
 
 import pytest
 
-from axion._core.tracing.collection.models import ObservationsView, TraceView
+from axion._core.tracing.collection.models import ObservationsView
 from axion._core.tracing.collection.prompt_patterns import (
     PromptPatternsBase,
     create_extraction_pattern,
 )
 from axion._core.tracing.collection.trace import Trace, TraceStep
-
 
 # ---------------------------------------------------------------------------
 # Fake trace data helpers

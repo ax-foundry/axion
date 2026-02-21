@@ -11,7 +11,6 @@ from axion._core.tracing.collection.models import (
 )
 from axion._core.tracing.collection.smart_access import SmartDict
 
-
 # ---------------------------------------------------------------------------
 # Enums
 # ---------------------------------------------------------------------------

@@ -502,12 +502,14 @@ result.to_scorecard(display_in_notebook=True)
 
 1. **[Configure Langfuse](configuration.md)**: Set up credentials and environment
 2. **[Create Traces](tracing.md)**: Instrument your LLM operations with `@trace` decorator
-3. **Fetch & Evaluate**: Retrieve traces and run metrics
-4. **[Publish Results](publishing.md)**: Send scores back to Langfuse
+3. **[Explore Traces](trace-collection.md)**: Navigate and filter traces with `TraceCollection`
+4. **Fetch & Evaluate**: Retrieve traces and run metrics
+5. **[Publish Results](publishing.md)**: Send scores back to Langfuse
 
 ## Next Steps
 
 - **[Configuration](configuration.md)**: Set up Langfuse credentials and options
 - **[Tracing](tracing.md)**: Learn how to create and manage traces
+- **[Trace Collection](trace-collection.md)**: Rich trace exploration, filtering, and dataset conversion
 - **[Publishing](publishing.md)**: Publish scores to existing traces or create experiments
 - **[Metrics Guide](../metrics.md)**: Available metrics and customization options

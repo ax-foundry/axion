@@ -23,6 +23,7 @@ nav:
       - Overview: guides/langfuse/overview.md
       - Configuration: guides/langfuse/configuration.md
       - Tracing: guides/langfuse/tracing.md
+      - Trace Collection: guides/langfuse/trace-collection.md
       - Publishing: guides/langfuse/publishing.md
     - LLM Providers: guides/llm-providers.md
     - Synthetic Data: guides/synthetic.md

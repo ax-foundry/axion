@@ -30,7 +30,6 @@ class TraceCollection:
         self._prompt_patterns = prompt_patterns
         self._traces = [Trace(item, prompt_patterns=prompt_patterns) for item in data]
 
-
     @classmethod
     def from_langfuse(
         cls,
@@ -123,7 +122,6 @@ class TraceCollection:
 
     def __repr__(self):
         return f'<TraceCollection count={len(self._traces)}>'
-
 
     def filter(self, condition: Callable[[Trace], bool]) -> TraceCollection:
         """
@@ -250,7 +248,6 @@ class TraceCollection:
             getattr(trace_obj, 'output', None),
             getattr(trace_obj, 'id', None),
         )
-
 
     def _from_traces(self, traces: List[Trace]) -> TraceCollection:
         """Build a new TraceCollection from already-wrapped Trace objects."""

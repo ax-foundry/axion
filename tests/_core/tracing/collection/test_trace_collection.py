@@ -1,15 +1,13 @@
 """Tests for TraceCollection."""
 
-import json
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
-from unittest.mock import MagicMock, patch
+from typing import Any, List
+from unittest.mock import MagicMock
 
 import pytest
 
 from axion._core.tracing.collection.trace import Trace
 from axion._core.tracing.collection.trace_collection import TraceCollection
-
 
 # ---------------------------------------------------------------------------
 # Fake trace data

@@ -4,7 +4,6 @@ import re
 from typing import Dict
 
 
-
 def create_extraction_pattern(start_text: str, end_pattern: str) -> str:
     r"""
     Build a regex that captures text between a labelled start and a terminating pattern.

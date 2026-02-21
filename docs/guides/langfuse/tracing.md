@@ -227,6 +227,9 @@ traces = loader.fetch_traces(
 
 Traces must be converted to `DatasetItem` objects for evaluation. The key is to preserve `trace_id` and optionally `observation_id` for score publishing.
 
+!!! tip "Use TraceCollection for Rich Exploration"
+    For step-based navigation, dot-notation access, prompt variable extraction, and built-in dataset conversion, see **[Trace Collection](trace-collection.md)**. The manual approach below works for simple cases.
+
 ### Understanding Trace Structure
 
 Langfuse traces contain:
@@ -356,6 +359,7 @@ If `fetch_traces()` returns an empty list:
 
 ## Next Steps
 
+- **[Trace Collection](trace-collection.md)**: Rich trace exploration with dot-notation, step navigation, and dataset conversion
 - **[Publishing](publishing.md)**: Publish evaluation scores to Langfuse
 - **[Configuration](configuration.md)**: Advanced configuration options
 - **[Overview](overview.md)**: Complete workflow example
