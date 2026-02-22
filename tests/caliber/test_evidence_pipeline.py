@@ -2,9 +2,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from axion.caliber.pattern_discovery._utils import MetadataConfig
 from axion.caliber.pattern_discovery.handlers import (
-    ClusterForDistillation,
     LearningArtifactOutput,
 )
 from axion.caliber.pattern_discovery.models import (
@@ -17,7 +15,6 @@ from axion.caliber.pattern_discovery.pipeline import EvidencePipeline
 from axion.caliber.pattern_discovery.plugins import (
     InMemoryDeduper,
     InMemorySink,
-    NoopSanitizer,
 )
 
 
@@ -164,9 +161,7 @@ class TestEvidencePipeline:
         # Return a learning with a hallucinated ID
         mock_writer = AsyncMock()
         mock_writer.distill = AsyncMock(
-            return_value=[
-                _make_learning_output(['e0', 'e1', 'hallucinated_id'])
-            ]
+            return_value=[_make_learning_output(['e0', 'e1', 'hallucinated_id'])]
         )
 
         pipeline = EvidencePipeline(
@@ -261,9 +256,7 @@ class TestEvidencePipeline:
         mock_clusterer.cluster = AsyncMock(return_value=cr)
 
         mock_writer = AsyncMock()
-        mock_writer.distill = AsyncMock(
-            return_value=[_make_learning_output(eids[:3])]
-        )
+        mock_writer.distill = AsyncMock(return_value=[_make_learning_output(eids[:3])])
 
         # Custom key: group by source_ref
         pipeline = EvidencePipeline(
@@ -369,9 +362,7 @@ class TestEvidencePipeline:
         mock_clusterer.cluster = AsyncMock(return_value=cr)
 
         mock_writer = AsyncMock()
-        mock_writer.distill = AsyncMock(
-            return_value=[_make_learning_output(eids[:2])]
-        )
+        mock_writer.distill = AsyncMock(return_value=[_make_learning_output(eids[:2])])
 
         sink = InMemorySink()
         pipeline = EvidencePipeline(
@@ -440,9 +431,7 @@ class TestEvidencePipeline:
         evidence = _make_evidence(3)
 
         mock_sanitizer = AsyncMock()
-        mock_sanitizer.sanitize = AsyncMock(
-            side_effect=lambda text: text.upper()
-        )
+        mock_sanitizer.sanitize = AsyncMock(side_effect=lambda text: text.upper())
 
         cr = PatternDiscoveryResult(
             patterns=[],

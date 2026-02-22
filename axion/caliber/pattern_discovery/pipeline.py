@@ -4,7 +4,6 @@ from typing import Any, Callable, Dict, List, Optional, Protocol, Sequence, Unio
 
 from axion._core.logging import get_logger
 from axion._core.tracing import trace
-
 from axion.caliber.pattern_discovery._utils import (
     ExcerptFn,
     MetadataConfig,
@@ -57,6 +56,7 @@ class ArtifactWriter(Protocol):
         cluster: ClusterForDistillation,
         domain_context: Optional[str],
     ) -> List[LearningArtifactOutput]: ...
+
 
 class _DefaultClusterer:
     """Wraps PatternDiscovery as an EvidenceClusterer."""
@@ -192,9 +192,7 @@ class EvidencePipeline:
         evidence_dict = await self._sanitize(evidence_dict)
 
         # Cluster
-        clustering_result = await self._clusterer.cluster(
-            evidence_dict, method
-        )
+        clustering_result = await self._clusterer.cluster(evidence_dict, method)
 
         # 3. Pre-filter: drop clusters below recurrence_threshold
         surviving_patterns = [
@@ -202,9 +200,7 @@ class EvidencePipeline:
             for p in clustering_result.patterns
             if len(p.record_ids) >= self._recurrence_threshold
         ]
-        filtered_count = len(clustering_result.patterns) - len(
-            surviving_patterns
-        )
+        filtered_count = len(clustering_result.patterns) - len(surviving_patterns)
 
         # Distill + Validate (bounded concurrency)
         all_learnings: List[LearningArtifact] = []
@@ -272,8 +268,7 @@ class EvidencePipeline:
                 source_refs = [
                     evidence_dict[sid].source_ref
                     for sid in la.supporting_item_ids
-                    if sid in evidence_dict
-                    and evidence_dict[sid].source_ref
+                    if sid in evidence_dict and evidence_dict[sid].source_ref
                 ]
                 provenance = Provenance(
                     source_ref=source_refs[0] if source_refs else None,
@@ -355,9 +350,7 @@ class EvidencePipeline:
             metadata_summary=metadata_summary,
         )
 
-        raw_learnings = await self._writer.distill(
-            cluster_input, self._domain_context
-        )
+        raw_learnings = await self._writer.distill(cluster_input, self._domain_context)
 
         # Truncate (by confidence desc)
         sorted_learnings = sorted(

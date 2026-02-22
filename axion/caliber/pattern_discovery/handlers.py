@@ -7,7 +7,6 @@ from axion._handlers.llm.handler import LLMHandler
 from axion.llm_registry import LLMRegistry
 
 
-
 class AnnotationNote(StrictBaseModel):
     """Single annotation note for clustering input."""
 
@@ -29,9 +28,7 @@ class PatternCategory(StrictBaseModel):
     category: str = Field(
         description='Short descriptive name for this pattern (2-4 words)'
     )
-    record_ids: List[str] = Field(
-        description='Record IDs that belong to this category'
-    )
+    record_ids: List[str] = Field(description='Record IDs that belong to this category')
     description: str = Field(
         description='Brief description of what characterizes this category'
     )
@@ -69,9 +66,7 @@ class LabelOutput(BaseModel):
 
     category_name: str = Field(
         description='Concise 2-4 word category name',
-        validation_alias=AliasChoices(
-            'category_name', 'category', 'name', 'label'
-        ),
+        validation_alias=AliasChoices('category_name', 'category', 'name', 'label'),
         serialization_alias='category_name',
     )
 
@@ -129,6 +124,7 @@ IMPORTANT:
 - Produce at most {max_learnings_per_cluster} learnings per cluster
 """
 
+
 def default_distillation_instruction(max_learnings_per_cluster: int = 3) -> str:
     if max_learnings_per_cluster < 1:
         raise ValueError('max_learnings_per_cluster must be >= 1')
@@ -138,7 +134,6 @@ def default_distillation_instruction(max_learnings_per_cluster: int = 3) -> str:
 
 
 DEFAULT_DISTILLATION_INSTRUCTION = default_distillation_instruction(3)
-
 
 
 def _set_handler_llm(
@@ -155,9 +150,7 @@ def _set_handler_llm(
         handler.llm = registry.get_llm(model_name)
 
     handler.model_name = model_name or getattr(handler.llm, 'model', None)
-    handler.llm_provider = llm_provider or getattr(
-        handler.llm, '_provider', None
-    )
+    handler.llm_provider = llm_provider or getattr(handler.llm, '_provider', None)
 
 
 class PatternClusteringHandler(LLMHandler[ClusteringInput, ClusteringOutput]):
@@ -207,7 +200,6 @@ class LabelRefinementHandler(LLMHandler[LabelInput, LabelOutput]):
     ):
         _set_handler_llm(self, llm, model_name, llm_provider)
         super().__init__(**kwargs)
-
 
 
 class EvidenceNote(StrictBaseModel):
@@ -261,9 +253,7 @@ class DistillationOutput(StrictBaseModel):
     learnings: List[LearningArtifactOutput]
 
 
-class EvidenceClusteringHandler(
-    LLMHandler[EvidenceClusteringInput, ClusteringOutput]
-):
+class EvidenceClusteringHandler(LLMHandler[EvidenceClusteringInput, ClusteringOutput]):
     """LLM handler for clustering evidence items into patterns.
 
     Reuses ``ClusteringOutput`` (uses ``record_ids`` for item IDs).

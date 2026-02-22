@@ -1,18 +1,4 @@
 # Models (existing)
-from axion.caliber.pattern_discovery.models import (
-    ClusteringMethod,
-    DiscoveredPattern,
-    PatternDiscoveryResult,
-)
-
-# Models (new)
-from axion.caliber.pattern_discovery.models import (
-    EvidenceItem,
-    LearningArtifact,
-    PipelineResult,
-    Provenance,
-)
-
 # Compat (AnnotatedItem + converters)
 from axion.caliber.pattern_discovery._compat import (
     AnnotatedItem,
@@ -21,37 +7,45 @@ from axion.caliber.pattern_discovery._compat import (
     normalize_annotations,
 )
 
+# Utils (new)
+from axion.caliber.pattern_discovery._utils import MetadataConfig
+
+# Discovery (existing class, refactored)
+from axion.caliber.pattern_discovery.discovery import PatternDiscovery
+
 # Handlers — Pydantic I/O models (existing)
+# Handlers — new Pydantic I/O models
+# Handlers — existing handler classes
 from axion.caliber.pattern_discovery.handlers import (
+    DEFAULT_CLUSTERING_INSTRUCTION,
     AnnotationNote,
+    ClusterForDistillation,
     ClusteringInput,
     ClusteringOutput,
-    DEFAULT_CLUSTERING_INSTRUCTION,
-    LabelInput,
-    LabelOutput,
-    PatternCategory,
-)
-
-# Handlers — new Pydantic I/O models
-from axion.caliber.pattern_discovery.handlers import (
-    ClusterForDistillation,
     DistillationHandler,
     DistillationInput,
     DistillationOutput,
     EvidenceClusteringHandler,
     EvidenceClusteringInput,
     EvidenceNote,
-    LearningArtifactOutput,
-)
-
-# Handlers — existing handler classes
-from axion.caliber.pattern_discovery.handlers import (
+    LabelInput,
+    LabelOutput,
     LabelRefinementHandler,
+    LearningArtifactOutput,
+    PatternCategory,
     PatternClusteringHandler,
 )
 
-# Discovery (existing class, refactored)
-from axion.caliber.pattern_discovery.discovery import PatternDiscovery
+# Models (new)
+from axion.caliber.pattern_discovery.models import (
+    ClusteringMethod,
+    DiscoveredPattern,
+    EvidenceItem,
+    LearningArtifact,
+    PatternDiscoveryResult,
+    PipelineResult,
+    Provenance,
+)
 
 # Pipeline (new)
 from axion.caliber.pattern_discovery.pipeline import (
@@ -71,9 +65,6 @@ from axion.caliber.pattern_discovery.plugins import (
     NoopSanitizer,
     Sanitizer,
 )
-
-# Utils (new)
-from axion.caliber.pattern_discovery._utils import MetadataConfig
 
 __all__ = [
     # Models — existing

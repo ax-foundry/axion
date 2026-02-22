@@ -22,7 +22,6 @@ class Deduper(Protocol):
     async def is_duplicate(self, artifact: LearningArtifact) -> bool: ...
 
 
-
 class NoopSanitizer:
     """Async pass-through sanitizer (default)."""
 
@@ -37,9 +36,7 @@ class InMemorySink:
         self._counter = 0
         self.artifacts: Dict[str, Dict] = {}
 
-    async def write(
-        self, artifact: LearningArtifact, provenance: Provenance
-    ) -> str:
+    async def write(self, artifact: LearningArtifact, provenance: Provenance) -> str:
         self._counter += 1
         sink_id = f'mem_{self._counter}'
         self.artifacts[sink_id] = {
@@ -56,9 +53,7 @@ class JsonlSink:
         self._path = Path(file_path)
         self._counter = 0
 
-    async def write(
-        self, artifact: LearningArtifact, provenance: Provenance
-    ) -> str:
+    async def write(self, artifact: LearningArtifact, provenance: Provenance) -> str:
         self._counter += 1
         sink_id = f'jsonl_{self._counter}'
         record = {
@@ -139,8 +134,6 @@ class EmbeddingDeduper:
         self._titles: List[str] = []
 
     async def is_duplicate(self, artifact: LearningArtifact) -> bool:
-        import numpy as np
-
         text = artifact.title + ' ' + artifact.content
         embedding = await self._embed(text)
 
@@ -167,9 +160,7 @@ class EmbeddingDeduper:
         from openai import OpenAI
 
         client = OpenAI()
-        response = client.embeddings.create(
-            model=self._embed_model_name, input=text
-        )
+        response = client.embeddings.create(model=self._embed_model_name, input=text)
         return response.data[0].embedding
 
     @staticmethod

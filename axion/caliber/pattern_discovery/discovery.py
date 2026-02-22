@@ -2,7 +2,6 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 
 from axion._core.logging import get_logger
 from axion._core.tracing import trace
-
 from axion.caliber.pattern_discovery._compat import (
     AnnotatedItem,
     annotations_to_evidence,
@@ -87,9 +86,7 @@ class PatternDiscovery:
         self._seed = seed
 
         # Lazily initialized handlers
-        self._evidence_clustering_handler: Optional[
-            EvidenceClusteringHandler
-        ] = None
+        self._evidence_clustering_handler: Optional[EvidenceClusteringHandler] = None
         self._label_handler: Optional[LabelRefinementHandler] = None
 
     def _get_evidence_clustering_handler(self) -> EvidenceClusteringHandler:
@@ -154,7 +151,6 @@ class PatternDiscovery:
             return evidence
         return {item.id: item for item in evidence}
 
-
     async def _discover_internal(
         self,
         evidence: Dict[str, EvidenceItem],
@@ -173,9 +169,7 @@ class PatternDiscovery:
     async def _cluster_evidence_with_llm(
         self, evidence: Dict[str, EvidenceItem]
     ) -> PatternDiscoveryResult:
-        items_with_text = {
-            eid: item for eid, item in evidence.items() if item.text
-        }
+        items_with_text = {eid: item for eid, item in evidence.items() if item.text}
 
         if not items_with_text:
             return PatternDiscoveryResult(
@@ -197,9 +191,7 @@ class PatternDiscovery:
             context = None
             if meta_cfg.include_in_clustering and item.metadata:
                 context = format_metadata_header(item.metadata, meta_cfg)
-            notes.append(
-                EvidenceNote(item_id=eid, text=item.text, context=context)
-            )
+            notes.append(EvidenceNote(item_id=eid, text=item.text, context=context))
 
         input_data = EvidenceClusteringInput(items=notes)
         handler = self._get_evidence_clustering_handler()
@@ -230,9 +222,7 @@ class PatternDiscovery:
                 for rid in p.record_ids[: self.MAX_EXAMPLES_PER_PATTERN]:
                     item = items.get(rid)
                     if item and item.text:
-                        examples.append(
-                            item.text[: self.EXAMPLE_PREVIEW_CHARS]
-                        )
+                        examples.append(item.text[: self.EXAMPLE_PREVIEW_CHARS])
                 patterns.append(
                     DiscoveredPattern(
                         category=p.category,
@@ -257,9 +247,7 @@ class PatternDiscovery:
                 'BERTopic not installed. Run: pip install axion[bertopic]'
             )
 
-        items_with_text = {
-            eid: item for eid, item in evidence.items() if item.text
-        }
+        items_with_text = {eid: item for eid, item in evidence.items() if item.text}
         record_ids = list(items_with_text.keys())
         texts = [items_with_text[rid].text for rid in record_ids]
 
@@ -300,9 +288,7 @@ class PatternDiscovery:
                 continue
 
             topic_ids_list = [
-                record_ids[i]
-                for i, t in enumerate(topics)
-                if t == topic_id
+                record_ids[i] for i, t in enumerate(topics) if t == topic_id
             ]
 
             if not topic_ids_list:
@@ -317,9 +303,7 @@ class PatternDiscovery:
                 if text:
                     examples.append(text[: self.EXAMPLE_PREVIEW_CHARS])
 
-            topic_probs = [
-                probs[i] for i, t in enumerate(topics) if t == topic_id
-            ]
+            topic_probs = [probs[i] for i, t in enumerate(topics) if t == topic_id]
             avg_confidence = (
                 sum(topic_probs) / len(topic_probs) if topic_probs else None
             )
@@ -330,12 +314,7 @@ class PatternDiscovery:
                     description=(
                         'Topics: '
                         + ', '.join(
-                            [
-                                w
-                                for w, _ in topic_words[
-                                    : self.TOPIC_DESCRIPTION_WORDS
-                                ]
-                            ]
+                            [w for w, _ in topic_words[: self.TOPIC_DESCRIPTION_WORDS]]
                         )
                     ),
                     count=len(topic_ids_list),
@@ -358,10 +337,7 @@ class PatternDiscovery:
     def _format_topic_name(self, topic_words: List[tuple]) -> str:
         if not topic_words:
             return 'Unknown Pattern'
-        top_words = [
-            word.title()
-            for word, _ in topic_words[: self.TOPIC_NAME_WORDS]
-        ]
+        top_words = [word.title() for word, _ in topic_words[: self.TOPIC_NAME_WORDS]]
         return ' / '.join(top_words)
 
     @trace(name='PatternDiscovery._cluster_evidence_hybrid')

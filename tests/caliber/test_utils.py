@@ -1,12 +1,7 @@
-import pytest
-
 from axion.caliber.pattern_discovery._utils import (
-    DEFAULT_DENIED_KEYS,
     MetadataConfig,
     aggregate_cluster_metadata,
     check_recurrence,
-    default_excerpt,
-    default_recurrence_key,
     default_tag_normalizer,
     deterministic_sample,
     format_metadata_header,
@@ -46,9 +41,7 @@ class TestMetadataConfig:
 
     def test_max_keys_cap(self):
         cfg = MetadataConfig(max_keys=2)
-        header = format_metadata_header(
-            {'a': '1', 'b': '2', 'c': '3', 'd': '4'}, cfg
-        )
+        header = format_metadata_header({'a': '1', 'b': '2', 'c': '3', 'd': '4'}, cfg)
         assert header is not None
         # Should only have 2 key=val pairs
         assert header.count('=') == 2
@@ -93,20 +86,12 @@ class TestAggregateClusterMetadata:
 
     def test_basic_aggregation(self):
         items = {
-            'e1': EvidenceItem(
-                id='e1', text='t', metadata={'step': 'checkout'}
-            ),
-            'e2': EvidenceItem(
-                id='e2', text='t', metadata={'step': 'checkout'}
-            ),
-            'e3': EvidenceItem(
-                id='e3', text='t', metadata={'step': 'billing'}
-            ),
+            'e1': EvidenceItem(id='e1', text='t', metadata={'step': 'checkout'}),
+            'e2': EvidenceItem(id='e2', text='t', metadata={'step': 'checkout'}),
+            'e3': EvidenceItem(id='e3', text='t', metadata={'step': 'billing'}),
         }
         cfg = MetadataConfig()
-        result = aggregate_cluster_metadata(
-            items, ['e1', 'e2', 'e3'], cfg
-        )
+        result = aggregate_cluster_metadata(items, ['e1', 'e2', 'e3'], cfg)
         assert result is not None
         assert 'step' in result
         assert 'checkout' in result
@@ -145,9 +130,7 @@ class TestValidateLearning:
         assert artifact.supporting_item_ids == ['e1', 'e2']
 
     def test_invalid_supporting_ids_removed(self):
-        learning = self._make_learning(
-            supporting_item_ids=['e1', 'e2', 'hallucinated']
-        )
+        learning = self._make_learning(supporting_item_ids=['e1', 'e2', 'hallucinated'])
         cluster_ids = {'e1', 'e2'}
         artifact, repairs = validate_learning(learning, cluster_ids)
         assert artifact is not None
@@ -184,9 +167,7 @@ class TestValidateLearning:
 
     def test_quality_gate_demotes_confidence(self):
         """confidence >= 0.7 with no recommended_actions => demoted."""
-        learning = self._make_learning(
-            confidence=0.85, recommended_actions=[]
-        )
+        learning = self._make_learning(confidence=0.85, recommended_actions=[])
         cluster_ids = {'e1', 'e2'}
         artifact, repairs = validate_learning(learning, cluster_ids)
         assert artifact is not None
@@ -194,9 +175,7 @@ class TestValidateLearning:
         assert repairs == 1
 
     def test_quality_gate_not_triggered_below_threshold(self):
-        learning = self._make_learning(
-            confidence=0.5, recommended_actions=[]
-        )
+        learning = self._make_learning(confidence=0.5, recommended_actions=[])
         cluster_ids = {'e1', 'e2'}
         artifact, repairs = validate_learning(learning, cluster_ids)
         assert artifact is not None
@@ -204,9 +183,7 @@ class TestValidateLearning:
         assert repairs == 0
 
     def test_quality_gate_not_triggered_with_actions(self):
-        learning = self._make_learning(
-            confidence=0.9, recommended_actions=['action1']
-        )
+        learning = self._make_learning(confidence=0.9, recommended_actions=['action1'])
         cluster_ids = {'e1', 'e2'}
         artifact, repairs = validate_learning(learning, cluster_ids)
         assert artifact is not None
@@ -219,15 +196,9 @@ class TestCheckRecurrence:
 
     def _make_evidence(self):
         return {
-            'e1': EvidenceItem(
-                id='e1', text='t', source_ref='conv_1'
-            ),
-            'e2': EvidenceItem(
-                id='e2', text='t', source_ref='conv_1'
-            ),
-            'e3': EvidenceItem(
-                id='e3', text='t', source_ref='conv_2'
-            ),
+            'e1': EvidenceItem(id='e1', text='t', source_ref='conv_1'),
+            'e2': EvidenceItem(id='e2', text='t', source_ref='conv_1'),
+            'e3': EvidenceItem(id='e3', text='t', source_ref='conv_2'),
         }
 
     def test_default_key_counts_items(self):
@@ -242,71 +213,46 @@ class TestCheckRecurrence:
 
         # e1, e2 share conv_1 → only 1 unique key
         assert (
-            check_recurrence(
-                ['e1', 'e2'], evidence, threshold=2, key_fn=key_fn
-            )
+            check_recurrence(['e1', 'e2'], evidence, threshold=2, key_fn=key_fn)
             is False
         )
         # e1 (conv_1), e3 (conv_2) → 2 unique keys
         assert (
-            check_recurrence(
-                ['e1', 'e3'], evidence, threshold=2, key_fn=key_fn
-            )
-            is True
+            check_recurrence(['e1', 'e3'], evidence, threshold=2, key_fn=key_fn) is True
         )
 
     def test_missing_ids_skipped(self):
         evidence = self._make_evidence()
-        assert (
-            check_recurrence(
-                ['e1', 'missing'], evidence, threshold=2
-            )
-            is False
-        )
+        assert check_recurrence(['e1', 'missing'], evidence, threshold=2) is False
 
 
 class TestDeterministicSample:
     """Tests for deterministic_sample."""
 
     def test_returns_all_when_below_max(self):
-        items = {
-            f'e{i}': EvidenceItem(id=f'e{i}', text=f't{i}')
-            for i in range(3)
-        }
+        items = {f'e{i}': EvidenceItem(id=f'e{i}', text=f't{i}') for i in range(3)}
         result = deterministic_sample(items, max_items=5)
         assert len(result) == 3
 
     def test_samples_to_max(self):
-        items = {
-            f'e{i}': EvidenceItem(id=f'e{i}', text=f't{i}')
-            for i in range(10)
-        }
+        items = {f'e{i}': EvidenceItem(id=f'e{i}', text=f't{i}') for i in range(10)}
         result = deterministic_sample(items, max_items=5)
         assert len(result) == 5
 
     def test_no_seed_is_deterministic(self):
-        items = {
-            f'e{i}': EvidenceItem(id=f'e{i}', text=f't{i}')
-            for i in range(10)
-        }
+        items = {f'e{i}': EvidenceItem(id=f'e{i}', text=f't{i}') for i in range(10)}
         r1 = deterministic_sample(items, max_items=5)
         r2 = deterministic_sample(items, max_items=5)
         assert list(r1.keys()) == list(r2.keys())
 
     def test_seed_reproducible(self):
-        items = {
-            f'e{i}': EvidenceItem(id=f'e{i}', text=f't{i}')
-            for i in range(10)
-        }
+        items = {f'e{i}': EvidenceItem(id=f'e{i}', text=f't{i}') for i in range(10)}
         r1 = deterministic_sample(items, max_items=5, seed=42)
         r2 = deterministic_sample(items, max_items=5, seed=42)
         assert set(r1.keys()) == set(r2.keys())
 
     def test_different_seeds_different_results(self):
-        items = {
-            f'e{i}': EvidenceItem(id=f'e{i}', text=f't{i}')
-            for i in range(20)
-        }
+        items = {f'e{i}': EvidenceItem(id=f'e{i}', text=f't{i}') for i in range(20)}
         r1 = deterministic_sample(items, max_items=5, seed=42)
         r2 = deterministic_sample(items, max_items=5, seed=99)
         # With 20 items and 5 selected, different seeds should differ

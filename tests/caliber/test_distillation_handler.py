@@ -1,5 +1,3 @@
-import pytest
-
 from axion.caliber.pattern_discovery.handlers import (
     ClusterForDistillation,
     DistillationInput,

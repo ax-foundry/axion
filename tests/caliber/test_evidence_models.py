@@ -1,15 +1,14 @@
 import pytest
 
+from axion.caliber.pattern_discovery.discovery import PatternDiscovery
 from axion.caliber.pattern_discovery.models import (
     ClusteringMethod,
-    DiscoveredPattern,
     EvidenceItem,
     LearningArtifact,
     PatternDiscoveryResult,
     PipelineResult,
     Provenance,
 )
-from axion.caliber.pattern_discovery.discovery import PatternDiscovery
 
 
 class TestEvidenceItem:

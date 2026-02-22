@@ -6,22 +6,24 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
 from axion.caliber.pattern_discovery.models import EvidenceItem, LearningArtifact
 
-DEFAULT_DENIED_KEYS: frozenset = frozenset({
-    'email',
-    'phone',
-    'name',
-    'address',
-    'ip',
-    'user_id',
-    'account_id',
-    'order_id',
-    'ssn',
-    'password',
-    'token',
-    'credit_card',
-    'dob',
-    'date_of_birth',
-})
+DEFAULT_DENIED_KEYS: frozenset = frozenset(
+    {
+        'email',
+        'phone',
+        'name',
+        'address',
+        'ip',
+        'user_id',
+        'account_id',
+        'order_id',
+        'ssn',
+        'password',
+        'token',
+        'credit_card',
+        'dob',
+        'date_of_birth',
+    }
+)
 DEFAULT_MAX_TAG_LENGTH = 50
 DEFAULT_MAX_TAGS = 10
 
@@ -31,9 +33,7 @@ class MetadataConfig:
     """Configuration for metadata handling in clustering and distillation."""
 
     allowed_keys: Optional[Set[str]] = None
-    denied_keys: Set[str] = field(
-        default_factory=lambda: set(DEFAULT_DENIED_KEYS)
-    )
+    denied_keys: Set[str] = field(default_factory=lambda: set(DEFAULT_DENIED_KEYS))
     max_keys: int = 6
     max_value_length: int = 50
     max_header_chars: int = 150
@@ -110,9 +110,7 @@ def aggregate_cluster_metadata(
     parts: List[str] = []
     for key, counter in key_counters.items():
         top = counter.most_common(3)
-        dist = ', '.join(
-            f'{val} ({count * 100 // total}%)' for val, count in top
-        )
+        dist = ', '.join(f'{val} ({count * 100 // total}%)' for val, count in top)
         parts.append(f'{key}: {dist}')
 
     return '; '.join(parts)
@@ -156,9 +154,7 @@ def validate_learning(
         return None, repairs
 
     # Validate counterexamples
-    valid_counter = [
-        cid for cid in learning.counterexamples if cid in cluster_item_ids
-    ]
+    valid_counter = [cid for cid in learning.counterexamples if cid in cluster_item_ids]
     repairs += len(learning.counterexamples) - len(valid_counter)
 
     # Quality gate: high confidence requires recommended_actions
@@ -203,12 +199,9 @@ def check_recurrence(
     ensures 2 chunks from the same conversation count as 1 occurrence.
     """
     unique_keys = {
-        key_fn(evidence[iid])
-        for iid in supporting_item_ids
-        if iid in evidence
+        key_fn(evidence[iid]) for iid in supporting_item_ids if iid in evidence
     }
     return len(unique_keys) >= threshold
-
 
 
 def deterministic_sample(
@@ -230,12 +223,11 @@ def deterministic_sample(
         rng = random.Random(seed)
         selected = rng.sample(keys, max_items)
     else:
-        selected = sorted(
-            keys, key=lambda k: hashlib.sha256(k.encode()).hexdigest()
-        )[:max_items]
+        selected = sorted(keys, key=lambda k: hashlib.sha256(k.encode()).hexdigest())[
+            :max_items
+        ]
 
     return {k: items[k] for k in selected}
-
 
 
 def default_tag_normalizer(tags: List[str]) -> List[str]:

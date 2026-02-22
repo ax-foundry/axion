@@ -34,7 +34,6 @@ class PatternDiscoveryResult:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 
-
 @dataclass
 class EvidenceItem:
     """A single piece of evidence for clustering.
