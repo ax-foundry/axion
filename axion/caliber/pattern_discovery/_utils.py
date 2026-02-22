@@ -61,7 +61,8 @@ def _filter_metadata(
 def format_metadata_header(
     metadata: Dict[str, Any], config: MetadataConfig
 ) -> Optional[str]:
-    """Format metadata into a compact header string.
+    """
+    Format metadata into a compact header string.
 
     Returns ``[meta: key=val, key=val]`` capped at ``max_header_chars``,
     or ``None`` if disabled or no keys pass the filter.
@@ -82,7 +83,8 @@ def aggregate_cluster_metadata(
     item_ids: List[str],
     config: MetadataConfig,
 ) -> Optional[str]:
-    """Aggregate metadata across cluster members into a summary string.
+    """
+    Aggregate metadata across cluster members into a summary string.
 
     Returns something like ``"failed_step: checkout (80%), billing (20%)"``.
     """
@@ -129,7 +131,8 @@ def validate_learning(
     cluster_item_ids: Set[str],
     min_actions_confidence: float = 0.7,
 ) -> Tuple[Optional[LearningArtifact], int]:
-    """Validate and repair a learning artifact.
+    """
+    Validate and repair a learning artifact.
 
     1. ``supporting_item_ids`` must be a subset of ``cluster_item_ids``.
        Remove invalid IDs and track repair count.
@@ -193,7 +196,8 @@ def check_recurrence(
     threshold: int,
     key_fn: RecurrenceKeyFn = default_recurrence_key,
 ) -> bool:
-    """Count UNIQUE recurrence keys, not just unique item IDs.
+    """
+    Count UNIQUE recurrence keys, not just unique item IDs.
 
     For conversations: ``key_fn = lambda item: item.source_ref or item.id``
     ensures 2 chunks from the same conversation count as 1 occurrence.
@@ -209,7 +213,8 @@ def deterministic_sample(
     max_items: int,
     seed: Optional[int] = None,
 ) -> Dict[str, EvidenceItem]:
-    """Hash-based deterministic selection.
+    """
+    Hash-based deterministic selection.
 
     Default (no seed): sort by ``sha256(key)`` and take first ``max_items``.
     With seed: ``Random(seed).sample()`` for reproducible random sampling.
@@ -231,7 +236,8 @@ def deterministic_sample(
 
 
 def default_tag_normalizer(tags: List[str]) -> List[str]:
-    """Deterministic tag normalization.
+    """
+    Deterministic tag normalization.
 
     - Lowercase, strip whitespace
     - Replace spaces with underscores

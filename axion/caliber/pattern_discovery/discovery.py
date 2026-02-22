@@ -114,7 +114,8 @@ class PatternDiscovery:
         annotations: Union[Dict[str, AnnotatedItem], Dict[str, Dict]],
         method: ClusteringMethod = ClusteringMethod.LLM,
     ) -> PatternDiscoveryResult:
-        """Backward-compatible entry point.
+        """
+        Backward-compatible entry point.
 
         Normalizes AnnotatedItem dicts into EvidenceItem dicts and
         delegates to ``discover_from_evidence()``.

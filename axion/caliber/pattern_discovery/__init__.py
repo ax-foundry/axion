@@ -1,5 +1,3 @@
-# Models (existing)
-# Compat (AnnotatedItem + converters)
 from axion.caliber.pattern_discovery._compat import (
     AnnotatedItem,
     annotated_item_to_evidence,
@@ -7,15 +5,9 @@ from axion.caliber.pattern_discovery._compat import (
     normalize_annotations,
 )
 
-# Utils (new)
 from axion.caliber.pattern_discovery._utils import MetadataConfig
-
-# Discovery (existing class, refactored)
 from axion.caliber.pattern_discovery.discovery import PatternDiscovery
 
-# Handlers — Pydantic I/O models (existing)
-# Handlers — new Pydantic I/O models
-# Handlers — existing handler classes
 from axion.caliber.pattern_discovery.handlers import (
     DEFAULT_CLUSTERING_INSTRUCTION,
     AnnotationNote,
@@ -36,7 +28,6 @@ from axion.caliber.pattern_discovery.handlers import (
     PatternClusteringHandler,
 )
 
-# Models (new)
 from axion.caliber.pattern_discovery.models import (
     ClusteringMethod,
     DiscoveredPattern,
@@ -47,14 +38,12 @@ from axion.caliber.pattern_discovery.models import (
     Provenance,
 )
 
-# Pipeline (new)
 from axion.caliber.pattern_discovery.pipeline import (
     ArtifactWriter,
     EvidenceClusterer,
     EvidencePipeline,
 )
 
-# Plugins (new)
 from axion.caliber.pattern_discovery.plugins import (
     ArtifactSink,
     Deduper,
@@ -67,21 +56,17 @@ from axion.caliber.pattern_discovery.plugins import (
 )
 
 __all__ = [
-    # Models — existing
     'ClusteringMethod',
     'DiscoveredPattern',
     'PatternDiscoveryResult',
-    # Models — new
     'EvidenceItem',
     'LearningArtifact',
     'PipelineResult',
     'Provenance',
-    # Compat
     'AnnotatedItem',
     'annotated_item_to_evidence',
     'annotations_to_evidence',
     'normalize_annotations',
-    # Pydantic I/O — existing
     'AnnotationNote',
     'ClusteringInput',
     'ClusteringOutput',
@@ -89,7 +74,6 @@ __all__ = [
     'LabelInput',
     'LabelOutput',
     'PatternCategory',
-    # Pydantic I/O — new
     'ClusterForDistillation',
     'DistillationHandler',
     'DistillationInput',
