@@ -4,10 +4,8 @@ from axion.caliber.pattern_discovery._compat import (
     annotations_to_evidence,
     normalize_annotations,
 )
-
 from axion.caliber.pattern_discovery._utils import MetadataConfig
 from axion.caliber.pattern_discovery.discovery import PatternDiscovery
-
 from axion.caliber.pattern_discovery.handlers import (
     DEFAULT_CLUSTERING_INSTRUCTION,
     AnnotationNote,
@@ -27,7 +25,6 @@ from axion.caliber.pattern_discovery.handlers import (
     PatternCategory,
     PatternClusteringHandler,
 )
-
 from axion.caliber.pattern_discovery.models import (
     ClusteringMethod,
     DiscoveredPattern,
@@ -37,13 +34,11 @@ from axion.caliber.pattern_discovery.models import (
     PipelineResult,
     Provenance,
 )
-
 from axion.caliber.pattern_discovery.pipeline import (
     ArtifactWriter,
     EvidenceClusterer,
     EvidencePipeline,
 )
-
 from axion.caliber.pattern_discovery.plugins import (
     ArtifactSink,
     Deduper,
