@@ -354,7 +354,7 @@ class EvidencePipeline:
 
         # Truncate (by confidence desc)
         sorted_learnings = sorted(
-            raw_learnings, key=lambda l: l.confidence, reverse=True
+            raw_learnings, key=lambda learning: learning.confidence, reverse=True
         )[: self._max_learnings_per_cluster]
 
         # Validate per-cluster

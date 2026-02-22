@@ -209,7 +209,9 @@ class TestCheckRecurrence:
     def test_custom_key_deduplicates_by_source(self):
         """2 items from same source_ref count as 1 with custom key."""
         evidence = self._make_evidence()
-        key_fn = lambda item: item.source_ref or item.id
+
+        def key_fn(item):
+            return item.source_ref or item.id
 
         # e1, e2 share conv_1 → only 1 unique key
         assert (
