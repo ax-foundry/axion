@@ -247,14 +247,12 @@ class TestPatternDiscoveryEmptyInput:
             'r2': AnnotatedItem(record_id='r2', score=0, notes=None),
         }
 
-        # This should return early without calling LLM
-        result = await discovery._cluster_with_llm(
-            discovery._normalize_annotations(annotations)
-        )
+        # annotations_to_evidence filters out items with no notes,
+        # resulting in empty evidence → early return
+        result = await discovery.discover(annotations)
 
         assert result.patterns == []
-        assert set(result.uncategorized) == {'r1', 'r2'}
-        assert result.metadata.get('error') == 'No items with notes to cluster'
+        assert result.metadata.get('error') == 'No items with text to cluster'
 
 
 class TestLabelModels:
@@ -306,8 +304,7 @@ class TestBERTopicClustering:
             'r3': AnnotatedItem(record_id='r3', score=1, notes='Good response'),
         }
 
-        items = discovery._normalize_annotations(annotations)
-        result = await discovery._cluster_with_bertopic(items)
+        result = await discovery.discover(annotations, method=ClusteringMethod.BERTOPIC)
 
         assert result.patterns == []
         assert set(result.uncategorized) == {'r1', 'r2', 'r3'}
@@ -324,8 +321,7 @@ class TestBERTopicClustering:
             'r2': AnnotatedItem(record_id='r2', score=1, notes=None),
         }
 
-        items = discovery._normalize_annotations(annotations)
-        result = await discovery._cluster_with_bertopic(items)
+        result = await discovery.discover(annotations, method=ClusteringMethod.BERTOPIC)
 
         assert result.patterns == []
         assert 'Too few documents' in result.metadata.get('error', '')
@@ -352,8 +348,7 @@ class TestHybridClustering:
             'r3': AnnotatedItem(record_id='r3', score=1, notes='Good response'),
         }
 
-        items = discovery._normalize_annotations(annotations)
-        result = await discovery._cluster_hybrid(items)
+        result = await discovery.discover(annotations, method=ClusteringMethod.HYBRID)
 
         # Should still return HYBRID method even though it fell back
         assert result.method == ClusteringMethod.HYBRID
