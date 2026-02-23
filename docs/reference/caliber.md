@@ -12,6 +12,9 @@ from axion.caliber import (
     CaliberMetric,
     ExampleSelector, SelectionStrategy, SelectionResult,
     PatternDiscovery, DiscoveredPattern, PatternDiscoveryResult,
+    EvidenceItem, EvidencePipeline, LearningArtifact, PipelineResult,
+    Provenance, MetadataConfig, ClusteringMethod, AnnotatedItem,
+    InMemorySink, JsonlSink, InMemoryDeduper, EmbeddingDeduper,
     MisalignmentAnalyzer, MisalignmentAnalysis, MisalignmentPattern,
     PromptOptimizer, OptimizedPrompt, PromptSuggestion,
     CaliberRenderer, NotebookCaliberRenderer,
@@ -30,7 +33,7 @@ from axion.caliber import (
 <div class="rule-card">
 <span class="rule-card__number">P</span>
 <p class="rule-card__title">Pattern Discovery</p>
-<p class="rule-card__desc">Discover scoring patterns and clusters in evaluation data using embedding-based analysis.</p>
+<p class="rule-card__desc">Cluster any text evidence into themes and distill actionable learning artifacts via a full pipeline.</p>
 </div>
 <div class="rule-card">
 <span class="rule-card__number">M</span>
@@ -84,6 +87,12 @@ from axion.caliber import (
     options:
       show_root_heading: true
 
+### EvidenceItem
+
+::: axion.caliber.EvidenceItem
+    options:
+      show_root_heading: true
+
 ### DiscoveredPattern
 
 ::: axion.caliber.DiscoveredPattern
@@ -96,15 +105,71 @@ from axion.caliber import (
     options:
       show_root_heading: true
 
-### AnnotatedItem
-
-::: axion.caliber.AnnotatedItem
-    options:
-      show_root_heading: true
-
 ### ClusteringMethod
 
 ::: axion.caliber.ClusteringMethod
+    options:
+      show_root_heading: true
+
+### EvidencePipeline
+
+::: axion.caliber.EvidencePipeline
+    options:
+      show_root_heading: true
+
+### LearningArtifact
+
+::: axion.caliber.LearningArtifact
+    options:
+      show_root_heading: true
+
+### PipelineResult
+
+::: axion.caliber.PipelineResult
+    options:
+      show_root_heading: true
+
+### Provenance
+
+::: axion.caliber.Provenance
+    options:
+      show_root_heading: true
+
+### MetadataConfig
+
+::: axion.caliber.MetadataConfig
+    options:
+      show_root_heading: true
+
+### Sinks & Dedupers
+
+#### InMemorySink
+
+::: axion.caliber.InMemorySink
+    options:
+      show_root_heading: true
+
+#### JsonlSink
+
+::: axion.caliber.JsonlSink
+    options:
+      show_root_heading: true
+
+#### InMemoryDeduper
+
+::: axion.caliber.InMemoryDeduper
+    options:
+      show_root_heading: true
+
+#### EmbeddingDeduper
+
+::: axion.caliber.EmbeddingDeduper
+    options:
+      show_root_heading: true
+
+### AnnotatedItem (Legacy)
+
+::: axion.caliber.AnnotatedItem
     options:
       show_root_heading: true
 
@@ -185,6 +250,7 @@ from axion.caliber import (
 <div class="ref-nav" markdown>
 
 [CaliberHQ Guide :octicons-arrow-right-24:](../guides/caliberhq.md){ .md-button .md-button--primary }
-[Example Selector Deep Dive :octicons-arrow-right-24:](../deep-dives/align/example-selector.md){ .md-button }
+[Pattern Discovery Deep Dive :octicons-arrow-right-24:](../deep-dives/caliber/pattern-discovery.md){ .md-button }
+[Example Selector Deep Dive :octicons-arrow-right-24:](../deep-dives/caliber/example-selector.md){ .md-button }
 
 </div>

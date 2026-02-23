@@ -310,7 +310,7 @@ selector = ExampleSelector(seed=42)
 
 <div class="ref-nav" markdown="1">
 
-[Caliber API Reference :octicons-arrow-right-24:](../../reference/align.md){ .md-button .md-button--primary }
+[Caliber API Reference :octicons-arrow-right-24:](../../reference/caliber.md){ .md-button .md-button--primary }
 [CaliberHQ Guide :octicons-arrow-right-24:](../../guides/caliberhq.md){ .md-button }
 
 </div>

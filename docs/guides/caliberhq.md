@@ -56,7 +56,7 @@ print(f"Cohen's Kappa: {result.metrics.cohen_kappa:.3f}")
 <div class="rule-card">
 <span class="rule-card__number">4</span>
 <p class="rule-card__title">Discover Patterns</p>
-<p class="rule-card__desc">Cluster annotation notes into themes (LLM / BERTopic / hybrid).</p>
+<p class="rule-card__desc">Cluster any text evidence into themes and distill learning artifacts via a full pipeline.</p>
 </div>
 <div class="rule-card">
 <span class="rule-card__number">5</span>
@@ -144,7 +144,7 @@ graph LR
 |----------|---------|
 | **Core session** | `CalibrationSession` |
 | **Step components** | `UploadHandler`, `AnnotationManager`, `EvaluationRunner` |
-| **Analysis tools** | `PatternDiscovery`, `MisalignmentAnalyzer`, `PromptOptimizer`, `ExampleSelector` |
+| **Analysis tools** | `PatternDiscovery`, `EvidencePipeline`, `MisalignmentAnalyzer`, `PromptOptimizer`, `ExampleSelector` |
 | **Renderers** | `ConsoleCaliberRenderer`, `NotebookCaliberRenderer`, `JsonCaliberRenderer` |
 
 ## Demo
@@ -313,7 +313,7 @@ for smarter selection instead of naive slicing.
 | `MISALIGNMENT_GUIDED` | Prioritize FP/FN cases from prior eval |
 | `PATTERN_AWARE` | Cover discovered failure patterns |
 
-See [Example Selector Deep Dive](../deep-dives/align/example-selector.md) for detailed usage.
+See [Example Selector Deep Dive](../deep-dives/caliber/example-selector.md) for detailed usage.
 
 ## Renderers
 
@@ -350,8 +350,9 @@ CaliberHQ uses a renderer interface so UIs can plug in without changing core log
 
 <div class="ref-nav" markdown="1">
 
-[Caliber API Reference :octicons-arrow-right-24:](../reference/align.md){ .md-button .md-button--primary }
-[Example Selector Deep Dive :octicons-arrow-right-24:](../deep-dives/align/example-selector.md){ .md-button }
+[Caliber API Reference :octicons-arrow-right-24:](../reference/caliber.md){ .md-button .md-button--primary }
+[Pattern Discovery Deep Dive :octicons-arrow-right-24:](../deep-dives/caliber/pattern-discovery.md){ .md-button }
+[Example Selector Deep Dive :octicons-arrow-right-24:](../deep-dives/caliber/example-selector.md){ .md-button }
 [Metrics Guide :octicons-arrow-right-24:](metrics.md){ .md-button }
 
 </div>

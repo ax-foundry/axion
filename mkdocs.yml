@@ -18,6 +18,7 @@ nav:
     - Metrics & Evaluation: guides/metrics.md
     - Running Evaluations: guides/evaluation.md
     - Issue Extraction & Analysis: guides/issue-extraction.md
+    - Cross-Metric Insight Extraction: guides/insight-extraction.md
     - CaliberHQ: guides/caliberhq.md
     - Langfuse:
       - Overview: guides/langfuse/overview.md
@@ -71,7 +72,8 @@ nav:
       - Evaluation Runner: deep-dives/runners/evaluation-runner.md
       - API Runner: deep-dives/runners/api-runner.md
     - Caliber:
-      - Example Selector: deep-dives/align/example-selector.md
+      - Pattern Discovery: deep-dives/caliber/pattern-discovery.md
+      - Example Selector: deep-dives/caliber/example-selector.md
     - Synthetic:
       - Document QA Generation: deep-dives/synthetic/document-qa.md
     - Search:
@@ -83,13 +85,14 @@ nav:
       - Environment: deep-dives/internals/environment.md
       - Logging: deep-dives/internals/logging.md
   - Reference:
-    - Caliber: reference/align.md
+    - Caliber: reference/caliber.md
     - Dataset: reference/dataset.md
     - Schema: reference/schema.md
     - Metrics: reference/metrics.md
     - Runners: reference/runners.md
     - Eval Tree: reference/eval-tree.md
     - Issue Extractor: reference/issue-extractor.md
+    - Insight Extractor: reference/insight-extractor.md
     - Synthetic: reference/synthetic.md
     - Search: reference/search.md
     - LLM Registry: reference/llm-registry.md

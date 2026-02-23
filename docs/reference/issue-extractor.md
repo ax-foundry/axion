@@ -152,7 +152,7 @@ The following adapters are pre-registered:
 <div class="ref-nav" markdown>
 
 [Issue Extraction Guide :octicons-arrow-right-24:](../guides/issue-extraction.md){ .md-button .md-button--primary }
+[Insight Extractor Reference :octicons-arrow-right-24:](insight-extractor.md){ .md-button }
 [Running Evaluations :octicons-arrow-right-24:](../guides/evaluation.md){ .md-button }
-[Creating Custom Metrics :octicons-arrow-right-24:](../deep-dives/metrics/creating-metrics.md){ .md-button }
 
 </div>
