@@ -10,31 +10,31 @@
       
       
       
-        <link rel="canonical" href="https://ax-foundry.github.io/axion/deep-dives/align/example-selector/">
+        <link rel="canonical" href="https://ax-foundry.github.io/axion/guides/insight-extraction/">
       
       
-        <link rel="prev" href="../../runners/api-runner/">
+        <link rel="prev" href="../issue-extraction/">
       
       
-        <link rel="next" href="../../synthetic/document-qa/">
+        <link rel="next" href="../caliberhq/">
       
       
         
       
       
-      <link rel="icon" href="../../../assets/ax-icon.png">
+      <link rel="icon" href="../../assets/ax-icon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
     
     
       
-        <title>Example Selector - Documentation</title>
+        <title>Cross-Metric Insight Extraction - Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -53,11 +53,11 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#example-selector" class="md-skip">
+        <a href="#cross-metric-insight-extraction" class="md-skip">
           Skip to content
         </a>
       
@@ -109,13 +109,13 @@
     </label>
 
     
-    <a href="../../.."
+    <a href="../.."
        title="Documentation"
        class="md-header__button md-logo"
        aria-label="Documentation"
        data-md-component="logo">
       
-  <img src="../../../assets/axion_main_transparent.png" alt="logo">
+  <img src="../../assets/axion_main_transparent.png" alt="logo">
 
       <span class="md-header__logo-text">Docs</span>
     </a>
@@ -203,35 +203,35 @@
         
       
         
-        <a href="../../../getting-started/installation/"
+        <a href="../../getting-started/installation/"
            class="md-header__section-link">
           Getting Started
         </a>
         
       
         
-        <a href="../../../guides/hierarchical-scoring/"
-           class="md-header__section-link">
+        <a href="../hierarchical-scoring/"
+           class="md-header__section-link md-header__section-link--active">
           Guides
         </a>
         
       
         
-        <a href="../../../metric-registry/composite/"
+        <a href="../../metric-registry/composite/"
            class="md-header__section-link">
           Metric Registry
         </a>
         
       
         
-        <a href="../../metrics/creating-metrics/"
-           class="md-header__section-link md-header__section-link--active">
+        <a href="../../deep-dives/metrics/creating-metrics/"
+           class="md-header__section-link">
           Deep Dives
         </a>
         
       
         
-        <a href="../../../reference/align/"
+        <a href="../../reference/caliber/"
            class="md-header__section-link">
           Reference
         </a>
@@ -281,7 +281,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../.." class="md-tabs__link">
+        <a href="../.." class="md-tabs__link">
           
   
   
@@ -305,7 +305,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../getting-started/installation/" class="md-tabs__link">
+        <a href="../../getting-started/installation/" class="md-tabs__link">
           
   
   
@@ -323,11 +323,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../../guides/hierarchical-scoring/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../hierarchical-scoring/" class="md-tabs__link">
           
   
   
@@ -356,7 +358,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../metric-registry/composite/" class="md-tabs__link">
+        <a href="../../metric-registry/composite/" class="md-tabs__link">
           
   
   
@@ -379,8 +381,6 @@
   
   
   
-    
-  
   
     
     
@@ -388,13 +388,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../metrics/creating-metrics/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../deep-dives/metrics/creating-metrics/" class="md-tabs__link">
           
   
   
@@ -419,7 +417,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../reference/align/" class="md-tabs__link">
+        <a href="../../reference/caliber/" class="md-tabs__link">
           
   
   
@@ -455,9 +453,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="Documentation" class="md-nav__button md-logo" aria-label="Documentation" data-md-component="logo">
+    <a href="../.." title="Documentation" class="md-nav__button md-logo" aria-label="Documentation" data-md-component="logo">
       
-  <img src="../../../assets/axion_main_transparent.png" alt="logo">
+  <img src="../../assets/axion_main_transparent.png" alt="logo">
 
     </a>
     Documentation
@@ -515,7 +513,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../.." class="md-nav__link ">
+            <a href="../.." class="md-nav__link ">
               
   
   
@@ -561,7 +559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../evaluation_flywheel/" class="md-nav__link">
+      <a href="../../evaluation_flywheel/" class="md-nav__link">
         
   
   
@@ -591,7 +589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../agent_playbook/" class="md-nav__link">
+      <a href="../../agent_playbook/" class="md-nav__link">
         
   
   
@@ -621,7 +619,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../why_ground_truth_matters/" class="md-nav__link">
+      <a href="../../why_ground_truth_matters/" class="md-nav__link">
         
   
   
@@ -716,7 +714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../getting-started/installation/" class="md-nav__link">
+      <a href="../../getting-started/installation/" class="md-nav__link">
         
   
   
@@ -754,8 +752,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -779,25 +779,28 @@
       
         
       
+        
+      
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
             
   
   
@@ -815,7 +818,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -833,7 +836,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/hierarchical-scoring/" class="md-nav__link">
+      <a href="../hierarchical-scoring/" class="md-nav__link">
         
   
   
@@ -863,7 +866,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/datasets/" class="md-nav__link">
+      <a href="../datasets/" class="md-nav__link">
         
   
   
@@ -893,7 +896,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/metrics/" class="md-nav__link">
+      <a href="../metrics/" class="md-nav__link">
         
   
   
@@ -923,7 +926,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/evaluation/" class="md-nav__link">
+      <a href="../evaluation/" class="md-nav__link">
         
   
   
@@ -953,7 +956,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/issue-extraction/" class="md-nav__link">
+      <a href="../issue-extraction/" class="md-nav__link">
         
   
   
@@ -980,10 +983,296 @@
                 
   
   
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cross-Metric Insight Extraction
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Cross-Metric Insight Extraction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Works
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="How It Works">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-to-evidence-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Issue-to-Evidence Mapping
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clustering-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clustering Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forwarding-pipeline-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forwarding Pipeline Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working with Results
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Working with Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#insightresult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InsightResult
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#insightpattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InsightPattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#learningartifact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LearningArtifact
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sync-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-to-other-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship to Other Tools
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/caliberhq/" class="md-nav__link">
+      <a href="../caliberhq/" class="md-nav__link">
         
   
   
@@ -1031,19 +1320,22 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_7" >
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_8" >
         
           
-          <label class="md-nav__link" for="__nav_3_7" id="__nav_3_7_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="">
             
   
   
@@ -1061,8 +1353,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_7">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_8">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1079,7 +1371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/langfuse/overview/" class="md-nav__link">
+      <a href="../langfuse/overview/" class="md-nav__link">
         
   
   
@@ -1109,7 +1401,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/langfuse/configuration/" class="md-nav__link">
+      <a href="../langfuse/configuration/" class="md-nav__link">
         
   
   
@@ -1139,7 +1431,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/langfuse/tracing/" class="md-nav__link">
+      <a href="../langfuse/tracing/" class="md-nav__link">
         
   
   
@@ -1169,7 +1461,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/langfuse/trace-collection/" class="md-nav__link">
+      <a href="../langfuse/trace-collection/" class="md-nav__link">
         
   
   
@@ -1199,7 +1491,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/langfuse/publishing/" class="md-nav__link">
+      <a href="../langfuse/publishing/" class="md-nav__link">
         
   
   
@@ -1237,7 +1529,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/llm-providers/" class="md-nav__link">
+      <a href="../llm-providers/" class="md-nav__link">
         
   
   
@@ -1267,7 +1559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/synthetic/" class="md-nav__link">
+      <a href="../synthetic/" class="md-nav__link">
         
   
   
@@ -1297,7 +1589,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../guides/search/" class="md-nav__link">
+      <a href="../search/" class="md-nav__link">
         
   
   
@@ -1451,7 +1743,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../metric-registry/composite/" class="md-nav__link ">
+            <a href="../../metric-registry/composite/" class="md-nav__link ">
               
   
   
@@ -1497,7 +1789,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/faithfulness/" class="md-nav__link">
+      <a href="../../metric-registry/composite/faithfulness/" class="md-nav__link">
         
   
   
@@ -1527,7 +1819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/answer_relevancy/" class="md-nav__link">
+      <a href="../../metric-registry/composite/answer_relevancy/" class="md-nav__link">
         
   
   
@@ -1557,7 +1849,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/factual_accuracy/" class="md-nav__link">
+      <a href="../../metric-registry/composite/factual_accuracy/" class="md-nav__link">
         
   
   
@@ -1587,7 +1879,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/answer_completeness/" class="md-nav__link">
+      <a href="../../metric-registry/composite/answer_completeness/" class="md-nav__link">
         
   
   
@@ -1617,7 +1909,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/answer_criteria/" class="md-nav__link">
+      <a href="../../metric-registry/composite/answer_criteria/" class="md-nav__link">
         
   
   
@@ -1647,7 +1939,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/tone_style_consistency/" class="md-nav__link">
+      <a href="../../metric-registry/composite/tone_style_consistency/" class="md-nav__link">
         
   
   
@@ -1677,7 +1969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/citation_relevancy/" class="md-nav__link">
+      <a href="../../metric-registry/composite/citation_relevancy/" class="md-nav__link">
         
   
   
@@ -1707,7 +1999,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/pii_leakage/" class="md-nav__link">
+      <a href="../../metric-registry/composite/pii_leakage/" class="md-nav__link">
         
   
   
@@ -1737,7 +2029,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_relevancy/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_relevancy/" class="md-nav__link">
         
   
   
@@ -1767,7 +2059,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_recall/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_recall/" class="md-nav__link">
         
   
   
@@ -1797,7 +2089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_precision/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_precision/" class="md-nav__link">
         
   
   
@@ -1827,7 +2119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_ranking/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_ranking/" class="md-nav__link">
         
   
   
@@ -1857,7 +2149,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_sufficiency/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_sufficiency/" class="md-nav__link">
         
   
   
@@ -1887,7 +2179,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_utilization/" class="md-nav__link">
+      <a href="../../metric-registry/composite/contextual_utilization/" class="md-nav__link">
         
   
   
@@ -1968,7 +2260,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../metric-registry/heuristic/" class="md-nav__link ">
+            <a href="../../metric-registry/heuristic/" class="md-nav__link ">
               
   
   
@@ -2014,7 +2306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/exact_string_match/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/exact_string_match/" class="md-nav__link">
         
   
   
@@ -2044,7 +2336,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/contains_match/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/contains_match/" class="md-nav__link">
         
   
   
@@ -2074,7 +2366,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/levenshtein_ratio/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/levenshtein_ratio/" class="md-nav__link">
         
   
   
@@ -2104,7 +2396,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
         
   
   
@@ -2134,7 +2426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/pii_leakage_heuristic/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/pii_leakage_heuristic/" class="md-nav__link">
         
   
   
@@ -2164,7 +2456,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/citation_presence/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/citation_presence/" class="md-nav__link">
         
   
   
@@ -2194,7 +2486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/latency/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/latency/" class="md-nav__link">
         
   
   
@@ -2224,7 +2516,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/length_constraint/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/length_constraint/" class="md-nav__link">
         
   
   
@@ -2254,7 +2546,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
+      <a href="../../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
         
   
   
@@ -2317,7 +2609,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../metric-registry/conversational/" class="md-nav__link ">
+            <a href="../../metric-registry/conversational/" class="md-nav__link ">
               
   
   
@@ -2393,7 +2685,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../metric-registry/tool/" class="md-nav__link ">
+            <a href="../../metric-registry/tool/" class="md-nav__link ">
               
   
   
@@ -2439,7 +2731,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/tool/tool_correctness/" class="md-nav__link">
+      <a href="../../metric-registry/tool/tool_correctness/" class="md-nav__link">
         
   
   
@@ -2481,10 +2773,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -2504,22 +2794,21 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -2537,7 +2826,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2569,13 +2858,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -2584,7 +2870,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_1" >
         
           
-          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
             
   
   
@@ -2620,7 +2906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metrics/creating-metrics/" class="md-nav__link">
+      <a href="../../deep-dives/metrics/creating-metrics/" class="md-nav__link">
         
   
   
@@ -2650,7 +2936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metrics/yaml-metrics/" class="md-nav__link">
+      <a href="../../deep-dives/metrics/yaml-metrics/" class="md-nav__link">
         
   
   
@@ -2685,7 +2971,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metrics/composite-metrics/" class="md-nav__link">
+      <a href="../../deep-dives/metrics/composite-metrics/" class="md-nav__link">
         
   
   
@@ -2737,13 +3023,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -2752,7 +3035,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
         
           
-          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
             
   
   
@@ -2788,7 +3071,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../runners/metric-runner/" class="md-nav__link">
+      <a href="../../deep-dives/runners/metric-runner/" class="md-nav__link">
         
   
   
@@ -2818,7 +3101,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../runners/evaluation-runner/" class="md-nav__link">
+      <a href="../../deep-dives/runners/evaluation-runner/" class="md-nav__link">
         
   
   
@@ -2848,7 +3131,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../runners/api-runner/" class="md-nav__link">
+      <a href="../../deep-dives/runners/api-runner/" class="md-nav__link">
         
   
   
@@ -2887,12 +3170,12 @@
                 
   
   
-    
   
   
-  
     
     
+      
+        
       
         
       
@@ -2902,20 +3185,19 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
             
   
   
@@ -2933,7 +3215,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2948,20 +3230,11 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
+    <li class="md-nav__item">
+      <a href="../../deep-dives/caliber/pattern-discovery/" class="md-nav__link">
         
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
   
   
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -2969,7 +3242,7 @@
   <span class="md-ellipsis">
     
   
-    Example Selector
+    Pattern Discovery
   
 
     
@@ -2977,10 +3250,20 @@
   
   
 
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deep-dives/caliber/example-selector/" class="md-nav__link">
         
   
   
@@ -2998,144 +3281,6 @@
   
 
       </a>
-      
-        
-
-  
-
-<nav class="md-nav md-nav--secondary" aria-label="On this page">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      On this page
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#what-youll-learn" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        What You'll Learn
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-start" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Start
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#selection-strategies" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Selection Strategies
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#data-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data Format
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#metric-integration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Metric Integration
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#best-practices" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Best Practices
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Best Practices">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#strategy-selection" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Strategy Selection
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#auto-selection-helper" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Auto-Selection Helper
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reproducibility" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reproducibility
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-count" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Count
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3166,13 +3311,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -3181,7 +3323,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
         
           
-          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
             
   
   
@@ -3217,7 +3359,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../synthetic/document-qa/" class="md-nav__link">
+      <a href="../../deep-dives/synthetic/document-qa/" class="md-nav__link">
         
   
   
@@ -3269,13 +3411,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -3284,7 +3423,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
         
           
-          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
             
   
   
@@ -3320,7 +3459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../search/google/" class="md-nav__link">
+      <a href="../../deep-dives/search/google/" class="md-nav__link">
         
   
   
@@ -3350,7 +3489,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../search/tavily/" class="md-nav__link">
+      <a href="../../deep-dives/search/tavily/" class="md-nav__link">
         
   
   
@@ -3380,7 +3519,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../search/you/" class="md-nav__link">
+      <a href="../../deep-dives/search/you/" class="md-nav__link">
         
   
   
@@ -3432,13 +3571,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -3447,7 +3583,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_6" >
         
           
-          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
             
   
   
@@ -3483,7 +3619,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/tracing/" class="md-nav__link">
+      <a href="../../deep-dives/internals/tracing/" class="md-nav__link">
         
   
   
@@ -3513,7 +3649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/environment/" class="md-nav__link">
+      <a href="../../deep-dives/internals/environment/" class="md-nav__link">
         
   
   
@@ -3546,7 +3682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../internals/logging/" class="md-nav__link">
+      <a href="../../deep-dives/internals/logging/" class="md-nav__link">
         
   
   
@@ -3592,6 +3728,8 @@
   
     
     
+      
+        
       
         
       
@@ -3669,7 +3807,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/align/" class="md-nav__link">
+      <a href="../../reference/caliber/" class="md-nav__link">
         
   
   
@@ -3699,7 +3837,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/dataset/" class="md-nav__link">
+      <a href="../../reference/dataset/" class="md-nav__link">
         
   
   
@@ -3729,7 +3867,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/schema/" class="md-nav__link">
+      <a href="../../reference/schema/" class="md-nav__link">
         
   
   
@@ -3759,7 +3897,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/metrics/" class="md-nav__link">
+      <a href="../../reference/metrics/" class="md-nav__link">
         
   
   
@@ -3789,7 +3927,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/runners/" class="md-nav__link">
+      <a href="../../reference/runners/" class="md-nav__link">
         
   
   
@@ -3819,7 +3957,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/eval-tree/" class="md-nav__link">
+      <a href="../../reference/eval-tree/" class="md-nav__link">
         
   
   
@@ -3849,7 +3987,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/issue-extractor/" class="md-nav__link">
+      <a href="../../reference/issue-extractor/" class="md-nav__link">
         
   
   
@@ -3879,7 +4017,37 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/synthetic/" class="md-nav__link">
+      <a href="../../reference/insight-extractor/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Insight Extractor
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/synthetic/" class="md-nav__link">
         
   
   
@@ -3909,7 +4077,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/search/" class="md-nav__link">
+      <a href="../../reference/search/" class="md-nav__link">
         
   
   
@@ -3939,7 +4107,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/llm-registry/" class="md-nav__link">
+      <a href="../../reference/llm-registry/" class="md-nav__link">
         
   
   
@@ -3969,7 +4137,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/tracer-registry/" class="md-nav__link">
+      <a href="../../reference/tracer-registry/" class="md-nav__link">
         
   
   
@@ -4028,10 +4196,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-youll-learn" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What You'll Learn
+        Overview
       
     </span>
   </a>
@@ -4050,88 +4218,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#selection-strategies" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Selection Strategies
+        How It Works
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#data-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Data Format
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#metric-integration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Metric Integration
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#best-practices" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Best Practices
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Best Practices">
+    <nav class="md-nav" aria-label="How It Works">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#strategy-selection" class="md-nav__link">
+  <a href="#issue-to-evidence-mapping" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Strategy Selection
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#auto-selection-helper" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Auto-Selection Helper
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reproducibility" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Reproducibility
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-count" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Count
+        Issue-to-Evidence Mapping
       
     </span>
   </a>
@@ -4140,6 +4242,161 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#basic-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Basic Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clustering-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clustering Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#forwarding-pipeline-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Forwarding Pipeline Options
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#working-with-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Working with Results
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Working with Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#insightresult" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InsightResult
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#insightpattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InsightPattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#learningartifact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LearningArtifact
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sync-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sync Usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#relationship-to-other-tools" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relationship to Other Tools
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Reference
+      
+    </span>
+  </a>
   
 </li>
       
@@ -4163,283 +4420,309 @@
   
 
 
-<h1 id="example-selector">Example Selector<a class="headerlink" href="#example-selector" title="Permanent link">&para;</a></h1>
-<p>The <code>ExampleSelector</code> provides intelligent selection of few-shot examples for LLM-as-judge calibration. Instead of naive slicing (<code>examples[:n]</code>), it offers strategies that improve calibration quality by balancing accept/reject cases, prioritizing misaligned examples, or covering discovered patterns.</p>
-<h2 id="what-youll-learn">What You'll Learn<a class="headerlink" href="#what-youll-learn" title="Permanent link">&para;</a></h2>
+<h1 id="cross-metric-insight-extraction">Cross-Metric Insight Extraction<a class="headerlink" href="#cross-metric-insight-extraction" title="Permanent link">&para;</a></h1>
+<p>Discover cross-metric patterns from evaluation issues using semantic clustering. The <code>InsightExtractor</code> bridges the <a href="../issue-extraction/">Issue Extractor</a> with the <a href="../../deep-dives/caliber/pattern-discovery/">Evidence Pipeline</a> to surface insights that span multiple metrics.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The <code>IssueExtractor</code> groups issues mechanically by metric + signal name. But real problems often cut across metrics — for example, faithfulness <strong>and</strong> contextual recall failures can both point to the same retrieval problem. The <code>InsightExtractor</code> uses semantic clustering to find these cross-metric patterns automatically.</p>
 <div class="rule-grid" markdown="0">
 <div class="rule-card">
-<span class="rule-card__number">1</span>
-<p class="rule-card__title">Balanced Selection</p>
-<p class="rule-card__desc">50/50 accept/reject sampling for unbiased baselines &mdash; the default strategy.</p>
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Cross-Metric Patterns</p>
+<p class="rule-card__desc">Detects issues that span multiple metrics pointing to a shared root cause.</p>
 </div>
 <div class="rule-card">
-<span class="rule-card__number">2</span>
-<p class="rule-card__title">Misalignment-Guided</p>
-<p class="rule-card__desc">Prioritize false positives and false negatives from prior evaluation runs to focus on hard cases.</p>
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Actionable Learnings</p>
+<p class="rule-card__desc">Distills clusters into titled insights with recommended actions and confidence scores.</p>
 </div>
 <div class="rule-card">
-<span class="rule-card__number">3</span>
-<p class="rule-card__title">Pattern-Aware</p>
-<p class="rule-card__desc">Sample from discovered failure patterns to ensure coverage across all failure categories.</p>
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Composable & Opt-In</p>
+<p class="rule-card__desc">Purely additive &mdash; no changes to IssueExtractor or EvidencePipeline.</p>
 </div>
 <div class="rule-card">
-<span class="rule-card__number">4</span>
-<p class="rule-card__title">Metric Integration</p>
-<p class="rule-card__desc">Convert selected examples to CaliberHQ dict format or Pydantic-based metric format.</p>
+<span class="rule-card__number">&#x2713;</span>
+<p class="rule-card__title">Pluggable Pipeline</p>
+<p class="rule-card__desc">Full control via pipeline overrides, sinks, dedupers, and clustering methods.</p>
 </div>
 </div>
 
 <h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSelector</span><span class="p">,</span> <span class="n">SelectionStrategy</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Initialize with seed for reproducibility</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">selector</span> <span class="o">=</span> <span class="n">ExampleSelector</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Basic balanced selection</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">result</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">annotations</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">examples</span><span class="p">)</span><span class="si">}</span><span class="s2"> examples&quot;</span><span class="p">)</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Strategy: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">strategy_used</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Metadata: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">IssueExtractor</span><span class="p">,</span> <span class="n">InsightExtractor</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># 1. Run your evaluation</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">evaluation_runner</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># 2. Extract issues</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">issue_extractor</span> <span class="o">=</span> <span class="n">IssueExtractor</span><span class="p">()</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">issues</span> <span class="o">=</span> <span class="n">issue_extractor</span><span class="o">.</span><span class="n">extract_from_evaluation</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># 3. Discover cross-metric patterns</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">insight_extractor</span> <span class="o">=</span> <span class="n">InsightExtractor</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">)</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="n">insights</span> <span class="o">=</span> <span class="k">await</span> <span class="n">insight_extractor</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1"># 4. Explore results</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">insights</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;CROSS-METRIC&quot;</span> <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">is_cross_metric</span> <span class="k">else</span> <span class="s2">&quot;single-metric&quot;</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">count</span><span class="si">}</span><span class="s2"> issues)&quot;</span><span class="p">)</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Metrics: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">metrics_involved</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Test cases: </span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">distinct_test_cases</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="k">for</span> <span class="n">learning</span> <span class="ow">in</span> <span class="n">insights</span><span class="o">.</span><span class="n">learnings</span><span class="p">:</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="si">{</span><span class="n">learning</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2"> (confidence=</span><span class="si">{</span><span class="n">learning</span><span class="o">.</span><span class="n">confidence</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>    <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">learning</span><span class="o">.</span><span class="n">recommended_actions</span><span class="p">:</span>
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span></code></pre></div>
-<h2 id="selection-strategies">Selection Strategies<a class="headerlink" href="#selection-strategies" title="Permanent link">&para;</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3c-1.27 0-2.4.8-2.82 2H3v2h1.95L2 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3L6.05 7h3.12c.33.85.98 1.5 1.83 1.83V20H2v2h20v-2h-9V8.82c.85-.32 1.5-.97 1.82-1.82h3.13L15 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3l-2.95-7H21V5h-6.17C14.4 3.8 13.27 3 12 3m0 2a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m-6.5 5.25L7 14H4zm13 0L20 14h-3z"/></svg></span> BALANCED (Default)</label><label for="__tabbed_1_2"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 2v2.07A8 8 0 0 0 4.07 11H2v2h2.07A8 8 0 0 0 11 19.93V22h2v-2.07A8 8 0 0 0 19.93 13H22v-2h-2.07A8 8 0 0 0 13 4.07V2m-2 4.08V8h2V6.09c2.5.41 4.5 2.41 4.92 4.91H16v2h1.91c-.41 2.5-2.41 4.5-4.91 4.92V16h-2v1.91C8.5 17.5 6.5 15.5 6.08 13H8v-2H6.09C6.5 8.5 8.5 6.5 11 6.08M12 11a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1"/></svg></span> MISALIGNMENT_GUIDED</label><label for="__tabbed_1_3"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 13.5v8H3v-8zM12 2l5.5 9h-11zm5.5 11c2.5 0 4.5 2 4.5 4.5S20 22 17.5 22 13 20 13 17.5s2-4.5 4.5-4.5"/></svg></span> PATTERN_AWARE</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<p>Selects a 50/50 mix of accept (score=1) and reject (score=0) cases with random
-sampling. This prevents the LLM judge from being biased toward one outcome.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">result</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">records</span><span class="o">=</span><span class="n">records</span><span class="p">,</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>  <span class="c1"># {record_id: 0 or 1}</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">strategy</span><span class="o">=</span><span class="n">SelectionStrategy</span><span class="o">.</span><span class="n">BALANCED</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">)</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># Metadata includes counts</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># {&#39;accepts&#39;: 3, &#39;rejects&#39;: 3}</span>
-</span></code></pre></div>
-<p><strong>When to use:</strong></p>
-<ul>
-<li>Initial calibration with no prior evaluation data</li>
-<li>General-purpose few-shot selection</li>
-<li>When you want unbiased baseline examples</li>
-</ul>
-<p><strong>Behavior with imbalanced data:</strong></p>
-<ul>
-<li>If all annotations are accepts, returns only accepts</li>
-<li>If all annotations are rejects, returns only rejects</li>
-<li>Fills remaining slots from the larger pool when one side is exhausted</li>
-</ul>
-</div>
-<div class="tabbed-block">
-<p>Prioritizes cases where the LLM judge disagreed with human annotations. This
-focuses calibration on the hardest cases — the examples the judge gets wrong.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Requires evaluation results from a prior run</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">eval_results</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;rec_1&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>  <span class="c1"># LLM predicted 1</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;rec_2&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>  <span class="c1"># LLM predicted 0</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="c1"># ...</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">]</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">result</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">records</span><span class="o">=</span><span class="n">records</span><span class="p">,</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">strategy</span><span class="o">=</span><span class="n">SelectionStrategy</span><span class="o">.</span><span class="n">MISALIGNMENT_GUIDED</span><span class="p">,</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="n">eval_results</span><span class="o">=</span><span class="n">eval_results</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="p">)</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1"># Metadata shows misalignment stats</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="c1"># {</span>
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="c1">#     &#39;false_positives_selected&#39;: 2,</span>
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="c1">#     &#39;false_negatives_selected&#39;: 1,</span>
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="c1">#     &#39;total_fp_available&#39;: 5,</span>
-</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="c1">#     &#39;total_fn_available&#39;: 3,</span>
-</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="c1"># }</span>
-</span></code></pre></div>
-<p><strong>When to use:</strong></p>
-<ul>
-<li>After running an initial evaluation and seeing low agreement</li>
-<li>To improve calibration on specific failure modes</li>
-<li>Iterative refinement workflow</li>
-</ul>
-<p><strong>How it works:</strong></p>
+<h2 id="how-it-works">How It Works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h2>
+<p>The <code>InsightExtractor</code> performs three steps:</p>
+<pre class="mermaid"><code>graph LR
+    I["IssueExtractionResult"] --&gt; A["Convert to EvidenceItems"]
+    A --&gt; P["EvidencePipeline.run()"]
+    P --&gt; R["Build InsightPatterns"]</code></pre>
 <ol>
-<li>Identifies false positives (LLM=1, Human=0) and false negatives (LLM=0, Human=1)</li>
-<li>Allocates ~1/3 of slots each to FP and FN cases</li>
-<li>Fills remaining slots with balanced aligned examples</li>
+<li>
+<p><strong>Convert</strong> — Each <code>ExtractedIssue</code> is mapped to an <code>EvidenceItem</code> with reasoning-first text and structured metadata. Issues with no reasoning and no query are skipped.</p>
+</li>
+<li>
+<p><strong>Cluster &amp; Distill</strong> — The <code>EvidencePipeline</code> clusters evidence semantically and distills each cluster into learning artifacts with recommended actions.</p>
+</li>
+<li>
+<p><strong>Enrich</strong> — Each cluster is enriched with cross-metric metadata: which metrics are involved, whether it spans multiple metrics, and how many distinct test cases it covers.</p>
+</li>
 </ol>
-</div>
-<div class="tabbed-block">
-<p>Samples from discovered patterns to ensure coverage across failure categories.
-Requires results from Pattern Discovery.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">PatternDiscovery</span>
+<h3 id="issue-to-evidence-mapping">Issue-to-Evidence Mapping<a class="headerlink" href="#issue-to-evidence-mapping" title="Permanent link">&para;</a></h3>
+<p>Each issue is converted to an <code>EvidenceItem</code> for clustering:</p>
+<table>
+<thead>
+<tr>
+<th>Issue Field</th>
+<th>Maps To</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>reasoning</code> + <code>signal cue</code> + <code>query</code></td>
+<td><code>EvidenceItem.text</code></td>
+<td>Clustering input</td>
+</tr>
+<tr>
+<td><code>test_case_id</code></td>
+<td><code>source_ref</code></td>
+<td>Recurrence grouping</td>
+</tr>
+<tr>
+<td><code>metric_name</code>, <code>signal_name</code>, <code>value</code>, <code>score</code></td>
+<td><code>metadata</code></td>
+<td>Cross-metric analysis</td>
+</tr>
+<tr>
+<td>SHA-256 of key fields</td>
+<td><code>id</code></td>
+<td>Stable, deterministic IDs</td>
+</tr>
+</tbody>
+</table>
+<p>The text is structured reasoning-first for better clustering:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>The claim contradicts the provided context about system requirements.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>[faithfulness / faithfulness_verdict: CONTRADICTORY]
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Query: What Python versions are supported?
+</span></code></pre></div>
+<p>Issues with <strong>no reasoning and no query</strong> produce no meaningful text and are automatically filtered out.</p>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<h3 id="basic-options">Basic Options<a class="headerlink" href="#basic-options" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">insight_extractor</span> <span class="o">=</span> <span class="n">InsightExtractor</span><span class="p">(</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">,</span>       <span class="c1"># LLM for clustering + distillation</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">method</span><span class="o">=</span><span class="n">ClusteringMethod</span><span class="o">.</span><span class="n">LLM</span><span class="p">,</span>     <span class="c1"># LLM, BERTOPIC, or HYBRID</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">recurrence_threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>          <span class="c1"># min unique test cases per learning</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">max_items</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>                    <span class="c1"># max evidence items to process</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">min_category_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>             <span class="c1"># min items per cluster</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="clustering-methods">Clustering Methods<a class="headerlink" href="#clustering-methods" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Best for</th>
+<th>LLM calls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ClusteringMethod.LLM</code></td>
+<td>Small-medium issue sets, best label quality</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>ClusteringMethod.BERTOPIC</code></td>
+<td>Large issue sets, cost-sensitive</td>
+<td>No (clustering only)</td>
+</tr>
+<tr>
+<td><code>ClusteringMethod.HYBRID</code></td>
+<td>Large sets where you want readable labels</td>
+<td>Partial</td>
+</tr>
+</tbody>
+</table>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber.pattern_discovery.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ClusteringMethod</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># First, discover patterns in your annotations</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">discovery</span> <span class="o">=</span> <span class="n">PatternDiscovery</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o&#39;</span><span class="p">)</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">patterns_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">discover</span><span class="p">(</span><span class="n">annotated_items</span><span class="p">)</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Then select examples covering those patterns</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">result</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="n">records</span><span class="o">=</span><span class="n">records</span><span class="p">,</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">strategy</span><span class="o">=</span><span class="n">SelectionStrategy</span><span class="o">.</span><span class="n">PATTERN_AWARE</span><span class="p">,</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="n">patterns</span><span class="o">=</span><span class="n">patterns_result</span><span class="o">.</span><span class="n">patterns</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="p">)</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="c1"># Metadata shows pattern coverage</span>
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="c1"># {</span>
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="c1">#     &#39;patterns_covered&#39;: [&#39;Missing Context&#39;, &#39;Factual Errors&#39;, &#39;Too Brief&#39;],</span>
-</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="c1">#     &#39;total_patterns&#39;: 5,</span>
-</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="c1"># }</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="c1"># Cost-effective for large evaluations</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">extractor</span> <span class="o">=</span> <span class="n">InsightExtractor</span><span class="p">(</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">,</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">method</span><span class="o">=</span><span class="n">ClusteringMethod</span><span class="o">.</span><span class="n">BERTOPIC</span><span class="p">,</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">)</span>
 </span></code></pre></div>
-<p><strong>When to use:</strong></p>
-<ul>
-<li>After Pattern Discovery reveals distinct failure categories</li>
-<li>To ensure few-shot examples represent all failure types</li>
-<li>When certain patterns are underrepresented in random selection</li>
-</ul>
-<p><strong>How it works:</strong></p>
-<ol>
-<li>Takes one example from each discovered pattern (up to <code>count</code>)</li>
-<li>Fills remaining slots with balanced selection</li>
-<li>Handles patterns with unknown record IDs gracefully</li>
-</ol>
-</div>
-</div>
-</div>
-<h2 id="data-format">Data Format<a class="headerlink" href="#data-format" title="Permanent link">&para;</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4M4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4m0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4"/></svg></span> Records</label><label for="__tabbed_2_2"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.5 7A1.5 1.5 0 0 1 4 5.5 1.5 1.5 0 0 1 5.5 4 1.5 1.5 0 0 1 7 5.5 1.5 1.5 0 0 1 5.5 7m15.91 4.58-9-9C12.05 2.22 11.55 2 11 2H4c-1.11 0-2 .89-2 2v7c0 .55.22 1.05.59 1.41l8.99 9c.37.36.87.59 1.42.59s1.05-.23 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.56-.23-1.06-.59-1.42"/></svg></span> Annotations</label><label for="__tabbed_2_3"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22 21H2V3h2v16h2v-9h4v9h2V6h4v13h2v-5h4z"/></svg></span> Evaluation Results</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<p>Records should be a list of dicts with an <code>id</code> or <code>record_id</code> field:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">records</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="p">{</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;rec_1&#39;</span><span class="p">,</span>  <span class="c1"># or &#39;record_id&#39;</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;What is Python?&#39;</span><span class="p">,</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        <span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="s1">&#39;A programming language&#39;</span><span class="p">,</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>        <span class="c1"># ... other fields</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="p">},</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="c1"># ...</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="p">]</span>
+<h3 id="custom-pipeline">Custom Pipeline<a class="headerlink" href="#custom-pipeline" title="Permanent link">&para;</a></h3>
+<p>For full control, pass a pre-configured <code>EvidencePipeline</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber.pattern_discovery</span><span class="w"> </span><span class="kn">import</span> <span class="n">EvidencePipeline</span><span class="p">,</span> <span class="n">InMemorySink</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">sink</span> <span class="o">=</span> <span class="n">InMemorySink</span><span class="p">()</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">EvidencePipeline</span><span class="p">(</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">recurrence_threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">min_category_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">domain_context</span><span class="o">=</span><span class="s1">&#39;RAG system evaluation&#39;</span><span class="p">,</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">sink</span><span class="o">=</span><span class="n">sink</span><span class="p">,</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">)</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="n">extractor</span> <span class="o">=</span> <span class="n">InsightExtractor</span><span class="p">(</span><span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">)</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="n">insights</span> <span class="o">=</span> <span class="k">await</span> <span class="n">extractor</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="c1"># Access persisted artifacts</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="k">for</span> <span class="n">sid</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">sink</span><span class="o">.</span><span class="n">artifacts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s1">&#39;artifact&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
 </span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">No mixing</p>
+<p>Passing both <code>pipeline=</code> and additional keyword arguments raises a <code>ValueError</code>. Use one or the other.</p>
 </div>
-<div class="tabbed-block">
-<p>Annotations map record IDs to binary scores:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">annotations</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="s1">&#39;rec_1&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># Accept</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="s1">&#39;rec_2&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Reject</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="s1">&#39;rec_3&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="c1"># ...</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="p">}</span>
+<h3 id="forwarding-pipeline-options">Forwarding Pipeline Options<a class="headerlink" href="#forwarding-pipeline-options" title="Permanent link">&para;</a></h3>
+<p>Any extra keyword arguments are forwarded to <code>EvidencePipeline</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">extractor</span> <span class="o">=</span> <span class="n">InsightExtractor</span><span class="p">(</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">,</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>                          <span class="c1"># reproducible sampling</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">max_concurrent_distillations</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>   <span class="c1"># limit parallel LLM calls</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">)</span>
 </span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<p>For <code>MISALIGNMENT_GUIDED</code>, provide the LLM's scores:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">eval_results</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;rec_1&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>      <span class="c1"># &#39;score&#39; field</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;rec_2&#39;</span><span class="p">,</span> <span class="s1">&#39;llm_score&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>  <span class="c1"># or &#39;llm_score&#39; field</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="c1"># ...</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="p">]</span>
+<h2 id="working-with-results">Working with Results<a class="headerlink" href="#working-with-results" title="Permanent link">&para;</a></h2>
+<h3 id="insightresult">InsightResult<a class="headerlink" href="#insightresult" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">insights</span> <span class="o">=</span> <span class="k">await</span> <span class="n">extractor</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">insights</span><span class="o">.</span><span class="n">patterns</span>              <span class="c1"># List[InsightPattern] — discovered clusters</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">insights</span><span class="o">.</span><span class="n">learnings</span>             <span class="c1"># List[LearningArtifact] — distilled insights</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">insights</span><span class="o">.</span><span class="n">total_issues_analyzed</span> <span class="c1"># how many issues had meaningful text</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">insights</span><span class="o">.</span><span class="n">clustering_method</span>     <span class="c1"># the ClusteringMethod enum used</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">insights</span><span class="o">.</span><span class="n">pipeline_result</span>       <span class="c1"># full PipelineResult for advanced use</span>
 </span></code></pre></div>
-</div>
-</div>
-</div>
-<h2 id="metric-integration">Metric Integration<a class="headerlink" href="#metric-integration" title="Permanent link">&para;</a></h2>
-<p>ExampleSelector returns generic dicts. The caller converts them to the format
-expected by their metric.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88zM12 4.15 6.04 7.5 12 10.85l5.96-3.35zM5 15.91l6 3.38v-6.71L5 9.21zm14 0v-6.7l-6 3.37v6.71z"/></svg></span> CaliberHQ (Dict Format)</label><label for="__tabbed_3_2"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11 13.5v8H3v-8zM12 2l5.5 9h-11zm5.5 11c2.5 0 4.5 2 4.5 4.5S20 22 17.5 22 13 20 13 17.5s2-4.5 4.5-4.5"/></svg></span> Pydantic-Based Metrics</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSelector</span><span class="p">,</span> <span class="n">CaliberMetric</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">selector</span> <span class="o">=</span> <span class="n">ExampleSelector</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">result</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">annotations</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="c1"># Format for CaliberHQ</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">examples</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="p">{</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>        <span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>            <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;query&#39;</span><span class="p">],</span>
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>            <span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;actual_output&#39;</span><span class="p">],</span>
-</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>            <span class="s1">&#39;expected_output&#39;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;expected_output&#39;</span><span class="p">),</span>
-</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>        <span class="p">},</span>
-</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>        <span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>            <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]],</span>
-</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>            <span class="s1">&#39;reason&#39;</span><span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;human_reasoning&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>        <span class="p">}</span>
-</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>    <span class="p">}</span>
-</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">examples</span>
-</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="p">]</span>
-</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>
-</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="n">evaluator</span> <span class="o">=</span> <span class="n">CaliberMetric</span><span class="p">(</span><span class="n">criteria</span><span class="o">=</span><span class="s2">&quot;...&quot;</span><span class="p">,</span> <span class="n">examples</span><span class="o">=</span><span class="n">examples</span><span class="p">)</span>
+<h3 id="insightpattern">InsightPattern<a class="headerlink" href="#insightpattern" title="Permanent link">&para;</a></h3>
+<p>Each pattern represents a discovered cluster:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">insights</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">category</span><span class="p">)</span>          <span class="c1"># &quot;Retrieval Coverage Gaps&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>       <span class="c1"># &quot;Issues where context doesn&#39;t cover...&quot;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">count</span><span class="p">)</span>             <span class="c1"># 8</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">metrics_involved</span><span class="p">)</span>  <span class="c1"># [&#39;faithfulness&#39;, &#39;contextual_recall&#39;]</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">is_cross_metric</span><span class="p">)</span>   <span class="c1"># True</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">distinct_test_cases</span><span class="p">)</span>  <span class="c1"># 5</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">examples</span><span class="p">)</span>          <span class="c1"># excerpted evidence text</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">confidence</span><span class="p">)</span>        <span class="c1"># 0.85</span>
 </span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExampleSelector</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Faithfulness</span>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics.faithfulness</span><span class="w"> </span><span class="kn">import</span> <span class="n">FaithfulnessInput</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricEvaluationResult</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">selector</span> <span class="o">=</span> <span class="n">ExampleSelector</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="n">result</span> <span class="o">=</span> <span class="n">selector</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">annotations</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="c1"># Convert to metric-specific Pydantic format</span>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="n">examples</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="p">(</span>
-</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        <span class="n">FaithfulnessInput</span><span class="p">(</span>
-</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>            <span class="n">query</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;query&#39;</span><span class="p">],</span>
-</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>            <span class="n">actual_output</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;actual_output&#39;</span><span class="p">],</span>
-</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>            <span class="n">retrieval_context</span><span class="o">=</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;retrieval_context&#39;</span><span class="p">],</span>
-</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>        <span class="p">),</span>
-</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>        <span class="n">MetricEvaluationResult</span><span class="p">(</span>
-</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>            <span class="n">score</span><span class="o">=</span><span class="n">annotations</span><span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]],</span>
-</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>            <span class="n">reason</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;human_reasoning&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>        <span class="p">)</span>
-</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>    <span class="p">)</span>
-</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">examples</span>
-</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="p">]</span>
-</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>
-</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="n">metric</span> <span class="o">=</span> <span class="n">Faithfulness</span><span class="p">(</span><span class="n">examples</span><span class="o">=</span><span class="n">examples</span><span class="p">)</span>
+<p>The <code>is_cross_metric</code> flag is <code>True</code> when a cluster contains issues from 2 or more different metrics — the key signal that a shared root cause exists.</p>
+<h3 id="learningartifact">LearningArtifact<a class="headerlink" href="#learningartifact" title="Permanent link">&para;</a></h3>
+<p>Each learning is a structured, actionable insight:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">for</span> <span class="n">learning</span> <span class="ow">in</span> <span class="n">insights</span><span class="o">.</span><span class="n">learnings</span><span class="p">:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">learning</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>              <span class="c1"># &quot;Mobile Checkout Failures on iOS&quot;</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">learning</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>            <span class="c1"># detailed explanation</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">learning</span><span class="o">.</span><span class="n">confidence</span><span class="p">)</span>         <span class="c1"># 0.9</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">learning</span><span class="o">.</span><span class="n">tags</span><span class="p">)</span>               <span class="c1"># [&#39;retrieval&#39;, &#39;context_quality&#39;]</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">learning</span><span class="o">.</span><span class="n">recommended_actions</span><span class="p">)</span>  <span class="c1"># [&#39;Improve chunk overlap...&#39;]</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">learning</span><span class="o">.</span><span class="n">supporting_item_ids</span><span class="p">)</span>  <span class="c1"># evidence IDs backing this</span>
 </span></code></pre></div>
-</div>
-</div>
-</div>
-<h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
-<h3 id="strategy-selection">Strategy Selection<a class="headerlink" href="#strategy-selection" title="Permanent link">&para;</a></h3>
-<p>Use this decision tree to pick the right strategy:</p>
-<pre class="mermaid"><code>graph TD
-    Q1["Do you have evaluation results from a prior run?"]
-    Q1 --&gt;|"Yes"| Q2["Do you have Pattern Discovery results?"]
-    Q1 --&gt;|"No"| B["BALANCED&lt;br/&gt;&lt;small&gt;Unbiased baseline&lt;/small&gt;"]
-    Q2 --&gt;|"Yes"| P["PATTERN_AWARE&lt;br/&gt;&lt;small&gt;Target failure modes&lt;/small&gt;"]
-    Q2 --&gt;|"No"| M["MISALIGNMENT_GUIDED&lt;br/&gt;&lt;small&gt;Focus on hard cases&lt;/small&gt;"]</code></pre>
-<h3 id="auto-selection-helper">Auto-Selection Helper<a class="headerlink" href="#auto-selection-helper" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">auto_select_strategy</span><span class="p">(</span><span class="n">eval_results</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">patterns</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Automatically choose the best strategy based on available data.&quot;&quot;&quot;</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="k">if</span> <span class="n">patterns</span><span class="p">:</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>        <span class="k">return</span> <span class="n">SelectionStrategy</span><span class="o">.</span><span class="n">PATTERN_AWARE</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="k">elif</span> <span class="n">eval_results</span><span class="p">:</span>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>        <span class="k">return</span> <span class="n">SelectionStrategy</span><span class="o">.</span><span class="n">MISALIGNMENT_GUIDED</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>        <span class="k">return</span> <span class="n">SelectionStrategy</span><span class="o">.</span><span class="n">BALANCED</span>
+<h2 id="sync-usage">Sync Usage<a class="headerlink" href="#sync-usage" title="Permanent link">&para;</a></h2>
+<p>For non-async code:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">insights</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">analyze_sync</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
 </span></code></pre></div>
-<h3 id="reproducibility">Reproducibility<a class="headerlink" href="#reproducibility" title="Permanent link">&para;</a></h3>
-<p>Always set a seed for reproducible results:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">selector</span> <span class="o">=</span> <span class="n">ExampleSelector</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<h2 id="complete-example">Complete Example<a class="headerlink" href="#complete-example" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Faithfulness</span><span class="p">,</span> <span class="n">AnswerRelevancy</span><span class="p">,</span> <span class="n">ContextualRecall</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">IssueExtractor</span><span class="p">,</span> <span class="n">InsightExtractor</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">discover_patterns</span><span class="p">():</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="c1"># 1. Run evaluation</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>    <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="s1">&#39;test_cases.csv&#39;</span><span class="p">)</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>        <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>        <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">Faithfulness</span><span class="p">(),</span> <span class="n">AnswerRelevancy</span><span class="p">(),</span> <span class="n">ContextualRecall</span><span class="p">()],</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>    <span class="p">)</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>    <span class="c1"># 2. Extract issues</span>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>    <span class="n">issue_extractor</span> <span class="o">=</span> <span class="n">IssueExtractor</span><span class="p">(</span><span class="n">score_threshold</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>    <span class="n">issues</span> <span class="o">=</span> <span class="n">issue_extractor</span><span class="o">.</span><span class="n">extract_from_evaluation</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Found </span><span class="si">{</span><span class="n">issues</span><span class="o">.</span><span class="n">issues_found</span><span class="si">}</span><span class="s1"> issues across </span><span class="si">{</span><span class="n">issues</span><span class="o">.</span><span class="n">total_test_cases</span><span class="si">}</span><span class="s1"> test cases&#39;</span><span class="p">)</span>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>    <span class="k">if</span> <span class="n">issues</span><span class="o">.</span><span class="n">issues_found</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No issues found.&#39;</span><span class="p">)</span>
+</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>        <span class="k">return</span>
+</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>
+</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>    <span class="c1"># 3. Discover cross-metric patterns</span>
+</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a>    <span class="n">insight_extractor</span> <span class="o">=</span> <span class="n">InsightExtractor</span><span class="p">(</span>
+</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>        <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">,</span>
+</span><span id="__span-10-27"><a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a>        <span class="n">recurrence_threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-10-28"><a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a>    <span class="p">)</span>
+</span><span id="__span-10-29"><a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a>    <span class="n">insights</span> <span class="o">=</span> <span class="k">await</span> <span class="n">insight_extractor</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
+</span><span id="__span-10-30"><a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a>
+</span><span id="__span-10-31"><a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a>    <span class="c1"># 4. Report cross-metric patterns</span>
+</span><span id="__span-10-32"><a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a>    <span class="n">cross_metric</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">insights</span><span class="o">.</span><span class="n">patterns</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_cross_metric</span><span class="p">]</span>
+</span><span id="__span-10-33"><a id="__codelineno-10-33" name="__codelineno-10-33" href="#__codelineno-10-33"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">--- </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">cross_metric</span><span class="p">)</span><span class="si">}</span><span class="s1"> cross-metric patterns found ---&#39;</span><span class="p">)</span>
+</span><span id="__span-10-34"><a id="__codelineno-10-34" name="__codelineno-10-34" href="#__codelineno-10-34"></a>    <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">cross_metric</span><span class="p">:</span>
+</span><span id="__span-10-35"><a id="__codelineno-10-35" name="__codelineno-10-35" href="#__codelineno-10-35"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">count</span><span class="si">}</span><span class="s1"> issues)&#39;</span><span class="p">)</span>
+</span><span id="__span-10-36"><a id="__codelineno-10-36" name="__codelineno-10-36" href="#__codelineno-10-36"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  Metrics: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">metrics_involved</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-10-37"><a id="__codelineno-10-37" name="__codelineno-10-37" href="#__codelineno-10-37"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  Distinct test cases: </span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">distinct_test_cases</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-10-38"><a id="__codelineno-10-38" name="__codelineno-10-38" href="#__codelineno-10-38"></a>
+</span><span id="__span-10-39"><a id="__codelineno-10-39" name="__codelineno-10-39" href="#__codelineno-10-39"></a>    <span class="c1"># 5. Show actionable learnings</span>
+</span><span id="__span-10-40"><a id="__codelineno-10-40" name="__codelineno-10-40" href="#__codelineno-10-40"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">--- </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">insights</span><span class="o">.</span><span class="n">learnings</span><span class="p">)</span><span class="si">}</span><span class="s1"> learnings ---&#39;</span><span class="p">)</span>
+</span><span id="__span-10-41"><a id="__codelineno-10-41" name="__codelineno-10-41" href="#__codelineno-10-41"></a>    <span class="k">for</span> <span class="n">learning</span> <span class="ow">in</span> <span class="n">insights</span><span class="o">.</span><span class="n">learnings</span><span class="p">:</span>
+</span><span id="__span-10-42"><a id="__codelineno-10-42" name="__codelineno-10-42" href="#__codelineno-10-42"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{</span><span class="n">learning</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1"> (confidence=</span><span class="si">{</span><span class="n">learning</span><span class="o">.</span><span class="n">confidence</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+</span><span id="__span-10-43"><a id="__codelineno-10-43" name="__codelineno-10-43" href="#__codelineno-10-43"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  </span><span class="si">{</span><span class="n">learning</span><span class="o">.</span><span class="n">content</span><span class="p">[:</span><span class="mi">200</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-10-44"><a id="__codelineno-10-44" name="__codelineno-10-44" href="#__codelineno-10-44"></a>        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">learning</span><span class="o">.</span><span class="n">recommended_actions</span><span class="p">:</span>
+</span><span id="__span-10-45"><a id="__codelineno-10-45" name="__codelineno-10-45" href="#__codelineno-10-45"></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  -&gt; </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="__span-10-46"><a id="__codelineno-10-46" name="__codelineno-10-46" href="#__codelineno-10-46"></a>
+</span><span id="__span-10-47"><a id="__codelineno-10-47" name="__codelineno-10-47" href="#__codelineno-10-47"></a><span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">discover_patterns</span><span class="p">())</span>
 </span></code></pre></div>
-<h3 id="example-count">Example Count<a class="headerlink" href="#example-count" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Start with 4–6 examples for initial calibration</li>
-<li>Increase to 8–10 for complex criteria</li>
-<li>More examples increase cost but may improve calibration</li>
-</ul>
-<hr />
-<div class="ref-nav">
-<p><a class="md-button md-button--primary" href="../../../reference/align/">Caliber API Reference <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a>
-<a class="md-button" href="../../../guides/caliberhq/">CaliberHQ Guide <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a></p>
-</div>
+<h2 id="relationship-to-other-tools">Relationship to Other Tools<a class="headerlink" href="#relationship-to-other-tools" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../issue-extraction/"><code>IssueExtractor</code></a></td>
+<td>Extracts failing signals by metric + signal</td>
+<td>Always — it produces the input for <code>InsightExtractor</code></td>
+</tr>
+<tr>
+<td><a href="#"><code>InsightExtractor</code></a></td>
+<td>Clusters issues semantically across metrics</td>
+<td>When you want cross-metric root cause analysis</td>
+</tr>
+<tr>
+<td><a href="../../deep-dives/caliber/pattern-discovery/"><code>EvidencePipeline</code></a></td>
+<td>General-purpose evidence clustering + distillation</td>
+<td>When you have arbitrary text evidence (not evaluation issues)</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>InsightExtractor</code> is the bridge: it converts <code>IssueExtractor</code> output into <code>EvidenceItem</code> format and runs it through the <code>EvidencePipeline</code>.</p>
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<p>See the full <a href="../../reference/insight-extractor/">Insight Extractor API Reference</a> for class signatures and data class details.</p>
 
 
 
@@ -4462,7 +4745,7 @@ expected by their metric.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 20, 2026 19:49:22 UTC">February 20, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 01:40:14 UTC">February 23, 2026</span>
   </span>
 
     
@@ -4472,7 +4755,7 @@ expected by their metric.</p>
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 1, 2026 16:46:24 UTC">February 1, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 01:40:14 UTC">February 23, 2026</span>
   </span>
 
     
@@ -4564,11 +4847,11 @@ expected by their metric.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "navigation.indexes", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "content.tabs.link", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
 
-      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
 <script>

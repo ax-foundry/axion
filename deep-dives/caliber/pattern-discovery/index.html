@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://ax-foundry.github.io/axion/guides/langfuse/overview/">
+        <link rel="canonical" href="https://ax-foundry.github.io/axion/deep-dives/caliber/pattern-discovery/">
       
       
-        <link rel="prev" href="../../caliberhq/">
+        <link rel="prev" href="../../runners/api-runner/">
       
       
-        <link rel="next" href="../configuration/">
+        <link rel="next" href="../example-selector/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Overview - Documentation</title>
+        <title>Pattern Discovery - Documentation</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#langfuse-integration" class="md-skip">
+        <a href="#pattern-discovery" class="md-skip">
           Skip to content
         </a>
       
@@ -210,8 +210,8 @@
         
       
         
-        <a href="../../hierarchical-scoring/"
-           class="md-header__section-link md-header__section-link--active">
+        <a href="../../../guides/hierarchical-scoring/"
+           class="md-header__section-link">
           Guides
         </a>
         
@@ -224,8 +224,8 @@
         
       
         
-        <a href="../../../deep-dives/metrics/creating-metrics/"
-           class="md-header__section-link">
+        <a href="../../metrics/creating-metrics/"
+           class="md-header__section-link md-header__section-link--active">
           Deep Dives
         </a>
         
@@ -323,13 +323,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../hierarchical-scoring/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../guides/hierarchical-scoring/" class="md-tabs__link">
           
   
   
@@ -381,6 +379,8 @@
   
   
   
+    
+  
   
     
     
@@ -388,11 +388,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../../deep-dives/metrics/creating-metrics/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../metrics/creating-metrics/" class="md-tabs__link">
           
   
   
@@ -752,10 +754,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -785,22 +785,21 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   
@@ -818,7 +817,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -836,7 +835,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../hierarchical-scoring/" class="md-nav__link">
+      <a href="../../../guides/hierarchical-scoring/" class="md-nav__link">
         
   
   
@@ -866,7 +865,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../datasets/" class="md-nav__link">
+      <a href="../../../guides/datasets/" class="md-nav__link">
         
   
   
@@ -896,7 +895,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metrics/" class="md-nav__link">
+      <a href="../../../guides/metrics/" class="md-nav__link">
         
   
   
@@ -926,7 +925,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluation/" class="md-nav__link">
+      <a href="../../../guides/evaluation/" class="md-nav__link">
         
   
   
@@ -956,7 +955,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../issue-extraction/" class="md-nav__link">
+      <a href="../../../guides/issue-extraction/" class="md-nav__link">
         
   
   
@@ -986,7 +985,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../insight-extraction/" class="md-nav__link">
+      <a href="../../../guides/insight-extraction/" class="md-nav__link">
         
   
   
@@ -1016,7 +1015,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../caliberhq/" class="md-nav__link">
+      <a href="../../../guides/caliberhq/" class="md-nav__link">
         
   
   
@@ -1043,10 +1042,8 @@
                 
   
   
-    
   
   
-  
     
     
       
@@ -1065,21 +1062,20 @@
     
       
       
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
         
           
-          
         
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_8" checked>
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_8" >
         
           
-          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3_8" id="__nav_3_8_label" tabindex="0">
             
   
   
@@ -1097,7 +1093,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3_8">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1112,39 +1108,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-  
-  <span class="md-ellipsis">
-    
-  
-    Overview
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../guides/langfuse/overview/" class="md-nav__link">
         
   
   
@@ -1162,194 +1129,6 @@
   
 
       </a>
-      
-        
-
-  
-
-<nav class="md-nav md-nav--secondary" aria-label="On this page">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      On this page
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#why-use-langfuse-with-axion" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Why Use Langfuse with Axion?
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#evaluation-workflows" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Evaluation Workflows
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Evaluation Workflows">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#workflow-overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Workflow Overview
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#offline-api-driven" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Offline: API-Driven
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#offline-trace-based" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Offline: Trace-Based
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#online-production" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Online: Production
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#disabling-evaluation-tracing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Disabling Evaluation Tracing
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#choosing-the-right-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Choosing the Right Workflow
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#complete-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Complete Example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#understanding-results" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Understanding Results
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Understanding Results">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#quick-analysis" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Quick Analysis
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#workflow-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Workflow Steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Next Steps
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1362,7 +1141,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
+      <a href="../../../guides/langfuse/configuration/" class="md-nav__link">
         
   
   
@@ -1392,7 +1171,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tracing/" class="md-nav__link">
+      <a href="../../../guides/langfuse/tracing/" class="md-nav__link">
         
   
   
@@ -1422,7 +1201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../trace-collection/" class="md-nav__link">
+      <a href="../../../guides/langfuse/trace-collection/" class="md-nav__link">
         
   
   
@@ -1452,7 +1231,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../publishing/" class="md-nav__link">
+      <a href="../../../guides/langfuse/publishing/" class="md-nav__link">
         
   
   
@@ -1490,7 +1269,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../llm-providers/" class="md-nav__link">
+      <a href="../../../guides/llm-providers/" class="md-nav__link">
         
   
   
@@ -1520,7 +1299,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../synthetic/" class="md-nav__link">
+      <a href="../../../guides/synthetic/" class="md-nav__link">
         
   
   
@@ -1550,7 +1329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../search/" class="md-nav__link">
+      <a href="../../../guides/search/" class="md-nav__link">
         
   
   
@@ -2734,8 +2513,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -2755,21 +2536,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -2787,7 +2569,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2819,10 +2601,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -2831,7 +2616,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_1" >
         
           
-          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="">
             
   
   
@@ -2867,7 +2652,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/metrics/creating-metrics/" class="md-nav__link">
+      <a href="../../metrics/creating-metrics/" class="md-nav__link">
         
   
   
@@ -2897,7 +2682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/metrics/yaml-metrics/" class="md-nav__link">
+      <a href="../../metrics/yaml-metrics/" class="md-nav__link">
         
   
   
@@ -2932,7 +2717,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/metrics/composite-metrics/" class="md-nav__link">
+      <a href="../../metrics/composite-metrics/" class="md-nav__link">
         
   
   
@@ -2984,10 +2769,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -2996,7 +2784,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
         
           
-          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
             
   
   
@@ -3032,7 +2820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/runners/metric-runner/" class="md-nav__link">
+      <a href="../../runners/metric-runner/" class="md-nav__link">
         
   
   
@@ -3062,7 +2850,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/runners/evaluation-runner/" class="md-nav__link">
+      <a href="../../runners/evaluation-runner/" class="md-nav__link">
         
   
   
@@ -3092,7 +2880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/runners/api-runner/" class="md-nav__link">
+      <a href="../../runners/api-runner/" class="md-nav__link">
         
   
   
@@ -3131,8 +2919,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -3145,20 +2935,21 @@
     
       
       
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
         
           
+          
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="">
             
   
   
@@ -3176,7 +2967,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3191,10 +2982,39 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../deep-dives/caliber/pattern-discovery/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Pattern Discovery
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -3212,6 +3032,350 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-youll-learn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What You'll Learn
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Start">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clustering-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clustering Only
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#full-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Full Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#core-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core Concepts
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Core Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#evidenceitem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EvidenceItem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clustering-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clustering Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#learning-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Learning Artifacts
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evidence-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evidence Pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Evidence Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-stages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline Stages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metadata-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metadata Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metadata Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metadataconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MetadataConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pii-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PII Safety
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-in-clusters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metadata in Clusters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plugins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plugins
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Plugins">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sinks-output-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sinks (Output Storage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dedupers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dedupers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation-quality-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation &amp; Quality Gates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validation &amp; Quality Gates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hallucinated-id-repair" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hallucinated ID Repair
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confidence-demotion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Confidence Demotion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recurrence-checking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recurrence Checking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#legacy-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Legacy API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-with-evaluation-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using with Evaluation Issues
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -3224,7 +3388,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/caliber/example-selector/" class="md-nav__link">
+      <a href="../example-selector/" class="md-nav__link">
         
   
   
@@ -3272,10 +3436,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -3284,7 +3451,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
         
           
-          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
             
   
   
@@ -3320,7 +3487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/synthetic/document-qa/" class="md-nav__link">
+      <a href="../../synthetic/document-qa/" class="md-nav__link">
         
   
   
@@ -3372,10 +3539,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -3384,7 +3554,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
         
           
-          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="">
             
   
   
@@ -3420,7 +3590,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/search/google/" class="md-nav__link">
+      <a href="../../search/google/" class="md-nav__link">
         
   
   
@@ -3450,7 +3620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/search/tavily/" class="md-nav__link">
+      <a href="../../search/tavily/" class="md-nav__link">
         
   
   
@@ -3480,7 +3650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/search/you/" class="md-nav__link">
+      <a href="../../search/you/" class="md-nav__link">
         
   
   
@@ -3532,10 +3702,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -3544,7 +3717,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_6" >
         
           
-          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="">
             
   
   
@@ -3580,7 +3753,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/internals/tracing/" class="md-nav__link">
+      <a href="../../internals/tracing/" class="md-nav__link">
         
   
   
@@ -3610,7 +3783,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/internals/environment/" class="md-nav__link">
+      <a href="../../internals/environment/" class="md-nav__link">
         
   
   
@@ -3643,7 +3816,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../deep-dives/internals/logging/" class="md-nav__link">
+      <a href="../../internals/logging/" class="md-nav__link">
         
   
   
@@ -4157,10 +4330,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#why-use-langfuse-with-axion" class="md-nav__link">
+  <a href="#what-youll-learn" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Why Use Langfuse with Axion?
+        What You'll Learn
       
     </span>
   </a>
@@ -4168,22 +4341,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#evaluation-workflows" class="md-nav__link">
+  <a href="#quick-start" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Evaluation Workflows
+        Quick Start
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Evaluation Workflows">
+    <nav class="md-nav" aria-label="Quick Start">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#workflow-overview" class="md-nav__link">
+  <a href="#clustering-only" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Workflow Overview
+        Clustering Only
       
     </span>
   </a>
@@ -4191,54 +4364,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#offline-api-driven" class="md-nav__link">
+  <a href="#full-pipeline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Offline: API-Driven
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#offline-trace-based" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Offline: Trace-Based
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#online-production" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Online: Production
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#disabling-evaluation-tracing" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Disabling Evaluation Tracing
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#choosing-the-right-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Choosing the Right Workflow
+        Full Pipeline
       
     </span>
   </a>
@@ -4251,44 +4380,44 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quick-summary" class="md-nav__link">
+  <a href="#core-concepts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Summary
+        Core Concepts
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#complete-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Complete Example
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#understanding-results" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Understanding Results
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Understanding Results">
+    <nav class="md-nav" aria-label="Core Concepts">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#quick-analysis" class="md-nav__link">
+  <a href="#evidenceitem" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Analysis
+        EvidenceItem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clustering-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clustering Methods
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#learning-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Learning Artifacts
       
     </span>
   </a>
@@ -4301,10 +4430,199 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#workflow-steps" class="md-nav__link">
+  <a href="#evidence-pipeline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Workflow Steps
+        Evidence Pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Evidence Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-stages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline Stages
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-result" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline Result
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metadata-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metadata Handling
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metadata Handling">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metadataconfig" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MetadataConfig
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pii-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PII Safety
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-in-clusters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metadata in Clusters
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plugins" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plugins
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Plugins">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sinks-output-storage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sinks (Output Storage)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dedupers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dedupers
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validation-quality-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Validation &amp; Quality Gates
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Validation &amp; Quality Gates">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hallucinated-id-repair" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hallucinated ID Repair
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#confidence-demotion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Confidence Demotion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recurrence-checking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recurrence Checking
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#legacy-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Legacy API
       
     </span>
   </a>
@@ -4312,10 +4630,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
+  <a href="#using-with-evaluation-issues" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Next Steps
+        Using with Evaluation Issues
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#api-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API Summary
       
     </span>
   </a>
@@ -4342,536 +4671,405 @@
   
 
 
-<h1 id="langfuse-integration">Langfuse Integration<a class="headerlink" href="#langfuse-integration" title="Permanent link">&para;</a></h1>
-<p>Integrate Axion evaluation with Langfuse observability to close the feedback loop between production LLM operations and quality metrics.</p>
-<h2 id="why-use-langfuse-with-axion">Why Use Langfuse with Axion?<a class="headerlink" href="#why-use-langfuse-with-axion" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Close the feedback loop</strong>: Connect evaluation results directly to production traces</li>
-<li><strong>Production-grade observability</strong>: Track LLM performance, costs, and quality metrics in one place</li>
-<li><strong>Continuous evaluation</strong>: Automate evaluation pipelines on real production data</li>
-</ul>
-<hr />
-<h2 id="evaluation-workflows">Evaluation Workflows<a class="headerlink" href="#evaluation-workflows" title="Permanent link">&para;</a></h2>
-<p>Axion supports three distinct evaluation workflows, each designed for different use cases. Understanding when to use each workflow is critical for effective LLM evaluation.</p>
-<h3 id="workflow-overview">Workflow Overview<a class="headerlink" href="#workflow-overview" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Workflow</th>
-<th>Testing Style</th>
-<th>Primary Use Case</th>
-<th>Publishing Method</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong><a href="#offline-api-driven">API-Driven</a></strong></td>
-<td>Black-box</td>
-<td>Regression testing, CI/CD</td>
-<td><code>publish_as_experiment()</code></td>
-</tr>
-<tr>
-<td><strong><a href="#offline-trace-based">Trace-Based</a></strong></td>
-<td>White-box</td>
-<td>Historical analysis, debugging</td>
-<td><code>publish_as_experiment()</code> or <code>publish_to_observability()</code></td>
-</tr>
-<tr>
-<td><strong><a href="#online-production">Online Production</a></strong></td>
-<td>Continuous</td>
-<td>Real-time quality monitoring</td>
-<td><code>publish_to_observability()</code></td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h3 id="offline-api-driven">Offline: API-Driven<a class="headerlink" href="#offline-api-driven" title="Permanent link">&para;</a></h3>
-<p><strong>Best for:</strong> Regression testing, CI/CD pipelines, comparing API versions</p>
-<p>This workflow treats your agent as a black-box. You provide inputs from a golden dataset, call your API endpoint, and evaluate the responses. You don't need access to internal traces or spans.</p>
-<pre class="mermaid"><code>flowchart LR
-    subgraph Source["Source"]
-        direction TB
-        A[(Langfuse)] --&gt;|read_from_langfuse| B[/Golden Dataset/]
-    end
+<h1 id="pattern-discovery">Pattern Discovery<a class="headerlink" href="#pattern-discovery" title="Permanent link">&para;</a></h1>
+<p>Pattern Discovery clusters free-text evidence into recurring themes and distills them into actionable <strong>learning artifacts</strong>. It works with any text source — annotation notes, bug reports, user feedback, support tickets — and provides a full pipeline from raw text to validated insights.</p>
+<h2 id="what-youll-learn">What You'll Learn<a class="headerlink" href="#what-youll-learn" title="Permanent link">&para;</a></h2>
+<div class="rule-grid" markdown="0">
+<div class="rule-card">
+<span class="rule-card__number">1</span>
+<p class="rule-card__title">Evidence Clustering</p>
+<p class="rule-card__desc">Cluster any text into semantic themes using LLM, BERTopic, or hybrid methods.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">2</span>
+<p class="rule-card__title">Evidence Pipeline</p>
+<p class="rule-card__desc">Full pipeline: sanitize &rarr; cluster &rarr; distill &rarr; validate &rarr; dedupe &rarr; sink.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">3</span>
+<p class="rule-card__title">Learning Artifacts</p>
+<p class="rule-card__desc">Distill clusters into titled insights with recommended actions and confidence scores.</p>
+</div>
+<div class="rule-card">
+<span class="rule-card__number">4</span>
+<p class="rule-card__title">Quality & Safety</p>
+<p class="rule-card__desc">Validation gates, PII filtering, recurrence checks, and deduplication strategies.</p>
+</div>
+</div>
 
-    subgraph Execute["Execute"]
-        direction TB
-        B --&gt;|execute_dataset_items_from_api| C[[APIRunner]]
-        C --&gt;|calls| D([Agent API])
-        D --&gt;|responses| B
-    end
-
-    subgraph Evaluate["Evaluate"]
-        direction TB
-        B --&gt; E[[evaluation_runner]]
-        E --&gt; F{{EvaluationResult}}
-    end
-
-    subgraph Publish["Publish"]
-        direction TB
-        F --&gt;|new experiment| G[publish_as_experiment]
-        G --&gt; A
-    end</code></pre>
-<p><strong>When to use:</strong></p>
-<ul>
-<li>You want to test API behavior without trace instrumentation</li>
-<li>Running automated regression tests in CI/CD</li>
-<li>Comparing responses between different API versions or models</li>
-<li>The agent is deployed as a service and you only care about input/output behavior</li>
-</ul>
-<p><strong>Example:</strong></p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span><span class="p">,</span> <span class="n">Faithfulness</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># 1. Load golden dataset from Langfuse</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">read_from_langfuse</span><span class="p">(</span><span class="n">golden</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_eval_dataset&#39;</span><span class="p">)</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># 2. Execute API calls to populate actual_output</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">dataset</span><span class="o">.</span><span class="n">execute_dataset_items_from_api</span><span class="p">(</span><span class="s1">&#39;Agent API&#39;</span><span class="p">,</span> <span class="s1">&#39;config.yaml&#39;</span><span class="p">)</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># 3. Run evaluation</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">evaluation_runner</span><span class="p">(</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">(),</span> <span class="n">Faithfulness</span><span class="p">()],</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">&#39;API Regression Test&#39;</span><span class="p">,</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">)</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="c1"># 4. Publish as experiment for version comparison</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="n">result</span><span class="o">.</span><span class="n">publish_as_experiment</span><span class="p">(</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">dataset_name</span><span class="o">=</span><span class="s1">&#39;api-regression-tests&#39;</span><span class="p">,</span>
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="n">run_name</span><span class="o">=</span><span class="s1">&#39;v2.1-release&#39;</span><span class="p">,</span>
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="p">)</span>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<h3 id="clustering-only">Clustering Only<a class="headerlink" href="#clustering-only" title="Permanent link">&para;</a></h3>
+<p>Cluster a list of <code>EvidenceItem</code> objects into semantic groups:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">PatternDiscovery</span><span class="p">,</span> <span class="n">EvidenceItem</span><span class="p">,</span> <span class="n">ClusteringMethod</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">evidence</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">EvidenceItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;bug_1&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Checkout button unresponsive on mobile Safari&#39;</span><span class="p">),</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">EvidenceItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;bug_2&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Payment form does not submit on iPhone&#39;</span><span class="p">),</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">EvidenceItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;bug_3&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Cart total shows wrong currency symbol&#39;</span><span class="p">),</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">EvidenceItem</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s1">&#39;bug_4&#39;</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Currency formatting broken for EUR prices&#39;</span><span class="p">),</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">]</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="n">discovery</span> <span class="o">=</span> <span class="n">PatternDiscovery</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">,</span> <span class="n">min_category_size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">discover_from_evidence</span><span class="p">(</span><span class="n">evidence</span><span class="p">)</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s1">] (</span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">count</span><span class="si">}</span><span class="s1"> items): </span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">record_ids</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </span></code></pre></div>
-<hr />
-<h3 id="offline-trace-based">Offline: Trace-Based<a class="headerlink" href="#offline-trace-based" title="Permanent link">&para;</a></h3>
-<p><strong>Best for:</strong> Historical analysis, A/B experiments, debugging with span-level insights</p>
-<p>This workflow evaluates agent runs where you have access to internal traces. You trigger agent runs from a golden dataset, collect the traces (with span-level details), then evaluate. This gives you white-box visibility into agent internals.</p>
-<pre class="mermaid"><code>flowchart LR
-    subgraph LF["Langfuse"]
-        direction TB
-        A[/Golden Dataset/]
-        C[(Traces)]
-    end
-
-    subgraph Run["Run Agent"]
-        direction TB
-        B([Agent])
-    end
-
-    subgraph Fetch["Fetch"]
-        direction TB
-        D[LangfuseTraceLoader]
-        E[/Dataset with Actuals/]
-        D --&gt; E
-    end
-
-    subgraph Evaluate["Evaluate"]
-        direction TB
-        F[[evaluation_runner]]
-        G{{EvaluationResult}}
-        F --&gt; G
-    end
-
-    subgraph Publish["Publish"]
-        direction TB
-        H[publish_to_observability]
-        I[publish_as_experiment]
-    end
-
-    A --&gt;|for each item| B
-    B --&gt;|traces| C
-    C --&gt;|fetch_traces| D
-    E --&gt; F
-    G --&gt;|attach to traces| H
-    G --&gt;|new experiment| I
-    H --&gt; C
-    I --&gt; C</code></pre>
-<p><strong>When to use:</strong></p>
-<ul>
-<li>You need span-level insights (LLM calls, tool usage, retrieval steps)</li>
-<li>Debugging why specific responses failed</li>
-<li>Running A/B experiments with different agent configurations</li>
-<li>Evaluating historical production runs</li>
-</ul>
-<p><strong>Key difference from API-Driven:</strong> The <code>actual_output</code> is extracted from traces, giving you access to intermediate steps, not just final responses.</p>
-<p><strong>Example:</strong></p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LangfuseTraceLoader</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span><span class="p">,</span> <span class="n">Faithfulness</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetItem</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># 1. Run your agent against golden dataset items (externally)</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># This creates traces in Langfuse with tags [&#39;experiment-v1&#39;]</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># 2. Fetch traces with outputs</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">loader</span> <span class="o">=</span> <span class="n">LangfuseTraceLoader</span><span class="p">()</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">traces</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">fetch_traces</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;experiment-v1&#39;</span><span class="p">])</span>
+<h3 id="full-pipeline">Full Pipeline<a class="headerlink" href="#full-pipeline" title="Permanent link">&para;</a></h3>
+<p>Run the complete pipeline — clustering, distillation into learning artifacts, validation, and persistence:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">EvidencePipeline</span><span class="p">,</span> <span class="n">InMemorySink</span><span class="p">,</span> <span class="n">MetadataConfig</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">sink</span> <span class="o">=</span> <span class="n">InMemorySink</span><span class="p">()</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">EvidencePipeline</span><span class="p">(</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">,</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">recurrence_threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">min_category_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="n">domain_context</span><span class="o">=</span><span class="s1">&#39;E-commerce platform bug triage&#39;</span><span class="p">,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">sink</span><span class="o">=</span><span class="n">sink</span><span class="p">,</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">)</span>
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="c1"># 3. Convert to Dataset (preserving trace_id for linking)</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>    <span class="n">DatasetItem</span><span class="p">(</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>        <span class="nb">id</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>        <span class="n">query</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>        <span class="n">actual_output</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>        <span class="n">trace_id</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>  <span class="c1"># Preserves link to original trace</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>    <span class="p">)</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">traces</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">input</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">output</span>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="p">]</span>
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="n">items</span><span class="p">)</span>
-</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a>
-</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="c1"># 4. Run evaluation</span>
-</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26" href="#__codelineno-1-26"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">evaluation_runner</span><span class="p">(</span>
-</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27" href="#__codelineno-1-27"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28" href="#__codelineno-1-28"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">(),</span> <span class="n">Faithfulness</span><span class="p">()],</span>
-</span><span id="__span-1-29"><a id="__codelineno-1-29" name="__codelineno-1-29" href="#__codelineno-1-29"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">&#39;Trace-Based Evaluation&#39;</span><span class="p">,</span>
-</span><span id="__span-1-30"><a id="__codelineno-1-30" name="__codelineno-1-30" href="#__codelineno-1-30"></a><span class="p">)</span>
-</span><span id="__span-1-31"><a id="__codelineno-1-31" name="__codelineno-1-31" href="#__codelineno-1-31"></a>
-</span><span id="__span-1-32"><a id="__codelineno-1-32" name="__codelineno-1-32" href="#__codelineno-1-32"></a><span class="c1"># 5. Publish - choose based on your needs:</span>
-</span><span id="__span-1-33"><a id="__codelineno-1-33" name="__codelineno-1-33" href="#__codelineno-1-33"></a><span class="c1"># Option A: Attach scores to existing traces (for debugging)</span>
-</span><span id="__span-1-34"><a id="__codelineno-1-34" name="__codelineno-1-34" href="#__codelineno-1-34"></a><span class="n">result</span><span class="o">.</span><span class="n">publish_to_observability</span><span class="p">()</span>
-</span><span id="__span-1-35"><a id="__codelineno-1-35" name="__codelineno-1-35" href="#__codelineno-1-35"></a>
-</span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a><span class="c1"># Option B: Create experiment (for comparison UI)</span>
-</span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a><span class="n">result</span><span class="o">.</span><span class="n">publish_as_experiment</span><span class="p">(</span>
-</span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>    <span class="n">dataset_name</span><span class="o">=</span><span class="s1">&#39;agent-experiments&#39;</span><span class="p">,</span>
-</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a>    <span class="n">run_name</span><span class="o">=</span><span class="s1">&#39;config-v2&#39;</span><span class="p">,</span>
-</span><span id="__span-1-40"><a id="__codelineno-1-40" name="__codelineno-1-40" href="#__codelineno-1-40"></a>    <span class="n">link_to_traces</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Links experiment runs to original traces</span>
-</span><span id="__span-1-41"><a id="__codelineno-1-41" name="__codelineno-1-41" href="#__codelineno-1-41"></a><span class="p">)</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">evidence</span><span class="p">)</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="k">for</span> <span class="n">learning</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">learnings</span><span class="p">:</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">learning</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s1"> (confidence=</span><span class="si">{</span><span class="n">learning</span><span class="o">.</span><span class="n">confidence</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">learning</span><span class="o">.</span><span class="n">recommended_actions</span><span class="p">:</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;  - </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </span></code></pre></div>
-<hr />
-<h3 id="online-production">Online: Production<a class="headerlink" href="#online-production" title="Permanent link">&para;</a></h3>
-<p><strong>Best for:</strong> Continuous quality monitoring, real-time alerts, production health tracking</p>
-<p>This workflow evaluates live production traces. You fetch recent traces from Langfuse, run evaluation metrics, and attach scores back to those traces for monitoring dashboards.</p>
-<pre class="mermaid"><code>flowchart LR
-    subgraph Production["Production"]
-        direction TB
-        A([Agent]) --&gt;|traces| B[(Langfuse)]
-    end
-
-    subgraph Fetch["Fetch"]
-        direction TB
-        B --&gt;|fetch_traces| C[LangfuseTraceLoader]
-        C --&gt; D[/Dataset/]
-    end
-
-    subgraph Evaluate["Evaluate"]
-        direction TB
-        D --&gt; E[[evaluation_runner]]
-        E --&gt; F{{EvaluationResult}}
-    end
-
-    subgraph Publish["Publish"]
-        direction TB
-        F --&gt;|attach scores| G[publish_to_observability]
-        G --&gt; B
-    end</code></pre>
-<p><strong>When to use:</strong></p>
-<ul>
-<li>Monitoring production quality in real-time</li>
-<li>Setting up quality alerts and dashboards</li>
-<li>Tracking quality drift over time</li>
-<li>Evaluating a sample of production traffic</li>
-</ul>
-<p><strong>Example:</strong></p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LangfuseTraceLoader</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span><span class="p">,</span> <span class="n">Toxicity</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetItem</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_production_traces</span><span class="p">():</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="c1"># 1. Fetch recent production traces</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">loader</span> <span class="o">=</span> <span class="n">LangfuseTraceLoader</span><span class="p">()</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">traces</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">fetch_traces</span><span class="p">(</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;production&#39;</span><span class="p">],</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="p">)</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="c1"># 2. Convert to Dataset</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    <span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="n">DatasetItem</span><span class="p">(</span>
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>            <span class="nb">id</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>            <span class="n">query</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>            <span class="n">actual_output</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>            <span class="n">trace_id</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="p">)</span>
-</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">traces</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">input</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">output</span>
-</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>    <span class="p">]</span>
-</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>    <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="n">items</span><span class="p">)</span>
-</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>
-</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>    <span class="c1"># 3. Run lightweight evaluation metrics</span>
-</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">evaluation_runner</span><span class="p">(</span>
-</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>        <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>        <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">(),</span> <span class="n">Toxicity</span><span class="p">()],</span>
-</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>        <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">&#39;Production Monitoring&#39;</span><span class="p">,</span>
-</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>    <span class="p">)</span>
-</span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a>
-</span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a>    <span class="c1"># 4. Attach scores to production traces</span>
-</span><span id="__span-2-34"><a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a>    <span class="n">stats</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">publish_to_observability</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;automated-eval&#39;</span><span class="p">])</span>
-</span><span id="__span-2-35"><a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluated </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;uploaded&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> production traces&quot;</span><span class="p">)</span>
-</span><span id="__span-2-36"><a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a>
-</span><span id="__span-2-37"><a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a><span class="c1"># Run periodically (e.g., every hour via cron)</span>
+<h2 id="core-concepts">Core Concepts<a class="headerlink" href="#core-concepts" title="Permanent link">&para;</a></h2>
+<h3 id="evidenceitem">EvidenceItem<a class="headerlink" href="#evidenceitem" title="Permanent link">&para;</a></h3>
+<p>The universal input type. Any text source with an ID, the text itself, optional metadata, and an optional source reference for provenance tracking:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">EvidenceItem</span><span class="p">(</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;ticket_42&#39;</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Search returns no results for valid product names&#39;</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;severity&#39;</span><span class="p">:</span> <span class="s1">&#39;high&#39;</span><span class="p">,</span> <span class="s1">&#39;platform&#39;</span><span class="p">:</span> <span class="s1">&#39;web&#39;</span><span class="p">},</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">source_ref</span><span class="o">=</span><span class="s1">&#39;jira_PROJ-42&#39;</span><span class="p">,</span>  <span class="c1"># for recurrence checking</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">)</span>
 </span></code></pre></div>
-<div class="admonition tip">
-<p class="admonition-title">Cost Considerations for Online Evaluation</p>
-<p>For high-volume production systems, consider:</p>
-<ul>
-<li><strong>Sampling</strong>: Evaluate a random sample (e.g., 1-5%) of traces instead of all</li>
-<li><strong>Lightweight metrics</strong>: Use heuristic metrics instead of LLM-based metrics for high-frequency evaluation</li>
-<li><strong>Batching</strong>: Aggregate traces and evaluate in batches during off-peak hours</li>
-</ul>
-</div>
-<hr />
-<h3 id="disabling-evaluation-tracing">Disabling Evaluation Tracing<a class="headerlink" href="#disabling-evaluation-tracing" title="Permanent link">&para;</a></h3>
-<p>By default, <code>evaluation_runner</code> creates traces for each metric execution. If you don't need these evaluation traces (most publishing workflows only use <strong>source traces</strong> from <code>DatasetItem.trace_id</code>), you can disable them to reduce overhead.</p>
-<p><strong>Important:</strong> Configure tracing to NOOP <em>before</em> creating metric instances, since tracers are cached at instantiation time.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_tracing</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span><span class="p">,</span> <span class="n">ExactStringMatch</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># 1. Disable tracing BEFORE creating metrics</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">configure_tracing</span><span class="p">(</span><span class="s1">&#39;noop&#39;</span><span class="p">)</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># 2. Create metrics (they will use NOOP tracers)</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="s1">&#39;metric&#39;</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>        <span class="s1">&#39;Relevance&#39;</span><span class="p">:</span> <span class="n">AnswerRelevancy</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o&#39;</span><span class="p">),</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>        <span class="s1">&#39;ExactStringMatch&#39;</span><span class="p">:</span> <span class="n">ExactStringMatch</span><span class="p">(),</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    <span class="p">},</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>        <span class="s1">&#39;ANSWER_QUALITY&#39;</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>            <span class="s1">&#39;Relevance&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>            <span class="s1">&#39;ExactStringMatch&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>        <span class="p">},</span>
-</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>    <span class="p">},</span>
-</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>    <span class="s1">&#39;weights&#39;</span><span class="p">:</span> <span class="p">{</span>
-</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>        <span class="s1">&#39;ANSWER_QUALITY&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>    <span class="p">}</span>
-</span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a><span class="p">}</span>
-</span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a>
-</span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a><span class="c1"># 3. Run evaluation (no evaluation traces created)</span>
-</span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
-</span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-</span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a>    <span class="n">scoring_config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
-</span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">&#39;My Evaluation&#39;</span><span class="p">,</span>
-</span><span id="__span-3-30"><a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a><span class="p">)</span>
-</span><span id="__span-3-31"><a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a>
-</span><span id="__span-3-32"><a id="__codelineno-3-32" name="__codelineno-3-32" href="#__codelineno-3-32"></a><span class="c1"># 4. Restore tracing for publishing</span>
-</span><span id="__span-3-33"><a id="__codelineno-3-33" name="__codelineno-3-33" href="#__codelineno-3-33"></a><span class="n">configure_tracing</span><span class="p">(</span><span class="s1">&#39;langfuse&#39;</span><span class="p">)</span>
-</span><span id="__span-3-34"><a id="__codelineno-3-34" name="__codelineno-3-34" href="#__codelineno-3-34"></a>
-</span><span id="__span-3-35"><a id="__codelineno-3-35" name="__codelineno-3-35" href="#__codelineno-3-35"></a><span class="c1"># 5. Publish results (uses source traces from DatasetItem.trace_id)</span>
-</span><span id="__span-3-36"><a id="__codelineno-3-36" name="__codelineno-3-36" href="#__codelineno-3-36"></a><span class="n">results</span><span class="o">.</span><span class="n">publish_to_observability</span><span class="p">()</span>
-</span></code></pre></div>
-<div class="admonition note">
-<p class="admonition-title">When to keep evaluation tracing enabled</p>
-<p>Keep tracing enabled (default) when:</p>
-<ul>
-<li>Using <code>publish_as_experiment(score_on_runtime_traces=True)</code></li>
-<li>You need to debug metric execution in Langfuse</li>
-<li>You want visibility into LLM calls made by metrics</li>
-</ul>
-</div>
-<hr />
-<h3 id="choosing-the-right-workflow">Choosing the Right Workflow<a class="headerlink" href="#choosing-the-right-workflow" title="Permanent link">&para;</a></h3>
-<p>Use this decision tree to select the appropriate workflow:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Do you have existing traces in Langfuse?
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>├── No → Do you need span-level insights?
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>│         ├── No → Use API-Driven (black-box testing)
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>│         └── Yes → Run agent with tracing, then use Trace-Based
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>└── Yes → Are these production traces?
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>          ├── Yes → Use Online Production (monitoring)
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>          └── No → Use Trace-Based (historical analysis)
-</span></code></pre></div>
-<table>
-<thead>
-<tr>
-<th>Question</th>
-<th style="text-align: center;">API-Driven</th>
-<th style="text-align: center;">Trace-Based</th>
-<th style="text-align: center;">Online</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Need span-level debugging?</td>
-<td style="text-align: center;">No</td>
-<td style="text-align: center;">Yes</td>
-<td style="text-align: center;">Depends</td>
-</tr>
-<tr>
-<td>Requires trace instrumentation?</td>
-<td style="text-align: center;">No</td>
-<td style="text-align: center;">Yes</td>
-<td style="text-align: center;">Yes</td>
-</tr>
-<tr>
-<td>Creates new traces?</td>
-<td style="text-align: center;">Optional</td>
-<td style="text-align: center;">Yes</td>
-<td style="text-align: center;">No</td>
-</tr>
-<tr>
-<td>Best for CI/CD?</td>
-<td style="text-align: center;">Yes</td>
-<td style="text-align: center;">Possible</td>
-<td style="text-align: center;">No</td>
-</tr>
-<tr>
-<td>Best for monitoring?</td>
-<td style="text-align: center;">No</td>
-<td style="text-align: center;">No</td>
-<td style="text-align: center;">Yes</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="quick-summary">Quick Summary<a class="headerlink" href="#quick-summary" title="Permanent link">&para;</a></h2>
-<pre class="mermaid"><code>flowchart LR
-    A[Agent] --&gt;|traces| B[Langfuse]
-    B --&gt;|fetch| C[LangfuseTraceLoader]
-    C --&gt;|convert| D[Dataset]
-    D --&gt;|evaluate| E[evaluation_runner]
-    E --&gt;|scores| F[EvaluationResult]
-    F --&gt;|publish| B</code></pre>
-<details class="note">
-<summary>Detailed Workflow</summary>
-<pre class="mermaid"><code>flowchart LR
-    subgraph Production["Production"]
-        direction TB
-        A([Agent]) --&gt;|traces| B[(Langfuse)]
-    end
-
-    subgraph Fetch["Fetch"]
-        direction TB
-        B --&gt;|fetch_traces| C[LangfuseTraceLoader]
-        C --&gt; D[/Dataset/]
-        E[/Local Data/] --&gt; D
-    end
-
-    subgraph Evaluate["Evaluate"]
-        direction TB
-        D --&gt; F[[evaluation_runner]]
-        F --&gt; G{{EvaluationResult}}
-    end
-
-    subgraph Analyze["Analyze"]
-        direction TB
-        G --&gt; H[summary]
-        G --&gt; I[to_dataframe]
-        G --&gt; J[to_scorecard]
-    end
-
-    subgraph Publish["Publish"]
-        direction TB
-        G --&gt;|existing traces| K[publish_to_observability]
-        G --&gt;|new experiment| L[publish_as_experiment]
-        K --&gt; B
-        L --&gt; B
-    end</code></pre>
-</details>
-<h2 id="complete-example">Complete Example<a class="headerlink" href="#complete-example" title="Permanent link">&para;</a></h2>
-<p>This example demonstrates the full workflow: fetching traces, running evaluation, viewing results, and publishing back to Langfuse.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">LangfuseTraceLoader</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span><span class="p">,</span> <span class="n">AnswerCompleteness</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluation_runner</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetItem</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="c1"># 1. Fetch traces from Langfuse</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">loader</span> <span class="o">=</span> <span class="n">LangfuseTraceLoader</span><span class="p">()</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">traces</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">fetch_traces</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;production&#39;</span><span class="p">])</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="c1"># 2. Convert to Dataset</span>
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
-</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>        <span class="n">DatasetItem</span><span class="p">(</span>
-</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>            <span class="nb">id</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>            <span class="n">query</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>            <span class="n">actual_output</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>            <span class="n">trace_id</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>        <span class="p">)</span>
-</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">traces</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">input</span> <span class="ow">and</span> <span class="n">t</span><span class="o">.</span><span class="n">output</span>
-</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>    <span class="p">]</span>
-</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>    <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">items</span><span class="o">=</span><span class="n">items</span><span class="p">)</span>
-</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>
-</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>    <span class="c1"># 3. Run evaluation</span>
-</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">evaluation_runner</span><span class="p">(</span>
-</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>        <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a>        <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">(),</span> <span class="n">AnswerCompleteness</span><span class="p">()],</span>
-</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a>        <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">&#39;Production Evaluation&#39;</span><span class="p">,</span>
-</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a>    <span class="p">)</span>
-</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a>
-</span><span id="__span-5-31"><a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a>    <span class="c1"># 4. View results</span>
-</span><span id="__span-5-32"><a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a>    <span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners.summary</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricSummary</span>
-</span><span id="__span-5-33"><a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a>    <span class="n">MetricSummary</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">results</span><span class="p">,</span> <span class="n">total_time</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-</span><span id="__span-5-34"><a id="__codelineno-5-34" name="__codelineno-5-34" href="#__codelineno-5-34"></a>    <span class="n">result</span><span class="o">.</span><span class="n">to_scorecard</span><span class="p">(</span><span class="n">display_in_notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-5-35"><a id="__codelineno-5-35" name="__codelineno-5-35" href="#__codelineno-5-35"></a>
-</span><span id="__span-5-36"><a id="__codelineno-5-36" name="__codelineno-5-36" href="#__codelineno-5-36"></a>    <span class="c1"># 5. Publish back to Langfuse</span>
-</span><span id="__span-5-37"><a id="__codelineno-5-37" name="__codelineno-5-37" href="#__codelineno-5-37"></a>    <span class="n">stats</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">publish_as_experiment</span><span class="p">(</span>
-</span><span id="__span-5-38"><a id="__codelineno-5-38" name="__codelineno-5-38" href="#__codelineno-5-38"></a>        <span class="n">dataset_name</span><span class="o">=</span><span class="s1">&#39;my-eval-dataset&#39;</span><span class="p">,</span>
-</span><span id="__span-5-39"><a id="__codelineno-5-39" name="__codelineno-5-39" href="#__codelineno-5-39"></a>        <span class="n">run_name</span><span class="o">=</span><span class="s1">&#39;experiment-v1&#39;</span><span class="p">,</span>
-</span><span id="__span-5-40"><a id="__codelineno-5-40" name="__codelineno-5-40" href="#__codelineno-5-40"></a>        <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;production&#39;</span><span class="p">]</span>
-</span><span id="__span-5-41"><a id="__codelineno-5-41" name="__codelineno-5-41" href="#__codelineno-5-41"></a>    <span class="p">)</span>
-</span><span id="__span-5-42"><a id="__codelineno-5-42" name="__codelineno-5-42" href="#__codelineno-5-42"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Published </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;scores_uploaded&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> scores&quot;</span><span class="p">)</span>
-</span><span id="__span-5-43"><a id="__codelineno-5-43" name="__codelineno-5-43" href="#__codelineno-5-43"></a>
-</span><span id="__span-5-44"><a id="__codelineno-5-44" name="__codelineno-5-44" href="#__codelineno-5-44"></a><span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
-</span></code></pre></div>
-<h2 id="understanding-results">Understanding Results<a class="headerlink" href="#understanding-results" title="Permanent link">&para;</a></h2>
-<p>After running <code>evaluation_runner</code>, use these methods to analyze results:</p>
+<h3 id="clustering-methods">Clustering Methods<a class="headerlink" href="#clustering-methods" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
 <th>Method</th>
-<th>Description</th>
+<th>How it works</th>
+<th>Best for</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>MetricSummary().execute(result.results, total_time)</code></td>
-<td>Generate detailed metric analysis report</td>
+<td><code>ClusteringMethod.LLM</code></td>
+<td>LLM reads all evidence and outputs semantic clusters</td>
+<td>Small-medium datasets, best label quality</td>
 </tr>
 <tr>
-<td><code>result.to_dataframe()</code></td>
-<td>Convert results to a pandas DataFrame for analysis</td>
+<td><code>ClusteringMethod.BERTOPIC</code></td>
+<td>BERTopic statistical topic modeling, no LLM calls</td>
+<td>Large datasets, cost-sensitive, 5+ documents</td>
 </tr>
 <tr>
-<td><code>result.to_scorecard(display_in_notebook=True)</code></td>
-<td>Display an interactive scorecard visualization</td>
-</tr>
-<tr>
-<td><code>result.to_latency_plot()</code></td>
-<td>Visualize metric latency distributions</td>
+<td><code>ClusteringMethod.HYBRID</code></td>
+<td>BERTopic clustering + LLM label refinement</td>
+<td>Large datasets where you want readable labels</td>
 </tr>
 </tbody>
 </table>
-<h3 id="quick-analysis">Quick Analysis<a class="headerlink" href="#quick-analysis" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners.summary</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricSummary</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># Generate detailed summary report</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">MetricSummary</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">results</span><span class="p">,</span> <span class="n">total_time</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># Export to DataFrame for custom analysis</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">df</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># Visual scorecard (in Jupyter notebooks)</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="n">result</span><span class="o">.</span><span class="n">to_scorecard</span><span class="p">(</span><span class="n">display_in_notebook</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># LLM-only (default)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">discover_from_evidence</span><span class="p">(</span><span class="n">evidence</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">ClusteringMethod</span><span class="o">.</span><span class="n">LLM</span><span class="p">)</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># BERTopic (no LLM cost)</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">discover_from_evidence</span><span class="p">(</span><span class="n">evidence</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">ClusteringMethod</span><span class="o">.</span><span class="n">BERTOPIC</span><span class="p">)</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Hybrid: BERTopic clusters + LLM-refined labels</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">discover_from_evidence</span><span class="p">(</span><span class="n">evidence</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">ClusteringMethod</span><span class="o">.</span><span class="n">HYBRID</span><span class="p">)</span>
 </span></code></pre></div>
-<h2 id="workflow-steps">Workflow Steps<a class="headerlink" href="#workflow-steps" title="Permanent link">&para;</a></h2>
-<ol>
-<li><strong><a href="../configuration/">Configure Langfuse</a></strong>: Set up credentials and environment</li>
-<li><strong><a href="../tracing/">Create Traces</a></strong>: Instrument your LLM operations with <code>@trace</code> decorator</li>
-<li><strong><a href="../trace-collection/">Explore Traces</a></strong>: Navigate and filter traces with <code>TraceCollection</code></li>
-<li><strong>Fetch &amp; Evaluate</strong>: Retrieve traces and run metrics</li>
-<li><strong><a href="../publishing/">Publish Results</a></strong>: Send scores back to Langfuse</li>
-</ol>
-<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong><a href="../configuration/">Configuration</a></strong>: Set up Langfuse credentials and options</li>
-<li><strong><a href="../tracing/">Tracing</a></strong>: Learn how to create and manage traces</li>
-<li><strong><a href="../trace-collection/">Trace Collection</a></strong>: Rich trace exploration, filtering, and dataset conversion</li>
-<li><strong><a href="../publishing/">Publishing</a></strong>: Publish scores to existing traces or create experiments</li>
-<li><strong><a href="../../metrics/">Metrics Guide</a></strong>: Available metrics and customization options</li>
-</ul>
+<h3 id="learning-artifacts">Learning Artifacts<a class="headerlink" href="#learning-artifacts" title="Permanent link">&para;</a></h3>
+<p>The pipeline distills each cluster into a <code>LearningArtifact</code> — a structured insight ready for consumption:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">LearningArtifact</span><span class="p">(</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Mobile Checkout Failures on iOS&#39;</span><span class="p">,</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="n">content</span><span class="o">=</span><span class="s1">&#39;Multiple reports of checkout and payment flows...&#39;</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;ios&#39;</span><span class="p">,</span> <span class="s1">&#39;checkout&#39;</span><span class="p">,</span> <span class="s1">&#39;mobile&#39;</span><span class="p">],</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">confidence</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">supporting_item_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bug_1&#39;</span><span class="p">,</span> <span class="s1">&#39;bug_2&#39;</span><span class="p">,</span> <span class="s1">&#39;feedback_1&#39;</span><span class="p">],</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">recommended_actions</span><span class="o">=</span><span class="p">[</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>        <span class="s1">&#39;Investigate touch event handling in mobile Safari&#39;</span><span class="p">,</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>        <span class="s1">&#39;Add fallback submit mechanism for iOS WebKit&#39;</span><span class="p">,</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    <span class="p">],</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>    <span class="n">counterexamples</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bug_3&#39;</span><span class="p">],</span>       <span class="c1"># IDs that look similar but differ</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="n">scope</span><span class="o">=</span><span class="s1">&#39;iOS mobile checkout flow&#39;</span><span class="p">,</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">when_not_to_apply</span><span class="o">=</span><span class="s1">&#39;Desktop browsers or Android devices&#39;</span><span class="p">,</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="evidence-pipeline">Evidence Pipeline<a class="headerlink" href="#evidence-pipeline" title="Permanent link">&para;</a></h2>
+<p>The <code>EvidencePipeline</code> orchestrates the full workflow:</p>
+<pre class="mermaid"><code>graph LR
+    S["Sanitize"] --&gt; C["Cluster"]
+    C --&gt; F["Pre-filter"]
+    F --&gt; D["Distill"]
+    D --&gt; V["Validate"]
+    V --&gt; R["Recurrence Check"]
+    R --&gt; T["Tag Normalize"]
+    T --&gt; DD["Dedupe"]
+    DD --&gt; SK["Sink"]</code></pre>
+<h3 id="pipeline-stages">Pipeline Stages<a class="headerlink" href="#pipeline-stages" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>What it does</th>
+<th>Configurable via</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sanitize</strong></td>
+<td>Optional async text cleaning</td>
+<td><code>sanitizer=</code> (implements <code>Sanitizer</code> protocol)</td>
+</tr>
+<tr>
+<td><strong>Cluster</strong></td>
+<td>Groups evidence into themes</td>
+<td><code>method=</code>, <code>clusterer=</code> (implements <code>EvidenceClusterer</code>)</td>
+</tr>
+<tr>
+<td><strong>Pre-filter</strong></td>
+<td>Drops clusters below <code>recurrence_threshold</code></td>
+<td><code>recurrence_threshold=</code></td>
+</tr>
+<tr>
+<td><strong>Distill</strong></td>
+<td>LLM converts each cluster into a learning artifact</td>
+<td><code>domain_context=</code>, <code>max_concurrent_distillations=</code></td>
+</tr>
+<tr>
+<td><strong>Validate</strong></td>
+<td>Repairs hallucinated IDs, enforces quality gates</td>
+<td>Automatic</td>
+</tr>
+<tr>
+<td><strong>Recurrence</strong></td>
+<td>Ensures learnings span multiple unique sources</td>
+<td><code>recurrence_threshold=</code></td>
+</tr>
+<tr>
+<td><strong>Tag normalize</strong></td>
+<td>Lowercase, deduplicate, cap at 10 tags</td>
+<td>Automatic</td>
+</tr>
+<tr>
+<td><strong>Dedupe</strong></td>
+<td>Removes near-duplicate learnings</td>
+<td><code>deduper=</code> (implements <code>Deduper</code>)</td>
+</tr>
+<tr>
+<td><strong>Sink</strong></td>
+<td>Persists artifacts with provenance metadata</td>
+<td><code>sink=</code> (implements <code>ArtifactSink</code>)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">EvidencePipeline</span><span class="p">(</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="c1"># LLM settings</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">,</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">llm_provider</span><span class="o">=</span><span class="s1">&#39;openai&#39;</span><span class="p">,</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="c1"># Clustering</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">method</span><span class="o">=</span><span class="n">ClusteringMethod</span><span class="o">.</span><span class="n">LLM</span><span class="p">,</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">min_category_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">max_notes</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="c1"># Distillation</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="n">domain_context</span><span class="o">=</span><span class="s1">&#39;Customer support ticket analysis&#39;</span><span class="p">,</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="n">max_concurrent_distillations</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    <span class="c1"># Quality gates</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    <span class="n">recurrence_threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>  <span class="c1"># need 2+ unique sources per learning</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>    <span class="c1"># Metadata</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>    <span class="n">metadata_config</span><span class="o">=</span><span class="n">MetadataConfig</span><span class="p">(</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>        <span class="n">include_in_clustering</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>        <span class="n">include_in_distillation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>        <span class="n">allowed_keys</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;severity&#39;</span><span class="p">,</span> <span class="s1">&#39;platform&#39;</span><span class="p">,</span> <span class="s1">&#39;category&#39;</span><span class="p">},</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>    <span class="p">),</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>    <span class="c1"># Plugins</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>    <span class="n">sink</span><span class="o">=</span><span class="n">InMemorySink</span><span class="p">(),</span>
+</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a>    <span class="n">deduper</span><span class="o">=</span><span class="n">InMemoryDeduper</span><span class="p">(),</span>
+</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="pipeline-result">Pipeline Result<a class="headerlink" href="#pipeline-result" title="Permanent link">&para;</a></h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">evidence</span><span class="p">)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">result</span><span class="o">.</span><span class="n">clustering_result</span>   <span class="c1"># PatternDiscoveryResult — the raw clusters</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">result</span><span class="o">.</span><span class="n">learnings</span>           <span class="c1"># list[LearningArtifact] — distilled insights</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">result</span><span class="o">.</span><span class="n">filtered_count</span>      <span class="c1"># clusters dropped by pre-filter</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">result</span><span class="o">.</span><span class="n">deduplicated_count</span>  <span class="c1"># learnings removed by deduper</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">result</span><span class="o">.</span><span class="n">validation_repairs</span>  <span class="c1"># count of hallucinated-ID repairs</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">result</span><span class="o">.</span><span class="n">sink_ids</span>            <span class="c1"># IDs returned by the sink after persistence</span>
+</span></code></pre></div>
+<h2 id="metadata-handling">Metadata Handling<a class="headerlink" href="#metadata-handling" title="Permanent link">&para;</a></h2>
+<h3 id="metadataconfig">MetadataConfig<a class="headerlink" href="#metadataconfig" title="Permanent link">&para;</a></h3>
+<p>Control how metadata flows through the pipeline:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetadataConfig</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">config</span> <span class="o">=</span> <span class="n">MetadataConfig</span><span class="p">(</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">include_in_clustering</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>      <span class="c1"># attach metadata to clustering prompts</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">include_in_distillation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>    <span class="c1"># attach metadata to distillation prompts</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">allowed_keys</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;severity&#39;</span><span class="p">,</span> <span class="s1">&#39;platform&#39;</span><span class="p">},</span>  <span class="c1"># only these keys pass through</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="n">denied_keys</span><span class="o">=</span><span class="nb">set</span><span class="p">(),</span>               <span class="c1"># explicit denylist (PII defaults apply)</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="pii-safety">PII Safety<a class="headerlink" href="#pii-safety" title="Permanent link">&para;</a></h3>
+<p>By default, metadata keys matching common PII patterns are excluded:</p>
+<blockquote>
+<p><code>email</code>, <code>phone</code>, <code>name</code>, <code>address</code>, <code>ssn</code>, <code>password</code>, <code>token</code>, <code>credit_card</code></p>
+</blockquote>
+<p>These are filtered before any data reaches an LLM. You can customize the denylist via <code>MetadataConfig.denied_keys</code>.</p>
+<h3 id="metadata-in-clusters">Metadata in Clusters<a class="headerlink" href="#metadata-in-clusters" title="Permanent link">&para;</a></h3>
+<p>When <code>include_in_clustering=True</code>, each evidence note sent to the LLM includes a compact header:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>[meta: severity=high, platform=ios] Checkout button unresponsive on mobile Safari
+</span></code></pre></div>
+<p>During distillation, cluster-level metadata is aggregated into frequency distributions so the LLM sees patterns like "severity: high (3), medium (1)".</p>
+<h2 id="plugins">Plugins<a class="headerlink" href="#plugins" title="Permanent link">&para;</a></h2>
+<h3 id="sinks-output-storage">Sinks (Output Storage)<a class="headerlink" href="#sinks-output-storage" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 17H7V7h10m4 4V9h-2V7a2 2 0 0 0-2-2h-2V3h-2v2h-2V3H9v2H7c-1.11 0-2 .89-2 2v2H3v2h2v2H3v2h2v2a2 2 0 0 0 2 2h2v2h2v-2h2v2h2v-2h2a2 2 0 0 0 2-2v-2h2v-2h-2v-2m-6 2h-2v-2h2m2-2H9v6h6z"/></svg></span> InMemorySink</label><label for="__tabbed_1_2"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 9h5.5L13 3.5zM6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2m9 16v-2H6v2zm3-4v-2H6v2z"/></svg></span> JsonlSink</label><label for="__tabbed_1_3"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.5 11H19V7a2 2 0 0 0-2-2h-4V3.5A2.5 2.5 0 0 0 10.5 1 2.5 2.5 0 0 0 8 3.5V5H4a2 2 0 0 0-2 2v3.8h1.5c1.5 0 2.7 1.2 2.7 2.7S5 16.2 3.5 16.2H2V20a2 2 0 0 0 2 2h3.8v-1.5c0-1.5 1.2-2.7 2.7-2.7s2.7 1.2 2.7 2.7V22H17a2 2 0 0 0 2-2v-4h1.5a2.5 2.5 0 0 0 2.5-2.5 2.5 2.5 0 0 0-2.5-2.5"/></svg></span> Custom Sink</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Dict-based storage, ideal for testing and notebooks:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemorySink</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">sink</span> <span class="o">=</span> <span class="n">InMemorySink</span><span class="p">()</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">evidence</span><span class="p">)</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="k">for</span> <span class="n">sid</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">sink</span><span class="o">.</span><span class="n">artifacts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s1">&#39;artifact&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">entry</span><span class="p">[</span><span class="s1">&#39;provenance&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Appends each artifact as a JSON line to a file:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonlSink</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">sink</span> <span class="o">=</span> <span class="n">JsonlSink</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;learnings.jsonl&#39;</span><span class="p">)</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">evidence</span><span class="p">)</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># Each learning is appended as one JSON line</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Implement the <code>ArtifactSink</code> protocol:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArtifactSink</span><span class="p">,</span> <span class="n">LearningArtifact</span><span class="p">,</span> <span class="n">Provenance</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">DatabaseSink</span><span class="p">:</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>        <span class="n">artifact</span><span class="p">:</span> <span class="n">LearningArtifact</span><span class="p">,</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>        <span class="n">provenance</span><span class="p">:</span> <span class="n">Provenance</span><span class="p">,</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>        <span class="c1"># persist to your database</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>        <span class="k">return</span> <span class="n">record_id</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="dedupers">Dedupers<a class="headerlink" href="#dedupers" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m19.31 18.9 3.08 3.1L21 23.39l-3.12-3.07c-.69.43-1.51.68-2.38.68-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5c0 .88-.25 1.71-.69 2.4m-3.81.1a2.5 2.5 0 0 0 0-5 2.5 2.5 0 0 0 0 5M21 4v2H3V4zM3 16v-2h6v2zm0-5V9h18v2h-2.03c-1.01-.63-2.2-1-3.47-1s-2.46.37-3.47 1z"/></svg></span> InMemoryDeduper</label><label for="__tabbed_2_2"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v6h.73l-3.94 7H2v6h6v-2h8v2h6v-6h-3.79l-3.94-7H15V3m-4 2h2v2h-2m1 2.04 4 7.11V18H8v-1.85M4 18h2v2H4m14-2h2v2h-2"/></svg></span> EmbeddingDeduper</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>Case-insensitive title matching — lightweight, no external dependencies:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryDeduper</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">deduper</span> <span class="o">=</span> <span class="n">InMemoryDeduper</span><span class="p">()</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<p>Cosine similarity on OpenAI embeddings (threshold defaults to 0.85):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddingDeduper</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">deduper</span> <span class="o">=</span> <span class="n">EmbeddingDeduper</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>  <span class="c1"># requires axion[embeddings]</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="validation-quality-gates">Validation &amp; Quality Gates<a class="headerlink" href="#validation-quality-gates" title="Permanent link">&para;</a></h2>
+<p>The pipeline automatically validates every learning artifact:</p>
+<h3 id="hallucinated-id-repair">Hallucinated ID Repair<a class="headerlink" href="#hallucinated-id-repair" title="Permanent link">&para;</a></h3>
+<p>If the LLM references item IDs that don't exist in the cluster, they are silently removed. If <strong>all</strong> IDs are invalid, the learning is dropped entirely.</p>
+<h3 id="confidence-demotion">Confidence Demotion<a class="headerlink" href="#confidence-demotion" title="Permanent link">&para;</a></h3>
+<p>Learnings with <code>confidence &gt;= 0.7</code> but <strong>no recommended actions</strong> are demoted to <code>confidence = 0.69</code> — the reasoning being that a high-confidence insight should be actionable.</p>
+<h3 id="recurrence-checking">Recurrence Checking<a class="headerlink" href="#recurrence-checking" title="Permanent link">&para;</a></h3>
+<p>A learning must be backed by evidence from multiple unique sources (controlled by <code>recurrence_threshold</code>). Two chunks from the same conversation count as one source — the check uses <code>source_ref</code> to deduplicate.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Standalone usage</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber.pattern_discovery._utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_learning</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="n">repaired</span><span class="p">,</span> <span class="n">repair_count</span> <span class="o">=</span> <span class="n">validate_learning</span><span class="p">(</span><span class="n">raw_learning</span><span class="p">,</span> <span class="n">cluster_item_ids</span><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="legacy-api">Legacy API<a class="headerlink" href="#legacy-api" title="Permanent link">&para;</a></h2>
+<p>The original <code>discover()</code> method still works for annotation-based workflows:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">PatternDiscovery</span><span class="p">,</span> <span class="n">AnnotatedItem</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">annotations</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="s1">&#39;rec_1&#39;</span><span class="p">:</span> <span class="n">AnnotatedItem</span><span class="p">(</span><span class="n">record_id</span><span class="o">=</span><span class="s1">&#39;rec_1&#39;</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="s1">&#39;Missing context&#39;</span><span class="p">),</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="s1">&#39;rec_2&#39;</span><span class="p">:</span> <span class="n">AnnotatedItem</span><span class="p">(</span><span class="n">record_id</span><span class="o">=</span><span class="s1">&#39;rec_2&#39;</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="s1">&#39;Too verbose&#39;</span><span class="p">),</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="p">}</span>
+</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="n">discovery</span> <span class="o">=</span> <span class="n">PatternDiscovery</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">)</span>
+</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">discover</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">ClusteringMethod</span><span class="o">.</span><span class="n">LLM</span><span class="p">)</span>
+</span></code></pre></div>
+<p>This is equivalent to converting annotations to <code>EvidenceItem</code> objects and calling <code>discover_from_evidence()</code>. The conversion happens automatically via the compatibility layer.</p>
+<h2 id="using-with-evaluation-issues">Using with Evaluation Issues<a class="headerlink" href="#using-with-evaluation-issues" title="Permanent link">&para;</a></h2>
+<p>The <code>InsightExtractor</code> bridges evaluation issues with this pipeline. It converts <code>ExtractedIssue</code> objects (from the <a href="../../../guides/issue-extraction/">Issue Extractor</a>) into <code>EvidenceItem</code> objects and runs them through <code>EvidencePipeline</code> to discover cross-metric patterns:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">IssueExtractor</span><span class="p">,</span> <span class="n">InsightExtractor</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">issues</span> <span class="o">=</span> <span class="n">IssueExtractor</span><span class="p">()</span><span class="o">.</span><span class="n">extract_from_evaluation</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="n">insights</span> <span class="o">=</span> <span class="k">await</span> <span class="n">InsightExtractor</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o-mini&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">insights</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>    <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">is_cross_metric</span><span class="p">:</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">metrics_involved</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>See the <a href="../../../guides/insight-extraction/">Cross-Metric Insight Extraction Guide</a> for full details.</p>
+<h2 id="api-summary">API Summary<a class="headerlink" href="#api-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>Input</th>
+<th>Output</th>
+<th>Use when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PatternDiscovery.discover()</code></td>
+<td><code>Dict[str, AnnotatedItem]</code></td>
+<td><code>PatternDiscoveryResult</code></td>
+<td>You have annotation notes from human evaluators</td>
+</tr>
+<tr>
+<td><code>PatternDiscovery.discover_from_evidence()</code></td>
+<td><code>Sequence[EvidenceItem]</code> or <code>Dict</code></td>
+<td><code>PatternDiscoveryResult</code></td>
+<td>Clustering only, from any text source</td>
+</tr>
+<tr>
+<td><code>EvidencePipeline.run()</code></td>
+<td><code>Sequence[EvidenceItem]</code> or <code>Dict</code></td>
+<td><code>PipelineResult</code></td>
+<td>Full pipeline: cluster + distill + validate + dedupe + sink</td>
+</tr>
+<tr>
+<td><code>InsightExtractor.analyze()</code></td>
+<td><code>IssueExtractionResult</code></td>
+<td><code>InsightResult</code></td>
+<td>Cross-metric pattern discovery from evaluation issues</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<div class="ref-nav">
+<p><a class="md-button md-button--primary" href="../../../reference/caliber/">Caliber API Reference <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a>
+<a class="md-button" href="../../../guides/caliberhq/">CaliberHQ Guide <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a>
+<a class="md-button" href="../example-selector/">Example Selector <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a></p>
+</div>
 
 
 
@@ -4894,7 +5092,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 21, 2026 02:13:50 UTC">February 21, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 01:40:14 UTC">February 23, 2026</span>
   </span>
 
     
@@ -4904,7 +5102,7 @@
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 19, 2026 17:55:56 UTC">January 19, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 23, 2026 01:40:14 UTC">February 23, 2026</span>
   </span>
 
     
