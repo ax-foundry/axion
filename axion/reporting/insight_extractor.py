@@ -1,5 +1,5 @@
 import hashlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from axion._core.asyncio import run_async_function
@@ -21,7 +21,7 @@ logger = get_logger(__name__)
 @dataclass
 class InsightPattern:
     """
-    A cross-metric pattern discovered 
+    A cross-metric pattern discovered
     from evaluation issues.
     """
 
@@ -49,7 +49,7 @@ class InsightResult:
 
 def _issue_to_evidence(issue: ExtractedIssue) -> Optional[EvidenceItem]:
     """
-    Convert ExtractedIssue -> EvidenceItem. 
+    Convert ExtractedIssue -> EvidenceItem.
     Returns None if no meaningful text.
     """
     reasoning = issue.reasoning or ''
@@ -105,7 +105,7 @@ _EMPTY_PIPELINE_RESULT = PipelineResult(
 
 class InsightExtractor:
     """
-    Bridges IssueExtractor output with EvidencePipeline 
+    Bridges IssueExtractor output with EvidencePipeline
     for cross-metric pattern discovery.
     """
 
@@ -122,9 +122,7 @@ class InsightExtractor:
         **pipeline_kwargs,
     ) -> None:
         if pipeline is not None and pipeline_kwargs:
-            raise ValueError(
-                'Cannot pass pipeline_kwargs when pipeline is provided'
-            )
+            raise ValueError('Cannot pass pipeline_kwargs when pipeline is provided')
 
         self._method = method
 
@@ -149,9 +147,7 @@ class InsightExtractor:
             )
 
     @trace(name='InsightExtractor.analyze')
-    async def analyze(
-        self, extraction_result: IssueExtractionResult
-    ) -> InsightResult:
+    async def analyze(self, extraction_result: IssueExtractionResult) -> InsightResult:
         """
         Analyze extracted issues for cross-metric patterns.
 
@@ -190,9 +186,7 @@ class InsightExtractor:
             self._pipeline._domain_context = old_ctx
 
         # Build InsightPattern list from clustering result
-        patterns = self._build_patterns(
-            pipeline_result, evidence_dict, issue_lookup
-        )
+        patterns = self._build_patterns(pipeline_result, evidence_dict, issue_lookup)
 
         return InsightResult(
             patterns=patterns,
@@ -202,9 +196,7 @@ class InsightExtractor:
             pipeline_result=pipeline_result,
         )
 
-    def analyze_sync(
-        self, extraction_result: IssueExtractionResult
-    ) -> InsightResult:
+    def analyze_sync(self, extraction_result: IssueExtractionResult) -> InsightResult:
         """Synchronous wrapper for analyze()."""
         return run_async_function(self.analyze, extraction_result)
 
@@ -220,9 +212,7 @@ class InsightExtractor:
             ),
         )
 
-    def _build_domain_context(
-        self, extraction_result: IssueExtractionResult
-    ) -> str:
+    def _build_domain_context(self, extraction_result: IssueExtractionResult) -> str:
         metrics = sorted(extraction_result.issues_by_metric.keys())
         metric_list = ', '.join(metrics)
         n = extraction_result.total_test_cases
@@ -235,8 +225,7 @@ class InsightExtractor:
                 f'{n} test cases, {m} issues across {k} metrics ({metric_list})'
             )
         return (
-            f'Evaluation: {n} test cases, {m} issues '
-            f'across {k} metrics ({metric_list})'
+            f'Evaluation: {n} test cases, {m} issues across {k} metrics ({metric_list})'
         )
 
     def _build_patterns(

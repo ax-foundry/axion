@@ -1,4 +1,4 @@
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -6,14 +6,12 @@ from axion.caliber.pattern_discovery.handlers import LearningArtifactOutput
 from axion.caliber.pattern_discovery.models import (
     ClusteringMethod,
     DiscoveredPattern,
-    EvidenceItem,
     PatternDiscoveryResult,
     PipelineResult,
 )
 from axion.caliber.pattern_discovery.pipeline import EvidencePipeline
 from axion.reporting.insight_extractor import (
     InsightExtractor,
-    InsightPattern,
     InsightResult,
     _issue_to_evidence,
 )
@@ -138,7 +136,10 @@ class TestIssueToEvidence:
         assert item.metadata['signal_group'] == 'claim_0'
         assert item.metadata['value'] == 'CONTRADICTORY'
         assert item.metadata['score'] == 0.0
-        assert item.metadata['source_path'] == 'results[0].score_results[0].signals.claim_0'
+        assert (
+            item.metadata['source_path']
+            == 'results[0].score_results[0].signals.claim_0'
+        )
 
     def test_issue_to_evidence_no_text_returns_none(self):
         """Issue with no reasoning and no query -> None."""
@@ -185,9 +186,7 @@ def _build_mocked_pipeline(evidence_dict, n_clusters=2, recurrence_threshold=1):
 
     mock_writer = AsyncMock()
     mock_writer.distill = AsyncMock(
-        side_effect=lambda cluster, ctx: [
-            _make_learning_output(cluster.item_ids[:2])
-        ]
+        side_effect=lambda cluster, ctx: [_make_learning_output(cluster.item_ids[:2])]
     )
 
     pipeline = EvidencePipeline(
@@ -206,7 +205,7 @@ class TestInsightExtractorAnalyze:
             _make_issue(test_case_id=f'tc_{i}', metric_name='faithfulness')
             for i in range(3)
         ] + [
-            _make_issue(test_case_id=f'tc_{i+3}', metric_name='contextual_recall')
+            _make_issue(test_case_id=f'tc_{i + 3}', metric_name='contextual_recall')
             for i in range(3)
         ]
         extraction = _make_extraction_result(issues)
@@ -371,9 +370,7 @@ class TestInsightExtractorAnalyze:
         mock_clusterer.cluster = AsyncMock(return_value=clustering_result)
         mock_writer = AsyncMock()
         mock_writer.distill = AsyncMock(
-            side_effect=lambda cluster, ctx: [
-                _make_learning_output(cluster.item_ids)
-            ]
+            side_effect=lambda cluster, ctx: [_make_learning_output(cluster.item_ids)]
         )
 
         # recurrence_threshold=2, but all items have source_ref='tc_1'
@@ -523,9 +520,7 @@ class TestInsightExtractorAnalyze:
         )
 
         extractor = InsightExtractor(
-            pipeline=EvidencePipeline(
-                clusterer=AsyncMock(), writer=AsyncMock()
-            ),
+            pipeline=EvidencePipeline(clusterer=AsyncMock(), writer=AsyncMock()),
             method=ClusteringMethod.LLM,
         )
         ctx = extractor._build_domain_context(extraction)
