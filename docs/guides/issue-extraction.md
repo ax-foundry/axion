@@ -550,6 +550,28 @@ class MetricSignalAdapter:
     context_signals: List[str]
 ```
 
+## Next Step: Cross-Metric Insights
+
+The `IssueExtractor` groups issues by metric + signal name. To discover patterns that **span multiple metrics** — for example, faithfulness and contextual recall failures both pointing to a retrieval problem — use the [`InsightExtractor`](insight-extraction.md):
+
+```python
+from axion.reporting import IssueExtractor, InsightExtractor
+
+# Extract issues as usual
+extractor = IssueExtractor()
+issues = extractor.extract_from_evaluation(results)
+
+# Discover cross-metric patterns
+insight_extractor = InsightExtractor(model_name='gpt-4o-mini')
+insights = await insight_extractor.analyze(issues)
+
+for pattern in insights.patterns:
+    if pattern.is_cross_metric:
+        print(f"{pattern.category}: {', '.join(pattern.metrics_involved)}")
+```
+
+[Cross-Metric Insight Extraction Guide :octicons-arrow-right-24:](insight-extraction.md){ .md-button .md-button--primary }
+
 ## Best Practices
 
 <div class="rule-grid" markdown="0">
