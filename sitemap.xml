@@ -2,302 +2,302 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://ax-foundry.github.io/axion/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/agent_playbook/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/evaluation_flywheel/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/why_ground_truth_matters/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/caliber/example-selector/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/caliber/pattern-discovery/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/internals/environment/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/internals/logging/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/internals/tracing/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/metrics/composite-metrics/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/metrics/creating-metrics/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/metrics/yaml-metrics/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/runners/api-runner/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/runners/evaluation-runner/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/runners/metric-runner/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/search/google/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/search/tavily/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/search/you/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/deep-dives/synthetic/document-qa/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/getting-started/installation/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/caliberhq/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/datasets/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/evaluation/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/hierarchical-scoring/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/insight-extraction/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/issue-extraction/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/llm-providers/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/metrics/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/search/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/synthetic/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/langfuse/configuration/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/langfuse/overview/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/langfuse/publishing/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/langfuse/trace-collection/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/guides/langfuse/tracing/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/answer_completeness/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/answer_criteria/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/answer_relevancy/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/citation_relevancy/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/contextual_precision/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/contextual_ranking/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/contextual_recall/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/contextual_relevancy/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/contextual_sufficiency/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/contextual_utilization/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/factual_accuracy/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/faithfulness/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/pii_leakage/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/composite/tone_style_consistency/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/conversational/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/heuristic/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/heuristic/citation_presence/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/heuristic/contains_match/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/heuristic/exact_string_match/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/heuristic/latency/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/heuristic/length_constraint/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/heuristic/levenshtein_ratio/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/heuristic/pii_leakage_heuristic/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/heuristic/retrieval_metrics/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/heuristic/sentence_bleu/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/tool/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/metric-registry/tool/tool_correctness/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/caliber/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/dataset/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/eval-tree/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/insight-extractor/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/issue-extractor/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/llm-registry/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/metrics/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/runners/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/schema/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/search/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/synthetic/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
     <url>
          <loc>https://ax-foundry.github.io/axion/reference/tracer-registry/</loc>
-         <lastmod>2026-02-23</lastmod>
+         <lastmod>2026-02-28</lastmod>
     </url>
 </urlset>
