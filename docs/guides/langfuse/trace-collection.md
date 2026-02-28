@@ -213,6 +213,20 @@ collection[0].ruling.variables
 
 While steps group observations by name, the **observation tree** reconstructs the parent/child hierarchy from `parent_observation_id` fields -- the same hierarchy visible in the Langfuse timeline UI.
 
+### Trace-Level Metadata
+
+Traces represent workflows or pipelines and carry top-level metadata that is always accessible, regardless of how many roots exist:
+
+```python
+trace = collection[0]
+
+trace.name      # Workflow / pipeline name
+trace.input     # Trace-level input
+trace.output    # Trace-level output
+```
+
+These properties read directly from the underlying trace object and are never shadowed by step names.
+
 ### Accessing the Tree
 
 ```python
@@ -224,10 +238,12 @@ roots = trace.tree_roots
 # Convenience: single root when exactly one exists, else None
 root = trace.tree
 
-# Walk the entire tree (pre-order depth-first)
-for node in root.walk():
+# Walk the entire trace (pre-order depth-first, works with any number of roots)
+for node in trace.walk():
     print("  " * node.depth + node.name)
 ```
+
+`trace.walk()` traverses all roots in order, so it works whether the trace has one root or many. You can also walk a single node's subtree with `node.walk()`.
 
 ### ObservationNode Properties
 
@@ -257,12 +273,32 @@ node.output          # Observation output
 
 ### Searching and Navigating
 
-`find()` searches the subtree for the first matching descendant:
+#### Trace-Level Search
+
+`trace.find()` searches across **all** roots and returns the first match:
 
 ```python
-root = trace.tree
+# Find by name (across all roots)
+gen = trace.find(name='recommendation:ai.generateText')
 
-# Find by name
+# Find by type
+first_gen = trace.find(type='GENERATION')
+
+# Find by both (AND)
+specific = trace.find(name='ruling', type='GENERATION')
+
+# Returns None when no match
+trace.find(name='nonexistent')  # None
+```
+
+#### Node-Level Search
+
+`node.find()` searches within a single node's subtree:
+
+```python
+root = trace.tree  # only works when a single root exists
+
+# Find by name within this subtree
 gen = root.find(name='recommendation:ai.generateText')
 
 # Find by type
@@ -522,12 +558,17 @@ result.publish_to_observability()
 
 | Property / Method | Description |
 |-------------------|-------------|
+| `trace.name` | Trace-level name (workflow / pipeline name) |
+| `trace.input` | Trace-level input |
+| `trace.output` | Trace-level output |
 | `trace.step_names` | List of observation group names |
 | `trace.steps` | Dict of step name to `TraceStep` |
 | `trace.observations` | Flat list of all observations |
 | `trace.raw` | Underlying raw trace object |
 | `trace.tree_roots` | List of root `ObservationNode`s (hierarchy) |
 | `trace.tree` | Single root node if exactly one root, else `None` |
+| `trace.walk()` | Pre-order depth-first generator across all roots |
+| `trace.find(name, type)` | First node matching name and/or type across all roots, or `None` |
 | `trace.<step_name>` | Access a step by name (fuzzy matching) |
 | `trace.<attribute>` | Access trace-level attributes (fuzzy matching) |
 
