@@ -1,6 +1,7 @@
 """Tests for Trace and TraceStep."""
 
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import pytest
@@ -19,8 +20,11 @@ from axion._core.tracing.collection.trace import Trace, TraceStep
 
 @dataclass
 class FakeObservation:
+    id: str = 'obs-1'
     name: str = 'step1'
     type: str = 'GENERATION'
+    parent_observation_id: Optional[str] = None
+    start_time: Any = None
     input: Any = ''
     output: Any = ''
     metadata: Optional[Dict] = None
@@ -283,3 +287,232 @@ class TestTraceRepr:
         t = Trace(raw)
         with pytest.raises(AttributeError):
             _ = t.totally_nonexistent_attribute_xyz
+
+
+# ---------------------------------------------------------------------------
+# Trace-level properties (name, input, output)
+# ---------------------------------------------------------------------------
+
+
+class TestTraceProperties:
+    def test_name_from_raw_object(self):
+        raw = FakeRawTrace(name='my-workflow')
+        t = Trace(raw)
+        assert t.name == 'my-workflow'
+
+    def test_input_from_raw_object(self):
+        raw = FakeRawTrace(input={'query': 'hello'})
+        t = Trace(raw)
+        assert t.input == {'query': 'hello'}
+
+    def test_output_from_raw_object(self):
+        raw = FakeRawTrace(output={'answer': 'world'})
+        t = Trace(raw)
+        assert t.output == {'answer': 'world'}
+
+    def test_name_from_dict_trace(self):
+        data = {'name': 'dict-workflow', 'observations': []}
+        t = Trace(data)
+        assert t.name == 'dict-workflow'
+
+    def test_input_output_from_dict_trace(self):
+        data = {
+            'input': {'q': 'test'},
+            'output': {'a': 'result'},
+            'observations': [],
+        }
+        t = Trace(data)
+        assert t.input == {'q': 'test'}
+        assert t.output == {'a': 'result'}
+
+    def test_properties_none_when_no_trace_obj(self):
+        """List-of-observations input has no trace object."""
+        t = Trace([])
+        assert t.name is None
+        assert t.input is None
+        assert t.output is None
+
+    def test_name_not_shadowed_by_step(self):
+        """A step named 'name' should not shadow trace.name."""
+        raw = FakeRawTrace(
+            name='my-workflow',
+            observations=[FakeObservation(name='name', type='SPAN')],
+        )
+        t = Trace(raw)
+        # Property always returns trace-level name
+        assert t.name == 'my-workflow'
+
+
+# ---------------------------------------------------------------------------
+# Trace.walk()
+# ---------------------------------------------------------------------------
+
+
+class TestTraceWalk:
+    def _make_single_root_trace(self):
+        """
+        root (id=r)
+        ├── child1 (id=c1)
+        │   └── grandchild (id=gc)
+        └── child2 (id=c2)
+        """
+        return FakeRawTrace(
+            observations=[
+                FakeObservation(
+                    id='r',
+                    name='root',
+                    type='SPAN',
+                    start_time=datetime(2025, 1, 1, 12, 0, 0),
+                ),
+                FakeObservation(
+                    id='c1',
+                    name='child1',
+                    type='SPAN',
+                    parent_observation_id='r',
+                    start_time=datetime(2025, 1, 1, 12, 0, 1),
+                ),
+                FakeObservation(
+                    id='gc',
+                    name='grandchild',
+                    type='GENERATION',
+                    parent_observation_id='c1',
+                    start_time=datetime(2025, 1, 1, 12, 0, 2),
+                ),
+                FakeObservation(
+                    id='c2',
+                    name='child2',
+                    type='SPAN',
+                    parent_observation_id='r',
+                    start_time=datetime(2025, 1, 1, 12, 0, 3),
+                ),
+            ],
+        )
+
+    def _make_multi_root_trace(self):
+        """
+        rootA (id=rA)
+        └── childA (id=cA)
+
+        rootB (id=rB)
+        └── childB (id=cB)
+        """
+        return FakeRawTrace(
+            observations=[
+                FakeObservation(
+                    id='rA',
+                    name='rootA',
+                    type='SPAN',
+                    start_time=datetime(2025, 1, 1, 12, 0, 0),
+                ),
+                FakeObservation(
+                    id='cA',
+                    name='childA',
+                    type='GENERATION',
+                    parent_observation_id='rA',
+                    start_time=datetime(2025, 1, 1, 12, 0, 1),
+                ),
+                FakeObservation(
+                    id='rB',
+                    name='rootB',
+                    type='SPAN',
+                    start_time=datetime(2025, 1, 1, 12, 0, 2),
+                ),
+                FakeObservation(
+                    id='cB',
+                    name='childB',
+                    type='GENERATION',
+                    parent_observation_id='rB',
+                    start_time=datetime(2025, 1, 1, 12, 0, 3),
+                ),
+            ],
+        )
+
+    def test_walk_single_root(self):
+        t = Trace(self._make_single_root_trace())
+        ids = [n.id for n in t.walk()]
+        assert ids == ['r', 'c1', 'gc', 'c2']
+
+    def test_walk_multi_root(self):
+        t = Trace(self._make_multi_root_trace())
+        ids = [n.id for n in t.walk()]
+        assert ids == ['rA', 'cA', 'rB', 'cB']
+
+    def test_walk_empty(self):
+        t = Trace(FakeRawTrace(observations=[]))
+        assert list(t.walk()) == []
+
+    def test_walk_with_depth(self):
+        """walk() works with node.depth for indented display."""
+        t = Trace(self._make_single_root_trace())
+        depths = [(n.name, n.depth) for n in t.walk()]
+        assert depths == [
+            ('root', 0),
+            ('child1', 1),
+            ('grandchild', 2),
+            ('child2', 1),
+        ]
+
+
+# ---------------------------------------------------------------------------
+# Trace.find()
+# ---------------------------------------------------------------------------
+
+
+class TestTraceFind:
+    def _make_multi_root_trace(self):
+        return FakeRawTrace(
+            observations=[
+                FakeObservation(
+                    id='rA',
+                    name='rootA',
+                    type='SPAN',
+                    start_time=datetime(2025, 1, 1, 12, 0, 0),
+                ),
+                FakeObservation(
+                    id='cA',
+                    name='childA',
+                    type='GENERATION',
+                    parent_observation_id='rA',
+                    start_time=datetime(2025, 1, 1, 12, 0, 1),
+                ),
+                FakeObservation(
+                    id='rB',
+                    name='rootB',
+                    type='SPAN',
+                    start_time=datetime(2025, 1, 1, 12, 0, 2),
+                ),
+                FakeObservation(
+                    id='cB',
+                    name='childB',
+                    type='GENERATION',
+                    parent_observation_id='rB',
+                    start_time=datetime(2025, 1, 1, 12, 0, 3),
+                ),
+            ],
+        )
+
+    def test_find_by_name_across_roots(self):
+        t = Trace(self._make_multi_root_trace())
+        node = t.find(name='childB')
+        assert node is not None
+        assert node.id == 'cB'
+
+    def test_find_by_type(self):
+        t = Trace(self._make_multi_root_trace())
+        node = t.find(type='GENERATION')
+        assert node is not None
+        assert node.id == 'cA'  # first generation in walk order
+
+    def test_find_by_name_and_type(self):
+        t = Trace(self._make_multi_root_trace())
+        node = t.find(name='childB', type='GENERATION')
+        assert node is not None
+        assert node.id == 'cB'
+
+    def test_find_no_match(self):
+        t = Trace(self._make_multi_root_trace())
+        assert t.find(name='nonexistent') is None
+
+    def test_find_empty_trace(self):
+        t = Trace(FakeRawTrace(observations=[]))
+        assert t.find(name='anything') is None

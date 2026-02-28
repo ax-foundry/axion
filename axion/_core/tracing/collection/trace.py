@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import re
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional
 
 from axion._core.logging import get_logger
 from axion._core.tracing.collection.models import ObservationsView, TraceView
 from axion._core.tracing.collection.smart_access import SmartAccess, _normalize_key
+
+if TYPE_CHECKING:
+    from axion._core.tracing.collection.observation_node import ObservationNode
 
 logger = get_logger(__name__)
 
@@ -210,6 +213,67 @@ class Trace(SmartAccess):
     def raw(self) -> Any:
         """The underlying raw trace object."""
         return self._trace_obj
+
+    @property
+    def name(self) -> Optional[str]:
+        """Trace-level name (workflow / pipeline name)."""
+        return self._get_trace_attr('name')
+
+    @property
+    def input(self) -> Any:
+        """Trace-level input."""
+        return self._get_trace_attr('input')
+
+    @property
+    def output(self) -> Any:
+        """Trace-level output."""
+        return self._get_trace_attr('output')
+
+    def _get_trace_attr(self, key: str) -> Any:
+        """Read an attribute directly from the root trace object, bypassing steps."""
+        if self._trace_obj is None:
+            return None
+        try:
+            if hasattr(self._trace_obj, '_lookup'):
+                return self._trace_obj._lookup(key)
+        except (KeyError, AttributeError, TypeError):
+            pass
+        return getattr(self._trace_obj, key, None)
+
+    def walk(self) -> Generator[ObservationNode, None, None]:
+        """
+        Pre-order depth-first traversal across **all** tree roots.
+
+        Works regardless of whether the trace has one root or many::
+
+            for node in trace.walk():
+                print("  " * node.depth + node.name)
+        """
+        for root in self.tree_roots:
+            yield from root.walk()
+
+    def find(
+        self,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+    ) -> Optional[ObservationNode]:
+        """
+        Return the first node matching *name* and/or *type* across all roots.
+
+        Searches every root's subtree in order and returns the first match,
+        or ``None`` if nothing matches.
+        """
+        for node in self.walk():
+            if name is not None:
+                node_name = _safe_get(node._observation, 'name')
+                if node_name != name:
+                    continue
+            if type is not None:
+                node_type = _safe_get(node._observation, 'type')
+                if node_type != type:
+                    continue
+            return node
+        return None
 
     def _lookup(self, key: str) -> Any:
         # Check grouped step names
