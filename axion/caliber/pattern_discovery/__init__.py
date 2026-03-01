@@ -6,6 +6,11 @@ from axion.caliber.pattern_discovery._compat import (
 )
 from axion.caliber.pattern_discovery._utils import MetadataConfig
 from axion.caliber.pattern_discovery.discovery import PatternDiscovery
+from axion.caliber.pattern_discovery.display import (
+    display_learnings,
+    display_patterns,
+    display_pipeline_result,
+)
 from axion.caliber.pattern_discovery.handlers import (
     DEFAULT_CLUSTERING_INSTRUCTION,
     AnnotationNote,
@@ -97,4 +102,8 @@ __all__ = [
     'Sanitizer',
     # Config
     'MetadataConfig',
+    # Display
+    'display_learnings',
+    'display_patterns',
+    'display_pipeline_result',
 ]

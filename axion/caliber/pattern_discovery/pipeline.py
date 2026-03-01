@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Dict, List, Optional, Protocol, Sequence, Union
 
 from axion._core.logging import get_logger
-from axion._core.tracing import trace
+from axion._core.tracing import init_tracer, trace
 from axion.caliber.pattern_discovery._utils import (
     ExcerptFn,
     MetadataConfig,
@@ -119,6 +119,7 @@ class EvidencePipeline:
         deduper: Optional[Deduper] = None,
         tag_normalizer: Optional[Callable[[List[str]], List[str]]] = None,
         bertopic_embedding_model: Any = 'all-MiniLM-L6-v2',
+        tracer: Optional[Any] = None,
     ) -> None:
         self._method = method
         self._recurrence_threshold = recurrence_threshold
@@ -132,6 +133,7 @@ class EvidencePipeline:
         self._excerpt_fn = excerpt_fn
         self._seed = seed
         self._max_concurrent = max_concurrent_distillations
+        self.tracer = init_tracer('base', tracer=tracer)
 
         self._sanitizer: Sanitizer = sanitizer or NoopSanitizer()
         self._sink = sink
@@ -153,6 +155,7 @@ class EvidencePipeline:
                 metadata_config=self._metadata_config,
                 excerpt_fn=excerpt_fn,
                 seed=seed,
+                tracer=self.tracer,
             )
             self._clusterer = _DefaultClusterer(discovery)
 
@@ -168,10 +171,11 @@ class EvidencePipeline:
                 llm=llm,
                 llm_provider=llm_provider,
                 instruction=distillation_instruction,
+                tracer=self.tracer,
             )
             self._writer = _DefaultWriter(handler)
 
-    @trace(name='EvidencePipeline.run', capture_args=True)
+    @trace(name='execute', capture_args=True)
     async def run(
         self,
         evidence: Union[Sequence[EvidenceItem], Dict[str, EvidenceItem]],
@@ -294,6 +298,15 @@ class EvidencePipeline:
             validation_repairs=total_repairs,
             sink_ids=sink_ids,
         )
+
+    def display(self, result: PipelineResult) -> None:
+        """Display a pipeline result (summary + patterns + learnings).
+
+        Auto-detects Jupyter notebook vs console environment.
+        """
+        from axion.caliber.pattern_discovery.display import display_pipeline_result
+
+        display_pipeline_result(result)
 
     @trace(name='EvidencePipeline._sanitize')
     async def _sanitize(
