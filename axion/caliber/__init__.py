@@ -41,6 +41,9 @@ from axion.caliber.pattern_discovery import (
     PipelineResult,
     Provenance,
     Sanitizer,
+    display_learnings,
+    display_patterns,
+    display_pipeline_result,
 )
 
 # Prompt Optimization
@@ -127,6 +130,9 @@ __all__ = [
     'PipelineResult',
     'Provenance',
     'Sanitizer',
+    'display_learnings',
+    'display_patterns',
+    'display_pipeline_result',
     # Example Selection
     'ExampleSelector',
     'SelectionResult',

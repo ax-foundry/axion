@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Sequence, Union
 
 from axion._core.logging import get_logger
-from axion._core.tracing import trace
+from axion._core.tracing import init_tracer, trace
 from axion.caliber.pattern_discovery._compat import (
     AnnotatedItem,
     annotations_to_evidence,
@@ -73,6 +73,7 @@ class PatternDiscovery:
         metadata_config: Optional[MetadataConfig] = None,
         excerpt_fn: Optional[ExcerptFn] = None,
         seed: Optional[int] = None,
+        tracer: Optional[Any] = None,
     ):
         self._model_name = model_name
         self._llm = llm
@@ -84,6 +85,7 @@ class PatternDiscovery:
         self._metadata_config = metadata_config or MetadataConfig()
         self._excerpt_fn = excerpt_fn
         self._seed = seed
+        self.tracer = init_tracer('base', tracer=tracer)
 
         # Lazily initialized handlers
         self._evidence_clustering_handler: Optional[EvidenceClusteringHandler] = None
@@ -96,6 +98,7 @@ class PatternDiscovery:
                 llm=self._llm,
                 llm_provider=self._llm_provider,
                 instruction=self._instruction,
+                tracer=self.tracer,
             )
         return self._evidence_clustering_handler
 
@@ -105,10 +108,11 @@ class PatternDiscovery:
                 model_name=self._model_name,
                 llm=self._llm,
                 llm_provider=self._llm_provider,
+                tracer=self.tracer,
             )
         return self._label_handler
 
-    @trace(name='PatternDiscovery.discover', capture_args=True)
+    @trace(name='discover', capture_args=True)
     async def discover(
         self,
         annotations: Union[Dict[str, AnnotatedItem], Dict[str, Dict]],
@@ -129,7 +133,7 @@ class PatternDiscovery:
     ) -> Dict[str, AnnotatedItem]:
         return normalize_annotations(annotations)
 
-    @trace(name='PatternDiscovery.discover_from_evidence', capture_args=True)
+    @trace(name='discover_from_evidence', capture_args=True)
     async def discover_from_evidence(
         self,
         evidence: Union[Sequence[EvidenceItem], Dict[str, EvidenceItem]],
@@ -166,7 +170,7 @@ class PatternDiscovery:
         else:
             raise ValueError(f'Unknown clustering method: {method}')
 
-    @trace(name='PatternDiscovery._cluster_evidence_with_llm')
+    @trace(name='cluster_evidence_with_llm')
     async def _cluster_evidence_with_llm(
         self, evidence: Dict[str, EvidenceItem]
     ) -> PatternDiscoveryResult:
@@ -236,7 +240,7 @@ class PatternDiscovery:
         patterns.sort(key=lambda p: p.count, reverse=True)
         return patterns
 
-    @trace(name='PatternDiscovery._cluster_evidence_with_bertopic')
+    @trace(name='cluster_evidence_with_bertopic')
     async def _cluster_evidence_with_bertopic(
         self, evidence: Dict[str, EvidenceItem]
     ) -> PatternDiscoveryResult:
@@ -341,7 +345,7 @@ class PatternDiscovery:
         top_words = [word.title() for word, _ in topic_words[: self.TOPIC_NAME_WORDS]]
         return ' / '.join(top_words)
 
-    @trace(name='PatternDiscovery._cluster_evidence_hybrid')
+    @trace(name='cluster_evidence_hybrid')
     async def _cluster_evidence_hybrid(
         self, evidence: Dict[str, EvidenceItem]
     ) -> PatternDiscoveryResult:

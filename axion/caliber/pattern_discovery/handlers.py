@@ -54,15 +54,9 @@ class LabelInput(StrictBaseModel):
 
 
 class LabelOutput(BaseModel):
-    """Output from label refinement.
+    """Output from label refinement."""
 
-    Uses plain BaseModel (not StrictBaseModel) because AliasChoices
-    requires ``populate_by_name=True`` which conflicts with strict mode.
-    Falls back to parser mode on structured output failure, which is fine
-    for this simple single-field model.
-    """
-
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='forbid')
 
     category_name: str = Field(
         description='Concise 2-4 word category name',
