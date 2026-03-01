@@ -1,5 +1,3 @@
-"""Tests for pattern discovery display functions (console output)."""
-
 from __future__ import annotations
 
 import pytest

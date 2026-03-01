@@ -1,9 +1,3 @@
-"""Display functions for pattern discovery results.
-
-Standalone functions with auto-detection of notebook vs console environment.
-Follows the existing ``display_*`` pattern (see ``axion/display.py``).
-"""
-
 from __future__ import annotations
 
 from typing import List
@@ -14,10 +8,6 @@ from axion.caliber.pattern_discovery.models import (
     PipelineResult,
 )
 
-# ---------------------------------------------------------------------------
-# Environment detection
-# ---------------------------------------------------------------------------
-
 
 def _is_notebook() -> bool:
     """Return *True* when running inside a Jupyter/IPython notebook."""
@@ -26,11 +16,6 @@ def _is_notebook() -> bool:
         return shell == 'ZMQInteractiveShell'
     except NameError:
         return False
-
-
-# ---------------------------------------------------------------------------
-# Console helpers
-# ---------------------------------------------------------------------------
 
 
 def _display_patterns_console(
@@ -106,11 +91,6 @@ def _display_pipeline_console(result: PipelineResult) -> None:
 
     _display_patterns_console(result.clustering_result)
     _display_learnings_console(result.learnings)
-
-
-# ---------------------------------------------------------------------------
-# Notebook helpers
-# ---------------------------------------------------------------------------
 
 
 def _build_summary_card_html(
@@ -268,11 +248,6 @@ def _display_pipeline_notebook(result: PipelineResult) -> None:
 
     _display_patterns_notebook(result.clustering_result)
     _display_learnings_notebook(result.learnings)
-
-
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
 
 
 def display_pipeline_result(result: PipelineResult) -> None:
