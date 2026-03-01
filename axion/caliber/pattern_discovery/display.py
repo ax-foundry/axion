@@ -14,10 +14,10 @@ from axion.caliber.pattern_discovery.models import (
     PipelineResult,
 )
 
-
 # ---------------------------------------------------------------------------
 # Environment detection
 # ---------------------------------------------------------------------------
+
 
 def _is_notebook() -> bool:
     """Return *True* when running inside a Jupyter/IPython notebook."""
@@ -32,7 +32,10 @@ def _is_notebook() -> bool:
 # Console helpers
 # ---------------------------------------------------------------------------
 
-def _display_patterns_console(result: PatternDiscoveryResult, *, header: bool = True) -> None:
+
+def _display_patterns_console(
+    result: PatternDiscoveryResult, *, header: bool = True
+) -> None:
     if header:
         print('\n' + '=' * 55)
         print('🔬 Pattern Discovery Results')
@@ -109,6 +112,7 @@ def _display_pipeline_console(result: PipelineResult) -> None:
 # Notebook helpers
 # ---------------------------------------------------------------------------
 
+
 def _build_summary_card_html(
     title: str,
     rows: List[tuple[str, str]],
@@ -129,9 +133,11 @@ def _build_summary_card_html(
     )
 
 
-def _display_patterns_notebook(result: PatternDiscoveryResult, *, header: bool = True) -> None:
-    from IPython.display import HTML, display
+def _display_patterns_notebook(
+    result: PatternDiscoveryResult, *, header: bool = True
+) -> None:
     import pandas as pd
+    from IPython.display import HTML, display
 
     if header:
         summary = _build_summary_card_html(
@@ -151,36 +157,42 @@ def _display_patterns_notebook(result: PatternDiscoveryResult, *, header: bool =
 
     rows = []
     for p in result.patterns:
-        rows.append({
-            'Category': p.category,
-            'Description': p.description,
-            'Count': p.count,
-            'Confidence': f'{p.confidence:.0%}' if p.confidence is not None else '—',
-            'Examples': '; '.join(p.examples[:3]) if p.examples else '—',
-        })
+        rows.append(
+            {
+                'Category': p.category,
+                'Description': p.description,
+                'Count': p.count,
+                'Confidence': f'{p.confidence:.0%}'
+                if p.confidence is not None
+                else '—',
+                'Examples': '; '.join(p.examples[:3]) if p.examples else '—',
+            }
+        )
 
     df = pd.DataFrame(rows)
     styled = (
         df.style.hide(axis='index')
-        .set_table_styles([
-            {
-                'selector': 'thead th',
-                'props': [
-                    ('background', '#667eea'),
-                    ('color', 'white'),
-                    ('font-weight', 'bold'),
-                    ('padding', '10px'),
-                ],
-            },
-            {
-                'selector': 'tbody td',
-                'props': [('padding', '8px'), ('border', '1px solid #ddd')],
-            },
-            {
-                'selector': 'tbody tr:hover',
-                'props': [('background-color', '#f5f5f5')],
-            },
-        ])
+        .set_table_styles(
+            [
+                {
+                    'selector': 'thead th',
+                    'props': [
+                        ('background', '#667eea'),
+                        ('color', 'white'),
+                        ('font-weight', 'bold'),
+                        ('padding', '10px'),
+                    ],
+                },
+                {
+                    'selector': 'tbody td',
+                    'props': [('padding', '8px'), ('border', '1px solid #ddd')],
+                },
+                {
+                    'selector': 'tbody tr:hover',
+                    'props': [('background-color', '#f5f5f5')],
+                },
+            ]
+        )
         .set_properties(**{'text-align': 'left'})
         .set_caption('Discovered Patterns')
     )
@@ -232,12 +244,12 @@ def _display_learnings_notebook(learnings: List[LearningArtifact]) -> None:
         )
         cards.append(card)
 
-    display(HTML(
-        '<div style="margin:10px 0;">'
-        '<h4>💡 Learning Artifacts</h4>'
-        + ''.join(cards)
-        + '</div>'
-    ))
+    display(
+        HTML(
+            '<div style="margin:10px 0;">'
+            '<h4>💡 Learning Artifacts</h4>' + ''.join(cards) + '</div>'
+        )
+    )
 
 
 def _display_pipeline_notebook(result: PipelineResult) -> None:
@@ -261,6 +273,7 @@ def _display_pipeline_notebook(result: PipelineResult) -> None:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def display_pipeline_result(result: PipelineResult) -> None:
     """Display a full pipeline result (summary + patterns + learnings).

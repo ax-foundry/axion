@@ -18,10 +18,10 @@ from axion.caliber.pattern_discovery.models import (
 )
 from axion.caliber.pattern_discovery.pipeline import EvidencePipeline
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture()
 def sample_patterns() -> list[DiscoveredPattern]:
@@ -46,7 +46,9 @@ def sample_patterns() -> list[DiscoveredPattern]:
 
 
 @pytest.fixture()
-def sample_discovery(sample_patterns: list[DiscoveredPattern]) -> PatternDiscoveryResult:
+def sample_discovery(
+    sample_patterns: list[DiscoveredPattern],
+) -> PatternDiscoveryResult:
     return PatternDiscoveryResult(
         patterns=sample_patterns,
         uncategorized=['r99'],
@@ -98,6 +100,7 @@ def sample_pipeline(
 # display_patterns
 # ---------------------------------------------------------------------------
 
+
 class TestDisplayPatterns:
     def test_shows_summary(self, capsys, sample_discovery):
         display_patterns(sample_discovery)
@@ -105,7 +108,7 @@ class TestDisplayPatterns:
         assert 'Pattern Discovery Results' in out
         assert 'llm' in out
         assert '20' in out  # total_analyzed
-        assert '2' in out   # pattern count
+        assert '2' in out  # pattern count
 
     def test_shows_pattern_details(self, capsys, sample_discovery):
         display_patterns(sample_discovery)
@@ -144,6 +147,7 @@ class TestDisplayPatterns:
 # display_learnings
 # ---------------------------------------------------------------------------
 
+
 class TestDisplayLearnings:
     def test_shows_learning_details(self, capsys, sample_learnings):
         display_learnings(sample_learnings)
@@ -180,6 +184,7 @@ class TestDisplayLearnings:
 # display_pipeline_result
 # ---------------------------------------------------------------------------
 
+
 class TestDisplayPipelineResult:
     def test_shows_pipeline_summary(self, capsys, sample_pipeline):
         display_pipeline_result(sample_pipeline)
@@ -211,6 +216,7 @@ class TestDisplayPipelineResult:
 # ---------------------------------------------------------------------------
 # EvidencePipeline.display
 # ---------------------------------------------------------------------------
+
 
 class TestPipelineDisplayMethod:
     def test_pipeline_display_delegates(self, capsys, sample_pipeline):
