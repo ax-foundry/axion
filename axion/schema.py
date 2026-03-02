@@ -370,6 +370,27 @@ class EvaluationResult:
         'llm_provider',
     ]
 
+    def _resolve_metric_timestamp(
+        self,
+        test_case: Any,
+        test_case_data: Optional[Dict[str, Any]] = None,
+    ) -> Any:
+        """
+        Prefer per-item source timestamp; fallback to evaluation run timestamp.
+        """
+        source_timestamp = None
+        if isinstance(test_case_data, dict):
+            source_timestamp = test_case_data.get('source_timestamp')
+
+        if source_timestamp in (None, '') and test_case is not None:
+            source_timestamp = getattr(test_case, 'source_timestamp', None)
+
+        if isinstance(source_timestamp, datetime):
+            return source_timestamp.isoformat()
+        if source_timestamp not in (None, ''):
+            return source_timestamp
+        return self.timestamp
+
     def to_dataframe(
         self,
         by_alias: bool = True,
@@ -455,6 +476,10 @@ class EvaluationResult:
 
                 # Merge data - DatasetItem's id is already in test_case_data with the correct key
                 row_data = {**test_case_data, **score_data, **run_metadata}
+                if include_run_metadata:
+                    row_data['timestamp'] = self._resolve_metric_timestamp(
+                        result.test_case, test_case_data
+                    )
 
                 all_rows.append(row_data)
 
@@ -631,8 +656,10 @@ class EvaluationResult:
                 # Add run metadata
                 score_data.update(run_metadata)
 
-                # Add timestamp from run
-                score_data['timestamp'] = self.timestamp
+                # Prefer source timestamp from each item when available.
+                score_data['timestamp'] = self._resolve_metric_timestamp(
+                    result.test_case, test_case_data
+                )
 
                 # Add evaluation metadata
                 score_data['evaluation_metadata'] = self.metadata
