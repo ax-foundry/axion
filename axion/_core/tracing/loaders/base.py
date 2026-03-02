@@ -85,6 +85,7 @@ class FetchedTraceData(RichBaseModel):
             trace_id=self.trace_id,
             observation_id=self.observation_id,
             latency=self.latency,
+            source_timestamp=self.timestamp,
             metadata=(
                 json.dumps(self.additional_metadata)
                 if self.additional_metadata
