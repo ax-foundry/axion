@@ -1,6 +1,7 @@
 import ast
 import json
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, Hashable, List, Literal, Optional, Union
 
@@ -34,6 +35,13 @@ from axion.synthetic import GenerationParams
 from axion.utils import current_datetime, format_value
 
 logger = get_logger(__name__)
+
+
+def _json_default(obj: Any) -> Any:
+    """JSON serializer for objects not serializable by default json code."""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    raise TypeError(f'Object of type {type(obj).__name__} is not JSON serializable')
 
 
 class DatasetItem(RichDatasetBaseModel):
@@ -123,6 +131,10 @@ class DatasetItem(RichDatasetBaseModel):
     user_tags: List[str] = Field(
         default_factory=list,
         description='A list of custom tags to apply to all tool calls in the conversation.',
+    )
+    source_timestamp: Optional[datetime] = Field(
+        default=None,
+        description='When the source event/trace occurred (timezone-aware UTC).',
     )
 
     # --- RUNTIME fields ---
@@ -228,6 +240,21 @@ class DatasetItem(RichDatasetBaseModel):
             return [{'id': item} for item in v]
 
         return v  # type: ignore[return-value]
+
+    @field_validator('source_timestamp', mode='before')
+    @classmethod
+    def _parse_source_timestamp(cls, v: Any) -> Optional[datetime]:
+        """Parse ISO 8601 strings and enforce UTC timezone."""
+        if v is None:
+            return None
+        if isinstance(v, str):
+            v = v.replace('Z', '+00:00')
+            v = datetime.fromisoformat(v)
+        if isinstance(v, datetime):
+            if v.tzinfo is None:
+                return v.replace(tzinfo=timezone.utc)
+            return v.astimezone(timezone.utc)
+        return v
 
     @model_validator(mode='before')
     @classmethod
@@ -934,6 +961,10 @@ class Dataset(RichSerializer):
         Args:
             file_path: Path where to save the JSON file
         """
+        exclude_fields = (
+            FieldNames.get_computed_field_keys()
+            | FieldNames.get_aliased_model_field_keys()
+        )
         data = {
             'name': self.name,
             'description': self.description,
@@ -941,11 +972,14 @@ class Dataset(RichSerializer):
             'created_at': self.created_at,
             'metadata': self.metadata,
             'items': [
-                item.model_dump(exclude_none=True, by_alias=True) for item in self.items
+                item.model_dump(
+                    exclude_none=True, by_alias=True, exclude=exclude_fields
+                )
+                for item in self.items
             ],
         }
         with open(file_path, 'w') as f:
-            json.dump(data, f, indent=2)
+            json.dump(data, f, indent=2, default=_json_default)
         logger.info(f'Saved dataset to {file_path} with {len(self.items)} items')
 
     def to_dataframe(

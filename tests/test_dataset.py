@@ -1,4 +1,6 @@
 import json
+import tempfile
+from datetime import datetime, timezone
 
 import pandas as pd
 import pytest
@@ -1076,3 +1078,106 @@ class TestDocumentTextField:
 
         assert 'document_text' in item_dict
         assert item_dict['document_text'] == 'Long document text here...'
+
+
+class TestSourceTimestamp:
+    """Tests for source_timestamp field on DatasetItem."""
+
+    def test_default_is_none(self):
+        """Test that source_timestamp defaults to None."""
+        item = DatasetItem(query='test')
+        assert item.source_timestamp is None
+
+    def test_set_with_utc_datetime(self):
+        """Test setting source_timestamp with a UTC datetime."""
+        ts = datetime(2024, 6, 15, 12, 0, 0, tzinfo=timezone.utc)
+        item = DatasetItem(query='test', source_timestamp=ts)
+        assert item.source_timestamp == ts
+        assert item.source_timestamp.tzinfo is not None
+
+    def test_parse_iso_string_with_z(self):
+        """Test parsing an ISO 8601 string with Z suffix."""
+        item = DatasetItem(query='test', source_timestamp='2024-06-15T12:00:00Z')
+        assert isinstance(item.source_timestamp, datetime)
+        assert item.source_timestamp.year == 2024
+        assert item.source_timestamp.month == 6
+        assert item.source_timestamp.tzinfo is not None
+
+    def test_parse_iso_string_with_offset(self):
+        """Test parsing an ISO 8601 string with timezone offset."""
+        item = DatasetItem(query='test', source_timestamp='2024-06-15T12:00:00+05:00')
+        assert isinstance(item.source_timestamp, datetime)
+        # Should be converted to UTC
+        assert item.source_timestamp.hour == 7
+        assert item.source_timestamp.tzinfo == timezone.utc
+
+    def test_naive_datetime_assumed_utc(self):
+        """Test that naive datetimes are treated as UTC."""
+        naive = datetime(2024, 6, 15, 12, 0, 0)
+        item = DatasetItem(query='test', source_timestamp=naive)
+        assert item.source_timestamp.tzinfo == timezone.utc
+        assert item.source_timestamp.hour == 12
+
+    def test_non_utc_converted_to_utc(self):
+        """Test that non-UTC datetimes are converted to UTC."""
+        from datetime import timedelta
+
+        est = timezone(timedelta(hours=-5))
+        ts = datetime(2024, 6, 15, 12, 0, 0, tzinfo=est)
+        item = DatasetItem(query='test', source_timestamp=ts)
+        assert item.source_timestamp.tzinfo == timezone.utc
+        assert item.source_timestamp.hour == 17  # 12 EST = 17 UTC
+
+    def test_to_dict_includes_field(self):
+        """Test that to_dict() includes source_timestamp."""
+        ts = datetime(2024, 6, 15, 12, 0, 0, tzinfo=timezone.utc)
+        item = DatasetItem(query='test', source_timestamp=ts)
+        d = item.to_dict()
+        assert 'source_timestamp' in d
+
+    def test_json_round_trip(self):
+        """Test JSON to_json -> read_json round-trip preserves timestamp."""
+        ts = datetime(2024, 6, 15, 12, 0, 0, tzinfo=timezone.utc)
+        dataset = Dataset(name='ts_test')
+        dataset.add_item({'query': 'test', 'source_timestamp': ts})
+
+        with tempfile.NamedTemporaryFile(suffix='.json', delete=False) as f:
+            dataset.to_json(f.name)
+            loaded = Dataset.read_json(f.name)
+
+        assert loaded[0].source_timestamp is not None
+        assert loaded[0].source_timestamp == ts
+
+    def test_csv_round_trip(self):
+        """Test CSV to_csv -> read_csv round-trip preserves timestamp."""
+        ts = datetime(2024, 6, 15, 12, 0, 0, tzinfo=timezone.utc)
+        dataset = Dataset(name='ts_test')
+        dataset.add_item({'query': 'test', 'source_timestamp': ts})
+
+        with tempfile.NamedTemporaryFile(suffix='.csv', delete=False) as f:
+            dataset.to_csv(f.name)
+            loaded = Dataset.read_csv(f.name)
+
+        assert loaded[0].source_timestamp is not None
+        assert loaded[0].source_timestamp == ts
+
+    def test_metadata_does_not_set_source_timestamp(self):
+        """Test that metadata timestamp keys do NOT auto-populate source_timestamp."""
+        meta = json.dumps({'timestamp': '2024-06-15T12:00:00Z'})
+        item = DatasetItem(query='test', metadata=meta)
+        assert item.source_timestamp is None
+
+    def test_fetched_trace_data_passes_timestamp(self):
+        """Test that FetchedTraceData.to_dataset_item() passes timestamp through."""
+        from axion._core.tracing.loaders.base import FetchedTraceData
+
+        ts = datetime(2024, 6, 15, 12, 0, 0, tzinfo=timezone.utc)
+        trace_data = FetchedTraceData(
+            id='trace-1',
+            query='test query',
+            actual_output='test output',
+            trace_id='trace-1',
+            timestamp=ts,
+        )
+        item = trace_data.to_dataset_item()
+        assert item.source_timestamp == ts

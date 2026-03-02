@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, is_dataclass
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
@@ -221,7 +222,9 @@ class TraceCollection:
         if trace_obj is None:
             return {}
 
-        raw_input, raw_output, trace_id = TraceCollection._extract_trace_io(trace_obj)
+        raw_input, raw_output, trace_id, raw_ts = TraceCollection._extract_trace_io(
+            trace_obj
+        )
 
         query = _extract_query(raw_input) if raw_input is not None else ''
         actual_output = _extract_output(raw_output) if raw_output is not None else ''
@@ -235,24 +238,51 @@ class TraceCollection:
         }
         if trace_id:
             result['trace_id'] = str(trace_id)
+        if raw_ts is not None:
+            result['source_timestamp'] = raw_ts
 
         return result
 
     @staticmethod
-    def _extract_trace_io(trace_obj: Any) -> tuple[Any, Any, Any]:
-        """Extract raw input/output/id from supported trace object shapes."""
+    def _extract_trace_io(trace_obj: Any) -> tuple[Any, Any, Any, Any]:
+        """Extract raw input/output/id/timestamp from supported trace object shapes."""
+        _ts_keys = ('timestamp', 'created_at', 'start_time')
+
+        def _get_timestamp(src: dict) -> Any:
+            for k in _ts_keys:
+                if k in src:
+                    return src[k]
+            return None
+
         # Access raw data directly to avoid SmartAccess wrapping.
         if isinstance(trace_obj, (TraceView, ObservationsView)):
             data = trace_obj._data
-            return data.get('input'), data.get('output'), data.get('id')
+            return (
+                data.get('input'),
+                data.get('output'),
+                data.get('id'),
+                _get_timestamp(data),
+            )
 
         if isinstance(trace_obj, dict):
-            return trace_obj.get('input'), trace_obj.get('output'), trace_obj.get('id')
+            return (
+                trace_obj.get('input'),
+                trace_obj.get('output'),
+                trace_obj.get('id'),
+                _get_timestamp(trace_obj),
+            )
+
+        ts = None
+        for k in _ts_keys:
+            ts = getattr(trace_obj, k, None)
+            if ts is not None:
+                break
 
         return (
             getattr(trace_obj, 'input', None),
             getattr(trace_obj, 'output', None),
             getattr(trace_obj, 'id', None),
+            ts,
         )
 
     def _from_traces(self, traces: List[Trace]) -> TraceCollection:
@@ -267,6 +297,9 @@ class TraceCollection:
 
         if value is None or isinstance(value, (str, int, float, bool)):
             return value
+
+        if isinstance(value, datetime):
+            return value.isoformat()
 
         if isinstance(value, Enum):
             return value.value

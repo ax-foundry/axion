@@ -52,7 +52,7 @@ class RichBaseModel(BaseModel):
 
     def __str__(self) -> str:
         """Returns a more concise, user-friendly string representation."""
-        return f'{self.__class__.__name__}: {json.dumps(self.model_dump(exclude_none=True, by_alias=True), indent=2)}'
+        return f'{self.__class__.__name__}: {json.dumps(self.model_dump(exclude_none=True, by_alias=True), indent=2, default=str)}'
 
     def __getitem__(self, key: str):
         """Allows dictionary-like access to attributes."""
@@ -65,7 +65,9 @@ class RichBaseModel(BaseModel):
     def to_json(self, exclude_none: bool = True) -> str:
         """Converts the model to a json."""
         return json.dumps(
-            self.model_dump(exclude_none=exclude_none, by_alias=True), indent=2
+            self.model_dump(exclude_none=exclude_none, by_alias=True),
+            indent=2,
+            default=str,
         )
 
     def clean_model_dump(

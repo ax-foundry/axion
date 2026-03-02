@@ -87,6 +87,7 @@ class FieldNames:
     EXPECTED_REFERENCE = 'expected_reference'
     ACTUAL_REFERENCE = 'actual_reference'
     DOCUMENT_TEXT = 'document_text'
+    SOURCE_TIMESTAMP = 'source_timestamp'
 
     # Feedback
     JUDGMENT = 'judgment'
@@ -119,6 +120,7 @@ class FieldNames:
             cls.EXPECTED_TOOLS,
             cls.ADDITIONAL_INPUT,
             cls.METADATA,
+            cls.SOURCE_TIMESTAMP,
         ]
 
     @classmethod
