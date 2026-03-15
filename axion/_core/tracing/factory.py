@@ -1,5 +1,5 @@
 import inspect
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from axion._core.metadata.schema import ToolMetadata
 from axion._core.tracing.config import get_tracer
@@ -68,6 +68,9 @@ def init_tracer(
     metadata_type: str,
     tool_metadata: Optional[ToolMetadata] = None,
     tracer: Optional['BaseTracer'] = None,
+    *,
+    force_new: bool = False,
+    **create_kwargs: Any,
 ) -> 'BaseTracer':
     """
     Initializes and returns a tracer instance, respecting global configuration.
@@ -75,8 +78,8 @@ def init_tracer(
     This helper function streamlines tracer initialization by following a
     standard pattern:
     1. Use an explicitly provided tracer if available
-    2. Fall back to an active tracer from the current context
-    3. Try the global registry (notebook-friendly fallback)
+    2. Fall back to an active tracer from the current context (skipped if force_new=True)
+    3. Try the global registry — notebook-friendly fallback (skipped if force_new=True)
     4. As a last resort, create a new tracer using the globally configured
        tracer class from the get_tracer() factory
 
@@ -85,6 +88,10 @@ def init_tracer(
                       (e.g., 'llm', 'base', 'database', 'knowledge')
         tool_metadata: Optional tool-specific metadata for a new tracer
         tracer: An optional, explicit tracer instance to use directly
+        force_new: If True, skip context/global tracer lookup and always
+                   create a fresh tracer instance
+        **create_kwargs: Additional keyword arguments forwarded to
+                         TracerClass.create() (e.g., trace_id, tags, environment)
 
     Returns:
         The resolved tracer instance (LogfireTracer, NoOpTracer, etc.)
@@ -101,34 +108,40 @@ def init_tracer(
         async with some_tracer.async_span("operation"):
             nested_tracer = init_tracer('llm')  # Returns some_tracer
 
+        # Force a fresh tracer with request-scoped config
+        tracer = init_tracer('llm', force_new=True, tags=['req-123'], environment='prod')
+
         # Notebook-friendly usage
         from axion._core.tracing import set_default_global_tracer
         set_default_global_tracer(my_tracer)
         nested_tracer = init_tracer('llm')  # Returns my_tracer
         ```
     """
-    # 1. Use the explicitly passed tracer if it exists
+    # Use the explicitly passed tracer if it exists
     if tracer:
         return tracer
 
-    # 2. Try to get an active tracer from the context
-    try:
-        return get_current_tracer()
-    except LookupError:
-        # 3. Try global registry (notebook-friendly fallback)
+    if not force_new:
+        # Try to get an active tracer from the context
+        try:
+            return get_current_tracer()
+        except LookupError:
+            pass
+
+        # Try global registry (notebook-friendly fallback)
         from axion._core.tracing.utils import get_default_global_tracer
 
         global_tracer = get_default_global_tracer()
         if global_tracer:
             return global_tracer
 
-        # 4. If no context exists, use the global factory to get the
-        #    correct tracer class and create an instance of it
-        TracerClass = get_tracer()
-        return TracerClass.create(
-            metadata_type=metadata_type,
-            tool_metadata=tool_metadata or infer_tool_metadata(),
-        )
+    # Create new tracer with forwarded kwargs
+    TracerClass = get_tracer()
+    return TracerClass.create(
+        metadata_type=metadata_type,
+        tool_metadata=tool_metadata or infer_tool_metadata(),
+        **create_kwargs,
+    )
 
 
 def Tracer(*args, **kwargs):

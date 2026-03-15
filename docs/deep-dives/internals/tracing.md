@@ -292,6 +292,36 @@ service = ServiceA()
 await service.process()
 ```
 
+### Request-Scoped Tracers
+
+By default `init_tracer` reuses the tracer from the current context (or the global tracer). Use `force_new=True` to bypass this and always create a fresh tracer — useful when you need request-scoped config like tags, environment, or a specific trace ID that should not leak to other callers sharing the same context.
+
+Any extra keyword arguments are forwarded directly to `TracerClass.create()`:
+
+```python
+from axion.tracing import init_tracer
+
+# Always creates a fresh tracer, even inside an existing trace context
+tracer = init_tracer(
+    'llm',
+    force_new=True,
+    tags=['request-abc123'],
+    environment='production',
+)
+
+# Without force_new (default) — reuses context/global tracer if one exists
+tracer = init_tracer('llm')
+```
+
+| Argument | Default | Behaviour |
+|----------|---------|-----------|
+| `force_new=False` | Reuse context tracer → global tracer → create new |
+| `force_new=True` | Always create a new tracer, skipping context/global lookup |
+| `tracer=<instance>` | Return that instance unchanged, `force_new` is ignored |
+| `**create_kwargs` | Forwarded to `TracerClass.create()` (e.g. `tags`, `environment`) |
+
+---
+
 ### Langfuse-Specific Features
 
 When using Langfuse, you get additional LLM-specific features:
@@ -381,7 +411,17 @@ tracer.flush()
 
 ### Input/Output Capture
 
-Spans support `set_input()` and `set_output()` methods for capturing data that appears in the Langfuse UI's Input and Output fields:
+All four provider spans implement the `BaseSpan` protocol, which guarantees `set_attribute`, `set_input`, and `set_output` on every span regardless of provider. You can import `BaseSpan` for type annotations:
+
+```python
+from axion.tracing import BaseSpan
+
+def process_span(span: BaseSpan) -> None:
+    span.set_input({'query': 'hello'})
+    span.set_output({'answer': 'world'})
+```
+
+Spans support `set_input()` and `set_output()` for capturing data that appears in the Langfuse/Opik UI's Input and Output fields:
 
 ```python
 async with tracer.async_span('my-operation') as span:
@@ -553,7 +593,7 @@ Choose the right type for automatic specialized handling:
 | `clear_tracing_config()` | Clear configuration (useful for testing/reconfiguration) |
 | `list_providers()` | List available providers: `['noop', 'logfire', 'otel', 'langfuse', 'opik']` |
 | `get_tracer()` | Get the configured tracer class |
-| `init_tracer(metadata_type, tool_metadata)` | Initialize a tracer instance |
+| `init_tracer(metadata_type, tool_metadata, tracer, *, force_new, **kwargs)` | Initialize a tracer instance |
 | `Tracer(metadata_type)` | Factory function for tracer instances (auto-configures) |
 
 ### Context Management
@@ -598,6 +638,7 @@ Choose the right type for automatic specialized handling:
 | `TracingMode` | Enumeration of available tracer modes |
 | `TracerRegistry` | Registry for tracer implementations |
 | `BaseTracer` | Abstract base class for tracer implementations |
+| `BaseSpan` | `@runtime_checkable` Protocol defining the standard span interface (`set_attribute`, `set_input`, `set_output`) |
 
 ---
 

@@ -8,7 +8,7 @@ Registry pattern for tracing providers with support for NoOp, Logfire, Langfuse,
 <div class="ref-import" markdown>
 
 ```python
-from axion._core.tracing.registry import TracerRegistry, BaseTracer
+from axion._core.tracing.registry import TracerRegistry, BaseTracer, BaseSpan
 from axion._core.tracing.noop.tracer import NoOpTracer
 from axion._core.tracing.logfire.tracer import LogfireTracer
 from axion._core.tracing.langfuse.tracer import LangfuseTracer
@@ -53,6 +53,14 @@ from axion._core.tracing.opik.tracer import OpikTracer
 ## BaseTracer
 
 ::: axion._core.tracing.registry.BaseTracer
+    options:
+      show_root_heading: true
+
+---
+
+## BaseSpan
+
+::: axion._core.tracing.registry.BaseSpan
     options:
       show_root_heading: true
 
