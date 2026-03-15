@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../../assets/ax-icon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.5">
     
     
       
@@ -3641,6 +3641,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#request-scoped-tracers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request-Scoped Tracers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#langfuse-specific-features" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4574,6 +4585,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#request-scoped-tracers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request-Scoped Tracers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#langfuse-specific-features" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5062,78 +5084,126 @@ The <code>@trace</code> decorator automatically looks for a tracer attribute on 
 </span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="n">service</span> <span class="o">=</span> <span class="n">ServiceA</span><span class="p">()</span>
 </span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="k">await</span> <span class="n">service</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
 </span></code></pre></div>
+<h3 id="request-scoped-tracers">Request-Scoped Tracers<a class="headerlink" href="#request-scoped-tracers" title="Permanent link">&para;</a></h3>
+<p>By default <code>init_tracer</code> reuses the tracer from the current context (or the global tracer). Use <code>force_new=True</code> to bypass this and always create a fresh tracer — useful when you need request-scoped config like tags, environment, or a specific trace ID that should not leak to other callers sharing the same context.</p>
+<p>Any extra keyword arguments are forwarded directly to <code>TracerClass.create()</code>:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_tracer</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># Always creates a fresh tracer, even inside an existing trace context</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">tracer</span> <span class="o">=</span> <span class="n">init_tracer</span><span class="p">(</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="s1">&#39;llm&#39;</span><span class="p">,</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>    <span class="n">force_new</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;request-abc123&#39;</span><span class="p">],</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="n">environment</span><span class="o">=</span><span class="s1">&#39;production&#39;</span><span class="p">,</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="p">)</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="c1"># Without force_new (default) — reuses context/global tracer if one exists</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="n">tracer</span> <span class="o">=</span> <span class="n">init_tracer</span><span class="p">(</span><span class="s1">&#39;llm&#39;</span><span class="p">)</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Default</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>force_new=False</code></td>
+<td>Reuse context tracer → global tracer → create new</td>
+<td></td>
+</tr>
+<tr>
+<td><code>force_new=True</code></td>
+<td>Always create a new tracer, skipping context/global lookup</td>
+<td></td>
+</tr>
+<tr>
+<td><code>tracer=&lt;instance&gt;</code></td>
+<td>Return that instance unchanged, <code>force_new</code> is ignored</td>
+<td></td>
+</tr>
+<tr>
+<td><code>**create_kwargs</code></td>
+<td>Forwarded to <code>TracerClass.create()</code> (e.g. <code>tags</code>, <code>environment</code>)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr />
 <h3 id="langfuse-specific-features">Langfuse-Specific Features<a class="headerlink" href="#langfuse-specific-features" title="Permanent link">&para;</a></h3>
 <p>When using Langfuse, you get additional LLM-specific features:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TRACING_MODE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;langfuse&#39;</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANGFUSE_PUBLIC_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pk-lf-...&#39;</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANGFUSE_SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sk-lf-...&#39;</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_tracing</span><span class="p">,</span> <span class="n">Tracer</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">configure_tracing</span><span class="p">()</span>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="n">tracer</span> <span class="o">=</span> <span class="n">Tracer</span><span class="p">(</span><span class="s1">&#39;llm&#39;</span><span class="p">)</span>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>
-</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="c1"># Create spans that appear in Langfuse</span>
-</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="k">with</span> <span class="n">tracer</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="s1">&#39;my-operation&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">span</span><span class="p">:</span>
-</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    <span class="c1"># Your code here</span>
-</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s1">&#39;custom_key&#39;</span><span class="p">,</span> <span class="s1">&#39;custom_value&#39;</span><span class="p">)</span>
-</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>
-</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="c1"># Log LLM calls with token usage</span>
-</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="n">tracer</span><span class="o">.</span><span class="n">log_llm_call</span><span class="p">(</span>
-</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;chat_completion&#39;</span><span class="p">,</span>
-</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>    <span class="n">model</span><span class="o">=</span><span class="s1">&#39;gpt-4&#39;</span><span class="p">,</span>
-</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>    <span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Hello, how are you?&#39;</span><span class="p">,</span>
-</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>    <span class="n">response</span><span class="o">=</span><span class="s1">&#39;I am doing well, thank you!&#39;</span><span class="p">,</span>
-</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>    <span class="n">usage</span><span class="o">=</span><span class="p">{</span>
-</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>        <span class="s1">&#39;prompt_tokens&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>        <span class="s1">&#39;completion_tokens&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
-</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>        <span class="s1">&#39;total_tokens&#39;</span><span class="p">:</span> <span class="mi">18</span>
-</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>    <span class="p">}</span>
-</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a><span class="p">)</span>
-</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>
-</span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a><span class="c1"># Log evaluations as scores</span>
-</span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a><span class="n">tracer</span><span class="o">.</span><span class="n">log_evaluation</span><span class="p">(</span>
-</span><span id="__span-9-31"><a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;relevance_score&#39;</span><span class="p">,</span>
-</span><span id="__span-9-32"><a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>    <span class="n">score</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
-</span><span id="__span-9-33"><a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>    <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;Highly relevant response&#39;</span>
-</span><span id="__span-9-34"><a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a><span class="p">)</span>
-</span><span id="__span-9-35"><a id="__codelineno-9-35" name="__codelineno-9-35" href="#__codelineno-9-35"></a>
-</span><span id="__span-9-36"><a id="__codelineno-9-36" name="__codelineno-9-36" href="#__codelineno-9-36"></a><span class="c1"># Important: Flush traces before exiting</span>
-</span><span id="__span-9-37"><a id="__codelineno-9-37" name="__codelineno-9-37" href="#__codelineno-9-37"></a><span class="n">tracer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
-</span></code></pre></div>
-<h3 id="opik-specific-features">Opik-Specific Features<a class="headerlink" href="#opik-specific-features" title="Permanent link">&para;</a></h3>
-<p>Opik (by Comet) provides open-source LLM observability with similar features:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TRACING_MODE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;opik&#39;</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;OPIK_API_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;your-api-key&#39;</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;OPIK_WORKSPACE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;your-workspace&#39;</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TRACING_MODE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;langfuse&#39;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANGFUSE_PUBLIC_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pk-lf-...&#39;</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANGFUSE_SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sk-lf-...&#39;</span>
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
 </span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_tracing</span><span class="p">,</span> <span class="n">Tracer</span>
 </span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
 </span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="n">configure_tracing</span><span class="p">()</span>
 </span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="n">tracer</span> <span class="o">=</span> <span class="n">Tracer</span><span class="p">(</span><span class="s1">&#39;llm&#39;</span><span class="p">)</span>
 </span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
-</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="c1"># Create spans that appear in Opik dashboard</span>
-</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="k">with</span> <span class="n">tracer</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="s1">&#39;my-operation&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s1">&#39;gpt-4&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">span</span><span class="p">:</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="c1"># Create spans that appear in Langfuse</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="k">with</span> <span class="n">tracer</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="s1">&#39;my-operation&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">span</span><span class="p">:</span>
 </span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>    <span class="c1"># Your code here</span>
-</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_input</span><span class="p">({</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;Hello, how are you?&#39;</span><span class="p">})</span>
-</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_output</span><span class="p">({</span><span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="s1">&#39;I am doing well!&#39;</span><span class="p">})</span>
-</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_usage</span><span class="p">(</span><span class="n">prompt_tokens</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">completion_tokens</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>
-</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="c1"># Log LLM calls with token usage</span>
-</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="n">tracer</span><span class="o">.</span><span class="n">log_llm_call</span><span class="p">(</span>
-</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;chat_completion&#39;</span><span class="p">,</span>
-</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>    <span class="n">model</span><span class="o">=</span><span class="s1">&#39;gpt-4&#39;</span><span class="p">,</span>
-</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>    <span class="n">provider</span><span class="o">=</span><span class="s1">&#39;openai&#39;</span><span class="p">,</span>
-</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>    <span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Hello, how are you?&#39;</span><span class="p">,</span>
-</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>    <span class="n">response</span><span class="o">=</span><span class="s1">&#39;I am doing well, thank you!&#39;</span><span class="p">,</span>
-</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a>    <span class="n">prompt_tokens</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>    <span class="n">completion_tokens</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s1">&#39;custom_key&#39;</span><span class="p">,</span> <span class="s1">&#39;custom_value&#39;</span><span class="p">)</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="c1"># Log LLM calls with token usage</span>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="n">tracer</span><span class="o">.</span><span class="n">log_llm_call</span><span class="p">(</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;chat_completion&#39;</span><span class="p">,</span>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>    <span class="n">model</span><span class="o">=</span><span class="s1">&#39;gpt-4&#39;</span><span class="p">,</span>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>    <span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Hello, how are you?&#39;</span><span class="p">,</span>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>    <span class="n">response</span><span class="o">=</span><span class="s1">&#39;I am doing well, thank you!&#39;</span><span class="p">,</span>
+</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>    <span class="n">usage</span><span class="o">=</span><span class="p">{</span>
+</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>        <span class="s1">&#39;prompt_tokens&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>        <span class="s1">&#39;completion_tokens&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a>        <span class="s1">&#39;total_tokens&#39;</span><span class="p">:</span> <span class="mi">18</span>
+</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a>    <span class="p">}</span>
 </span><span id="__span-10-27"><a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="p">)</span>
 </span><span id="__span-10-28"><a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a>
-</span><span id="__span-10-29"><a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="c1"># Important: Flush traces before exiting</span>
-</span><span id="__span-10-30"><a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="n">tracer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</span><span id="__span-10-29"><a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a><span class="c1"># Log evaluations as scores</span>
+</span><span id="__span-10-30"><a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a><span class="n">tracer</span><span class="o">.</span><span class="n">log_evaluation</span><span class="p">(</span>
+</span><span id="__span-10-31"><a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;relevance_score&#39;</span><span class="p">,</span>
+</span><span id="__span-10-32"><a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a>    <span class="n">score</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+</span><span id="__span-10-33"><a id="__codelineno-10-33" name="__codelineno-10-33" href="#__codelineno-10-33"></a>    <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;Highly relevant response&#39;</span>
+</span><span id="__span-10-34"><a id="__codelineno-10-34" name="__codelineno-10-34" href="#__codelineno-10-34"></a><span class="p">)</span>
+</span><span id="__span-10-35"><a id="__codelineno-10-35" name="__codelineno-10-35" href="#__codelineno-10-35"></a>
+</span><span id="__span-10-36"><a id="__codelineno-10-36" name="__codelineno-10-36" href="#__codelineno-10-36"></a><span class="c1"># Important: Flush traces before exiting</span>
+</span><span id="__span-10-37"><a id="__codelineno-10-37" name="__codelineno-10-37" href="#__codelineno-10-37"></a><span class="n">tracer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+</span></code></pre></div>
+<h3 id="opik-specific-features">Opik-Specific Features<a class="headerlink" href="#opik-specific-features" title="Permanent link">&para;</a></h3>
+<p>Opik (by Comet) provides open-source LLM observability with similar features:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TRACING_MODE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;opik&#39;</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;OPIK_API_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;your-api-key&#39;</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;OPIK_WORKSPACE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;your-workspace&#39;</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_tracing</span><span class="p">,</span> <span class="n">Tracer</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="n">configure_tracing</span><span class="p">()</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="n">tracer</span> <span class="o">=</span> <span class="n">Tracer</span><span class="p">(</span><span class="s1">&#39;llm&#39;</span><span class="p">)</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="c1"># Create spans that appear in Opik dashboard</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="k">with</span> <span class="n">tracer</span><span class="o">.</span><span class="n">span</span><span class="p">(</span><span class="s1">&#39;my-operation&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s1">&#39;gpt-4&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">span</span><span class="p">:</span>
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>    <span class="c1"># Your code here</span>
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_input</span><span class="p">({</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;Hello, how are you?&#39;</span><span class="p">})</span>
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_output</span><span class="p">({</span><span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="s1">&#39;I am doing well!&#39;</span><span class="p">})</span>
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_usage</span><span class="p">(</span><span class="n">prompt_tokens</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">completion_tokens</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>
+</span><span id="__span-11-18"><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a><span class="c1"># Log LLM calls with token usage</span>
+</span><span id="__span-11-19"><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="n">tracer</span><span class="o">.</span><span class="n">log_llm_call</span><span class="p">(</span>
+</span><span id="__span-11-20"><a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;chat_completion&#39;</span><span class="p">,</span>
+</span><span id="__span-11-21"><a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>    <span class="n">model</span><span class="o">=</span><span class="s1">&#39;gpt-4&#39;</span><span class="p">,</span>
+</span><span id="__span-11-22"><a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a>    <span class="n">provider</span><span class="o">=</span><span class="s1">&#39;openai&#39;</span><span class="p">,</span>
+</span><span id="__span-11-23"><a id="__codelineno-11-23" name="__codelineno-11-23" href="#__codelineno-11-23"></a>    <span class="n">prompt</span><span class="o">=</span><span class="s1">&#39;Hello, how are you?&#39;</span><span class="p">,</span>
+</span><span id="__span-11-24"><a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a>    <span class="n">response</span><span class="o">=</span><span class="s1">&#39;I am doing well, thank you!&#39;</span><span class="p">,</span>
+</span><span id="__span-11-25"><a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a>    <span class="n">prompt_tokens</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+</span><span id="__span-11-26"><a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a>    <span class="n">completion_tokens</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+</span><span id="__span-11-27"><a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a><span class="p">)</span>
+</span><span id="__span-11-28"><a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a>
+</span><span id="__span-11-29"><a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a><span class="c1"># Important: Flush traces before exiting</span>
+</span><span id="__span-11-30"><a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a><span class="n">tracer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
 </span></code></pre></div>
 <p><strong>Key Opik features:</strong>
 - Open-source and self-hostable
@@ -5141,29 +5211,36 @@ The <code>@trace</code> decorator automatically looks for a tracer attribute on 
 - Token usage tracking via <code>usage</code> attribute
 - Integration with Comet ML platform</p>
 <h3 id="inputoutput-capture">Input/Output Capture<a class="headerlink" href="#inputoutput-capture" title="Permanent link">&para;</a></h3>
-<p>Spans support <code>set_input()</code> and <code>set_output()</code> methods for capturing data that appears in the Langfuse UI's Input and Output fields:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">tracer</span><span class="o">.</span><span class="n">async_span</span><span class="p">(</span><span class="s1">&#39;my-operation&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">span</span><span class="p">:</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="c1"># Capture the input data</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_input</span><span class="p">({</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>        <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;How do I reset my password?&#39;</span><span class="p">,</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>        <span class="s1">&#39;context&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;doc1&#39;</span><span class="p">,</span> <span class="s1">&#39;doc2&#39;</span><span class="p">],</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    <span class="p">})</span>
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">process_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>
-</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>    <span class="c1"># Capture the output data</span>
-</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_output</span><span class="p">({</span>
-</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>        <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
-</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>        <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">confidence</span><span class="p">,</span>
-</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>    <span class="p">})</span>
+<p>All four provider spans implement the <code>BaseSpan</code> protocol, which guarantees <code>set_attribute</code>, <code>set_input</code>, and <code>set_output</code> on every span regardless of provider. You can import <code>BaseSpan</code> for type annotations:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseSpan</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">process_span</span><span class="p">(</span><span class="n">span</span><span class="p">:</span> <span class="n">BaseSpan</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_input</span><span class="p">({</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;hello&#39;</span><span class="p">})</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_output</span><span class="p">({</span><span class="s1">&#39;answer&#39;</span><span class="p">:</span> <span class="s1">&#39;world&#39;</span><span class="p">})</span>
+</span></code></pre></div>
+<p>Spans support <code>set_input()</code> and <code>set_output()</code> for capturing data that appears in the Langfuse/Opik UI's Input and Output fields:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">tracer</span><span class="o">.</span><span class="n">async_span</span><span class="p">(</span><span class="s1">&#39;my-operation&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">span</span><span class="p">:</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="c1"># Capture the input data</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_input</span><span class="p">({</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>        <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s1">&#39;How do I reset my password?&#39;</span><span class="p">,</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>        <span class="s1">&#39;context&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;doc1&#39;</span><span class="p">,</span> <span class="s1">&#39;doc2&#39;</span><span class="p">],</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    <span class="p">})</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">process_query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>    <span class="c1"># Capture the output data</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_output</span><span class="p">({</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>        <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a>        <span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="n">result</span><span class="o">.</span><span class="n">confidence</span><span class="p">,</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>    <span class="p">})</span>
 </span></code></pre></div>
 <p>The <code>@trace</code> decorator automatically captures input/output when enabled:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nd">@trace</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;process_data&quot;</span><span class="p">,</span> <span class="n">capture_args</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_result</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="c1"># Input (args/kwargs) automatically captured via span.set_input()</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">do_work</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="c1"># Result automatically captured via span.set_output()</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="k">return</span> <span class="n">result</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nd">@trace</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;process_data&quot;</span><span class="p">,</span> <span class="n">capture_args</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">capture_result</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="c1"># Input (args/kwargs) automatically captured via span.set_input()</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">do_work</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    <span class="c1"># Result automatically captured via span.set_output()</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    <span class="k">return</span> <span class="n">result</span>
 </span></code></pre></div>
 <p><strong>Supported data types for serialization:</strong>
 - Pydantic models (serialized via <code>model_dump()</code>)
@@ -5172,101 +5249,101 @@ The <code>@trace</code> decorator automatically looks for a tracer attribute on 
 <h3 id="custom-span-names">Custom Span Names<a class="headerlink" href="#custom-span-names" title="Permanent link">&para;</a></h3>
 <p>Axion components use meaningful span names for better observability:</p>
 <p><strong>Evaluation Runner</strong>: Uses <code>evaluation_name</code> as the trace name in Langfuse/Opik:
-<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;My RAG Evaluation&quot;</span>  <span class="c1"># This becomes the trace name</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="p">)</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="c1"># Appears as &quot;My RAG Evaluation&quot; in Langfuse/Opik instead of &quot;evaluation_runner&quot;</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;My RAG Evaluation&quot;</span>  <span class="c1"># This becomes the trace name</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="p">)</span>
+</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="c1"># Appears as &quot;My RAG Evaluation&quot; in Langfuse/Opik instead of &quot;evaluation_runner&quot;</span>
 </span></code></pre></div></p>
 <p><strong>Trace Granularity</strong>: Control how evaluation traces are organized:
-<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Single trace (default) - all evaluations under one parent</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
-</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;My Evaluation&quot;</span><span class="p">,</span>
-</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    <span class="n">trace_granularity</span><span class="o">=</span><span class="s1">&#39;single_trace&#39;</span>  <span class="c1"># or &#39;single&#39;</span>
-</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="p">)</span>
-</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>
-</span><span id="__span-14-9"><a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="c1"># Separate traces - each metric execution gets its own trace</span>
-</span><span id="__span-14-10"><a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
-</span><span id="__span-14-11"><a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-</span><span id="__span-14-12"><a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
-</span><span id="__span-14-13"><a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;My Evaluation&quot;</span><span class="p">,</span>
-</span><span id="__span-14-14"><a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>    <span class="n">trace_granularity</span><span class="o">=</span><span class="s1">&#39;separate&#39;</span>
-</span><span id="__span-14-15"><a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Single trace (default) - all evaluations under one parent</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;My Evaluation&quot;</span><span class="p">,</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="n">trace_granularity</span><span class="o">=</span><span class="s1">&#39;single_trace&#39;</span>  <span class="c1"># or &#39;single&#39;</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="p">)</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="c1"># Separate traces - each metric execution gets its own trace</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;My Evaluation&quot;</span><span class="p">,</span>
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>    <span class="n">trace_granularity</span><span class="o">=</span><span class="s1">&#39;separate&#39;</span>
+</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="p">)</span>
 </span></code></pre></div></p>
 <p><strong>Evaluation Trace Hierarchy</strong> (lean 4-level structure):
-<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>My RAG Evaluation                             # evaluation_name (root)
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>├─ AnswerRelevancy.execute                    # Metric logic
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>│  └─ litellm_structured                      # LLM formatting/parsing
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>│     └─ llm_call                             # LLM API call (cost/tokens)
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>└─ Faithfulness.execute
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>   └─ litellm_structured
-</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>      └─ llm_call
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>My RAG Evaluation                             # evaluation_name (root)
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>├─ AnswerRelevancy.execute                    # Metric logic
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>│  └─ litellm_structured                      # LLM formatting/parsing
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>│     └─ llm_call                             # LLM API call (cost/tokens)
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>└─ Faithfulness.execute
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>   └─ litellm_structured
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>      └─ llm_call
 </span></code></pre></div></p>
 <p><strong>LLM Handlers</strong>: Use <code>metadata.name</code> or class name as the span name:
-<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMHandler</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">SentimentAnalysisHandler</span><span class="p">(</span><span class="n">LLMHandler</span><span class="p">):</span>
-</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="c1"># ... handler config ...</span>
-</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="k">pass</span>
-</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
-</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="n">handler</span> <span class="o">=</span> <span class="n">SentimentAnalysisHandler</span><span class="p">()</span>
-</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="c1"># Appears as &quot;SentimentAnalysisHandler&quot; in Langfuse instead of &quot;llm_handler&quot;</span>
-</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>
-</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="c1"># Or set a custom name via metadata</span>
-</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="n">handler</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Sentiment Analysis&quot;</span>
-</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="c1"># Now appears as &quot;Sentiment Analysis&quot; in Langfuse</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMHandler</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">SentimentAnalysisHandler</span><span class="p">(</span><span class="n">LLMHandler</span><span class="p">):</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>    <span class="c1"># ... handler config ...</span>
+</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>    <span class="k">pass</span>
+</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="n">handler</span> <span class="o">=</span> <span class="n">SentimentAnalysisHandler</span><span class="p">()</span>
+</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="c1"># Appears as &quot;SentimentAnalysisHandler&quot; in Langfuse instead of &quot;llm_handler&quot;</span>
+</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="c1"># Or set a custom name via metadata</span>
+</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="n">handler</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Sentiment Analysis&quot;</span>
+</span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="c1"># Now appears as &quot;Sentiment Analysis&quot; in Langfuse</span>
 </span></code></pre></div></p>
 <h3 id="complete-example">Complete Example<a class="headerlink" href="#complete-example" title="Permanent link">&para;</a></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_tracer</span><span class="p">,</span> <span class="n">trace</span>
-</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span>
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
-</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.metadata.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolMetadata</span>
-</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
-</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="k">class</span><span class="w"> </span><span class="nc">MetricService</span><span class="p">:</span>
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>        <span class="c1"># Set Context on Span</span>
-</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>        <span class="n">tool_metadata</span> <span class="o">=</span> <span class="n">ToolMetadata</span><span class="p">(</span>
-</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MetricService&quot;</span><span class="p">,</span>
-</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;My Service&#39;</span><span class="p">,</span>
-</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>            <span class="n">version</span><span class="o">=</span><span class="s1">&#39;1.0.1&#39;</span><span class="p">,</span>
-</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>        <span class="p">)</span>
-</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">tracer</span> <span class="o">=</span> <span class="n">init_tracer</span><span class="p">(</span>
-</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>            <span class="n">metadata_type</span><span class="o">=</span><span class="s1">&#39;llm&#39;</span><span class="p">,</span>
-</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>            <span class="n">tool_metadata</span><span class="o">=</span><span class="n">tool_metadata</span><span class="p">,</span>
-</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>        <span class="p">)</span>
-</span><span id="__span-17-19"><a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>
-</span><span id="__span-17-20"><a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>    <span class="nd">@trace</span><span class="p">(</span><span class="n">capture_result</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="__span-17-21"><a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-17-22"><a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>        <span class="c1"># AnswerRelevancy has its own tracer and auto-captured as a child span</span>
-</span><span id="__span-17-23"><a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>        <span class="n">metric</span> <span class="o">=</span> <span class="n">AnswerRelevancy</span><span class="p">()</span>
-</span><span id="__span-17-24"><a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>        <span class="n">data_item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-</span><span id="__span-17-25"><a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>            <span class="n">query</span><span class="o">=</span><span class="s2">&quot;How do I reset my password?&quot;</span><span class="p">,</span>
-</span><span id="__span-17-26"><a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>            <span class="n">actual_output</span><span class="o">=</span><span class="s2">&quot;To reset your password, click &#39;Forgot Password&#39; on the login page and follow the email instructions.&quot;</span><span class="p">,</span>
-</span><span id="__span-17-27"><a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>            <span class="n">expected_output</span><span class="o">=</span><span class="s2">&quot;Navigate to login, click &#39;Forgot Password&#39;, and follow the reset link sent to your email.&quot;</span><span class="p">,</span>
-</span><span id="__span-17-28"><a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>        <span class="p">)</span>
-</span><span id="__span-17-29"><a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>        <span class="k">return</span> <span class="k">await</span> <span class="n">metric</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">data_item</span><span class="p">)</span>
-</span><span id="__span-17-30"><a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>
-</span><span id="__span-17-31"><a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a>    <span class="nd">@trace</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;doing_work&quot;</span><span class="p">)</span>
-</span><span id="__span-17-32"><a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">do_some_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-17-33"><a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-</span><span id="__span-17-34"><a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>        <span class="k">return</span> <span class="s2">&quot;Work done!&quot;</span>
-</span><span id="__span-17-35"><a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a>
-</span><span id="__span-17-36"><a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a>    <span class="nd">@trace</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;run_main_task&#39;</span><span class="p">)</span>
-</span><span id="__span-17-37"><a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run_main_task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="__span-17-38"><a id="__codelineno-17-38" name="__codelineno-17-38" href="#__codelineno-17-38"></a>        <span class="c1"># Can also set manual spans</span>
-</span><span id="__span-17-39"><a id="__codelineno-17-39" name="__codelineno-17-39" href="#__codelineno-17-39"></a>        <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracer</span><span class="o">.</span><span class="n">async_span</span><span class="p">(</span><span class="s2">&quot;metric_evaluation&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">span</span><span class="p">:</span>
-</span><span id="__span-17-40"><a id="__codelineno-17-40" name="__codelineno-17-40" href="#__codelineno-17-40"></a>            <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_some_work</span><span class="p">()</span>
-</span><span id="__span-17-41"><a id="__codelineno-17-41" name="__codelineno-17-41" href="#__codelineno-17-41"></a>            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_metric</span><span class="p">()</span>
-</span><span id="__span-17-42"><a id="__codelineno-17-42" name="__codelineno-17-42" href="#__codelineno-17-42"></a>            <span class="n">span</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s2">&quot;operation_status&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
-</span><span id="__span-17-43"><a id="__codelineno-17-43" name="__codelineno-17-43" href="#__codelineno-17-43"></a>        <span class="k">return</span> <span class="n">result</span>
-</span><span id="__span-17-44"><a id="__codelineno-17-44" name="__codelineno-17-44" href="#__codelineno-17-44"></a>
-</span><span id="__span-17-45"><a id="__codelineno-17-45" name="__codelineno-17-45" href="#__codelineno-17-45"></a><span class="c1"># Usage</span>
-</span><span id="__span-17-46"><a id="__codelineno-17-46" name="__codelineno-17-46" href="#__codelineno-17-46"></a><span class="n">service</span> <span class="o">=</span> <span class="n">MetricService</span><span class="p">()</span>
-</span><span id="__span-17-47"><a id="__codelineno-17-47" name="__codelineno-17-47" href="#__codelineno-17-47"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">service</span><span class="o">.</span><span class="n">run_main_task</span><span class="p">()</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">init_tracer</span><span class="p">,</span> <span class="n">trace</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnswerRelevancy</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.metadata.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">ToolMetadata</span>
+</span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>
+</span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="k">class</span><span class="w"> </span><span class="nc">MetricService</span><span class="p">:</span>
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-19-9"><a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a>        <span class="c1"># Set Context on Span</span>
+</span><span id="__span-19-10"><a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a>        <span class="n">tool_metadata</span> <span class="o">=</span> <span class="n">ToolMetadata</span><span class="p">(</span>
+</span><span id="__span-19-11"><a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a>            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MetricService&quot;</span><span class="p">,</span>
+</span><span id="__span-19-12"><a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a>            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;My Service&#39;</span><span class="p">,</span>
+</span><span id="__span-19-13"><a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a>            <span class="n">version</span><span class="o">=</span><span class="s1">&#39;1.0.1&#39;</span><span class="p">,</span>
+</span><span id="__span-19-14"><a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a>        <span class="p">)</span>
+</span><span id="__span-19-15"><a id="__codelineno-19-15" name="__codelineno-19-15" href="#__codelineno-19-15"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">tracer</span> <span class="o">=</span> <span class="n">init_tracer</span><span class="p">(</span>
+</span><span id="__span-19-16"><a id="__codelineno-19-16" name="__codelineno-19-16" href="#__codelineno-19-16"></a>            <span class="n">metadata_type</span><span class="o">=</span><span class="s1">&#39;llm&#39;</span><span class="p">,</span>
+</span><span id="__span-19-17"><a id="__codelineno-19-17" name="__codelineno-19-17" href="#__codelineno-19-17"></a>            <span class="n">tool_metadata</span><span class="o">=</span><span class="n">tool_metadata</span><span class="p">,</span>
+</span><span id="__span-19-18"><a id="__codelineno-19-18" name="__codelineno-19-18" href="#__codelineno-19-18"></a>        <span class="p">)</span>
+</span><span id="__span-19-19"><a id="__codelineno-19-19" name="__codelineno-19-19" href="#__codelineno-19-19"></a>
+</span><span id="__span-19-20"><a id="__codelineno-19-20" name="__codelineno-19-20" href="#__codelineno-19-20"></a>    <span class="nd">@trace</span><span class="p">(</span><span class="n">capture_result</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-19-21"><a id="__codelineno-19-21" name="__codelineno-19-21" href="#__codelineno-19-21"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-19-22"><a id="__codelineno-19-22" name="__codelineno-19-22" href="#__codelineno-19-22"></a>        <span class="c1"># AnswerRelevancy has its own tracer and auto-captured as a child span</span>
+</span><span id="__span-19-23"><a id="__codelineno-19-23" name="__codelineno-19-23" href="#__codelineno-19-23"></a>        <span class="n">metric</span> <span class="o">=</span> <span class="n">AnswerRelevancy</span><span class="p">()</span>
+</span><span id="__span-19-24"><a id="__codelineno-19-24" name="__codelineno-19-24" href="#__codelineno-19-24"></a>        <span class="n">data_item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
+</span><span id="__span-19-25"><a id="__codelineno-19-25" name="__codelineno-19-25" href="#__codelineno-19-25"></a>            <span class="n">query</span><span class="o">=</span><span class="s2">&quot;How do I reset my password?&quot;</span><span class="p">,</span>
+</span><span id="__span-19-26"><a id="__codelineno-19-26" name="__codelineno-19-26" href="#__codelineno-19-26"></a>            <span class="n">actual_output</span><span class="o">=</span><span class="s2">&quot;To reset your password, click &#39;Forgot Password&#39; on the login page and follow the email instructions.&quot;</span><span class="p">,</span>
+</span><span id="__span-19-27"><a id="__codelineno-19-27" name="__codelineno-19-27" href="#__codelineno-19-27"></a>            <span class="n">expected_output</span><span class="o">=</span><span class="s2">&quot;Navigate to login, click &#39;Forgot Password&#39;, and follow the reset link sent to your email.&quot;</span><span class="p">,</span>
+</span><span id="__span-19-28"><a id="__codelineno-19-28" name="__codelineno-19-28" href="#__codelineno-19-28"></a>        <span class="p">)</span>
+</span><span id="__span-19-29"><a id="__codelineno-19-29" name="__codelineno-19-29" href="#__codelineno-19-29"></a>        <span class="k">return</span> <span class="k">await</span> <span class="n">metric</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">data_item</span><span class="p">)</span>
+</span><span id="__span-19-30"><a id="__codelineno-19-30" name="__codelineno-19-30" href="#__codelineno-19-30"></a>
+</span><span id="__span-19-31"><a id="__codelineno-19-31" name="__codelineno-19-31" href="#__codelineno-19-31"></a>    <span class="nd">@trace</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;doing_work&quot;</span><span class="p">)</span>
+</span><span id="__span-19-32"><a id="__codelineno-19-32" name="__codelineno-19-32" href="#__codelineno-19-32"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">do_some_work</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-19-33"><a id="__codelineno-19-33" name="__codelineno-19-33" href="#__codelineno-19-33"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</span><span id="__span-19-34"><a id="__codelineno-19-34" name="__codelineno-19-34" href="#__codelineno-19-34"></a>        <span class="k">return</span> <span class="s2">&quot;Work done!&quot;</span>
+</span><span id="__span-19-35"><a id="__codelineno-19-35" name="__codelineno-19-35" href="#__codelineno-19-35"></a>
+</span><span id="__span-19-36"><a id="__codelineno-19-36" name="__codelineno-19-36" href="#__codelineno-19-36"></a>    <span class="nd">@trace</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;run_main_task&#39;</span><span class="p">)</span>
+</span><span id="__span-19-37"><a id="__codelineno-19-37" name="__codelineno-19-37" href="#__codelineno-19-37"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">run_main_task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-19-38"><a id="__codelineno-19-38" name="__codelineno-19-38" href="#__codelineno-19-38"></a>        <span class="c1"># Can also set manual spans</span>
+</span><span id="__span-19-39"><a id="__codelineno-19-39" name="__codelineno-19-39" href="#__codelineno-19-39"></a>        <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">tracer</span><span class="o">.</span><span class="n">async_span</span><span class="p">(</span><span class="s2">&quot;metric_evaluation&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">span</span><span class="p">:</span>
+</span><span id="__span-19-40"><a id="__codelineno-19-40" name="__codelineno-19-40" href="#__codelineno-19-40"></a>            <span class="n">_</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_some_work</span><span class="p">()</span>
+</span><span id="__span-19-41"><a id="__codelineno-19-41" name="__codelineno-19-41" href="#__codelineno-19-41"></a>            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_metric</span><span class="p">()</span>
+</span><span id="__span-19-42"><a id="__codelineno-19-42" name="__codelineno-19-42" href="#__codelineno-19-42"></a>            <span class="n">span</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s2">&quot;operation_status&quot;</span><span class="p">,</span> <span class="s2">&quot;success&quot;</span><span class="p">)</span>
+</span><span id="__span-19-43"><a id="__codelineno-19-43" name="__codelineno-19-43" href="#__codelineno-19-43"></a>        <span class="k">return</span> <span class="n">result</span>
+</span><span id="__span-19-44"><a id="__codelineno-19-44" name="__codelineno-19-44" href="#__codelineno-19-44"></a>
+</span><span id="__span-19-45"><a id="__codelineno-19-45" name="__codelineno-19-45" href="#__codelineno-19-45"></a><span class="c1"># Usage</span>
+</span><span id="__span-19-46"><a id="__codelineno-19-46" name="__codelineno-19-46" href="#__codelineno-19-46"></a><span class="n">service</span> <span class="o">=</span> <span class="n">MetricService</span><span class="p">()</span>
+</span><span id="__span-19-47"><a id="__codelineno-19-47" name="__codelineno-19-47" href="#__codelineno-19-47"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">service</span><span class="o">.</span><span class="n">run_main_task</span><span class="p">()</span>
 </span></code></pre></div>
 <hr />
 <h2 id="metadata-types">Metadata Types<a class="headerlink" href="#metadata-types" title="Permanent link">&para;</a></h2>
@@ -5310,7 +5387,7 @@ The <code>@trace</code> decorator automatically looks for a tracer attribute on 
 <td>Get the configured tracer class</td>
 </tr>
 <tr>
-<td><code>init_tracer(metadata_type, tool_metadata)</code></td>
+<td><code>init_tracer(metadata_type, tool_metadata, tracer, *, force_new, **kwargs)</code></td>
 <td>Initialize a tracer instance</td>
 </tr>
 <tr>
@@ -5444,6 +5521,10 @@ The <code>@trace</code> decorator automatically looks for a tracer attribute on 
 <td><code>BaseTracer</code></td>
 <td>Abstract base class for tracer implementations</td>
 </tr>
+<tr>
+<td><code>BaseSpan</code></td>
+<td><code>@runtime_checkable</code> Protocol defining the standard span interface (<code>set_attribute</code>, <code>set_input</code>, <code>set_output</code>)</td>
+</tr>
 </tbody>
 </table>
 <hr />
@@ -5458,17 +5539,17 @@ The <code>@trace</code> decorator automatically looks for a tracer attribute on 
 <hr />
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <p>The tracing providers are optional dependencies. From the project root:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Install with Logfire support</span>
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[logfire]&quot;</span>
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># Install with Langfuse support</span>
-</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[langfuse]&quot;</span>
-</span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
-</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1"># Install with Opik support</span>
-</span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[opik]&quot;</span>
-</span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>
-</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="c1"># Install with all tracing providers</span>
-</span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[tracing]&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Install with Logfire support</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[logfire]&quot;</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="c1"># Install with Langfuse support</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[langfuse]&quot;</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="c1"># Install with Opik support</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[opik]&quot;</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="c1"># Install with all tracing providers</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[tracing]&quot;</span>
 </span></code></pre></div>
 
 
@@ -5492,7 +5573,7 @@ The <code>@trace</code> decorator automatically looks for a tracer attribute on 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 20, 2026 19:49:22 UTC">February 20, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 15, 2026 23:13:42 UTC">March 15, 2026</span>
   </span>
 
     
