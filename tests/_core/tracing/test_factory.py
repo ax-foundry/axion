@@ -1,7 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from axion._core.tracing.context import reset_tracer_context, set_current_tracer
 
 

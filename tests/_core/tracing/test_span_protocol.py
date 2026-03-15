@@ -1,4 +1,5 @@
 """Tests for BaseSpan protocol and span helper standardization."""
+
 from contextlib import asynccontextmanager
 from unittest.mock import MagicMock, patch
 
@@ -92,7 +93,6 @@ class TestBaseSpanProtocol:
     def test_decorator_capture_result_calls_set_output(self):
         """@trace(capture_result=True) calls set_output without hasattr guard."""
         from axion._core.tracing.decorators import trace
-        from axion._core.tracing.noop.span import Span
         from axion._core.tracing.noop.tracer import NoOpTracer
 
         tracer = NoOpTracer.create(metadata_type='llm')
