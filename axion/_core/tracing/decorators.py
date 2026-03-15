@@ -227,7 +227,7 @@ def trace(
                     _capture_result_attributes(span, result)
 
                     # Capture output for Langfuse/tracing visibility
-                    if capture_result and hasattr(span, 'set_output'):
+                    if capture_result:
                         span.set_output(_serialize_output(result))
 
                     return result
@@ -264,7 +264,7 @@ def trace(
                     _capture_result_attributes(span, result)
 
                     # Capture output for Langfuse/tracing visibility
-                    if capture_result and hasattr(span, 'set_output'):
+                    if capture_result:
                         span.set_output(_serialize_output(result))
 
                     return result

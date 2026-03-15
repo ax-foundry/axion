@@ -42,7 +42,7 @@ from axion._core.tracing.context import (
 )
 from axion._core.tracing.decorators import trace, trace_function, trace_method
 from axion._core.tracing.factory import Tracer, infer_tool_metadata, init_tracer
-from axion._core.tracing.registry import BaseTracer, TracerRegistry
+from axion._core.tracing.registry import BaseSpan, BaseTracer, TracerRegistry
 from axion._core.tracing.utils import (
     get_default_global_tracer,
     set_default_global_tracer,
@@ -62,6 +62,7 @@ __all__ = [
     # Registry and base classes
     'TracerRegistry',
     'BaseTracer',
+    'BaseSpan',
     # Context management
     'get_current_tracer',
     'set_current_tracer',

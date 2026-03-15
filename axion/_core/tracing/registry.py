@@ -1,12 +1,37 @@
 from abc import ABC, abstractmethod
 from contextlib import asynccontextmanager, contextmanager
-from typing import Any, Callable, Dict, List, Optional, Type
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Protocol,
+    Type,
+    runtime_checkable,
+)
 
 from axion._core.logging import get_logger
 
 logger = get_logger(__name__)
 
-__all__ = ['BaseTracer', 'TracerRegistry']
+__all__ = ['BaseSpan', 'BaseTracer', 'TracerRegistry']
+
+
+@runtime_checkable
+class BaseSpan(Protocol):
+    """
+    Protocol defining the standard interface for all span implementations.
+
+    All provider spans (NoOp, Logfire, Langfuse, Opik) implement this interface,
+    enabling type-safe span handling without provider-specific isinstance checks.
+    """
+
+    def set_attribute(self, key: str, value: Any) -> None: ...
+
+    def set_input(self, data: Any) -> None: ...
+
+    def set_output(self, data: Any) -> None: ...
 
 
 class BaseTracer(ABC):

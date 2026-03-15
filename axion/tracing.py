@@ -42,9 +42,11 @@ Public API:
         - TraceGranularity: Controls trace granularity during evaluation
         - TracerRegistry: Registry for tracer implementations
         - BaseTracer: Abstract base class for tracer implementations
+        - BaseSpan: Protocol defining the standard span interface (set_attribute, set_input, set_output)
 """
 
 from axion._core.tracing import (
+    BaseSpan,
     BaseTracer,
     TraceGranularity,
     Tracer,
@@ -101,6 +103,7 @@ __all__ = [
     # Registry and base classes
     'TracerRegistry',
     'BaseTracer',
+    'BaseSpan',
     # Context management
     'get_current_tracer',
     'set_current_tracer',
