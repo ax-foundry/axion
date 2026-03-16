@@ -1,15 +1,9 @@
-"""Tests for first-class Langfuse session_id support."""
-
 import sys
 import types
 from typing import Any, Dict, List
 from unittest.mock import MagicMock, patch
 
 import pytest
-
-# ---------------------------------------------------------------------------
-# Minimal langfuse stub so tests run without the real package installed
-# ---------------------------------------------------------------------------
 
 _langfuse_stub = types.ModuleType('langfuse')
 
@@ -43,10 +37,6 @@ sys.modules.setdefault('langfuse', _langfuse_stub)
 from axion._core.tracing.langfuse.span import LangfuseSpan  # noqa: E402
 from axion._core.tracing.langfuse.tracer import LangfuseTracer  # noqa: E402
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
 
 def _make_tracer(session_id=None, tags=None, **kwargs) -> LangfuseTracer:
     """Build a LangfuseTracer with a fake client."""
@@ -70,11 +60,6 @@ def _make_tracer(session_id=None, tags=None, **kwargs) -> LangfuseTracer:
     tracer.session_id = LangfuseTracer._validate_session_id(session_id)
     tracer._client = _FakeLangfuse()
     return tracer
-
-
-# ---------------------------------------------------------------------------
-# Validation unit tests
-# ---------------------------------------------------------------------------
 
 
 class TestValidateSessionId:
@@ -110,11 +95,6 @@ class TestValidateSessionId:
         assert LangfuseTracer._validate_session_id(42) is None  # type: ignore[arg-type]
 
 
-# ---------------------------------------------------------------------------
-# Tracer wiring tests
-# ---------------------------------------------------------------------------
-
-
 class TestTracerSessionIdWiring:
     def test_stores_valid_session_id(self):
         tracer = _make_tracer(session_id='my-session')
@@ -132,11 +112,6 @@ class TestTracerSessionIdWiring:
     def test_default_session_id_is_none(self):
         tracer = _make_tracer()
         assert tracer.session_id is None
-
-
-# ---------------------------------------------------------------------------
-# Span behaviour tests
-# ---------------------------------------------------------------------------
 
 
 class TestSpanSessionIdBehaviour:
@@ -220,11 +195,6 @@ class TestSpanSessionIdBehaviour:
         tracer._span_stack.append(child)
         await child.__aenter__()
         assert len(tracer._client._update_calls) == 1  # no additional call
-
-
-# ---------------------------------------------------------------------------
-# End-to-end init_tracer test
-# ---------------------------------------------------------------------------
 
 
 class TestInitTracerSessionIdEndToEnd:
