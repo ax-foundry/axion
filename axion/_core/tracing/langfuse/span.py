@@ -123,6 +123,7 @@ class LangfuseSpan:
                 'environment',
                 'tags',
                 'session_id',  # tracer-level only; span-attribute session_id is intentionally ignored
+                'user_id',  # tracer-level only; span-attribute user_id is intentionally ignored
                 'span_type',
             }
 
@@ -191,6 +192,9 @@ class LangfuseSpan:
                     session_id = getattr(self.tracer, 'session_id', None)
                     if session_id:
                         update_kwargs['session_id'] = session_id
+                    user_id = getattr(self.tracer, 'user_id', None)
+                    if user_id:
+                        update_kwargs['user_id'] = user_id
                     if update_kwargs:
                         self.tracer._client.update_current_trace(**update_kwargs)
                         logger.debug(
