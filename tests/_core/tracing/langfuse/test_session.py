@@ -1,7 +1,8 @@
 """Tests for first-class Langfuse session_id support."""
+
 import sys
 import types
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -39,13 +40,13 @@ _langfuse_stub.Langfuse = _FakeLangfuse
 sys.modules.setdefault('langfuse', _langfuse_stub)
 
 # Now import the modules under test (after stub is in place)
-from axion._core.tracing.langfuse.tracer import LangfuseTracer  # noqa: E402
 from axion._core.tracing.langfuse.span import LangfuseSpan  # noqa: E402
-
+from axion._core.tracing.langfuse.tracer import LangfuseTracer  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_tracer(session_id=None, tags=None, **kwargs) -> LangfuseTracer:
     """Build a LangfuseTracer with a fake client."""
@@ -56,10 +57,12 @@ def _make_tracer(session_id=None, tags=None, **kwargs) -> LangfuseTracer:
     tracer.kwargs = {}
     tracer.logger = MagicMock()
     from axion._core.utils import Timer
+
     tracer.timer = Timer()
     tracer._current_span = None
     tracer._span_stack = []
     from axion._core.uuid import uuid7
+
     tracer._trace_id = str(uuid7())
     tracer._metadata = tracer._create_metadata()
     tracer.tags = tags or []
@@ -72,6 +75,7 @@ def _make_tracer(session_id=None, tags=None, **kwargs) -> LangfuseTracer:
 # ---------------------------------------------------------------------------
 # Validation unit tests
 # ---------------------------------------------------------------------------
+
 
 class TestValidateSessionId:
     def test_none(self):
@@ -110,6 +114,7 @@ class TestValidateSessionId:
 # Tracer wiring tests
 # ---------------------------------------------------------------------------
 
+
 class TestTracerSessionIdWiring:
     def test_stores_valid_session_id(self):
         tracer = _make_tracer(session_id='my-session')
@@ -132,6 +137,7 @@ class TestTracerSessionIdWiring:
 # ---------------------------------------------------------------------------
 # Span behaviour tests
 # ---------------------------------------------------------------------------
+
 
 class TestSpanSessionIdBehaviour:
     def _enter_root_span(self, tracer: LangfuseTracer) -> LangfuseSpan:
@@ -183,7 +189,9 @@ class TestSpanSessionIdBehaviour:
 
     def test_session_id_span_attribute_dropped_from_metadata(self):
         tracer = _make_tracer()
-        span = LangfuseSpan(tracer, 'op', {'session_id': 'should-be-dropped'}, is_async=False)
+        span = LangfuseSpan(
+            tracer, 'op', {'session_id': 'should-be-dropped'}, is_async=False
+        )
         tracer._span_stack.append(span)
         span.__enter__()
         # The fake client's start_as_current_observation is a method; inspect that
@@ -218,10 +226,11 @@ class TestSpanSessionIdBehaviour:
 # End-to-end init_tracer test
 # ---------------------------------------------------------------------------
 
+
 class TestInitTracerSessionIdEndToEnd:
     def test_init_tracer_session_id_end_to_end(self):
-        from axion._core.tracing import init_tracer
         import axion._core.tracing.factory as factory_mod
+        from axion._core.tracing import init_tracer
 
         with (
             patch.object(LangfuseTracer, '_initialize_client'),
