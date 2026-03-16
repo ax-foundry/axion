@@ -122,6 +122,7 @@ class LangfuseSpan:
                 'new_trace',
                 'environment',
                 'tags',
+                'session_id',  # tracer-level only; span-attribute session_id is intentionally ignored
                 'span_type',
             }
 
@@ -179,17 +180,25 @@ class LangfuseSpan:
             except Exception as e:
                 logger.debug(f'Failed to sync Langfuse IDs: {e}')
 
-            # For the root span, set tags on the trace
+            # For the root span, set tags and session_id on the trace
             # Note: environment is set at client initialization, not via update_current_trace()
             # Check if this is the root span (only one span in stack, which is this one)
             if len(self.tracer._span_stack) == 1:
                 try:
-                    # Update trace with tags (environment is set at client init)
+                    update_kwargs = {}
                     if tags:
-                        self.tracer._client.update_current_trace(tags=tags)
-                        logger.debug(f'Langfuse trace updated with tags: {tags}')
+                        update_kwargs['tags'] = tags
+                    session_id = getattr(self.tracer, 'session_id', None)
+                    if session_id:
+                        update_kwargs['session_id'] = session_id
+                    if update_kwargs:
+                        self.tracer._client.update_current_trace(**update_kwargs)
+                        logger.debug(
+                            'Langfuse trace updated (keys=%s)',
+                            list(update_kwargs.keys()),
+                        )
                 except Exception as e:
-                    logger.debug(f'Failed to update trace with tags: {e}')
+                    logger.debug(f'Failed to update trace: {e}')
 
             logger.debug(f'Langfuse span created: {self.name} (type={as_type})')
         except Exception as e:

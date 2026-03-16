@@ -79,6 +79,7 @@ class LangfuseTracer(BaseTracer):
         trace_id: Optional[str] = None,
         tags: Optional[List[str]] = None,
         environment: Optional[str] = None,
+        session_id: Optional[str] = None,
         **kwargs,
     ):
         self.metadata_type = metadata_type
@@ -117,9 +118,41 @@ class LangfuseTracer(BaseTracer):
 
         self.environment = environment or os.environ.get('LANGFUSE_ENVIRONMENT')
 
+        self.session_id: Optional[str] = self._validate_session_id(session_id)
+
         # Initialize client
         self._client: Optional[Langfuse] = None
         self._initialize_client()
+
+    @staticmethod
+    def _validate_session_id(session_id: Optional[str]) -> Optional[str]:
+        """Validate session_id: must be a non-empty printable ASCII string, max 200 chars.
+        Logs length/hash on rejection — never logs the raw value.
+        Returns None silently on invalid input so tracing continues unaffected.
+        """
+        if session_id is None:
+            return None
+        if not isinstance(session_id, str):
+            logger.debug(
+                'session_id rejected: not a string (type=%s)', type(session_id).__name__
+            )
+            return None
+        stripped = session_id.strip()
+        if not stripped:
+            logger.debug('session_id rejected: empty or whitespace-only')
+            return None
+        if not stripped.isprintable() or not stripped.isascii():
+            logger.debug(
+                'session_id rejected: non-printable or non-ASCII (len=%d)',
+                len(stripped),
+            )
+            return None
+        if len(stripped) > 200:
+            logger.debug(
+                'session_id rejected: exceeds 200 chars (len=%d)', len(stripped)
+            )
+            return None
+        return stripped
 
     @staticmethod
     def _create_default_tool_meta() -> ToolMetadata:
