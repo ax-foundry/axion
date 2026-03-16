@@ -309,10 +309,11 @@ tracer = init_tracer(
     environment='production',
 )
 
-# Multi-turn chat: each turn creates a new trace, all grouped under one session
+# Full actor → thread → turn lineage
 tracer = init_tracer(
     'llm',
     force_new=True,
+    user_id='user-42',
     session_id='chat-thread-123',
     tags=['copilot.stream'],
     environment='production',
@@ -322,14 +323,14 @@ tracer = init_tracer(
 tracer = init_tracer('llm')
 ```
 
-All traces created with the same `session_id` appear grouped under a single Langfuse Session, enabling session-level replay and scoring.
+All traces created with the same `session_id` appear grouped under a single Langfuse Session; `user_id` further attributes traces to a specific actor, enabling user-level replay, scoring, and incident triage.
 
 | Argument | Default | Behaviour |
 |----------|---------|-----------|
 | `force_new=False` | Reuse context tracer → global tracer → create new |
 | `force_new=True` | Always create a new tracer, skipping context/global lookup |
 | `tracer=<instance>` | Return that instance unchanged, `force_new` is ignored |
-| `**create_kwargs` | Forwarded to `TracerClass.create()` (e.g. `tags`, `environment`, `session_id`) |
+| `**create_kwargs` | Forwarded to `TracerClass.create()` (e.g. `tags`, `environment`, `session_id`, `user_id`) |
 
 ---
 

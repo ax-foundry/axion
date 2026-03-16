@@ -80,6 +80,7 @@ class LangfuseTracer(BaseTracer):
         tags: Optional[List[str]] = None,
         environment: Optional[str] = None,
         session_id: Optional[str] = None,
+        user_id: Optional[str] = None,
         **kwargs,
     ):
         self.metadata_type = metadata_type
@@ -119,40 +120,55 @@ class LangfuseTracer(BaseTracer):
         self.environment = environment or os.environ.get('LANGFUSE_ENVIRONMENT')
 
         self.session_id: Optional[str] = self._validate_session_id(session_id)
+        self.user_id: Optional[str] = self._validate_user_id(user_id)
 
         # Initialize client
         self._client: Optional[Langfuse] = None
         self._initialize_client()
 
     @staticmethod
-    def _validate_session_id(session_id: Optional[str]) -> Optional[str]:
-        """Validate session_id: must be a non-empty printable ASCII string, max 200 chars.
-        Logs length/hash on rejection — never logs the raw value.
-        Returns None silently on invalid input so tracing continues unaffected.
-        """
-        if session_id is None:
+    def _validate_identity_field(
+        field_name: str, value: Optional[str]
+    ) -> Optional[str]:
+        # Constraints (non-empty printable ASCII, max 200 chars) are intentionally identical
+        # for session_id and user_id. If their semantics diverge later (e.g. user_id relaxed
+        # to printable UTF-8 for IdP compatibility), make the wrappers below independent
+        # rather than adding conditional logic here.
+        if value is None:
             return None
-        if not isinstance(session_id, str):
+        if not isinstance(value, str):
             logger.debug(
-                'session_id rejected: not a string (type=%s)', type(session_id).__name__
+                '%s rejected: not a string (type=%s)', field_name, type(value).__name__
             )
             return None
-        stripped = session_id.strip()
+        stripped = value.strip()
         if not stripped:
-            logger.debug('session_id rejected: empty or whitespace-only')
+            logger.debug('%s rejected: empty or whitespace-only', field_name)
             return None
         if not stripped.isprintable() or not stripped.isascii():
             logger.debug(
-                'session_id rejected: non-printable or non-ASCII (len=%d)',
+                '%s rejected: non-printable or non-ASCII (len=%d)',
+                field_name,
                 len(stripped),
             )
             return None
         if len(stripped) > 200:
             logger.debug(
-                'session_id rejected: exceeds 200 chars (len=%d)', len(stripped)
+                '%s rejected: exceeds 200 chars (len=%d)', field_name, len(stripped)
             )
             return None
         return stripped
+
+    @staticmethod
+    def _validate_session_id(session_id: Optional[str]) -> Optional[str]:
+        return LangfuseTracer._validate_identity_field('session_id', session_id)
+
+    @staticmethod
+    def _validate_user_id(user_id: Optional[str]) -> Optional[str]:
+        # Currently identical to session_id validation (printable ASCII, max 200 chars).
+        # If IdP-sourced user IDs require printable UTF-8, drop the isascii() check here
+        # and make this wrapper independent of _validate_identity_field.
+        return LangfuseTracer._validate_identity_field('user_id', user_id)
 
     @staticmethod
     def _create_default_tool_meta() -> ToolMetadata:
