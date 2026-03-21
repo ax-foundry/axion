@@ -5,6 +5,7 @@ from axion._core.uuid import uuid7
 
 try:
     from langfuse import propagate_attributes as _propagate_attributes
+
     _PROPAGATE_AVAILABLE = True
 except ImportError:
     _PROPAGATE_AVAILABLE = False
