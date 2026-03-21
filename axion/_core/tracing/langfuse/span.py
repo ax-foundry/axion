@@ -3,6 +3,12 @@ from typing import TYPE_CHECKING, Any, Dict, Optional
 from axion._core.logging import get_logger
 from axion._core.uuid import uuid7
 
+try:
+    from langfuse import propagate_attributes as _propagate_attributes
+    _PROPAGATE_AVAILABLE = True
+except ImportError:
+    _PROPAGATE_AVAILABLE = False
+
 if TYPE_CHECKING:
     from axion._core.tracing.langfuse.tracer import LangfuseTracer
 
@@ -87,6 +93,7 @@ class LangfuseSpan:
         self._observation = None
         self._observation_context = None
         self._trace_context = None
+        self._propagation_context = None
         self._span_id = str(uuid7())
         self._trace_id = (
             tracer._trace_id if hasattr(tracer, '_trace_id') else str(uuid7())
@@ -181,28 +188,37 @@ class LangfuseSpan:
             except Exception as e:
                 logger.debug(f'Failed to sync Langfuse IDs: {e}')
 
-            # For the root span, set tags and session_id on the trace
-            # Note: environment is set at client initialization, not via update_current_trace()
-            # Check if this is the root span (only one span in stack, which is this one)
+            # For the root span, propagate session_id/user_id/tags to the trace.
+            # propagate_attributes() is a context manager that works with both
+            # Langfuse SDK v3 (>=3.8) and v4. It replaces update_current_trace()
+            # which was removed in v4.
             if len(self.tracer._span_stack) == 1:
                 try:
-                    update_kwargs = {}
+                    prop_kwargs: Dict[str, Any] = {}
                     if tags:
-                        update_kwargs['tags'] = tags
+                        prop_kwargs['tags'] = tags
                     session_id = getattr(self.tracer, 'session_id', None)
                     if session_id:
-                        update_kwargs['session_id'] = session_id
+                        prop_kwargs['session_id'] = session_id
                     user_id = getattr(self.tracer, 'user_id', None)
                     if user_id:
-                        update_kwargs['user_id'] = user_id
-                    if update_kwargs:
-                        self.tracer._client.update_current_trace(**update_kwargs)
+                        prop_kwargs['user_id'] = user_id
+                    if prop_kwargs and _PROPAGATE_AVAILABLE:
+                        self._propagation_context = _propagate_attributes(**prop_kwargs)
+                        self._propagation_context.__enter__()
                         logger.debug(
-                            'Langfuse trace updated (keys=%s)',
-                            list(update_kwargs.keys()),
+                            'Langfuse attributes propagated (keys=%s)',
+                            list(prop_kwargs.keys()),
+                        )
+                    elif prop_kwargs:
+                        # Fallback for older langfuse without propagate_attributes
+                        self.tracer._client.update_current_trace(**prop_kwargs)
+                        logger.debug(
+                            'Langfuse trace updated via legacy API (keys=%s)',
+                            list(prop_kwargs.keys()),
                         )
                 except Exception as e:
-                    logger.debug(f'Failed to update trace: {e}')
+                    logger.debug(f'Failed to propagate trace attributes: {e}')
 
             logger.debug(f'Langfuse span created: {self.name} (type={as_type})')
         except Exception as e:
@@ -211,6 +227,15 @@ class LangfuseSpan:
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """Exit the span context."""
+        # Close propagation context if active (must happen before observation close)
+        if self._propagation_context is not None:
+            try:
+                self._propagation_context.__exit__(exc_type, exc_val, exc_tb)
+            except Exception as e:
+                logger.debug(f'Failed to close propagation context: {e}')
+            finally:
+                self._propagation_context = None
+
         if self._observation_context:
             try:
                 if exc_type is not None:
