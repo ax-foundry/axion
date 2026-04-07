@@ -1,3 +1,11 @@
+# Model prefixes that only support temperature=1 (reasoning models)
+fixed_temperature_model_prefixes = [
+    'gpt-5.4',
+    'o1',
+    'o3',
+    'o4',
+]
+
 structured_outputs_models = [
     'gpt-4o',
     'gpt-4o-2024-05-13',
