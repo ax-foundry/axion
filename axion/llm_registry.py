@@ -180,6 +180,17 @@ class MockLLM:
         pass
 
 
+def _is_fixed_temperature_model(model: str) -> bool:
+    """Check if a model doesn't support temperature=0.0 (e.g., GPT-5, o1, o3 reasoning models)."""
+    from axion._handlers.llm.models import fixed_temperature_model_prefixes
+
+    model_lower = model.lower()
+    # Strip provider prefixes for matching
+    if '/' in model_lower:
+        model_lower = model_lower.split('/')[-1]
+    return any(model_lower.startswith(p) for p in fixed_temperature_model_prefixes)
+
+
 class LiteLLMWrapper:
     """
     Lightweight LLM wrapper for LiteLLM-based execution.
@@ -206,7 +217,7 @@ class LiteLLMWrapper:
         self,
         model: str,
         provider: str = 'openai',
-        temperature: float = 0.0,
+        temperature: Optional[float] = None,
         api_key: Optional[str] = None,
         **kwargs,
     ):
@@ -221,7 +232,10 @@ class LiteLLMWrapper:
             **kwargs: Additional model configuration
         """
         self.model = model
-        self.temperature = temperature
+        if temperature is None:
+            self.temperature = 1.0 if _is_fixed_temperature_model(model) else 0.0
+        else:
+            self.temperature = temperature
         self._provider = provider
         self._api_key = api_key
         self._kwargs = kwargs
@@ -442,7 +456,7 @@ class BaseProvider(ABC):
         if self.LITELLM_PREFIX and not model_name.startswith(self.LITELLM_PREFIX):
             model_name = f'{self.LITELLM_PREFIX}{model_name}'
 
-        temperature = kwargs.pop('temperature', 0.0)
+        temperature = kwargs.pop('temperature', None)
         return LiteLLMWrapper(
             model=model_name,
             provider=self.LITELLM_PREFIX.rstrip('/') or 'openai',
@@ -848,7 +862,7 @@ class VertexAIProvider(BaseProvider):
         if self.LITELLM_PREFIX and not model_name.startswith(self.LITELLM_PREFIX):
             model_name = f'{self.LITELLM_PREFIX}{model_name}'
 
-        temperature = kwargs.pop('temperature', 0.0)
+        temperature = kwargs.pop('temperature', None)
 
         # Add Vertex AI specific kwargs
         vertex_kwargs = {}
