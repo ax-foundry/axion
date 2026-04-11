@@ -323,6 +323,55 @@ for trace in traces:
     ))
 ```
 
+## Fetching by Session
+
+If your traces are grouped by session, you can fetch all traces for a session:
+
+### Get Session ID from Tracer
+
+```python
+tracer = Tracer('llm', session_id='my-session-123')
+
+# After tracing operations
+session_id = tracer.get_session_id()
+```
+
+### Fetch Session and Traces
+
+```python
+from axion.tracing import LangfuseTraceLoader
+
+loader = LangfuseTraceLoader()
+
+# Fetch the session object (contains trace summaries)
+session = loader.fetch_session(session_id)
+
+# Fetch all full trace data for a session
+traces = loader.get_session_traces(session_id)
+```
+
+### Convert Session Traces to Dataset
+
+```python
+from axion import Dataset, DatasetItem
+
+items = []
+for trace in traces:
+    items.append(DatasetItem(
+        id=trace.id,
+        query=trace.input.get('query', '') if isinstance(trace.input, dict) else str(trace.input or ''),
+        actual_output=trace.output.get('response', '') if isinstance(trace.output, dict) else str(trace.output or ''),
+        trace_id=trace.id,
+    ))
+
+dataset = Dataset(items=items)
+```
+
+!!! tip "Use TraceCollection.from_session()"
+    For a streamlined workflow, see **[Trace Collection — From Session](trace-collection.md#from-session)** which handles fetching and conversion in one step.
+
+---
+
 ## Performance Tips
 
 !!! tip "Fetching Large Volumes"
