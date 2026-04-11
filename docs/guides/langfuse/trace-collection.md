@@ -65,6 +65,25 @@ collection = TraceCollection.from_langfuse(
 )
 ```
 
+### From Session
+
+The `from_session()` factory fetches all traces for a Langfuse session:
+
+```python
+from axion.tracing import TraceCollection, LangfuseTraceLoader
+
+loader = LangfuseTraceLoader()
+
+# Fetch all traces in a session
+collection = TraceCollection.from_session(
+    session_id='my-session-123',
+    loader=loader,
+)
+
+# Convert directly to dataset for evaluation
+dataset = collection.to_dataset(name='session-eval')
+```
+
 ### From Pre-fetched Traces
 
 If you already have raw traces from `loader.fetch_traces()` or `loader.fetch_trace()`:
@@ -544,6 +563,7 @@ result.publish_to_observability()
 | Method | Description |
 |--------|-------------|
 | `from_langfuse(trace_ids, limit, days_back, tags, name, loader, prompt_patterns)` | Fetch from Langfuse and wrap |
+| `from_session(session_id, loader, prompt_patterns)` | Fetch all traces for a session and wrap |
 | `from_raw_traces(raw_traces, prompt_patterns)` | Wrap pre-fetched trace objects |
 | `load_json(path, prompt_patterns)` | Load from a JSON file |
 | `filter(condition)` | Filter by lambda, returns new `TraceCollection` |
