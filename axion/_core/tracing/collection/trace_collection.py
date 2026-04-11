@@ -83,6 +83,33 @@ class TraceCollection:
         return cls(raw_traces, prompt_patterns=prompt_patterns)
 
     @classmethod
+    def from_session(
+        cls,
+        session_id: str,
+        *,
+        loader: Any = None,
+        show_progress: bool = True,
+        prompt_patterns: Any = None,
+    ) -> TraceCollection:
+        """
+        Fetch all traces for a Langfuse session and return a TraceCollection.
+
+        Args:
+            session_id: Langfuse session ID.
+            loader: Pre-configured LangfuseTraceLoader instance. If *None*,
+                a new one is created from environment variables.
+            show_progress: Show a tqdm progress bar while fetching.
+            prompt_patterns: Optional PromptPatternsBase for variable extraction.
+        """
+        if loader is None:
+            from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
+
+            loader = LangfuseTraceLoader()
+
+        raw_traces = loader.get_session_traces(session_id, show_progress=show_progress)
+        return cls(raw_traces, prompt_patterns=prompt_patterns)
+
+    @classmethod
     def from_raw_traces(
         cls,
         raw_traces: List[Any],

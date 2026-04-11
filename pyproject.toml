@@ -32,7 +32,7 @@ dependencies = [
 "pandas",
 "protobuf",
 "psutil",
-"pydantic",
+"pydantic>=2.11.0",
 "pydantic-graph>=1.41.0",
 "pydantic-settings>=2.0.0",
 "python-dotenv>=1.0.0",

@@ -538,6 +538,86 @@ class LangfuseTraceLoader(BaseTraceLoader):
             logger.warning(f'Failed to fetch trace {trace_id}: {e}')
             return None
 
+    def fetch_session(self, session_id: str, pace: bool = True) -> Optional[Any]:
+        """
+        Fetch a session by session_id.
+
+        Args:
+            session_id: Langfuse session ID to fetch
+            pace: Whether to apply request pacing delay after fetch
+
+        Returns:
+            The Langfuse session object (contains traces list), or None if not found/failed.
+        """
+        if not self._client_initialized:
+            logger.error('Langfuse client not initialized')
+            return None
+
+        if not session_id:
+            logger.warning('fetch_session called with empty session_id')
+            return None
+
+        try:
+            session = self._execute_with_retry(
+                lambda: self.client.api.sessions.get(session_id),
+                description=f'fetch session {session_id}',
+            )
+
+            if pace and self.request_pacing > 0:
+                time.sleep(self.request_pacing)
+
+            return session
+        except Exception as e:
+            logger.warning(f'Failed to fetch session {session_id}: {e}')
+            return None
+
+    def get_session_traces(
+        self,
+        session_id: str,
+        show_progress: bool = True,
+    ) -> List[Any]:
+        """
+        Fetch all full trace data for a session.
+
+        Retrieves the session by ID, then fetches full trace details
+        for every trace in the session.
+
+        Args:
+            session_id: Langfuse session ID
+            show_progress: Whether to show a progress bar while fetching traces
+
+        Returns:
+            List of full Langfuse trace objects, or empty list on failure.
+        """
+        session = self.fetch_session(session_id)
+        if session is None:
+            return []
+
+        traces = getattr(session, 'traces', None)
+        if not traces:
+            logger.info(f'Session {session_id} has no traces')
+            return []
+
+        trace_ids = [t.id for t in traces if getattr(t, 'id', None)]
+        logger.info(
+            f'Fetching {len(trace_ids)} full traces for session {session_id}...'
+        )
+
+        results = []
+        trace_iter = trace_ids
+        if show_progress:
+            trace_iter = tqdm(trace_iter, desc='Fetching session traces', unit='trace')
+
+        for tid in trace_iter:
+            trace = self.fetch_trace(tid)
+            if trace is not None:
+                results.append(trace)
+
+        logger.info(
+            f'Successfully loaded {len(results)} traces for session {session_id}'
+        )
+        return results
+
     def push_scores_to_langfuse(
         self,
         evaluation_result: 'EvaluationResult',
