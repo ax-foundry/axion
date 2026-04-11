@@ -631,6 +631,10 @@ class LangfuseTracer(BaseTracer):
             return self._current_span.trace_id
         return self._trace_id
 
+    def get_session_id(self) -> Optional[str]:
+        """Get the current session ID."""
+        return self.session_id
+
     @property
     def handler(self):
         """Return None for handler since Langfuse doesn't use the handler pattern."""
