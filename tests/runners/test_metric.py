@@ -7,6 +7,20 @@ import numpy as np
 import pandas as pd
 import pytest
 
+try:
+    import ragas  # noqa: F401
+
+    _has_ragas = True
+except ImportError:
+    _has_ragas = False
+
+try:
+    import deepeval  # noqa: F401
+
+    _has_deepeval = True
+except ImportError:
+    _has_deepeval = False
+
 from axion._core.tracing import clear_tracing_config, configure_tracing
 from axion.dataset import DatasetItem
 from axion.runners.metric import (
@@ -676,6 +690,7 @@ class TestAxionRunner:
         assert result.score == 0.75
 
 
+@pytest.mark.skipif(not _has_ragas, reason='ragas not installed')
 class TestRagasRunner:
     """Test suite for RagasRunner."""
 
@@ -738,6 +753,7 @@ class TestRagasRunner:
             assert 'Error executing metric' in result.explanation
 
 
+@pytest.mark.skipif(not _has_deepeval, reason='deepeval not installed')
 class TestDeepEvalRunner:
     """Test suite for DeepEvalRunner."""
 
@@ -789,6 +805,10 @@ class TestDeepEvalRunner:
             assert 'Error executing metric' in result.explanation
 
 
+@pytest.mark.skipif(
+    not (_has_ragas and _has_deepeval),
+    reason='ragas and/or deepeval not installed',
+)
 class TestMetricRunnerIntegration:
     """Integration tests for MetricRunner with multiple metric types."""
 
