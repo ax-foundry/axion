@@ -22,16 +22,16 @@ dependencies = [
 "cachetools",
 "diskcache>=5.6.3",
 "ipython",
-"llama-index>=0.13.0,<0.14.0",
+"llama-index>=0.13.0,<0.15.0",
 "loguru>=0.7.2",
 "nest-asyncio",
 "numpy",
-"litellm>=1.52.0,<2.0.0",
+"litellm>=1.52.0",
 "openai>=1.0.0",
 "pandas",
 "protobuf",
 "psutil",
-"pydantic>=2.11.0",
+"pydantic",
 "pydantic-settings>=2.0.0",
 "python-dotenv>=1.0.0",
 "PyYAML>=6.0.1",
@@ -41,11 +41,6 @@ dependencies = [
 "s3fs",
 "tenacity",
 "tqdm",
-# Pin otel to prevent resolver backtracking across transitive deps
-"opentelemetry-api>=1.28.0,<1.42.0",
-"opentelemetry-sdk>=1.28.0,<1.42.0",
-"opentelemetry-exporter-otlp-proto-grpc>=1.28.0,<1.42.0",
-"opentelemetry-exporter-otlp-proto-http>=1.28.0,<1.42.0",
 ]
 
 [project.optional-dependencies]
@@ -65,16 +60,16 @@ dev = [
 "nbstripout",
 ]
 # Evaluation integrations (optional)
-deepeval = ["deepeval>=3.1.0,<4.0.0"]
+deepeval = ["deepeval>=3.1.0"]
 ragas = ["ragas>=0.4.2"]
-eval = ["deepeval>=3.1.0,<4.0.0", "ragas>=0.4.2"]
+eval = ["deepeval>=3.1.0", "ragas>=0.4.2"]
 # Synthetic data generation (optional)
 synthetic = ["pydantic-graph>=1.41.0"]
 # Tracing providers (optional)
-logfire = ["logfire>=2.0.0,<5.0.0"]
-langfuse = ["langfuse>=3.0.0,<5.0.0"]
+logfire = ["logfire>=2.0.0"]
+langfuse = ["langfuse>=3.0.0"]
 opik = ["opik>=1.0.0"]
-tracing = ["logfire>=2.0.0,<5.0.0", "langfuse>=3.0.0,<5.0.0", "opik>=1.0.0"]
+tracing = ["logfire>=2.0.0", "langfuse>=3.0.0", "opik>=1.0.0"]
 # Visualization (optional)
 plotting = ["matplotlib", "seaborn"]
 # Search integrations (optional)
