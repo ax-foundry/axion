@@ -1221,28 +1221,12 @@ class LangfuseTraceLoader(BaseTraceLoader):
                             stats['errors'].append(error_msg)
                             stats['scores_skipped'] += 1
                 else:
-                    # Default mode: create a fresh trace via the v4 span API and
-                    # link it to the dataset run via the low-level API.
-                    #
-                    # Langfuse SDK v4 removed the `dataset_item.run(...)` context
-                    # manager — `client.get_dataset(...).items` now returns plain
-                    # API DatasetItem pydantic models. The equivalent flow is:
-                    #   1. Open a span (which creates the trace and observation),
-                    #   2. Stamp input/output via `update_trace`,
-                    #   3. Call `dataset_run_items.create(...)` with the
-                    #      trace_id + dataset_item_id + run_name to link this
-                    #      trace into the dataset's experiment run,
-                    #   4. Attach scores by trace_id.
                     with self.client.start_as_current_observation(
                         name=f'dataset-run:{run_name}:{item_id}',
                         as_type='evaluator',
                         input=input_data,
                         output=actual_output,
                     ) as root_span:
-                        # `set_trace_io` is the v4 equivalent of v3's
-                        # `update_trace(input=..., output=...)`. We mirror
-                        # input/output up to the trace so the dataset-run row
-                        # shows them in the UI without expanding the span.
                         root_span.set_trace_io(
                             input=input_data,
                             output=actual_output,

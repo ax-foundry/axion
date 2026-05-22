@@ -1,16 +1,3 @@
-"""Unit tests for `LangfuseTraceLoader._build_dataset_item`.
-
-These cover the three expected_output shapes a caller can put in the Langfuse
-dataset UI's "Expected Output" box:
-
-1. A bare value extractable by `_extract_output` (e.g. ``"answer"`` or
-   ``{"output": "answer"}``).
-2. A wrapper dict ``{"expected_output": "..."}`` — Langfuse's dataset UI
-   requires JSON in this box, so a bare string can't be entered directly.
-3. A wrapper dict carrying both ``expected_output`` and ``additional_output``,
-   where the latter must populate ``DatasetItem.additional_output``.
-"""
-
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
@@ -43,10 +30,6 @@ def test_expected_output_extracted_from_bare_value() -> None:
 
 
 def test_expected_output_unwrapped_from_wrapper_dict() -> None:
-    # Langfuse's dataset UI requires JSON in the Expected Output box, so callers
-    # typically wrap the string in `{"expected_output": "..."}`. The loader must
-    # unwrap it so `exact_string_match` and other metrics compare against the
-    # raw string, not the JSON-encoded wrapper.
     item = FakeLangfuseItem(
         input={'query': 'q'},
         expected_output={'expected_output': 'Building 1: AAL 221'},

@@ -129,9 +129,6 @@ class FakeLangfuseClient:
         self.started_observations: List[Dict[str, Any]] = []
         self.flush_calls = 0
         self.api = FakeApi()
-        # Auto-increments so every span gets a distinct trace_id, matching
-        # real-world behavior. Tests can inspect `started_observations` to
-        # see which item each span belonged to.
         self._next_trace_seq = 0
 
     def create_dataset(self, name: str):
@@ -139,10 +136,6 @@ class FakeLangfuseClient:
 
     @contextmanager
     def start_as_current_observation(self, **kwargs):
-        # v4 entry point axion now uses for the default (no link_to_traces,
-        # no score_on_runtime_traces) experiment-upload path. Returns a
-        # FakeRootSpan whose `trace_id` is unique per call so callers can
-        # attach scores to the right trace afterwards.
         self._next_trace_seq += 1
         trace_id = f'fake-trace-{self._next_trace_seq}'
         span = FakeRootSpan(trace_id=trace_id)
@@ -462,7 +455,8 @@ def test_upload_experiment_link_to_traces_uses_low_level_api(monkeypatch):
 
 
 def test_upload_experiment_link_to_traces_false_creates_new_traces(monkeypatch):
-    """`link_to_traces=False` (default): create a fresh trace per item via the
+    """
+    `link_to_traces=False` (default): create a fresh trace per item via the
     v4 `start_as_current_observation` span and link it to the run via the
     low-level API. Even when the test_case has a trace_id, the default path
     ignores it and mints a new one — that's the whole point of `False`.
