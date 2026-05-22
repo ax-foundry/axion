@@ -11,7 +11,7 @@ dataset UI's "Expected Output" box:
    where the latter must populate ``DatasetItem.additional_output``.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
@@ -61,7 +61,10 @@ def test_additional_output_pulled_from_explicit_key() -> None:
         input={'query': 'q'},
         expected_output={
             'expected_output': 'Building 1: AAL 221',
-            'additional_output': {'building_id': '01KQAH33321JGTA0CG9SJF09MB', 'aal': 221},
+            'additional_output': {
+                'building_id': '01KQAH33321JGTA0CG9SJF09MB',
+                'aal': 221,
+            },
         },
     )
     result = _loader()._build_dataset_item(item, field_map={})
