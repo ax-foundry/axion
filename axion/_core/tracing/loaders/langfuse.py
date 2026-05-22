@@ -25,6 +25,7 @@ from axion.metrics.schema import DEFAULT_EXPLANATION
 T = TypeVar('T')
 
 if TYPE_CHECKING:
+    from axion.dataset import Dataset, DatasetItem
     from axion.schema import EvaluationResult
 
 logger = get_logger(__name__)
@@ -809,6 +810,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
         score_on_runtime_traces: bool = False,
         link_to_traces: bool = False,
         metric_names: Optional[List[str]] = None,
+        update_existing_items: bool = False,
     ) -> Dict[str, Any]:
         """
         Upload evaluation results to Langfuse as a dataset experiment.
@@ -838,6 +840,13 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 score_on_runtime_traces is True.
             metric_names: Optional list of metric names to upload. If provided,
                 only scores whose metric name matches are uploaded.
+            update_existing_items: If False (default), skip the
+                ``create_dataset_item`` upsert for items whose ``id`` already
+                exists on the dataset. The input shape produced by
+                ``_serialize_dataset_item_input`` is lossy (it re-wraps
+                ``additional_input`` under a nested key) and would otherwise
+                overwrite user-curated input on every push. Set True only when
+                bootstrapping a brand-new dataset from evaluation results.
 
         Returns:
             Dict with statistics:
@@ -921,6 +930,28 @@ class LangfuseTraceLoader(BaseTraceLoader):
             stats['errors'].append(error_msg)
             return stats
 
+        # When `update_existing_items=False` we must skip the
+        # `create_dataset_item` upsert for items that already exist — otherwise
+        # the serialized-from-runtime input shape clobbers user-curated input
+        # on every push. Pre-fetch the existing item ids once so the loop
+        # below can branch cheaply.
+        existing_item_ids: set[str] = set()
+        if not update_existing_items:
+            try:
+                existing_dataset = self.client.get_dataset(name=dataset_name)
+                for existing in getattr(existing_dataset, 'items', None) or []:
+                    existing_id = getattr(existing, 'id', None)
+                    if existing_id:
+                        existing_item_ids.add(str(existing_id))
+            except Exception as e:
+                # If we can't read existing items, fall back to attempting the
+                # upsert — better to risk overwriting than to fail the whole
+                # run. Log so it's visible.
+                logger.warning(
+                    f'Could not pre-fetch dataset items for {dataset_name} '
+                    f'(falling back to upsert path): {e}'
+                )
+
         # Build a map of item_id -> (test_result, input_data, actual_output)
         # for lookup when iterating over dataset items
         test_result_map: Dict[str, Any] = {}
@@ -962,25 +993,29 @@ class LangfuseTraceLoader(BaseTraceLoader):
             if hasattr(item, 'metadata') and item.metadata:
                 item_metadata['original_metadata'] = item.metadata
 
-            # Create dataset item
+            # Create dataset item — but only when the caller explicitly asked
+            # us to bootstrap items, or when the id doesn't already exist on
+            # the dataset. See `update_existing_items` arg docstring.
+            should_upsert = update_existing_items or item_id not in existing_item_ids
             try:
-                self._execute_with_retry(
-                    lambda item_id=item_id,
-                    input_data=input_data,
-                    expected_output=expected_output,
-                    item_metadata=item_metadata: self.client.create_dataset_item(
-                        dataset_name=dataset_name,
-                        id=item_id,
-                        input=input_data,
+                if should_upsert:
+                    self._execute_with_retry(
+                        lambda item_id=item_id,
+                        input_data=input_data,
                         expected_output=expected_output,
-                        metadata=item_metadata if item_metadata else None,
-                    ),
-                    description=f'create dataset item {item_id}',
-                )
-                stats['items_created'] += 1
+                        item_metadata=item_metadata: self.client.create_dataset_item(
+                            dataset_name=dataset_name,
+                            id=item_id,
+                            input=input_data,
+                            expected_output=expected_output,
+                            metadata=item_metadata if item_metadata else None,
+                        ),
+                        description=f'create dataset item {item_id}',
+                    )
+                    stats['items_created'] += 1
 
-                if self.request_pacing > 0:
-                    time.sleep(self.request_pacing)
+                    if self.request_pacing > 0:
+                        time.sleep(self.request_pacing)
 
             except Exception as e:
                 error_str = str(e).lower()
@@ -1186,48 +1221,88 @@ class LangfuseTraceLoader(BaseTraceLoader):
                             stats['errors'].append(error_msg)
                             stats['scores_skipped'] += 1
                 else:
-                    # Default mode: use item.run() context manager to create new trace
-                    with dataset_item.run(
-                        run_name=run_name,
-                        run_metadata=per_item_run_metadata,
+                    # Default mode: create a fresh trace via the v4 span API and
+                    # link it to the dataset run via the low-level API.
+                    #
+                    # Langfuse SDK v4 removed the `dataset_item.run(...)` context
+                    # manager — `client.get_dataset(...).items` now returns plain
+                    # API DatasetItem pydantic models. The equivalent flow is:
+                    #   1. Open a span (which creates the trace and observation),
+                    #   2. Stamp input/output via `update_trace`,
+                    #   3. Call `dataset_run_items.create(...)` with the
+                    #      trace_id + dataset_item_id + run_name to link this
+                    #      trace into the dataset's experiment run,
+                    #   4. Attach scores by trace_id.
+                    with self.client.start_as_current_observation(
+                        name=f'dataset-run:{run_name}:{item_id}',
+                        as_type='evaluator',
+                        input=input_data,
+                        output=actual_output,
                     ) as root_span:
-                        # Make the experiment trace itself useful in the UI
-                        # (input/output visible without digging into metadata).
-                        root_span.update_trace(
+                        # `set_trace_io` is the v4 equivalent of v3's
+                        # `update_trace(input=..., output=...)`. We mirror
+                        # input/output up to the trace so the dataset-run row
+                        # shows them in the UI without expanding the span.
+                        root_span.set_trace_io(
                             input=input_data,
                             output=actual_output,
                         )
+                        trace_id = root_span.trace_id
 
+                    # Linking and scores happen after the span closes so the
+                    # observation is flushed and the trace_id is final.
+                    try:
+                        self._execute_with_retry(
+                            lambda: self.client.api.dataset_run_items.create(
+                                run_name=run_name,
+                                dataset_item_id=item_id,
+                                trace_id=trace_id,
+                                metadata=per_item_run_metadata,
+                            ),
+                            description=f'link dataset run for item {item_id}',
+                        )
                         stats['runs_created'] += 1
+                    except Exception as e:
+                        error_msg = (
+                            f'Failed to create dataset run item for {item_id}: {e}'
+                        )
+                        logger.warning(error_msg)
+                        stats['errors'].append(error_msg)
 
-                        # Add scores using score_trace
-                        for metric_score in test_result.score_results:
-                            if not self._should_upload_metric(
-                                metric_score,
-                                metric_name_filter,
-                                stats,
-                                'scores_skipped',
-                            ):
-                                continue
+                    for metric_score in test_result.score_results:
+                        if not self._should_upload_metric(
+                            metric_score,
+                            metric_name_filter,
+                            stats,
+                            'scores_skipped',
+                        ):
+                            continue
 
-                            try:
-                                root_span.score_trace(
-                                    name=metric_score.name,
-                                    value=float(metric_score.score),
-                                    comment=self._format_comment(
-                                        metric_score.explanation, metric_score.signals
-                                    ),
-                                )
-                                stats['scores_uploaded'] += 1
+                        try:
+                            score_kwargs = {
+                                'trace_id': trace_id,
+                                'name': metric_score.name,
+                                'value': float(metric_score.score),
+                                'comment': self._format_comment(
+                                    metric_score.explanation, metric_score.signals
+                                ),
+                            }
+                            self._execute_with_retry(
+                                lambda kwargs=score_kwargs: self.client.create_score(
+                                    **kwargs
+                                ),
+                                description=f'upload score {metric_score.name}',
+                            )
+                            stats['scores_uploaded'] += 1
 
-                            except Exception as e:
-                                error_msg = (
-                                    f'Failed to upload score {metric_score.name} '
-                                    f'for item {item_id}: {e}'
-                                )
-                                logger.warning(error_msg)
-                                stats['errors'].append(error_msg)
-                                stats['scores_skipped'] += 1
+                        except Exception as e:
+                            error_msg = (
+                                f'Failed to upload score {metric_score.name} '
+                                f'for item {item_id}: {e}'
+                            )
+                            logger.warning(error_msg)
+                            stats['errors'].append(error_msg)
+                            stats['scores_skipped'] += 1
 
                 if self.request_pacing > 0:
                     time.sleep(self.request_pacing)
@@ -1249,3 +1324,227 @@ class LangfuseTraceLoader(BaseTraceLoader):
         )
 
         return stats
+
+    @staticmethod
+    def _resolve_field(lf_item: Any, spec: Any) -> Any:
+        """
+        Resolve a field value from a Langfuse dataset item via a spec.
+
+        spec can be:
+        - callable: called with the raw Langfuse item; return value used as-is.
+        - "source.key" string: looks up lf_item.<source>["key"].
+        - plain string (no dot): shorthand for "input.<key>".
+
+        Returns None when the path cannot be resolved.
+        """
+        if callable(spec):
+            return spec(lf_item)
+        if not isinstance(spec, str):
+            return None
+        source, _, key = spec.partition('.')
+        if not key:
+            container, key = getattr(lf_item, 'input', None), source
+        else:
+            container = getattr(lf_item, source, None)
+        return container.get(key) if isinstance(container, dict) else None
+
+    def _build_dataset_item(
+        self, lf_item: Any, field_map: Dict[str, Any]
+    ) -> 'DatasetItem':
+        """Convert a single Langfuse dataset item to an Axion DatasetItem."""
+        from axion.dataset import DatasetItem
+
+        raw_input = getattr(lf_item, 'input', None)
+        raw_expected = getattr(lf_item, 'expected_output', None)
+
+        def get(field: str, default: Any) -> Any:
+            if field in field_map:
+                return self._resolve_field(lf_item, field_map[field])
+            return default
+
+        query = get(
+            'query', self._extract_query(raw_input) if raw_input is not None else None
+        )
+        actual_output = get('actual_output', None)
+
+        default_expected = (
+            str(raw_expected['expected_output'])
+            if isinstance(raw_expected, dict) and 'expected_output' in raw_expected
+            else self._extract_output(raw_expected)
+            if raw_expected is not None
+            else None
+        )
+        expected_output = get('expected_output', default_expected)
+
+        # `lf_item.expected_output` may be a wrapper dict like
+        # `{"expected_output": "...", "additional_output": {...}}` because
+        # Langfuse's dataset UI requires JSON in the Expected Output box and
+        # does not accept a bare string. We pull `additional_output` from the
+        # wrapper (preferred) or, failing that, treat any leftover dict keys
+        # as additional_output — symmetric with how `additional_input` is
+        # derived from leftover `lf_item.input` keys.
+        if isinstance(raw_expected, dict):
+            if 'additional_output' in raw_expected and isinstance(
+                raw_expected['additional_output'], dict
+            ):
+                default_additional_output = raw_expected['additional_output']
+            else:
+                default_additional_output = {
+                    k: v
+                    for k, v in raw_expected.items()
+                    if k not in {'expected_output', 'additional_output'}
+                }
+        else:
+            default_additional_output = {}
+        additional_output_val = get('additional_output', default_additional_output)
+        additional_output = (
+            additional_output_val if isinstance(additional_output_val, dict) else {}
+        )
+
+        default_rc = (
+            raw_input['retrieved_content']
+            if isinstance(raw_input, dict) and 'retrieved_content' in raw_input
+            else None
+        )
+        rc_val = get('retrieved_content', default_rc)
+        retrieved_content = (
+            rc_val
+            if isinstance(rc_val, list)
+            else [str(rc_val)]
+            if rc_val is not None
+            else None
+        )
+
+        trace_id = get('trace_id', getattr(lf_item, 'source_trace_id', None))
+        observation_id = get('observation_id', None)
+        latency = get('latency', None)
+
+        # Default `additional_input` to the input-dict keys we didn't already
+        # promote to a typed slot. Without this, agent-specific fields living
+        # in `lf_item.input` (e.g., case_id, quote_locator) are silently dropped
+        # when callers go through `load_langfuse_dataset`. A field_map entry
+        # overrides this default if the caller wants finer control.
+        if isinstance(raw_input, dict):
+            reserved = {'query', 'retrieved_content', 'expected_output'}
+            default_additional = {
+                k: v for k, v in raw_input.items() if k not in reserved
+            }
+        else:
+            default_additional = {}
+        additional_input_val = get('additional_input', default_additional)
+        additional_input = (
+            additional_input_val if isinstance(additional_input_val, dict) else {}
+        )
+
+        metadata = getattr(lf_item, 'metadata', None)
+        metadata_str: Optional[str] = None
+        if metadata is not None:
+            try:
+                metadata_str = json.dumps(metadata, default=str)
+            except Exception:
+                metadata_str = str(metadata)
+
+        return DatasetItem(
+            dataset_id=getattr(lf_item, 'id', None),
+            query=query,
+            actual_output=actual_output,
+            expected_output=expected_output,
+            retrieved_content=retrieved_content,
+            additional_input=additional_input,
+            additional_output=additional_output,
+            trace_id=trace_id,
+            observation_id=observation_id,
+            latency=latency,
+            dataset_metadata=metadata_str,
+        )
+
+    def load_langfuse_dataset(
+        self,
+        dataset_name: str,
+        dataset_item_name: Optional[str] = None,
+        axion_dataset_name: Optional[str] = None,
+        field_map: Optional[Dict[str, Any]] = None,
+    ) -> 'Dataset':
+        """
+        Load a Langfuse dataset by name and convert its items to an Axion Dataset.
+
+        Args:
+            dataset_name: Name of the Langfuse dataset to load.
+            dataset_item_name: Optional filter — only include items whose ``id``
+                or ``source_trace_id`` matches this value.
+            axion_dataset_name: Name for the returned Axion ``Dataset``.
+                Defaults to ``dataset_name``.
+            field_map: Optional mapping from Axion ``DatasetItem`` field names to
+                a dot-path string or callable. Unmapped fields fall back to default
+                extraction logic.
+
+                Supported fields: ``query``, ``actual_output``, ``expected_output``,
+                ``retrieved_content``, ``additional_input``, ``additional_output``,
+                ``trace_id``, ``observation_id``, ``latency``.
+
+                ``additional_input`` defaults to the keys of ``lf_item.input`` that
+                weren't promoted to a typed slot (``query`` / ``retrieved_content`` /
+                ``expected_output``), so agent-specific input fields are preserved
+                without an explicit mapping.
+
+                ``additional_output`` is populated when ``lf_item.expected_output``
+                is a dict — either from an explicit ``additional_output`` key inside
+                that dict, or from leftover keys after ``expected_output`` is
+                promoted. This lets callers stash structured expectations alongside
+                the primary expected string (Langfuse's dataset UI requires JSON,
+                not bare strings, in the Expected Output box).
+
+                Dot-path — ``"<source>.<key>"`` where source is ``input`` or
+                ``expected_output``; a plain key (no dot) defaults to ``input``::
+
+                    field_map={
+                        "query": "input.case_id",
+                        "trace_id": "input.correlation_id",
+                    }
+
+                Callable — receives the raw Langfuse item::
+
+                    field_map={
+                        "query": lambda item: (item.input or {}).get("case_id"),
+                    }
+
+        Returns:
+            Axion ``Dataset`` ready to pass to ``evaluation_runner``.
+        """
+        from axion.dataset import Dataset
+
+        field_map = field_map or {}
+
+        if not self._client_initialized:
+            logger.error('Langfuse client not initialized')
+            return Dataset(name=axion_dataset_name or dataset_name)
+
+        try:
+            lf_dataset = self._execute_with_retry(
+                lambda: self.client.get_dataset(name=dataset_name),
+                description=f'get dataset {dataset_name}',
+            )
+        except Exception as e:
+            logger.error(f'Failed to load Langfuse dataset "{dataset_name}": {e}')
+            return Dataset(name=axion_dataset_name or dataset_name)
+
+        lf_items = lf_dataset.items
+        if dataset_item_name is not None:
+            lf_items = [
+                item
+                for item in lf_items
+                if dataset_item_name
+                in (
+                    getattr(item, 'id', None) or '',
+                    getattr(item, 'source_trace_id', None) or '',
+                )
+            ]
+
+        items = []
+        for lf_item in lf_items:
+            items.append(self._build_dataset_item(lf_item, field_map))
+            if self.request_pacing > 0:
+                time.sleep(self.request_pacing)
+
+        logger.info(f'Loaded {len(items)} items from Langfuse dataset "{dataset_name}"')
+        return Dataset(name=axion_dataset_name or dataset_name, items=items)

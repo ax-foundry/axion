@@ -42,11 +42,19 @@ class SignalExtractor:
                 value = node.extract(structured_data)
                 if value is not None:
                     group_name = node.descriptor.group or 'overall'
+                    passed: Optional[bool] = None
+                    if node.descriptor.is_pass is not None:
+                        try:
+                            verdict = node.descriptor.is_pass(structured_data)
+                            passed = bool(verdict) if verdict is not None else None
+                        except Exception:
+                            passed = None
                     grouped_signals[group_name].append(
                         {
                             'name': node.descriptor.name,
                             'value': value,
                             'score': node.to_score(value),
+                            'passed': passed,
                             'description': node.descriptor.description,
                             'headline_display': node.descriptor.headline_display,
                         }

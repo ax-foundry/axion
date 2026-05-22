@@ -173,6 +173,7 @@ class SignalDescriptor(Generic[T]):
     score_mapping: Optional[Dict[str, float]] = None
     group: Optional[str] = None
     headline_display: bool = False
+    is_pass: Optional[Callable[[T], Optional[bool]]] = None
 
     def __post_init__(self):
         """Auto-generate a default description if one is not provided."""

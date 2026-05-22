@@ -41,12 +41,23 @@ class FakeEvaluationResult:
 
 
 class FakeRootSpan:
-    def __init__(self):
+    """Stands in for both the v3 dataset_item.run() span and the v4
+    `start_as_current_observation` span — same surface, just different
+    method names. Tests use either depending on which path they exercise.
+    """
+
+    def __init__(self, trace_id: Optional[str] = None):
         self.update_trace_calls: List[Dict[str, Any]] = []
+        self.set_trace_io_calls: List[Dict[str, Any]] = []
         self.score_trace_calls: List[Dict[str, Any]] = []
+        self.trace_id = trace_id or 'fake-trace-id'
 
     def update_trace(self, **kwargs):
         self.update_trace_calls.append(kwargs)
+
+    def set_trace_io(self, **kwargs):
+        # v4 SDK equivalent of v3's update_trace(input=..., output=...).
+        self.set_trace_io_calls.append(kwargs)
 
     def score_trace(self, **kwargs):
         self.score_trace_calls.append(kwargs)
@@ -75,10 +86,14 @@ class FakeDatasetRunItems:
     def __init__(self):
         self.created_run_items: List[Dict[str, Any]] = []
 
-    def create(self, request):
-        # Extract fields from the request object (CreateDatasetRunItemRequest)
-        self.created_run_items.append(
-            {
+    def create(self, request=None, **kwargs):
+        # Langfuse SDK v4 dropped the request-object signature and calls
+        # `create(run_name=..., dataset_item_id=..., trace_id=..., metadata=...)`
+        # directly. We accept either form so old (request=req) and new
+        # (kwargs) callsites both work; tests don't have to care which one
+        # axion is using internally.
+        if request is not None:
+            payload = {
                 'run_name': getattr(request, 'run_name', None)
                 or getattr(request, 'runName', None),
                 'dataset_item_id': getattr(request, 'dataset_item_id', None)
@@ -89,7 +104,15 @@ class FakeDatasetRunItems:
                 or getattr(request, 'observationId', None),
                 'metadata': getattr(request, 'metadata', None),
             }
-        )
+        else:
+            payload = {
+                'run_name': kwargs.get('run_name'),
+                'dataset_item_id': kwargs.get('dataset_item_id'),
+                'trace_id': kwargs.get('trace_id'),
+                'observation_id': kwargs.get('observation_id'),
+                'metadata': kwargs.get('metadata'),
+            }
+        self.created_run_items.append(payload)
 
 
 class FakeApi:
@@ -103,11 +126,28 @@ class FakeLangfuseClient:
         self.created_items: List[Dict[str, Any]] = []
         self.created_datasets: List[str] = []
         self.created_scores: List[Dict[str, Any]] = []
+        self.started_observations: List[Dict[str, Any]] = []
         self.flush_calls = 0
         self.api = FakeApi()
+        # Auto-increments so every span gets a distinct trace_id, matching
+        # real-world behavior. Tests can inspect `started_observations` to
+        # see which item each span belonged to.
+        self._next_trace_seq = 0
 
     def create_dataset(self, name: str):
         self.created_datasets.append(name)
+
+    @contextmanager
+    def start_as_current_observation(self, **kwargs):
+        # v4 entry point axion now uses for the default (no link_to_traces,
+        # no score_on_runtime_traces) experiment-upload path. Returns a
+        # FakeRootSpan whose `trace_id` is unique per call so callers can
+        # attach scores to the right trace afterwards.
+        self._next_trace_seq += 1
+        trace_id = f'fake-trace-{self._next_trace_seq}'
+        span = FakeRootSpan(trace_id=trace_id)
+        self.started_observations.append({**kwargs, 'trace_id': trace_id, 'span': span})
+        yield span
 
     def create_dataset_item(
         self,
@@ -237,20 +277,26 @@ def test_upload_experiment_sets_input_output_and_linking_metadata(monkeypatch):
     assert stats['run_name'] == 'experiment-v6'
     assert stats['runs_created'] == 2
 
-    # Verify each dataset item run trace received input/output
-    for ds_item in dataset_items:
-        assert ds_item.last_run_name == 'experiment-v6'
-        assert ds_item.root_span.update_trace_calls, (
-            'expected update_trace to be called'
-        )
-        call = ds_item.root_span.update_trace_calls[0]
+    # Default mode now opens one span per item via start_as_current_observation
+    # and stamps input/output via set_trace_io (v4 SDK shape).
+    assert len(fake_client.started_observations) == 2
+    for obs in fake_client.started_observations:
+        span = obs['span']
+        assert span.set_trace_io_calls, 'expected set_trace_io to be called'
+        call = span.set_trace_io_calls[0]
         assert 'input' in call
         assert 'output' in call
 
-    # Verify per-item run_metadata includes linking identifiers when present
-    assert dataset_items[0].last_run_metadata['trace_id'] == 'trace-1'
-    assert dataset_items[0].last_run_metadata['observation_id'] == 'obs-1'
-    assert 'trace_id' not in (dataset_items[1].last_run_metadata or {})
+    # Each item should have produced a low-level dataset_run_items.create call
+    # linking the freshly-created trace to the run.
+    run_items = fake_client.api.dataset_run_items.created_run_items
+    assert len(run_items) == 2
+    run_items_by_id = {ri['dataset_item_id']: ri for ri in run_items}
+    assert run_items_by_id['item-1']['run_name'] == 'experiment-v6'
+    # Per-item metadata should include the original linking identifiers when present
+    assert run_items_by_id['item-1']['metadata']['trace_id'] == 'trace-1'
+    assert run_items_by_id['item-1']['metadata']['observation_id'] == 'obs-1'
+    assert 'trace_id' not in run_items_by_id['item-2']['metadata']
 
 
 def test_upload_experiment_scores_on_runtime_traces_no_dataset_runs(monkeypatch):
@@ -375,40 +421,52 @@ def test_upload_experiment_link_to_traces_uses_low_level_api(monkeypatch):
     assert stats['runs_created'] == 2
     assert stats['scores_uploaded'] == 2
 
-    # Verify item-1 used low-level API (link_to_traces)
+    # Both paths now create dataset_run_items via the low-level API. The
+    # difference is what trace_id each call carries:
+    #   - item-1 (link_to_traces hit): the test_case.trace_id ("trace-1")
+    #   - item-2 (no trace_id, fallback): a freshly-minted trace from
+    #     start_as_current_observation
     run_items = fake_client.api.dataset_run_items.created_run_items
-    assert len(run_items) == 1, 'Only item-1 has trace_id, should use low-level API'
+    assert len(run_items) == 2
+    by_id = {ri['dataset_item_id']: ri for ri in run_items}
+    assert by_id['item-1']['run_name'] == 'experiment-v7'
+    assert by_id['item-1']['trace_id'] == 'trace-1'
+    assert by_id['item-1']['observation_id'] == 'obs-1'
 
-    run_item = run_items[0]
-    assert run_item['run_name'] == 'experiment-v7'
-    assert run_item['dataset_item_id'] == 'item-1'
-    assert run_item['trace_id'] == 'trace-1'
-    assert run_item['observation_id'] == 'obs-1'
+    # item-2 fell back to creating a new trace; its run-item must point at
+    # that new trace, not be None.
+    assert by_id['item-2']['trace_id'] and by_id['item-2']['trace_id'] != 'trace-1'
 
-    # Verify score was created directly on existing trace (not via root_span.score_trace)
-    assert len(fake_client.created_scores) == 1
-    score = fake_client.created_scores[0]
-    assert score['trace_id'] == 'trace-1'
-    assert score['observation_id'] == 'obs-1'
-    assert score['name'] == 'm1'
-    assert score['value'] == 0.5
+    # Scores: item-1's m1 attaches to the existing trace; item-2's m2 attaches
+    # to the freshly-created trace. Both go through create_score now.
+    score_by_name = {s['name']: s for s in fake_client.created_scores}
+    assert score_by_name['m1']['trace_id'] == 'trace-1'
+    assert score_by_name['m1']['observation_id'] == 'obs-1'
+    assert score_by_name['m1']['value'] == 0.5
+    assert score_by_name['m2']['trace_id'] == by_id['item-2']['trace_id']
+    assert score_by_name['m2']['value'] == 0.7
 
-    # item-1's dataset_item.run() context should NOT have been called
-    assert dataset_items[0].last_run_name is None, (
-        'link_to_traces should skip dataset_item.run()'
+    # item-1 hit the link_to_traces branch — must NOT have opened a span.
+    started_for_item_1 = [
+        o for o in fake_client.started_observations if 'item-1' in (o.get('name') or '')
+    ]
+    assert started_for_item_1 == [], (
+        'link_to_traces=True path should not open a new observation for item-1'
     )
 
-    # Verify item-2 fell back to normal behavior (creating new trace via dataset_item.run)
-    assert dataset_items[1].last_run_name == 'experiment-v7', (
-        'item without trace_id should use fallback'
-    )
-    assert dataset_items[1].root_span.score_trace_calls, (
-        'fallback should use root_span.score_trace'
-    )
+    # item-2 fell back — must have opened exactly one observation.
+    started_for_item_2 = [
+        o for o in fake_client.started_observations if 'item-2' in (o.get('name') or '')
+    ]
+    assert len(started_for_item_2) == 1
 
 
-def test_upload_experiment_link_to_traces_false_uses_context_manager(monkeypatch):
-    """Test that link_to_traces=False (default) uses dataset_item.run() context manager."""
+def test_upload_experiment_link_to_traces_false_creates_new_traces(monkeypatch):
+    """`link_to_traces=False` (default): create a fresh trace per item via the
+    v4 `start_as_current_observation` span and link it to the run via the
+    low-level API. Even when the test_case has a trace_id, the default path
+    ignores it and mints a new one — that's the whole point of `False`.
+    """
     dataset_items = [FakeDatasetItem('item-1')]
     fake_dataset = FakeDataset(dataset_items)
     fake_client = FakeLangfuseClient(dataset=fake_dataset)
@@ -452,17 +510,22 @@ def test_upload_experiment_link_to_traces_false_uses_context_manager(monkeypatch
     assert stats['runs_created'] == 1
     assert stats['scores_uploaded'] == 1
 
-    # Should NOT have used low-level API
-    assert len(fake_client.api.dataset_run_items.created_run_items) == 0
+    # New trace was minted via start_as_current_observation, *not* reused from
+    # the test_case's existing trace_id.
+    assert len(fake_client.started_observations) == 1
+    new_trace_id = fake_client.started_observations[0]['trace_id']
+    assert new_trace_id != 'trace-1'
 
-    # Should have used dataset_item.run() context manager
-    assert dataset_items[0].last_run_name == 'experiment-v8'
-    assert dataset_items[0].root_span.score_trace_calls, (
-        'should use root_span.score_trace'
-    )
+    # Low-level API was used to link the new trace to the dataset run.
+    run_items = fake_client.api.dataset_run_items.created_run_items
+    assert len(run_items) == 1
+    assert run_items[0]['dataset_item_id'] == 'item-1'
+    assert run_items[0]['run_name'] == 'experiment-v8'
+    assert run_items[0]['trace_id'] == new_trace_id
 
-    # Scores should NOT be created directly via create_score when not using link_to_traces
-    assert len(fake_client.created_scores) == 0
+    # Score was attached to the new trace, not the old one.
+    assert len(fake_client.created_scores) == 1
+    assert fake_client.created_scores[0]['trace_id'] == new_trace_id
 
 
 def test_upload_experiment_score_on_runtime_traces_takes_precedence(monkeypatch):
