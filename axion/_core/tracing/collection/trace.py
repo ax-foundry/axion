@@ -57,7 +57,21 @@ class TraceStep(SmartAccess):
         """Extract prompt variables using the configured prompt patterns."""
         return self._extract_variables()
 
-    def _lookup(self, key: str) -> Any:
+    def __iter__(self):
+        return iter(self.observations)
+
+    def __len__(self) -> int:
+        return len(self.observations)
+
+    def _lookup(self, key: Any) -> Any:
+        if isinstance(key, int):
+            try:
+                return self.observations[key]
+            except IndexError:
+                raise KeyError(
+                    f"Index {key} out of range for step '{self.name}' with {len(self.observations)} observations."
+                )
+
         if key == 'variables':
             return self._extract_variables()
 
