@@ -224,6 +224,48 @@ class Trace(SmartAccess):
         return list(self._raw_observations)
 
     @property
+    def observation_types(self) -> List[str]:
+        """Unique observation types present in this trace (e.g. 'SPAN', 'GENERATION', 'EVENT')."""
+        seen: list[str] = []
+        for obs in self._raw_observations:
+            t = getattr(obs, 'type', None)
+            if t and t not in seen:
+                seen.append(t)
+        return seen
+
+    def by_type(self, type_str: str) -> List[ObservationsView]:
+        """Return all observations whose type matches *type_str* (case-insensitive)."""
+        target = type_str.upper()
+        return [
+            obs
+            for obs in self._raw_observations
+            if getattr(obs, 'type', '').upper() == target
+        ]
+
+    def find_all(
+        self,
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+    ) -> List['ObservationNode']:
+        """
+        Return every node matching *name* and/or *type* across all roots.
+
+        Unlike :meth:`find`, which stops at the first match, this collects all of them.
+        """
+        results = []
+        for node in self.walk():
+            if name is not None:
+                node_name = _safe_get(node._observation, 'name')
+                if node_name != name:
+                    continue
+            if type is not None:
+                node_type = _safe_get(node._observation, 'type')
+                if node_type != type:
+                    continue
+            results.append(node)
+        return results
+
+    @property
     def raw(self) -> Any:
         """The underlying raw trace object."""
         return self._trace_obj
