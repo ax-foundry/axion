@@ -156,6 +156,29 @@ step = trace['rule-lookup']
 step.generation.output
 ```
 
+### Multi-Observation Steps
+
+When a step contains multiple observations of the same type (e.g. a step called five times), iterate or index directly on the step:
+
+```python
+step = trace['llm.uw_referral_clearing.clear_referral']
+# <TraceStep name='...' types=['GENERATION', 'GENERATION', 'GENERATION', 'GENERATION', 'GENERATION']>
+
+# Iterate all observations
+for obs in step:
+    print(obs.output)
+
+# Index access
+step[0]   # first observation
+step[-1]  # last observation
+
+# Count and bounds
+len(step)   # 5
+step.count  # 5
+step.first  # same as step[0]
+step.last   # same as step[-1]
+```
+
 ### Fuzzy Step Names
 
 Step name resolution is case and separator insensitive:
@@ -375,6 +398,39 @@ for roots in collection.trees:
 
 ---
 
+## Filtering by Observation Type
+
+Use `by_type()` to pull all observations of a given type from a trace, regardless of their name.
+
+### Discovering Types
+
+```python
+trace = collection[0]
+trace.observation_types   # e.g. ['SPAN', 'GENERATION', 'EVENT', 'TOOL']
+```
+
+### Extracting by Type
+
+```python
+# All LLM calls
+generations = trace.by_type('GENERATION')
+
+# All tool calls
+tools = trace.by_type('TOOL')
+for obs in tools:
+    print(obs.name, obs.output)
+
+# All spans
+spans = trace.by_type('SPAN')
+```
+
+`by_type()` is case-insensitive and returns a flat list of `ObservationsView` objects in the order they appear in the trace.
+
+!!! note "Name prefix vs. observation type"
+    Step names like `tool.web_search` are a naming convention — the actual observation `type` field determines what `by_type()` matches. Use `trace.observation_types` to see what types are present in your data.
+
+---
+
 ## Filtering
 
 ### Lambda Filter
@@ -587,8 +643,11 @@ result.publish_to_observability()
 | `trace.raw` | Underlying raw trace object |
 | `trace.tree_roots` | List of root `ObservationNode`s (hierarchy) |
 | `trace.tree` | Single root node if exactly one root, else `None` |
+| `trace.observation_types` | Unique observation types present (e.g. `['SPAN', 'GENERATION', 'TOOL']`) |
+| `trace.by_type(type_str)` | All observations matching that type (case-insensitive), as a flat list |
 | `trace.walk()` | Pre-order depth-first generator across all roots |
 | `trace.find(name, type)` | First node matching name and/or type across all roots, or `None` |
+| `trace.find_all(name, type)` | All nodes matching name and/or type across all roots |
 | `trace.<step_name>` | Access a step by name (fuzzy matching) |
 | `trace.<attribute>` | Access trace-level attributes (fuzzy matching) |
 
@@ -599,8 +658,11 @@ result.publish_to_observability()
 | `step.count` | Number of observations |
 | `step.first` | First observation |
 | `step.last` | Last observation |
-| `step.generation` | GENERATION observation |
-| `step.context` | SPAN observation (alias) |
+| `step[i]` | Observation at index `i` (supports negative indexing) |
+| `for obs in step` | Iterate all observations in the step |
+| `len(step)` | Number of observations (same as `step.count`) |
+| `step.generation` | First GENERATION observation |
+| `step.context` | First SPAN observation (alias) |
 | `step.extract_variables()` | Extract prompt variables via patterns |
 | `step.variables` | Shorthand for `extract_variables()` |
 
