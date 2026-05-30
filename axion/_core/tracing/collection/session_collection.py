@@ -48,10 +48,6 @@ class SessionCollection:
             for item in data
         ]
 
-    # ------------------------------------------------------------------ #
-    # Factories
-    # ------------------------------------------------------------------ #
-
     @classmethod
     def from_langfuse(
         cls,
@@ -165,10 +161,6 @@ class SessionCollection:
             turns_only=turns_only,
         )
 
-    # ------------------------------------------------------------------ #
-    # Sequence protocol
-    # ------------------------------------------------------------------ #
-
     def __len__(self) -> int:
         return len(self._sessions)
 
@@ -180,10 +172,6 @@ class SessionCollection:
 
     def __repr__(self):
         return f'<SessionCollection count={len(self._sessions)}>'
-
-    # ------------------------------------------------------------------ #
-    # Filtering
-    # ------------------------------------------------------------------ #
 
     def filter(self, condition: Callable[[Session], bool]) -> SessionCollection:
         """Return a new SessionCollection of sessions matching *condition*."""
@@ -223,10 +211,6 @@ class SessionCollection:
             turns_only=self._turns_only,
         )
 
-    # ------------------------------------------------------------------ #
-    # Aggregation across sessions
-    # ------------------------------------------------------------------ #
-
     def by_type(self, type_str: str) -> List[Any]:
         """All observations of *type_str* across every trace in every session."""
         return [obs for session in self._sessions for obs in session.by_type(type_str)]
@@ -234,10 +218,6 @@ class SessionCollection:
     def tools(self) -> List[Any]:
         """All ``TOOL`` observations across every session."""
         return self.by_type('TOOL')
-
-    # ------------------------------------------------------------------ #
-    # Serialization
-    # ------------------------------------------------------------------ #
 
     def to_list(self) -> List[Any]:
         """Return each session as a JSON-able dict."""
@@ -248,10 +228,6 @@ class SessionCollection:
         target = Path(path).expanduser()
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(json.dumps(self.to_list(), indent=2, sort_keys=True))
-
-    # ------------------------------------------------------------------ #
-    # Dataset conversion
-    # ------------------------------------------------------------------ #
 
     def to_dataset(
         self,

@@ -1,14 +1,3 @@
-"""Shared, pure helpers for extracting input/output and timestamps from raw
-trace/observation/session payloads.
-
-These live here (rather than on a collection class) so that ``trace.py``,
-``trace_collection.py``, ``session.py``, and ``session_collection.py`` can all
-reuse them without importing each other or reaching into private statics.
-
-Symbols imported by other modules are public (no leading underscore); helpers
-used only within this module stay underscore-prefixed.
-"""
-
 from __future__ import annotations
 
 import json
@@ -23,11 +12,11 @@ OUTPUT_KEYS = ('output', 'response', 'answer', 'result', 'content', 'text', 'mes
 
 # UTC-aware sentinel for missing/invalid timestamps. Using an aware value keeps
 # every comparison in a single timezone policy so sorts never mix naive/aware.
-_TS_SENTINEL = datetime.min.replace(tzinfo=timezone.utc)
+TS_SENTINEL = datetime.min.replace(tzinfo=timezone.utc)
 
 # Timestamp-like keys, snake_case first then camelCase, so a dict/object using
 # either Langfuse convention (created_at vs createdAt) sorts correctly.
-_TS_KEYS = (
+TS_KEYS = (
     'timestamp',
     'created_at',
     'createdAt',
@@ -96,9 +85,9 @@ def coerce_ts(value: Any) -> datetime:
         try:
             parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
         except ValueError:
-            return _TS_SENTINEL
+            return TS_SENTINEL
         return _as_utc(parsed)
-    return _TS_SENTINEL
+    return TS_SENTINEL
 
 
 def _as_utc(dt: datetime) -> datetime:
@@ -110,7 +99,7 @@ def _as_utc(dt: datetime) -> datetime:
 
 def _get_timestamp_value(src: dict) -> Any:
     """Return the first present timestamp-like key from a dict payload."""
-    for k in _TS_KEYS:
+    for k in TS_KEYS:
         if k in src:
             return src[k]
     return None
@@ -144,7 +133,7 @@ def extract_trace_io(trace_obj: Any) -> tuple[Any, Any, Any, Any]:
         )
 
     ts = None
-    for k in _TS_KEYS:
+    for k in TS_KEYS:
         ts = getattr(trace_obj, k, None)
         if ts is not None:
             break

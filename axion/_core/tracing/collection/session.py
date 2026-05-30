@@ -85,10 +85,6 @@ class Session:
             self._traces = self._traces.filter(predicate)
             self._auto_turn_analysis_cache = None
 
-    # ------------------------------------------------------------------ #
-    # Input coercion / sorting
-    # ------------------------------------------------------------------ #
-
     @staticmethod
     def _coerce_session_input(session_data: Any) -> tuple[Dict[str, Any], List[Any]]:
         """Return ``(metadata_dict, raw_traces)`` from supported session shapes."""
@@ -144,10 +140,6 @@ class Session:
         ordered = sorted(enumerate(raw_traces), key=_key)
         return [trace for _, trace in ordered]
 
-    # ------------------------------------------------------------------ #
-    # Metadata properties
-    # ------------------------------------------------------------------ #
-
     @property
     def metadata(self) -> Dict[str, Any]:
         """Full session-level metadata (all captured fields)."""
@@ -181,10 +173,6 @@ class Session:
     def traces(self) -> TraceCollection:
         """The session's traces as a :class:`TraceCollection`."""
         return self._traces
-
-    # ------------------------------------------------------------------ #
-    # Turn detection
-    # ------------------------------------------------------------------ #
 
     @staticmethod
     def _trace_qualifies_as_turn(trace: Trace) -> bool:
@@ -269,10 +257,6 @@ class Session:
             return lambda trace: trace.name == configured
         return self._default_is_turn()
 
-    # ------------------------------------------------------------------ #
-    # Conversation
-    # ------------------------------------------------------------------ #
-
     def conversation(
         self,
         name: Optional[str] = None,
@@ -310,10 +294,6 @@ class Session:
         predicate = self._resolve_turn_predicate(None, None)
         return sum(1 for t in self._traces if predicate(t))
 
-    # ------------------------------------------------------------------ #
-    # Aggregation across traces
-    # ------------------------------------------------------------------ #
-
     def by_type(self, type_str: str) -> List[Any]:
         """All observations of *type_str* across every trace (case-insensitive)."""
         return [obs for trace in self._traces for obs in trace.by_type(type_str)]
@@ -342,10 +322,6 @@ class Session:
         for trace in self._traces:
             results.extend(trace.find_all(name=name, type=type))
         return results
-
-    # ------------------------------------------------------------------ #
-    # Dataset conversion
-    # ------------------------------------------------------------------ #
 
     def to_dataset(
         self,
@@ -395,10 +371,6 @@ class Session:
                 )
         return items
 
-    # ------------------------------------------------------------------ #
-    # Serialization
-    # ------------------------------------------------------------------ #
-
     def to_dict(self) -> Dict[str, Any]:
         """Full session metadata + JSON-able traces, round-trippable via __init__."""
         payload = {k: TraceCollection._to_jsonable(v) for k, v in self._meta.items()}
@@ -406,10 +378,6 @@ class Session:
             TraceCollection._to_jsonable(t._trace_obj) for t in self._traces
         ]
         return payload
-
-    # ------------------------------------------------------------------ #
-    # Factories
-    # ------------------------------------------------------------------ #
 
     @classmethod
     def from_langfuse(
@@ -477,10 +445,6 @@ class Session:
             turn_predicate=turn_predicate,
             turns_only=turns_only,
         )
-
-    # ------------------------------------------------------------------ #
-    # Dunders (delegate to the trace collection)
-    # ------------------------------------------------------------------ #
 
     def __len__(self) -> int:
         return len(self._traces)
