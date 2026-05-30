@@ -9,9 +9,9 @@ from typing import Any, Callable, Dict, List, Optional
 
 from axion._core.logging import get_logger
 from axion._core.tracing.collection._io import (
-    _extract_output,
-    _extract_query,
-    _extract_trace_io,
+    extract_output,
+    extract_query,
+    extract_trace_io,
 )
 from axion._core.tracing.collection.observation_node import ObservationNode
 from axion._core.tracing.collection.smart_access import SmartAccess
@@ -257,8 +257,8 @@ class TraceCollection:
             trace_obj
         )
 
-        query = _extract_query(raw_input) if raw_input is not None else ''
-        actual_output = _extract_output(raw_output) if raw_output is not None else ''
+        query = extract_query(raw_input) if raw_input is not None else ''
+        actual_output = extract_output(raw_output) if raw_output is not None else ''
 
         if not query and not actual_output:
             return {}
@@ -280,7 +280,7 @@ class TraceCollection:
 
         Thin delegator to the shared helper in ``_io.py`` (kept for back-compat).
         """
-        return _extract_trace_io(trace_obj)
+        return extract_trace_io(trace_obj)
 
     def _from_traces(self, traces: List[Trace]) -> TraceCollection:
         """Build a new TraceCollection from already-wrapped Trace objects."""

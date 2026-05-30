@@ -4,6 +4,9 @@ trace/observation/session payloads.
 These live here (rather than on a collection class) so that ``trace.py``,
 ``trace_collection.py``, ``session.py``, and ``session_collection.py`` can all
 reuse them without importing each other or reaching into private statics.
+
+Symbols imported by other modules are public (no leading underscore); helpers
+used only within this module stay underscore-prefixed.
 """
 
 from __future__ import annotations
@@ -15,8 +18,8 @@ from typing import Any
 # Keys searched (in priority order) when pulling a query/output string out of a
 # structured payload. Kept module-level so callers can reuse the exact same
 # precedence the trace collection uses.
-_QUERY_KEYS = ('query', 'question', 'input', 'message', 'prompt', 'user_input', 'text')
-_OUTPUT_KEYS = ('output', 'response', 'answer', 'result', 'content', 'text', 'message')
+QUERY_KEYS = ('query', 'question', 'input', 'message', 'prompt', 'user_input', 'text')
+OUTPUT_KEYS = ('output', 'response', 'answer', 'result', 'content', 'text', 'message')
 
 # UTC-aware sentinel for missing/invalid timestamps. Using an aware value keeps
 # every comparison in a single timezone policy so sorts never mix naive/aware.
@@ -33,7 +36,7 @@ _TS_KEYS = (
 )
 
 
-def _safe_json_load(data: Any) -> Any:
+def safe_json_load(data: Any) -> Any:
     """Best-effort JSON decode: parse a JSON string, else return as-is."""
     if isinstance(data, str):
         try:
@@ -45,19 +48,20 @@ def _safe_json_load(data: Any) -> Any:
 
 def _extract_by_keys(payload: Any, keys: tuple[str, ...]) -> str:
     """Extract text from a payload by prioritized keys, with safe fallbacks."""
-    text, _ = _extract_text_with_match(payload, keys)
+    text, _ = extract_text_with_match(payload, keys)
     return text
 
 
-def _extract_text_with_match(payload: Any, keys: tuple[str, ...]) -> tuple[str, bool]:
-    """Extract text from a payload, reporting whether a real key matched.
+def extract_text_with_match(payload: Any, keys: tuple[str, ...]) -> tuple[str, bool]:
+    """
+    Extract text from a payload, reporting whether a real key matched.
 
     Returns ``(text, matched)`` where *matched* is ``True`` only when the value
     came from a string payload or a recognised key in a dict. When a dict has no
     matching key we fall back to ``json.dumps(dict)`` and report ``matched=False``
     so callers can distinguish "found a real message field" from "dumped a blob".
     """
-    data = _safe_json_load(payload)
+    data = safe_json_load(payload)
     if isinstance(data, str):
         return data, True
     if isinstance(data, dict):
@@ -68,16 +72,17 @@ def _extract_text_with_match(payload: Any, keys: tuple[str, ...]) -> tuple[str, 
     return str(data), False
 
 
-def _extract_query(input_data: Any) -> str:
-    return _extract_by_keys(input_data, _QUERY_KEYS)
+def extract_query(input_data: Any) -> str:
+    return _extract_by_keys(input_data, QUERY_KEYS)
 
 
-def _extract_output(output_data: Any) -> str:
-    return _extract_by_keys(output_data, _OUTPUT_KEYS)
+def extract_output(output_data: Any) -> str:
+    return _extract_by_keys(output_data, OUTPUT_KEYS)
 
 
-def _coerce_ts(value: Any) -> datetime:
-    """Normalize a timestamp value to a UTC-aware ``datetime``.
+def coerce_ts(value: Any) -> datetime:
+    """
+    Normalize a timestamp value to a UTC-aware ``datetime``.
 
     - ``datetime``: naive values are assumed UTC; aware values are converted.
     - ISO 8601 strings: parsed (``Z`` handled), then normalized as above.
@@ -111,8 +116,9 @@ def _get_timestamp_value(src: dict) -> Any:
     return None
 
 
-def _extract_trace_io(trace_obj: Any) -> tuple[Any, Any, Any, Any]:
-    """Extract raw ``(input, output, id, timestamp)`` from supported shapes.
+def extract_trace_io(trace_obj: Any) -> tuple[Any, Any, Any, Any]:
+    """
+    Extract raw ``(input, output, id, timestamp)`` from supported shapes.
 
     Handles SmartAccess-backed views (``TraceView``/``ObservationsView`` expose a
     ``_data`` dict), plain dicts, and generic SDK objects with attributes.

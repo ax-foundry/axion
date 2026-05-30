@@ -1,19 +1,20 @@
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional
 
 from axion._core.logging import get_logger
 from axion._core.schema import AIMessage, HumanMessage, ToolCall, ToolMessage
 from axion._core.tracing.collection._io import (
-    _OUTPUT_KEYS,
-    _QUERY_KEYS,
-    _coerce_ts,
-    _extract_output,
-    _extract_query,
-    _extract_text_with_match,
-    _extract_trace_io,
-    _safe_json_load,
+    OUTPUT_KEYS,
+    QUERY_KEYS,
+    coerce_ts,
+    extract_output,
+    extract_query,
+    extract_text_with_match,
+    extract_trace_io,
+    safe_json_load,
 )
 from axion._core.tracing.collection.observation_node import ObservationNode
 from axion._core.tracing.collection.trace import Trace
@@ -23,6 +24,15 @@ logger = get_logger(__name__)
 
 # Predicate deciding whether a Trace represents a conversational turn.
 TurnPredicate = Callable[[Trace], bool]
+
+
+@dataclass(frozen=True)
+class _TurnAnalysis:
+    """Cached result of best-effort turn discovery."""
+
+    names: tuple[str, ...]
+    dominant_name: Optional[str]
+    dominant_count: int
 
 
 class Session:
@@ -61,8 +71,8 @@ class Session:
 
         self._traces = TraceCollection(raw_traces, prompt_patterns=prompt_patterns)
 
-        # Lazily computed auto turn-name discovery cache.
-        self._auto_turn_names_cache: Optional[List[str]] = None
+        # Lazily computed best-effort turn discovery cache.
+        self._auto_turn_analysis_cache: Optional[_TurnAnalysis] = None
 
     # ------------------------------------------------------------------ #
     # Input coercion / sorting
@@ -117,8 +127,8 @@ class Session:
 
         def _key(item: tuple[int, Any]) -> tuple:
             idx, trace = item
-            _, _, _, ts = _extract_trace_io(trace)
-            return (_coerce_ts(ts), idx)
+            _, _, _, ts = extract_trace_io(trace)
+            return (coerce_ts(ts), idx)
 
         ordered = sorted(enumerate(raw_traces), key=_key)
         return [trace for _, trace in ordered]
@@ -130,7 +140,7 @@ class Session:
     @property
     def metadata(self) -> Dict[str, Any]:
         """Full session-level metadata (all captured fields)."""
-        return self._meta
+        return dict(self._meta)
 
     def _meta_get(self, *keys: str) -> Any:
         """First present (non-None) value among *keys* -- tolerates camelCase."""
@@ -168,49 +178,50 @@ class Session:
     @staticmethod
     def _trace_qualifies_as_turn(trace: Trace) -> bool:
         """A trace qualifies when both input AND output yield real (key-matched) text."""
-        raw_in, raw_out, _, _ = _extract_trace_io(trace._trace_obj)
-        in_text, in_match = _extract_text_with_match(raw_in, _QUERY_KEYS)
-        out_text, out_match = _extract_text_with_match(raw_out, _OUTPUT_KEYS)
+        raw_in, raw_out, _, _ = extract_trace_io(trace._trace_obj)
+        in_text, in_match = extract_text_with_match(raw_in, QUERY_KEYS)
+        out_text, out_match = extract_text_with_match(raw_out, OUTPUT_KEYS)
         return bool(in_match and in_text.strip() and out_match and out_text.strip())
 
-    def _qualifying_names(self) -> List[str]:
-        """First-seen-ordered list of distinct trace names that qualify as turns."""
-        if self._auto_turn_names_cache is not None:
-            return self._auto_turn_names_cache
+    def _auto_turn_analysis(self) -> _TurnAnalysis:
+        """Best-effort turn-name discovery, cached after the first scan."""
+        if self._auto_turn_analysis_cache is not None:
+            return self._auto_turn_analysis_cache
 
-        names: List[str] = []
-        for trace in self._traces:
+        names: list[str] = []
+        counts: dict[str, int] = {}
+        order: dict[str, int] = {}
+
+        for idx, trace in enumerate(self._traces):
             if self._trace_qualifies_as_turn(trace):
                 name = trace.name or 'unnamed'
                 if name not in names:
                     names.append(name)
-        self._auto_turn_names_cache = names
-        return names
+                counts[name] = counts.get(name, 0) + 1
+                order.setdefault(name, idx)
+
+        dominant = min(counts, key=lambda n: (-counts[n], order[n])) if counts else None
+        analysis = _TurnAnalysis(
+            names=tuple(names),
+            dominant_name=dominant,
+            dominant_count=counts[dominant] if dominant is not None else 0,
+        )
+        self._auto_turn_analysis_cache = analysis
+        return analysis
 
     @property
     def turn_trace_names(self) -> List[str]:
         """All distinct trace names that auto-detect as conversational turns."""
-        return list(self._qualifying_names())
+        return list(self._auto_turn_analysis().names)
 
     @property
     def turn_trace_name(self) -> Optional[str]:
         """The single dominant qualifying trace name (highest count, then first-seen)."""
-        counts: Dict[str, int] = {}
-        order: Dict[str, int] = {}
-        for idx, trace in enumerate(self._traces):
-            if not self._trace_qualifies_as_turn(trace):
-                continue
-            name = trace.name or 'unnamed'
-            counts[name] = counts.get(name, 0) + 1
-            order.setdefault(name, idx)
-
-        if not counts:
-            return None
-        # Highest count, tie-break by first-seen order (lowest index).
-        return min(counts, key=lambda n: (-counts[n], order[n]))
+        return self._auto_turn_analysis().dominant_name
 
     def _default_is_turn(self) -> TurnPredicate:
-        """Best-effort default predicate: qualifying text AND dominant trace name.
+        """
+        Best-effort default predicate: qualifying text AND dominant trace name.
 
         Documented as best-effort: a pipeline/workflow trace whose payload happens
         to contain ``input``/``output``/``message``/``result`` keys can be
@@ -230,7 +241,8 @@ class Session:
         name: Optional[str],
         is_turn: Optional[TurnPredicate],
     ) -> TurnPredicate:
-        """Resolve the turn predicate.
+        """
+        Resolve the turn predicate.
 
         Priority: per-call ``is_turn`` > per-call ``name`` > session-level
         ``turn_predicate`` > session-level ``turn_name`` > best-effort auto default.
@@ -276,12 +288,14 @@ class Session:
             list(self._traces),
             predicate,
             include_tools=include_tools,
-            metadata=self._meta or None,
+            metadata=self.metadata or None,
         )
 
     @property
     def turn_count(self) -> int:
         """Number of traces counted as turns under the session's default selector."""
+        if self._turn_predicate is None and self._turn_name is None:
+            return self._auto_turn_analysis().dominant_count
         predicate = self._resolve_turn_predicate(None, None)
         return sum(1 for t in self._traces if predicate(t))
 
@@ -363,6 +377,11 @@ class Session:
                 items.append(entry)
             elif isinstance(entry, dict):
                 items.append(DatasetItem(**entry))
+            else:
+                raise TypeError(
+                    'Session.to_dataset transform must return a DatasetItem, '
+                    'a dict, a list of those, or None.'
+                )
         return items
 
     # ------------------------------------------------------------------ #
@@ -393,7 +412,8 @@ class Session:
         turn_name: Optional[str] = None,
         turn_predicate: Optional[TurnPredicate] = None,
     ) -> 'Session':
-        """Fetch a Langfuse session and wrap it.
+        """
+        Fetch a Langfuse session and wrap it.
 
         Missing-session policy: if the id is not found, this returns an empty but
         *identifiable* ``Session`` (``id == session_id``, no traces) rather than
@@ -443,9 +463,13 @@ class Session:
         return iter(self._traces)
 
     def __repr__(self):
+        cached_turns = (
+            self._auto_turn_analysis_cache.dominant_count
+            if self._auto_turn_analysis_cache is not None
+            else '?'
+        )
         return (
-            f"<Session id='{self.id}' traces={len(self._traces)} "
-            f'turns={self.turn_count}>'
+            f"<Session id='{self.id}' traces={len(self._traces)} turns={cached_turns}>"
         )
 
 
@@ -455,7 +479,8 @@ def _build_conversation(
     include_tools: bool = False,
     metadata: Optional[Dict[str, Any]] = None,
 ) -> Optional[Any]:
-    """Build a ``MultiTurnConversation`` from the traces that satisfy *is_turn*.
+    """
+    Build a ``MultiTurnConversation`` from the traces that satisfy *is_turn*.
 
     Module-level so :class:`SessionCollection` can reuse it without instantiating
     a throwaway ``Session``. Returns ``None`` when no messages are produced
@@ -468,9 +493,9 @@ def _build_conversation(
         if not is_turn(trace):
             continue
 
-        raw_in, raw_out, _, _ = _extract_trace_io(trace._trace_obj)
-        user_text = _extract_query(raw_in) if raw_in is not None else ''
-        ai_text = _extract_output(raw_out) if raw_out is not None else ''
+        raw_in, raw_out, _, _ = extract_trace_io(trace._trace_obj)
+        user_text = extract_query(raw_in) if raw_in is not None else ''
+        ai_text = extract_output(raw_out) if raw_out is not None else ''
 
         if not user_text and not ai_text:
             continue
@@ -496,7 +521,8 @@ def _build_conversation(
 
 
 def _raw_obs_value(obs: Any, key: str) -> Any:
-    """Read a raw (unwrapped) value off an observation view/dict/object.
+    """
+    Read a raw (unwrapped) value off an observation view/dict/object.
 
     ``by_type`` yields ``ObservationsView``s whose dot-access re-wraps dicts as
     ``SmartDict``; reading ``_data`` directly keeps plain values for schema
@@ -511,7 +537,8 @@ def _raw_obs_value(obs: Any, key: str) -> Any:
 
 
 def _build_tool_messages(trace: Trace) -> tuple[List[ToolCall], List[ToolMessage]]:
-    """Best-effort ``(tool_calls, tool_messages)`` from a trace's TOOL observations.
+    """
+    Best-effort ``(tool_calls, tool_messages)`` from a trace's TOOL observations.
 
     Skips any observation without a name; never fabricates a tool call. The
     synthesized ``ToolCall.id`` is shared with its paired ``ToolMessage``.
@@ -526,7 +553,7 @@ def _build_tool_messages(trace: Trace) -> tuple[List[ToolCall], List[ToolMessage
 
         # Tool inputs may be stored as a dict or as a JSON string; decode the
         # latter before deciding the args are unusable.
-        args = _safe_json_load(_raw_obs_value(obs, 'input'))
+        args = safe_json_load(_raw_obs_value(obs, 'input'))
         if not isinstance(args, dict):
             args = {}
 
@@ -534,16 +561,25 @@ def _build_tool_messages(trace: Trace) -> tuple[List[ToolCall], List[ToolMessage
         tool_calls.append(call)
 
         raw_output = _raw_obs_value(obs, 'output')
-        if isinstance(raw_output, str):
-            content = raw_output
-        elif raw_output is not None:
-            try:
-                content = json.dumps(raw_output, default=str)
-            except TypeError:
-                content = str(raw_output)
-        else:
-            content = '[Tool execution completed]'
+        tool_message_kwargs: Dict[str, Any] = {
+            'content': _stringify_tool_output(raw_output),
+            'tool_call_id': call.id,
+        }
+        if isinstance(raw_output, dict):
+            tool_message_kwargs['tool_output'] = raw_output
 
-        tool_messages.append(ToolMessage(content=content, tool_call_id=call.id))
+        tool_messages.append(ToolMessage(**tool_message_kwargs))
 
     return tool_calls, tool_messages
+
+
+def _stringify_tool_output(raw_output: Any) -> str:
+    """Return the user-facing content string for a tool observation output."""
+    if isinstance(raw_output, str):
+        return raw_output
+    if raw_output is not None:
+        try:
+            return json.dumps(raw_output, default=str)
+        except TypeError:
+            return str(raw_output)
+    return '[Tool execution completed]'

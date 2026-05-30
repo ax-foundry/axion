@@ -88,6 +88,12 @@ class TestCoercion:
         assert s.metadata['custom_field'] == 'keep-me'
         assert len(s) == 1
 
+    def test_metadata_returns_copy(self):
+        s = Session({'id': 'sess-1', 'traces': [_chat_trace(0)]})
+        metadata = s.metadata
+        metadata['id'] = 'mutated'
+        assert s.id == 'sess-1'
+
     def test_sdk_like_object(self):
         sdk = MagicMock()
         sdk.model_dump.return_value = {
@@ -382,6 +388,7 @@ class TestIncludeTools:
         s = Session([_chat_trace(0, observations=[tool_obs])])
         conv = s.conversation(include_tools=True)
         assert '"rows"' in conv.messages[2].content
+        assert conv.messages[2].tool_output == {'rows': [1, 2, 3]}
 
 
 # ---------------------------------------------------------------------------
@@ -461,6 +468,13 @@ class TestToDataset:
         s = Session([_chat_trace(0)])
         ds = s.to_dataset(transform=lambda session: None)
         assert len(ds.items) == 0
+
+    def test_transform_returning_invalid_type_raises(self):
+        import pytest
+
+        s = Session([_chat_trace(0)])
+        with pytest.raises(TypeError, match='transform must return'):
+            s.to_dataset(transform=lambda session: 'not-a-dataset-item')
 
 
 # ---------------------------------------------------------------------------
@@ -587,3 +601,11 @@ def test_repr():
     r = repr(s)
     assert 'sess-1' in r
     assert 'traces=1' in r
+
+
+def test_repr_does_not_call_turn_predicate():
+    def explode(trace):
+        raise AssertionError('repr should not count turns')
+
+    s = Session({'id': 'sess-1', 'traces': [_chat_trace(0)]}, turn_predicate=explode)
+    assert "Session id='sess-1'" in repr(s)
