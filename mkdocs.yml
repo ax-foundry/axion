@@ -25,6 +25,7 @@ nav:
       - Configuration: guides/langfuse/configuration.md
       - Tracing: guides/langfuse/tracing.md
       - Trace Collection: guides/langfuse/trace-collection.md
+      - Session Collection: guides/langfuse/session-collection.md
       - Publishing: guides/langfuse/publishing.md
     - LLM Providers: guides/llm-providers.md
     - Synthetic Data: guides/synthetic.md

@@ -581,7 +581,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
         Fetch all full trace data for a session.
 
         Retrieves the session by ID, then fetches full trace details
-        for every trace in the session.
+        for every trace in the session. Traces whose full fetch fails are
+        dropped (see :meth:`get_session_with_traces` to retain stubs instead).
 
         Args:
             session_id: Langfuse session ID
@@ -590,16 +591,62 @@ class LangfuseTraceLoader(BaseTraceLoader):
         Returns:
             List of full Langfuse trace objects, or empty list on failure.
         """
+        _, traces = self.get_session_with_traces(
+            session_id, show_progress=show_progress, retain_stub_on_failure=False
+        )
+        return traces
+
+    def get_session_with_traces(
+        self,
+        session_id: str,
+        show_progress: bool = True,
+        retain_stub_on_failure: bool = True,
+        enrich: bool = True,
+    ) -> tuple[Optional[Any], List[Any]]:
+        """
+        Fetch a session along with trace details for each of its traces.
+
+        Retrieves the session by ID (preserving session-level metadata) and,
+        when ``enrich`` is True, fetches full trace details for every trace.
+
+        Args:
+            session_id: Langfuse session ID
+            show_progress: Whether to show a progress bar while fetching traces
+            retain_stub_on_failure: When a full ``fetch_trace`` fails, keep the
+                session's stub trace instead of dropping it. Stubs still carry
+                trace-level input/output (so a conversation turn is preserved),
+                only observation-level detail is missing. Defaults to ``True``.
+            enrich: When ``True`` (default), fetch full trace details (with
+                observations) via one ``fetch_trace`` per trace. When ``False``,
+                skip enrichment and return the session's stub traces directly
+                (a single API call). Stubs carry trace-level input/output, so the
+                conversation is still reconstructable, but observation-level data
+                (``by_type``/``tools``/``find_all``) will be empty.
+
+        Returns:
+            A ``(session, traces)`` tuple. ``session`` is the raw Langfuse
+            session object (or ``None`` if it could not be fetched), and
+            ``traces`` is the list of full (or, when not enriching / on failure,
+            stub) trace objects.
+        """
         session = self.fetch_session(session_id)
         if session is None:
-            return []
+            return None, []
 
-        traces = getattr(session, 'traces', None)
-        if not traces:
+        stubs = getattr(session, 'traces', None)
+        if not stubs:
             logger.info(f'Session {session_id} has no traces')
-            return []
+            return session, []
 
-        trace_ids = [t.id for t in traces if getattr(t, 'id', None)]
+        if not enrich:
+            logger.info(
+                f'Skipping enrichment for session {session_id}; '
+                f'using {len(stubs)} stub traces (trace-level I/O only).'
+            )
+            return session, list(stubs)
+
+        stub_by_id = {t.id: t for t in stubs if getattr(t, 'id', None)}
+        trace_ids = list(stub_by_id.keys())
         logger.info(
             f'Fetching {len(trace_ids)} full traces for session {session_id}...'
         )
@@ -613,11 +660,16 @@ class LangfuseTraceLoader(BaseTraceLoader):
             trace = self.fetch_trace(tid)
             if trace is not None:
                 results.append(trace)
+            elif retain_stub_on_failure:
+                logger.warning(
+                    f'Full fetch failed for trace {tid}; retaining session stub.'
+                )
+                results.append(stub_by_id[tid])
 
         logger.info(
             f'Successfully loaded {len(results)} traces for session {session_id}'
         )
-        return results
+        return session, results
 
     def push_scores_to_langfuse(
         self,

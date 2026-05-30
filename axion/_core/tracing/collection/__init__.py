@@ -10,6 +10,8 @@ from axion._core.tracing.collection.prompt_patterns import (
     PromptPatternsBase,
     create_extraction_pattern,
 )
+from axion._core.tracing.collection.session import Session
+from axion._core.tracing.collection.session_collection import SessionCollection
 from axion._core.tracing.collection.smart_access import (
     SmartAccess,
     SmartDict,
@@ -36,6 +38,9 @@ __all__ = [
     'ObservationNode',
     # Collection container
     'TraceCollection',
+    # Session wrappers
+    'Session',
+    'SessionCollection',
     # Prompt patterns
     'PromptPatternsBase',
     'create_extraction_pattern',

@@ -17,7 +17,7 @@ from axion.synthetic import DocumentQAGenerator, GenerationParams
 
 ## DocumentQAGenerator
 
-::: axion.synthetic.DocumentQAGenerator
+::: axion.synthetic.document_generator.DocumentQAGenerator
     options:
       show_root_heading: true
 
