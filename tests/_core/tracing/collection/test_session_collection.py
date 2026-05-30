@@ -23,7 +23,7 @@ class FakeObservation:
 @dataclass
 class FakeRawTrace:
     id: str = 'trace-1'
-    name: str = 'athena-chat'
+    name: str = 'chat-turn'
     input: Any = None
     output: Any = None
     observations: List[Any] = field(default_factory=list)
@@ -34,7 +34,7 @@ class FakeRawTrace:
 def _chat_trace(i, observations=None):
     return FakeRawTrace(
         id=f'chat-{i}',
-        name='athena-chat',
+        name='chat-turn',
         input=f'question {i}',
         output=f'answer {i}',
         observations=observations or [],
@@ -178,7 +178,7 @@ class TestToDataset:
             'traces': [
                 FakeRawTrace(
                     id='p0',
-                    name='athena',
+                    name='pipeline',
                     input={'case_id': 'C0'},
                     output={'outcome': 'done'},
                 )
@@ -210,7 +210,13 @@ class TestFromLangfuse:
     def test_loops_session_ids(self):
         loader = MagicMock()
 
-        def fake_get(session_id, show_progress=True, enrich=True):
+        def fake_get(
+            session_id,
+            show_progress=True,
+            enrich=True,
+            trace_name=None,
+            trace_predicate=None,
+        ):
             return ({'id': session_id, 'environment': 'production'}, [_chat_trace(0)])
 
         loader.get_session_with_traces.side_effect = fake_get
@@ -222,9 +228,15 @@ class TestFromLangfuse:
     def test_turn_name_threaded_to_sessions(self):
         loader = MagicMock()
 
-        def fake_get(session_id, show_progress=True, enrich=True):
+        def fake_get(
+            session_id,
+            show_progress=True,
+            enrich=True,
+            trace_name=None,
+            trace_predicate=None,
+        ):
             traces = [
-                _chat_trace(0),  # name 'athena-chat'
+                _chat_trace(0),  # name 'chat-turn'
                 FakeRawTrace(
                     id='other',
                     name='other-chat',
@@ -236,12 +248,12 @@ class TestFromLangfuse:
 
         loader.get_session_with_traces.side_effect = fake_get
         sc = SessionCollection.from_langfuse(
-            ['s1'], loader=loader, turn_name='athena-chat'
+            ['s1'], loader=loader, turn_name='chat-turn'
         )
         conv = sc[0].conversation()
-        assert len(conv.messages) == 2  # only the athena-chat turn
+        assert len(conv.messages) == 2  # only the chat-turn turn
         # Default survives filtering (re-wrap preserves config).
-        assert sc.filter(lambda s: True)[0]._turn_name == 'athena-chat'
+        assert sc.filter(lambda s: True)[0]._turn_name == 'chat-turn'
 
     def test_enrich_false_threaded_to_loader(self):
         loader = MagicMock()
@@ -256,7 +268,13 @@ class TestFromLangfuse:
     def test_skips_missing_sessions(self):
         loader = MagicMock()
 
-        def fake_get(session_id, show_progress=True, enrich=True):
+        def fake_get(
+            session_id,
+            show_progress=True,
+            enrich=True,
+            trace_name=None,
+            trace_predicate=None,
+        ):
             if session_id == 'missing':
                 return (None, [])
             return ({'id': session_id}, [_chat_trace(0)])
@@ -265,3 +283,73 @@ class TestFromLangfuse:
         sc = SessionCollection.from_langfuse(['s1', 'missing'], loader=loader)
         assert len(sc) == 1
         assert sc[0].id == 's1'
+
+
+# ---------------------------------------------------------------------------
+# turns_only: prune each session's traces to the resolved turn selector
+# ---------------------------------------------------------------------------
+
+
+def _mixed_session_dict(sid):
+    """A session with one chat-turn turn and one pipeline trace."""
+    return {
+        'id': sid,
+        'traces': [
+            _chat_trace(0),  # name 'chat-turn'
+            FakeRawTrace(
+                id='pipe',
+                name='pipeline',
+                input={'case_id': 'C1'},
+                output={'outcome': 'done'},
+                observations=[FakeObservation(name='search_db', type='TOOL')],
+            ),
+        ],
+    }
+
+
+class TestTurnsOnly:
+    def test_opt_out_keeps_all_traces(self):
+        sc = SessionCollection(
+            [_mixed_session_dict('s1')],
+            turn_name='chat-turn',
+            turns_only=False,
+        )
+        assert len(sc[0]) == 2
+
+    def test_prunes_traces_at_construction_by_default(self):
+        # turns_only defaults to True.
+        sc = SessionCollection([_mixed_session_dict('s1')], turn_name='chat-turn')
+        assert len(sc[0]) == 1
+        assert sc[0][0].name == 'chat-turn'
+        assert sc[0].by_type('TOOL') == []
+
+    def test_threaded_via_from_langfuse(self):
+        loader = MagicMock()
+
+        def fake_get(
+            session_id,
+            show_progress=True,
+            enrich=True,
+            trace_name=None,
+            trace_predicate=None,
+        ):
+            return (
+                {'id': session_id},
+                _mixed_session_dict(session_id)['traces'],
+            )
+
+        loader.get_session_with_traces.side_effect = fake_get
+        sc = SessionCollection.from_langfuse(
+            ['s1'], loader=loader, turn_name='chat-turn'
+        )
+        assert len(sc[0]) == 1
+        assert sc[0][0].name == 'chat-turn'
+
+    def test_survives_filtering(self):
+        sc = SessionCollection(
+            [_mixed_session_dict('s1')],
+            turn_name='chat-turn',
+        )
+        # Re-wrapping via filter must preserve the turns_only config.
+        assert sc._turns_only is True
+        assert len(sc.filter(lambda s: True)[0]) == 1

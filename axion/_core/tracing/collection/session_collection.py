@@ -27,10 +27,12 @@ class SessionCollection:
         prompt_patterns: Any = None,
         turn_name: Optional[str] = None,
         turn_predicate: Optional[TurnPredicate] = None,
+        turns_only: bool = True,
     ):
         self._prompt_patterns = prompt_patterns
         self._turn_name = turn_name
         self._turn_predicate = turn_predicate
+        self._turns_only = turns_only
         # Already-built Session instances keep their own turn config; raw items
         # are constructed with the collection-level default selector.
         self._sessions = [
@@ -41,6 +43,7 @@ class SessionCollection:
                 prompt_patterns=prompt_patterns,
                 turn_name=turn_name,
                 turn_predicate=turn_predicate,
+                turns_only=turns_only,
             )
             for item in data
         ]
@@ -60,6 +63,9 @@ class SessionCollection:
         enrich: bool = True,
         turn_name: Optional[str] = None,
         turn_predicate: Optional[TurnPredicate] = None,
+        turns_only: bool = True,
+        trace_name: Optional[str] = None,
+        trace_predicate: Optional[Callable[[Any], bool]] = None,
     ) -> SessionCollection:
         """
         Fetch the given Langfuse sessions and wrap them.
@@ -83,10 +89,23 @@ class SessionCollection:
                 conversation-only workflows over many sessions.
             turn_name: Default turn trace name applied to every session's
                 ``conversation()``/``to_dataset()``/``turn_count`` (e.g.
-                ``'athena-chat'``); overridable per-call. Reliable -- bypasses
+                ``'chat-turn'``); overridable per-call. Reliable -- bypasses
                 best-effort auto-detection.
             turn_predicate: Default ``(Trace) -> bool`` turn selector; wins over
                 ``turn_name`` when both are given.
+            turns_only: When ``True`` (default), additionally prune each
+                session's ``traces`` down to the resolved turn selector, so
+                ``session[i]``/``by_type()`` only ever see turn traces. Set
+                ``False`` to keep every trace (e.g. pipeline runs needed for
+                tool aggregation).
+            trace_name: When given, only traces whose name equals this value are
+                fetched/enriched -- non-matching traces are filtered out at the
+                loader **before** any per-trace API call, so they are never pulled.
+                Use this (rather than ``turns_only``) when you want to avoid
+                fetching pipeline traces entirely. Often set equal to ``turn_name``.
+            trace_predicate: When given, only stub traces for which this
+                ``(stub) -> bool`` returns ``True`` are fetched (combined with
+                ``trace_name``). Filters at the loader, before enrichment.
         """
         if loader is None:
             from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
@@ -96,7 +115,11 @@ class SessionCollection:
         sessions: List[Session] = []
         for session_id in session_ids:
             session_obj, full_traces = loader.get_session_with_traces(
-                session_id, show_progress=show_progress, enrich=enrich
+                session_id,
+                show_progress=show_progress,
+                enrich=enrich,
+                trace_name=trace_name,
+                trace_predicate=trace_predicate,
             )
             if session_obj is None:
                 logger.warning('Session %s not found; skipping.', session_id)
@@ -108,6 +131,7 @@ class SessionCollection:
                     prompt_patterns=prompt_patterns,
                     turn_name=turn_name,
                     turn_predicate=turn_predicate,
+                    turns_only=turns_only,
                 )
             )
 
@@ -116,6 +140,7 @@ class SessionCollection:
             prompt_patterns=prompt_patterns,
             turn_name=turn_name,
             turn_predicate=turn_predicate,
+            turns_only=turns_only,
         )
 
     @classmethod
@@ -125,6 +150,7 @@ class SessionCollection:
         prompt_patterns: Any = None,
         turn_name: Optional[str] = None,
         turn_predicate: Optional[TurnPredicate] = None,
+        turns_only: bool = True,
     ) -> SessionCollection:
         """Load a SessionCollection from a JSON file (list of session dicts)."""
         source = Path(path).expanduser()
@@ -136,6 +162,7 @@ class SessionCollection:
             prompt_patterns=prompt_patterns,
             turn_name=turn_name,
             turn_predicate=turn_predicate,
+            turns_only=turns_only,
         )
 
     # ------------------------------------------------------------------ #
@@ -193,6 +220,7 @@ class SessionCollection:
             prompt_patterns=self._prompt_patterns,
             turn_name=self._turn_name,
             turn_predicate=self._turn_predicate,
+            turns_only=self._turns_only,
         )
 
     # ------------------------------------------------------------------ #

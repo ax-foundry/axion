@@ -55,13 +55,15 @@ class Session:
         sort: bool = True,
         turn_name: Optional[str] = None,
         turn_predicate: Optional[TurnPredicate] = None,
+        turns_only: bool = True,
     ):
         self._prompt_patterns = prompt_patterns
         # Default turn selector applied by conversation()/to_dataset()/turn_count
         # when no per-call name=/is_turn= is given. Lets callers pin turn
-        # selection once (e.g. turn_name='athena-chat') instead of repeating it.
+        # selection once (e.g. turn_name='chat-turn') instead of repeating it.
         self._turn_name = turn_name
         self._turn_predicate = turn_predicate
+        self._turns_only = turns_only
         meta, coerced_traces = self._coerce_session_input(session_data)
         self._meta: Dict[str, Any] = meta
 
@@ -73,6 +75,15 @@ class Session:
 
         # Lazily computed best-effort turn discovery cache.
         self._auto_turn_analysis_cache: Optional[_TurnAnalysis] = None
+
+        # On by default: prune the stored traces down to the resolved turn
+        # selector, so session.traces / session[i] / by_type() only ever see turn
+        # traces. Set turns_only=False to keep every trace (e.g. pipeline runs
+        # needed for tool aggregation).
+        if turns_only:
+            predicate = self._resolve_turn_predicate(None, None)
+            self._traces = self._traces.filter(predicate)
+            self._auto_turn_analysis_cache = None
 
     # ------------------------------------------------------------------ #
     # Input coercion / sorting
@@ -411,6 +422,9 @@ class Session:
         enrich: bool = True,
         turn_name: Optional[str] = None,
         turn_predicate: Optional[TurnPredicate] = None,
+        turns_only: bool = True,
+        trace_name: Optional[str] = None,
+        trace_predicate: Optional[Callable[[Any], bool]] = None,
     ) -> 'Session':
         """
         Fetch a Langfuse session and wrap it.
@@ -429,6 +443,16 @@ class Session:
 
         ``turn_name``/``turn_predicate`` set the default turn selector applied by
         ``conversation()``/``to_dataset()``/``turn_count`` (overridable per-call).
+
+        ``turns_only`` (default ``True``) additionally prunes ``session.traces``
+        down to that selector, so ``session[i]``/``by_type()`` only ever see turn
+        traces. Set ``False`` to keep every trace (e.g. pipeline runs needed for
+        tool aggregation).
+
+        ``trace_name``/``trace_predicate`` filter at the loader **before** any
+        per-trace fetch, so non-matching traces (e.g. pipeline runs) are never
+        pulled at all. Use these (rather than ``turns_only``) to avoid the fetch
+        cost entirely; ``trace_name`` is often set equal to ``turn_name``.
         """
         if loader is None:
             from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
@@ -436,7 +460,11 @@ class Session:
             loader = LangfuseTraceLoader()
 
         session_obj, full_traces = loader.get_session_with_traces(
-            session_id, show_progress=show_progress, enrich=enrich
+            session_id,
+            show_progress=show_progress,
+            enrich=enrich,
+            trace_name=trace_name,
+            trace_predicate=trace_predicate,
         )
         if session_obj is None:
             # Build from the raw id so the Session is still usable/identifiable.
@@ -447,6 +475,7 @@ class Session:
             prompt_patterns=prompt_patterns,
             turn_name=turn_name,
             turn_predicate=turn_predicate,
+            turns_only=turns_only,
         )
 
     # ------------------------------------------------------------------ #

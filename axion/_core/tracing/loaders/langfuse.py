@@ -602,6 +602,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
         show_progress: bool = True,
         retain_stub_on_failure: bool = True,
         enrich: bool = True,
+        trace_name: Optional[str] = None,
+        trace_predicate: Optional[Callable[[Any], bool]] = None,
     ) -> tuple[Optional[Any], List[Any]]:
         """
         Fetch a session along with trace details for each of its traces.
@@ -622,6 +624,13 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 (a single API call). Stubs carry trace-level input/output, so the
                 conversation is still reconstructable, but observation-level data
                 (``by_type``/``tools``/``find_all``) will be empty.
+            trace_name: When given, keep only stub traces whose ``name`` equals
+                this value **before** enrichment, so non-matching traces are never
+                fetched (saves one API call per skipped trace).
+            trace_predicate: When given, keep only stub traces for which this
+                ``(stub) -> bool`` returns ``True``, applied before enrichment.
+                Combined with ``trace_name`` (both must pass). Lets callers filter
+                on any stub attribute without fetching the full trace.
 
         Returns:
             A ``(session, traces)`` tuple. ``session`` is the raw Langfuse
@@ -636,6 +645,11 @@ class LangfuseTraceLoader(BaseTraceLoader):
         stubs = getattr(session, 'traces', None)
         if not stubs:
             logger.info(f'Session {session_id} has no traces')
+            return session, []
+
+        stubs = self._filter_stub_traces(stubs, trace_name, trace_predicate)
+        if not stubs:
+            logger.info(f'No traces in session {session_id} matched the trace filter.')
             return session, []
 
         if not enrich:
@@ -670,6 +684,28 @@ class LangfuseTraceLoader(BaseTraceLoader):
             f'Successfully loaded {len(results)} traces for session {session_id}'
         )
         return session, results
+
+    @staticmethod
+    def _filter_stub_traces(
+        stubs: List[Any],
+        trace_name: Optional[str],
+        trace_predicate: Optional[Callable[[Any], bool]],
+    ) -> List[Any]:
+        """Filter session stub traces by name/predicate before enrichment.
+
+        Applied to the cheap stubs so non-matching traces are never fetched.
+        """
+        if trace_name is None and trace_predicate is None:
+            return list(stubs)
+
+        kept = []
+        for stub in stubs:
+            if trace_name is not None and getattr(stub, 'name', None) != trace_name:
+                continue
+            if trace_predicate is not None and not trace_predicate(stub):
+                continue
+            kept.append(stub)
+        return kept
 
     def push_scores_to_langfuse(
         self,

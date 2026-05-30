@@ -143,7 +143,7 @@ Sessions often mix conversational traces (text I/O) with pipeline/workflow trace
 
     ```python
     # Only traces with this exact name become turns.
-    conv = session.conversation(name='athena-chat')
+    conv = session.conversation(name='chat-turn')
     ```
 
 === "By predicate (reliable)"
@@ -151,7 +151,7 @@ Sessions often mix conversational traces (text I/O) with pipeline/workflow trace
     ```python
     # Arbitrary logic; wins over name=.
     conv = session.conversation(
-        is_turn=lambda trace: trace.name in {'athena-chat', 'athena-chat-v2'}
+        is_turn=lambda trace: trace.name in {'chat-turn', 'chat-turn-v2'}
     )
     ```
 
@@ -181,10 +181,10 @@ Rather than passing `name=` on every call, pin a default selector once at fetch 
 sc = SessionCollection.from_langfuse(
     session_ids=['session-a'],
     loader=loader,
-    turn_name='athena-chat',          # default for every session
+    turn_name='chat-turn',          # default for every session
 )
 
-sc[0].conversation()                  # uses 'athena-chat' automatically
+sc[0].conversation()                  # uses 'chat-turn' automatically
 sc[0].conversation(name='other')      # per-call override still wins
 ```
 
@@ -194,7 +194,7 @@ sc[0].conversation(name='other')      # per-call override still wins
 sc = SessionCollection.from_langfuse(
     session_ids=['session-a'],
     loader=loader,
-    turn_predicate=lambda t: t.name == 'athena-chat',
+    turn_predicate=lambda t: t.name == 'chat-turn',
 )
 ```
 
@@ -206,12 +206,71 @@ Selector priority, highest first:
 4. Session-level `turn_name=`
 5. Best-effort auto-detection
 
+### Pruning Traces to Turns Only
+
+By default (`turns_only=True`), the resolved selector also prunes the stored traces — so `session.traces`, `session[i]`, and `by_type()` only ever see turn traces:
+
+```python
+sc = SessionCollection.from_langfuse(
+    session_ids=['session-a'],
+    loader=loader,
+    turn_name='chat-turn',          # turns_only=True is the default
+)
+
+len(sc[0])                            # only chat-turn traces
+sc[0][0].name                         # 'chat-turn'
+sc[0].by_type('TOOL')                 # [] if tools lived only in pruned traces
+```
+
+This is equivalent to `session.traces.filter_by(name='chat-turn')`, applied once at construction. The flag is accepted by `Session(...)`, `Session.from_langfuse`, `SessionCollection(...)`, `SessionCollection.from_langfuse`, and `load_json`, and survives `filter()`/`filter_by()` re-wrapping.
+
+Pass `turns_only=False` to keep *every* trace (pipeline runs included) while still scoping `conversation()`/`to_dataset()`/`turn_count` to the selector — useful when aggregation like `by_type('TOOL')`/`tools()` needs the pipeline traces:
+
+```python
+sc = SessionCollection.from_langfuse(
+    session_ids=['session-a'],
+    loader=loader,
+    turn_name='chat-turn',
+    turns_only=False,                 # keep pipeline traces for tool aggregation
+)
+
+len(sc[0])                            # all traces (chat + pipeline)
+sc[0].conversation()                  # still only the chat-turn turns
+sc[0].tools()                         # TOOL observations from the pipeline traces
+```
+
+!!! warning "`turns_only` prunes *after* fetching"
+    `turns_only` prunes traces **after** they are fetched from Langfuse — with `enrich=True`, the pipeline traces are still fetched (one API call each) and then discarded. To avoid pulling them at all, use `trace_name=`/`trace_predicate=` (below), which filter at the loader so non-matching traces are never enriched.
+
+### Filtering at Fetch Time: `trace_name=`
+
+`turns_only` controls what the in-memory `Session` exposes, but `from_langfuse` still fetches every trace first. To skip fetching non-matching traces entirely (saving one API call per skipped trace), pass `trace_name=` — the session's trace stubs are filtered **before** enrichment, so e.g. pipeline traces are never pulled:
+
+```python
+sc = SessionCollection.from_langfuse(
+    session_ids=['session-a'],
+    loader=loader,
+    turn_name='chat-turn',            # selects turns for conversation()
+    trace_name='chat-turn',           # only 'chat-turn' traces are fetched at all
+)
+
+len(sc[0])                            # only 'chat-turn' traces — others never pulled
+```
+
+`trace_predicate=` accepts an arbitrary `(stub) -> bool` for filtering on any stub attribute (combined with `trace_name=` when both are given). Both are available on `Session.from_langfuse` and `SessionCollection.from_langfuse`.
+
+| Knob | When it acts | Effect |
+|------|-------------|--------|
+| `trace_name=` / `trace_predicate=` | At the loader, **before** fetch | Non-matching traces are never pulled |
+| `turns_only=` | In the `Session`, **after** fetch | Prunes already-fetched traces from `session.traces` |
+| `turn_name=` / `turn_predicate=` | At `conversation()`/`turn_count` | Selects which traces count as turns |
+
 ### Including Tool Calls
 
 Tool reconstruction is **off by default**. Opt in with `include_tools=True` to attach `tool_calls` to each `AIMessage` and a paired `ToolMessage` per tool, reconstructed from each turn's `TOOL` observations:
 
 ```python
-conv = session.conversation(name='athena-chat', include_tools=True)
+conv = session.conversation(name='chat-turn', include_tools=True)
 ```
 
 !!! note "Best-effort, skip-malformed"
@@ -300,7 +359,7 @@ Pass a `transform(session)` returning a `DatasetItem`, a `dict`, **or a list** o
 from axion.dataset import DatasetItem
 
 def per_turn(session):
-    conv = session.conversation(name='athena-chat')
+    conv = session.conversation(name='chat-turn')
     if conv is None:
         return None
     return DatasetItem(
@@ -346,7 +405,7 @@ loader = LangfuseTraceLoader()
 sc = SessionCollection.from_langfuse(
     session_ids=['01KSQTKNK4YEWEFYA1ATEQ9QN1'],
     loader=loader,
-    turn_name='athena-chat',
+    turn_name='chat-turn',
 )
 
 # 2. Explore
@@ -355,13 +414,13 @@ for session in sc:
     print('  tools used:', [t.name for t in session.tools()])
 
 # 3. Convert to a multi-turn dataset (one item per session)
-dataset = sc.to_dataset(name='athena-conversations')
+dataset = sc.to_dataset(name='chat-conversations')
 
 # 4. Evaluate
 result = await evaluation_runner(
     evaluation_inputs=dataset,
     scoring_metrics=[AnswerRelevancy()],
-    evaluation_name='Athena Multi-Turn Evaluation',
+    evaluation_name='Multi-Turn Evaluation',
 )
 
 # 5. Publish scores back to Langfuse
@@ -376,8 +435,8 @@ result.publish_to_observability()
 
 | Method | Description |
 |--------|-------------|
-| `from_langfuse(session_ids, loader, prompt_patterns, show_progress, enrich, turn_name, turn_predicate)` | Fetch sessions from Langfuse and wrap |
-| `load_json(path, prompt_patterns, turn_name, turn_predicate)` | Load from a JSON file |
+| `from_langfuse(session_ids, loader, prompt_patterns, show_progress, enrich, turn_name, turn_predicate, turns_only, trace_name, trace_predicate)` | Fetch sessions from Langfuse and wrap |
+| `load_json(path, prompt_patterns, turn_name, turn_predicate, turns_only)` | Load from a JSON file |
 | `filter(condition)` | Filter by lambda, returns new `SessionCollection` |
 | `filter_by(**kwargs)` | Filter by attribute equality |
 | `by_type(type_str)` | All observations of a type across every session |
@@ -408,7 +467,7 @@ result.publish_to_observability()
 | `session.find_all(name, type)` | All matching nodes across all traces |
 | `session.to_dataset(name, transform)` | Convert to a `Dataset` (one multi-turn item) |
 | `session.to_dict()` | Full metadata + JSON-able traces (round-trippable) |
-| `Session.from_langfuse(session_id, loader, prompt_patterns, show_progress, enrich, turn_name, turn_predicate)` | Fetch a single session and wrap |
+| `Session.from_langfuse(session_id, loader, prompt_patterns, show_progress, enrich, turn_name, turn_predicate, turns_only, trace_name, trace_predicate)` | Fetch a single session and wrap |
 
 ---
 

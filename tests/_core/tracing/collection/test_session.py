@@ -34,7 +34,7 @@ class FakeRawTrace:
     tags: List[str] = field(default_factory=list)
 
 
-def _chat_trace(i, ts=None, name='athena-chat', observations=None):
+def _chat_trace(i, ts=None, name='chat-turn', observations=None):
     """A conversational turn: plain-text trace-level input/output."""
     return FakeRawTrace(
         id=f'chat-{i}',
@@ -50,7 +50,7 @@ def _pipeline_trace(i, ts=None):
     """A non-conversational pipeline run: dict I/O with no query/output keys."""
     return FakeRawTrace(
         id=f'pipe-{i}',
-        name='athena',
+        name='pipeline',
         input={'case_id': f'C{i}', 'execution_id': f'E{i}'},
         output={'outcome': 'done', 'workflow_status': 'complete'},
         timestamp=ts,
@@ -116,7 +116,7 @@ class TestCoercion:
         full = [_chat_trace(0), _chat_trace(1)]
         s = Session({'id': 'x', 'traces': sdk_stub_traces}, full_traces=full)
         assert len(s) == 2
-        assert all(t.name == 'athena-chat' for t in s)
+        assert all(t.name == 'chat-turn' for t in s)
 
     def test_camelcase_meta_aliases(self):
         s = Session(
@@ -197,12 +197,12 @@ class TestTurnDetection:
     def test_only_chat_traces_qualify(self):
         s = Session([_chat_trace(0), _pipeline_trace(0), _chat_trace(1)])
         assert s.turn_count == 2
-        assert s.turn_trace_name == 'athena-chat'
-        assert s.turn_trace_names == ['athena-chat']
+        assert s.turn_trace_name == 'chat-turn'
+        assert s.turn_trace_names == ['chat-turn']
 
     def test_name_override_reliable(self):
-        s = Session([_chat_trace(0), _pipeline_trace(0)])
-        conv = s.conversation(name='athena')
+        s = Session([_chat_trace(0), _pipeline_trace(0)], turns_only=False)
+        conv = s.conversation(name='pipeline')
         # Pipeline trace has dict I/O; query/output fall back to json.dumps,
         # but a turn is still built because the user side is non-empty.
         assert conv is not None
@@ -234,7 +234,7 @@ class TestTurnDetection:
             _chat_trace(0, name='chat-a'),
             _chat_trace(1, name='chat-b'),
         ]
-        s = Session(traces, sort=False)
+        s = Session(traces, sort=False, turns_only=False)
         assert s.turn_trace_name == 'chat-a'
         assert set(s.turn_trace_names) == {'chat-a', 'chat-b'}
 
@@ -250,22 +250,22 @@ class TestTurnDetection:
     def test_default_turn_name_applies_to_conversation(self):
         # Two chat names present; pin one as the session default.
         traces = [
-            _chat_trace(0, name='athena-chat'),
-            _chat_trace(1, name='athena-chat'),
+            _chat_trace(0, name='chat-turn'),
+            _chat_trace(1, name='chat-turn'),
             _chat_trace(2, name='other-chat'),
         ]
-        s = Session(traces, sort=False, turn_name='athena-chat')
+        s = Session(traces, sort=False, turn_name='chat-turn')
         conv = s.conversation()  # no per-call name
         assert conv is not None
-        assert len(conv.messages) == 4  # only the 2 athena-chat turns
+        assert len(conv.messages) == 4  # only the 2 chat-turn turns
         assert s.turn_count == 2
 
     def test_per_call_name_overrides_default(self):
         traces = [
-            _chat_trace(0, name='athena-chat'),
+            _chat_trace(0, name='chat-turn'),
             _chat_trace(1, name='other-chat'),
         ]
-        s = Session(traces, sort=False, turn_name='athena-chat')
+        s = Session(traces, sort=False, turn_name='chat-turn', turns_only=False)
         conv = s.conversation(name='other-chat')  # override
         assert len(conv.messages) == 2
 
@@ -275,6 +275,68 @@ class TestTurnDetection:
         conv = s.conversation()
         assert len(conv.messages) == 2
         assert s.turn_count == 1
+
+
+# ---------------------------------------------------------------------------
+# turns_only: prune stored traces to the resolved turn selector
+# ---------------------------------------------------------------------------
+
+
+class TestTurnsOnly:
+    def test_opt_out_keeps_all_traces(self):
+        traces = [
+            _chat_trace(0, name='chat-turn'),
+            _pipeline_trace(1),
+            _chat_trace(2, name='chat-turn'),
+        ]
+        s = Session(traces, sort=False, turn_name='chat-turn', turns_only=False)
+        # Opt-out: traces are unfiltered, so the pipeline trace is still present.
+        assert len(s) == 3
+        assert {t.name for t in s} == {'chat-turn', 'pipeline'}
+
+    def test_turn_name_prunes_traces_by_default(self):
+        traces = [
+            _chat_trace(0, name='chat-turn'),
+            _pipeline_trace(1),
+            _chat_trace(2, name='chat-turn'),
+        ]
+        # turns_only defaults to True.
+        s = Session(traces, sort=False, turn_name='chat-turn')
+        assert len(s) == 2
+        assert [t.name for t in s] == ['chat-turn', 'chat-turn']
+        assert s[0].name == 'chat-turn'
+
+    def test_pruned_traces_drop_pipeline_observations(self):
+        # TOOL observations only live on the pruned pipeline trace.
+        chat = _chat_trace(0, name='chat-turn')
+        pipe = _pipeline_trace(1)
+        pipe.observations = [FakeObservation(name='search_db', type='TOOL')]
+        s = Session([chat, pipe], sort=False, turn_name='chat-turn', turns_only=True)
+        assert len(s) == 1
+        assert s.by_type('TOOL') == []
+
+    def test_turn_predicate_prunes_traces(self):
+        traces = [_chat_trace(0), _chat_trace(1), _chat_trace(2)]
+        s = Session(
+            traces,
+            sort=False,
+            turn_predicate=lambda t: t.id == 'chat-1',
+            turns_only=True,
+        )
+        assert len(s) == 1
+        assert s[0].id == 'chat-1'
+
+    def test_pruned_session_conversation_consistent(self):
+        traces = [
+            _chat_trace(0, name='chat-turn'),
+            _pipeline_trace(1),
+            _chat_trace(2, name='chat-turn'),
+        ]
+        s = Session(traces, sort=False, turn_name='chat-turn', turns_only=True)
+        conv = s.conversation()
+        assert conv is not None
+        assert len(conv.messages) == 4  # 2 turns, human + ai each
+        assert s.turn_count == 2
 
 
 # ---------------------------------------------------------------------------
@@ -607,5 +669,9 @@ def test_repr_does_not_call_turn_predicate():
     def explode(trace):
         raise AssertionError('repr should not count turns')
 
-    s = Session({'id': 'sess-1', 'traces': [_chat_trace(0)]}, turn_predicate=explode)
+    s = Session(
+        {'id': 'sess-1', 'traces': [_chat_trace(0)]},
+        turn_predicate=explode,
+        turns_only=False,
+    )
     assert "Session id='sess-1'" in repr(s)
