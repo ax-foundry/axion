@@ -8,7 +8,11 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 from axion._core.logging import get_logger
-from axion._core.tracing.collection.models import ObservationsView, TraceView
+from axion._core.tracing.collection._io import (
+    extract_output,
+    extract_query,
+    extract_trace_io,
+)
 from axion._core.tracing.collection.observation_node import ObservationNode
 from axion._core.tracing.collection.smart_access import SmartAccess
 from axion._core.tracing.collection.trace import Trace
@@ -253,8 +257,8 @@ class TraceCollection:
             trace_obj
         )
 
-        query = _extract_query(raw_input) if raw_input is not None else ''
-        actual_output = _extract_output(raw_output) if raw_output is not None else ''
+        query = extract_query(raw_input) if raw_input is not None else ''
+        actual_output = extract_output(raw_output) if raw_output is not None else ''
 
         if not query and not actual_output:
             return {}
@@ -272,45 +276,11 @@ class TraceCollection:
 
     @staticmethod
     def _extract_trace_io(trace_obj: Any) -> tuple[Any, Any, Any, Any]:
-        """Extract raw input/output/id/timestamp from supported trace object shapes."""
-        _ts_keys = ('timestamp', 'created_at', 'start_time')
+        """Extract raw input/output/id/timestamp from supported trace object shapes.
 
-        def _get_timestamp(src: dict) -> Any:
-            for k in _ts_keys:
-                if k in src:
-                    return src[k]
-            return None
-
-        # Access raw data directly to avoid SmartAccess wrapping.
-        if isinstance(trace_obj, (TraceView, ObservationsView)):
-            data = trace_obj._data
-            return (
-                data.get('input'),
-                data.get('output'),
-                data.get('id'),
-                _get_timestamp(data),
-            )
-
-        if isinstance(trace_obj, dict):
-            return (
-                trace_obj.get('input'),
-                trace_obj.get('output'),
-                trace_obj.get('id'),
-                _get_timestamp(trace_obj),
-            )
-
-        ts = None
-        for k in _ts_keys:
-            ts = getattr(trace_obj, k, None)
-            if ts is not None:
-                break
-
-        return (
-            getattr(trace_obj, 'input', None),
-            getattr(trace_obj, 'output', None),
-            getattr(trace_obj, 'id', None),
-            ts,
-        )
+        Thin delegator to the shared helper in ``_io.py`` (kept for back-compat).
+        """
+        return extract_trace_io(trace_obj)
 
     def _from_traces(self, traces: List[Trace]) -> TraceCollection:
         """Build a new TraceCollection from already-wrapped Trace objects."""
@@ -361,37 +331,3 @@ class TraceCollection:
             return convert(vars(value))
 
         return str(value)
-
-
-_QUERY_KEYS = ('query', 'question', 'input', 'message', 'prompt', 'user_input', 'text')
-_OUTPUT_KEYS = ('output', 'response', 'answer', 'result', 'content', 'text', 'message')
-
-
-def _safe_json_load(data: Any) -> Any:
-    if isinstance(data, str):
-        try:
-            return json.loads(data)
-        except (json.JSONDecodeError, TypeError):
-            return data
-    return data
-
-
-def _extract_query(input_data: Any) -> str:
-    return _extract_by_keys(input_data, _QUERY_KEYS)
-
-
-def _extract_output(output_data: Any) -> str:
-    return _extract_by_keys(output_data, _OUTPUT_KEYS)
-
-
-def _extract_by_keys(payload: Any, keys: tuple[str, ...]) -> str:
-    """Extract text from a payload by prioritized keys, with safe fallbacks."""
-    data = _safe_json_load(payload)
-    if isinstance(data, str):
-        return data
-    if isinstance(data, dict):
-        for key in keys:
-            if key in data:
-                return str(data[key])
-        return json.dumps(data)
-    return str(data)
