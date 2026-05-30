@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 
 from axion._core.logging import get_logger
@@ -27,7 +27,27 @@ TurnPredicate = Callable[[Trace], bool]
 
 
 @dataclass(frozen=True)
-class _TurnAnalysis:
+class ConversationTurn:
+    """
+    A single turn in a session conversation, linked back to its source trace.
+
+    Returned by :meth:`Session.turns`, which is like :meth:`Session.conversation`
+    but preserves per-turn ``trace_id``/``trace_name``/``timestamp`` so callers
+    can drill into the trace from the conversation view.
+    """
+
+    index: int
+    trace_id: Optional[str]
+    trace_name: Optional[str]
+    timestamp: Any
+    user: Optional[str]
+    assistant: Optional[str]
+    tool_calls: List[Any] = field(default_factory=list)
+    tool_messages: List[Any] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class TurnAnalysis:
     """Cached result of best-effort turn discovery."""
 
     names: tuple[str, ...]
@@ -74,7 +94,7 @@ class Session:
         self._traces = TraceCollection(raw_traces, prompt_patterns=prompt_patterns)
 
         # Lazily computed best-effort turn discovery cache.
-        self._auto_turn_analysis_cache: Optional[_TurnAnalysis] = None
+        self._auto_turn_analysis_cache: Optional[TurnAnalysis] = None
 
         # On by default: prune the stored traces down to the resolved turn
         # selector, so session.traces / session[i] / by_type() only ever see turn
@@ -182,7 +202,7 @@ class Session:
         out_text, out_match = extract_text_with_match(raw_out, OUTPUT_KEYS)
         return bool(in_match and in_text.strip() and out_match and out_text.strip())
 
-    def _auto_turn_analysis(self) -> _TurnAnalysis:
+    def _auto_turn_analysis(self) -> TurnAnalysis:
         """Best-effort turn-name discovery, cached after the first scan."""
         if self._auto_turn_analysis_cache is not None:
             return self._auto_turn_analysis_cache
@@ -200,7 +220,7 @@ class Session:
                 order.setdefault(name, idx)
 
         dominant = min(counts, key=lambda n: (-counts[n], order[n])) if counts else None
-        analysis = _TurnAnalysis(
+        analysis = TurnAnalysis(
             names=tuple(names),
             dominant_name=dominant,
             dominant_count=counts[dominant] if dominant is not None else 0,
@@ -285,6 +305,64 @@ class Session:
             include_tools=include_tools,
             metadata=self.metadata or None,
         )
+
+    def turns(
+        self,
+        name: Optional[str] = None,
+        is_turn: Optional[TurnPredicate] = None,
+        include_tools: bool = False,
+    ) -> List[ConversationTurn]:
+        """
+        Return structured turns, each linked to its source trace.
+
+        Like :meth:`conversation` but preserves ``trace_id``, ``trace_name``,
+        and ``timestamp`` per turn so callers can drill into the trace from
+        the conversation view. Uses the same turn-selection logic and
+        ``_resolve_turn_predicate`` priority chain as :meth:`conversation`.
+
+        Args:
+            name: Only treat traces with this exact ``name`` as turns.
+            is_turn: Custom predicate ``(Trace) -> bool`` selecting turns; wins
+                over ``name``.
+            include_tools: When True, attach tool_calls and tool_messages from
+                each turn's TOOL observations.
+
+        Returns:
+            Chronologically ordered list of :class:`ConversationTurn`, one per
+            qualifying trace. Empty when no traces qualify as turns.
+        """
+        predicate = self._resolve_turn_predicate(name, is_turn)
+        result: List[ConversationTurn] = []
+        idx = 0
+        for trace in self._traces:
+            if not predicate(trace):
+                continue
+
+            raw_in, raw_out, _, ts = extract_trace_io(trace._trace_obj)
+            user_text = extract_query(raw_in) if raw_in is not None else ''
+            ai_text = extract_output(raw_out) if raw_out is not None else ''
+
+            if not user_text and not ai_text:
+                continue
+
+            tool_calls, tool_messages = (
+                _build_tool_messages(trace) if include_tools else ([], [])
+            )
+
+            result.append(
+                ConversationTurn(
+                    index=idx,
+                    trace_id=str(getattr(trace, 'id', None) or '') or None,
+                    trace_name=getattr(trace, 'name', None),
+                    timestamp=ts,
+                    user=user_text or None,
+                    assistant=ai_text or None,
+                    tool_calls=tool_calls,
+                    tool_messages=tool_messages,
+                )
+            )
+            idx += 1
+        return result
 
     @property
     def turn_count(self) -> int:
