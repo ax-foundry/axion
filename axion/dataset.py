@@ -87,7 +87,9 @@ class DatasetItem(RichDatasetBaseModel):
             Execution trace information, stored as a JSON string.
         trace_id: Optional[str]:
             Trace ID for the original observation from tracing provider.
-    observation_id: Optional[str]:
+        session_id: Optional[str]:
+            Session ID for the original session from tracing provider.
+        observation_id: Optional[str]:
             Observation ID for the original observation from tracing provider.
             This is the ID of the specific observation that was evaluated.
         additional_output (Dict[str, Any]):
@@ -143,6 +145,7 @@ class DatasetItem(RichDatasetBaseModel):
     latency: Optional[float] = None
     trace: Optional[str] = None
     trace_id: Optional[str] = None
+    session_id: Optional[str] = None
     observation_id: Optional[str] = None
     additional_output: Dict[str, Any] = Field(default_factory=dict)
 
@@ -1210,6 +1213,8 @@ class Dataset(RichSerializer):
             item.latency = response.latency
             item.trace = json.dumps(response.trace) if response.trace else None
             item.trace_id = response.trace_id
+            item.session_id = response.session_id
+            item.observation_id = response.observation_id
             item.additional_output.update(response.additional_output or {})
 
             updated_items.append(item)
