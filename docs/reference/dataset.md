@@ -76,6 +76,7 @@ from axion import Dataset, DatasetItem
         - metadata
         - trace
         - trace_id
+        - session_id
         - observation_id
         - actual_ranking
         - expected_ranking

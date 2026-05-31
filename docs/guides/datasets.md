@@ -93,6 +93,7 @@ dataset = Dataset.create(name="my-eval-dataset", items=[item])
 | `additional_output` | Extra outputs from the system |
 | `trace` | Execution trace information (JSON string) |
 | `trace_id` | Trace ID from tracing provider |
+| `session_id` | Session ID from tracing provider |
 | `observation_id` | Observation ID from tracing provider |
 
 ## Creating Datasets

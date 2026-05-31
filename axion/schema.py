@@ -326,6 +326,7 @@ class EvaluationResult:
         'latency',
         'trace',
         'trace_id',
+        'session_id',
         'observation_id',
         'dataset_metadata',
         'user_tags',
