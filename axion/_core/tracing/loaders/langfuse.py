@@ -347,13 +347,15 @@ class LangfuseTraceLoader(BaseTraceLoader):
     def _observation_filter_str(tags: Optional[List[str]]) -> Optional[str]:
         """Build the observations API filter for trace-level tags."""
         filters = []
-        for tag in (tags or []):
-            filters.append({
-                'type': 'arrayOptions',
-                'column': 'traceTags',
-                'operator': 'any of',
-                'value': [tag],
-            })
+        for tag in tags or []:
+            filters.append(
+                {
+                    'type': 'arrayOptions',
+                    'column': 'traceTags',
+                    'operator': 'any of',
+                    'value': [tag],
+                }
+            )
 
         return json.dumps(filters) if filters else None
 
@@ -565,9 +567,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
         window_suffix = (
             f'between {from_ts} and {to_ts}' if to_ts else f'since {from_ts}'
         )
-        logger.info(
-            f'Fetching up to {limit} traces from Langfuse ({window_suffix})...'
-        )
+        logger.info(f'Fetching up to {limit} traces from Langfuse ({window_suffix})...')
 
         # When name filtering is requested we must post-filter full trace objects
         # because the observations API does not reliably index trace name.
@@ -623,9 +623,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
             from_ts=from_ts,
             to_ts=to_ts,
         )
-        logger.info(
-            f'Found {len(trace_id_list)} unique trace IDs via observations API'
-        )
+        logger.info(f'Found {len(trace_id_list)} unique trace IDs via observations API')
 
         if not fetch_full_traces:
             from types import SimpleNamespace
