@@ -343,6 +343,102 @@ class LangfuseTraceLoader(BaseTraceLoader):
             metric_names=metric_names,
         )
 
+    @staticmethod
+    def _observation_filter_str(tags: Optional[List[str]]) -> Optional[str]:
+        """Build the observations API filter for trace-level tags."""
+        filters = []
+        for tag in tags or []:
+            filters.append(
+                {
+                    'type': 'arrayOptions',
+                    'column': 'traceTags',
+                    'operator': 'any of',
+                    'value': [tag],
+                }
+            )
+
+        return json.dumps(filters) if filters else None
+
+    def _fetch_trace_id_page_via_observations(
+        self,
+        batch_size: int,
+        environment: Optional[str],
+        tags: Optional[List[str]],
+        from_ts: datetime,
+        to_ts: Optional[datetime],
+        cursor: Optional[str],
+    ) -> tuple[List[str], Optional[str]]:
+        """Fetch one observations page and return unique trace IDs plus cursor."""
+        try:
+            response = self._execute_with_retry(
+                lambda: self.client.api.observations.get_many(
+                    limit=batch_size,
+                    cursor=cursor,
+                    environment=environment,
+                    from_start_time=from_ts,
+                    to_start_time=to_ts,
+                    filter=self._observation_filter_str(tags),
+                ),
+                description='list observations v2',
+            )
+        except Exception as e:
+            logger.error(f'Failed to fetch observations from Langfuse: {e}')
+            return [], None
+
+        page_ids: List[str] = []
+        page_seen: set = set()
+        for obs in response.data:
+            tid = obs.trace_id
+            if tid and tid not in page_seen:
+                page_seen.add(tid)
+                page_ids.append(tid)
+
+        next_cursor = response.meta.cursor
+        return page_ids, next_cursor if response.data else None
+
+    def _fetch_trace_ids_via_observations(
+        self,
+        limit: int,
+        environment: Optional[str],
+        tags: Optional[List[str]],
+        from_ts: datetime,
+        to_ts: Optional[datetime],
+    ) -> List[str]:
+        """
+        Collect unique trace IDs via the v2 observations endpoint.
+
+        Paginates with cursor until `limit` unique trace IDs are collected
+        or the API has no more results. Uses the high-performance observations
+        API instead of the legacy trace.list() endpoint.
+        """
+        seen_ids: List[str] = []
+        seen_set: set = set()
+        cursor: Optional[str] = None
+
+        while len(seen_ids) < limit:
+            batch_size = min(100, max(10, (limit - len(seen_ids)) * 5))
+            page_ids, next_cursor = self._fetch_trace_id_page_via_observations(
+                batch_size=batch_size,
+                environment=environment,
+                tags=tags,
+                from_ts=from_ts,
+                to_ts=to_ts,
+                cursor=cursor,
+            )
+
+            for tid in page_ids:
+                if tid and tid not in seen_set:
+                    seen_set.add(tid)
+                    seen_ids.append(tid)
+                    if len(seen_ids) >= limit:
+                        break
+
+            if not next_cursor:
+                break
+            cursor = next_cursor
+
+        return seen_ids[:limit]
+
     def fetch_traces(
         self,
         limit: int = 50,
@@ -353,43 +449,65 @@ class LangfuseTraceLoader(BaseTraceLoader):
         to_timestamp: datetime | str | None = None,
         tags: Optional[List[str]] = None,
         name: Optional[str] = None,
+        environment: Optional[str] = None,
         trace_ids: Optional[List[str]] = None,
         fetch_full_traces: bool = True,
         show_progress: bool = True,
-        **trace_list_kwargs: Any,
+        **deprecated_kwargs: Any,
     ) -> List[Any]:
         """
         Fetch raw traces from Langfuse.
 
+        Uses the v2 observations endpoint to discover trace IDs (avoiding the
+        legacy trace.list() endpoint), then fetches full traces by ID.
+
+        Note on time window: the discovery step filters by *observation* start
+        time, not by the parent trace timestamp. This is generally equivalent
+        but may differ for long-running traces.
+
         Args:
-            limit: Maximum number of traces to fetch
-            mode: Time window mode to use for fetching traces. Options:
-                'days_back', 'hours_back', or 'absolute'.
-            days_back: Number of days to look back (days_back mode)
-            hours_back: Number of hours to look back (hours_back mode)
-            from_timestamp: Start timestamp for absolute mode (datetime or ISO string)
-            to_timestamp: End timestamp for absolute mode (datetime or ISO string)
-            tags: Filter by specific tags
-            name: Filter by trace name
-            trace_ids: Optional list of trace IDs to fetch directly. If provided,
-                skips list() and fetches each trace by ID.
-            fetch_full_traces: If True (default), fetch full trace details for each
-                trace via additional API calls. If False, only return trace summaries
-                (faster but less data). Set to False to avoid rate limits.
-            show_progress: If True, display a tqdm progress bar when fetching full traces.
-            **trace_list_kwargs: Additional kwargs passed to
-                langfuse_client.api.trace.list(...)
+            limit: Maximum number of traces to fetch.
+            mode: Time window mode: 'days_back', 'hours_back', or 'absolute'.
+            days_back: Number of days to look back (days_back mode).
+            hours_back: Number of hours to look back (hours_back mode).
+            from_timestamp: Start timestamp for absolute mode (datetime or ISO string).
+            to_timestamp: End timestamp for absolute mode (datetime or ISO string).
+            tags: Filter by trace tags (AND semantics — all tags must be present).
+            name: Filter by trace name. Applied as a post-filter on fetched traces;
+                paginates through candidates until enough matches are found.
+                Requires fetch_full_traces=True; if False, a warning is emitted
+                and name filtering is skipped.
+            environment: Filter by Langfuse environment (e.g. 'production').
+            trace_ids: Fetch these specific IDs directly, bypassing discovery.
+            fetch_full_traces: If True (default), return full trace objects.
+                If False, return id-only stubs (SimpleNamespace with .id).
+                Name filtering is not supported with fetch_full_traces=False.
+            show_progress: Show a tqdm progress bar while fetching full traces.
+            **deprecated_kwargs: Formerly passed to trace.list(). No longer used;
+                passing any value emits a deprecation warning.
 
         Returns:
-            List of raw Langfuse trace objects (full traces or summaries)
+            List of raw Langfuse trace objects (full traces or id-only stubs).
         """
+        if deprecated_kwargs:
+            import warnings
+
+            warnings.warn(
+                f'fetch_traces() received unexpected keyword arguments '
+                f'{list(deprecated_kwargs.keys())}. These were formerly passed to '
+                f'trace.list() which has been replaced by the v2 observations API. '
+                f'Unknown kwargs are ignored. Remove them to silence this warning.',
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
         if not self._client_initialized:
             logger.error('Langfuse client not initialized')
             return []
 
         def _fetch_full_traces(trace_id_list: List[str]) -> List[Any]:
             results = []
-            trace_iter = trace_id_list
+            trace_iter: Any = trace_id_list
             if show_progress:
                 trace_iter = tqdm(trace_iter, desc='Fetching traces', unit='trace')
 
@@ -429,18 +547,6 @@ class LangfuseTraceLoader(BaseTraceLoader):
                     ) from exc
             raise ValueError(f'Invalid {label} type: {type(value).__name__}.')
 
-        list_kwargs = dict(trace_list_kwargs)
-
-        for key, value in {
-            'limit': limit,
-            'tags': tags,
-            'name': name,
-            'from_timestamp': from_timestamp,
-            'to_timestamp': to_timestamp,
-        }.items():
-            if value is not None and key in list_kwargs:
-                raise ValueError(f'Duplicate value provided for "{key}".')
-
         if mode != 'absolute':
             if from_timestamp is not None or to_timestamp is not None:
                 raise ValueError('from_timestamp/to_timestamp require mode="absolute".')
@@ -450,61 +556,82 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 from_ts = datetime.now() - timedelta(hours=hours_back)
             to_ts = None
         else:
-            resolved_from = _parse_timestamp(
-                from_timestamp or list_kwargs.get('from_timestamp'), 'from_timestamp'
-            )
-            resolved_to = _parse_timestamp(
-                to_timestamp or list_kwargs.get('to_timestamp'), 'to_timestamp'
-            )
+            from_ts = _parse_timestamp(from_timestamp, 'from_timestamp')
+            to_ts = _parse_timestamp(to_timestamp, 'to_timestamp')
 
-            if resolved_from is None:
+            if from_ts is None:
                 raise ValueError('absolute mode requires from_timestamp.')
-
-            if resolved_to and resolved_from > resolved_to:
+            if to_ts and from_ts > to_ts:
                 raise ValueError('from_timestamp cannot be after to_timestamp.')
-
-            from_ts = resolved_from
-            to_ts = resolved_to
-
-        list_kwargs.pop('from_timestamp', None)
-        list_kwargs.pop('to_timestamp', None)
-
-        if 'limit' not in list_kwargs:
-            list_kwargs['limit'] = limit
-        if tags is not None:
-            list_kwargs['tags'] = tags
-        if name is not None:
-            list_kwargs['name'] = name
-
-        list_kwargs['from_timestamp'] = from_ts
-        if to_ts is not None:
-            list_kwargs['to_timestamp'] = to_ts
 
         window_suffix = (
             f'between {from_ts} and {to_ts}' if to_ts else f'since {from_ts}'
         )
-        logger.info(
-            f'Fetching up to {list_kwargs["limit"]} traces from Langfuse '
-            f'({window_suffix})...'
-        )
+        logger.info(f'Fetching up to {limit} traces from Langfuse ({window_suffix})...')
 
-        # Fetch trace list with retry
-        try:
-            traces_page = self._execute_with_retry(
-                lambda: self.client.api.trace.list(**list_kwargs),
-                description='list traces',
+        # When name filtering is requested we must post-filter full trace objects
+        # because the observations API does not reliably index trace name.
+        if name and not fetch_full_traces:
+            import warnings
+
+            warnings.warn(
+                'fetch_traces(): name filtering requires fetch_full_traces=True '
+                '(stubs carry only .id). The name filter will be ignored.',
+                UserWarning,
+                stacklevel=2,
             )
-        except Exception as e:
-            logger.error(f'Failed to fetch traces from Langfuse: {e}')
-            return []
+            name = None  # disable post-filter so callers aren't silently wrong
+
+        if name:
+            full_traces: List[Any] = []
+            seen_ids: set = set()
+            cursor: Optional[str] = None
+
+            while len(full_traces) < limit:
+                page_ids, next_cursor = self._fetch_trace_id_page_via_observations(
+                    batch_size=100,
+                    environment=environment,
+                    tags=tags,
+                    from_ts=from_ts,
+                    to_ts=to_ts,
+                    cursor=cursor,
+                )
+                if not page_ids and not next_cursor:
+                    break
+
+                candidate_ids = [tid for tid in page_ids if tid not in seen_ids]
+                seen_ids.update(candidate_ids)
+
+                for trace in _fetch_full_traces(candidate_ids):
+                    if getattr(trace, 'name', None) == name:
+                        full_traces.append(trace)
+                        if len(full_traces) >= limit:
+                            break
+
+                if not next_cursor:
+                    break
+                cursor = next_cursor
+
+            logger.info(f'After name={name!r} filter: {len(full_traces)} traces')
+            return full_traces[:limit]
+
+        discovery_limit = limit
+        trace_id_list = self._fetch_trace_ids_via_observations(
+            limit=discovery_limit,
+            environment=environment,
+            tags=tags,
+            from_ts=from_ts,
+            to_ts=to_ts,
+        )
+        logger.info(f'Found {len(trace_id_list)} unique trace IDs via observations API')
 
         if not fetch_full_traces:
-            # Return trace summaries directly
-            logger.info(f'Successfully loaded {len(traces_page.data)} trace summaries')
-            return list(traces_page.data)
+            from types import SimpleNamespace
 
-        # Fetch full trace details for each summary
-        return _fetch_full_traces([trace.id for trace in traces_page.data])
+            logger.info(f'Successfully loaded {len(trace_id_list)} trace stubs')
+            return [SimpleNamespace(id=tid) for tid in trace_id_list[:limit]]
+
+        return _fetch_full_traces(trace_id_list)
 
     def fetch_trace(self, trace_id: str, pace: bool = True) -> Optional[Any]:
         """

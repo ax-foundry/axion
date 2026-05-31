@@ -162,12 +162,22 @@ from axion.tracing import LangfuseTraceLoader
 
 loader = LangfuseTraceLoader()
 
-# Fetch recent traces
+# Fetch recent traces (last 7 days)
 traces = loader.fetch_traces(
-    limit=100,          # Maximum traces to fetch
-    days_back=7,        # Time window in days
-    tags=['prod'],      # Filter by tags (optional)
-    name='rag-query',   # Filter by trace name (optional)
+    limit=100,
+    mode='days_back',   # Always set mode explicitly
+    days_back=7,
+    environment='production',  # Filter by Langfuse environment
+    tags=['v2'],               # Filter by tags (optional)
+    name='rag-query',          # Post-filter by trace name (optional)
+)
+
+# Fetch traces from the last 2 hours
+recent = loader.fetch_traces(
+    limit=50,
+    mode='hours_back',  # Must specify mode — hours_back is ignored if mode='days_back'
+    hours_back=2,
+    environment='production',
 )
 ```
 
@@ -176,37 +186,47 @@ traces = loader.fetch_traces(
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `limit` | `int` | `50` | Maximum number of traces to fetch |
-| `mode` | `str` | `'days_back'` | Time window mode: `days_back`, `hours_back`, `absolute` |
-| `days_back` | `int` | `7` | Number of days to look back (days_back mode) |
-| `hours_back` | `int` | `24` | Number of hours to look back (hours_back mode) |
-| `from_timestamp` | `datetime \| str \| None` | `None` | Start timestamp (absolute mode, ISO string supported) |
-| `to_timestamp` | `datetime \| str \| None` | `None` | End timestamp (absolute mode, ISO string supported) |
-| `tags` | `list[str]` | `None` | Filter by specific tags |
-| `name` | `str` | `None` | Filter by trace name |
-| `fetch_full_traces` | `bool` | `True` | Fetch full details vs. summaries |
-| `**trace_list_kwargs` | `dict` | `{}` | Extra kwargs passed to `langfuse_client.api.trace.list(...)` |
+| `mode` | `str` | `'days_back'` | Time window mode: `days_back`, `hours_back`, `absolute`. Always set explicitly — the default is `days_back` regardless of whether `hours_back` is provided. |
+| `days_back` | `int` | `7` | Number of days to look back (`days_back` mode) |
+| `hours_back` | `int` | `24` | Number of hours to look back (`hours_back` mode) |
+| `from_timestamp` | `datetime \| str \| None` | `None` | Start timestamp (`absolute` mode, ISO string supported) |
+| `to_timestamp` | `datetime \| str \| None` | `None` | End timestamp (`absolute` mode, ISO string supported) |
+| `tags` | `list[str]` | `None` | Filter by trace tags (server-side, AND semantics) |
+| `name` | `str` | `None` | Filter by trace name (post-filter after fetch; requires `fetch_full_traces=True`) |
+| `environment` | `str` | `None` | Filter by Langfuse environment, e.g. `'production'` |
+| `trace_ids` | `list[str]` | `None` | Fetch specific trace IDs directly, bypassing time-window discovery |
+| `fetch_full_traces` | `bool` | `True` | If `True`, fetch full trace objects. If `False`, return id-only stubs (`SimpleNamespace(id=…)`). Name filtering requires `True`. |
+| `show_progress` | `bool` | `True` | Show a tqdm progress bar while fetching full traces |
+
+!!! note "Time window semantics"
+    Discovery uses the v2 observations endpoint and filters by **observation start time**, not parent trace timestamp. For typical short-running traces these are equivalent; very long-running traces may fall outside the window by trace timestamp but still appear via their observations.
 
 ### Filtering Examples
 
 ```python
-# Filter by multiple tags (AND logic)
+# Filter by environment
 prod_traces = loader.fetch_traces(
     limit=100,
-    tags=['production', 'v2.0']
+    mode='days_back',
+    days_back=7,
+    environment='production',
 )
 
-# Filter by trace name
+# Filter by trace name (post-filter; requires fetch_full_traces=True)
 rag_traces = loader.fetch_traces(
     limit=100,
-    name='rag-query'
+    mode='days_back',
+    days_back=3,
+    name='rag-query',
 )
 
-# Combine filters
+# Combine environment + name filters
 traces = loader.fetch_traces(
     limit=50,
+    mode='days_back',
     days_back=3,
-    tags=['production'],
-    name='chat-completion'
+    environment='production',
+    name='chat-completion',
 )
 ```
 
@@ -375,13 +395,13 @@ dataset = Dataset(items=items)
 ## Performance Tips
 
 !!! tip "Fetching Large Volumes"
-    Set `fetch_full_traces=False` when fetching large volumes of traces. This returns trace summaries instead of full details, significantly reducing API calls and avoiding rate limits.
+    Set `fetch_full_traces=False` when fetching large volumes of traces. This returns id-only stubs instead of full trace objects, significantly reducing API calls and avoiding rate limits.
 
 ```python
 # Fast fetch for large volumes
 traces = loader.fetch_traces(
     limit=1000,
-    fetch_full_traces=False  # Returns summaries only
+    fetch_full_traces=False  # Returns id-only stubs
 )
 ```
 
