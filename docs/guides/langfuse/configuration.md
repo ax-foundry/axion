@@ -220,7 +220,7 @@ loader = LangfuseTraceLoader(
     base_delay=1.0,
 )
 
-# Or fetch summaries only (fewer API calls)
+# Or fetch id-only stubs (fewer API calls)
 traces = loader.fetch_traces(
     limit=1000,
     fetch_full_traces=False
