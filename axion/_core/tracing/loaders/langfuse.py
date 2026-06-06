@@ -439,6 +439,58 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
         return seen_ids[:limit]
 
+    def _fetch_trace_summaries_via_list(
+        self,
+        limit: int,
+        from_ts: datetime,
+        to_ts: Optional[datetime],
+        tags: Optional[List[str]],
+        name: Optional[str],
+        environment: Optional[str],
+    ) -> List[Any]:
+        """
+        Fetch lightweight trace summaries via trace.list().
+
+        Used for the fetch_full_traces=False path so summaries carry trace-level
+        name/tags/timestamp/metrics in a single batched call, without N per-trace
+        fetches. The observations API used for full-trace discovery does not return
+        trace name, so it cannot serve this path. trace.list() filters name/tags
+        server-side and orders by timestamp (most recent first).
+
+        Returns a list of raw Langfuse trace summary objects (TraceWithDetails).
+        """
+        collected: List[Any] = []
+        page = 1
+
+        while len(collected) < limit:
+            page_size = min(100, limit - len(collected))
+            response = self._execute_with_retry(
+                lambda p=page, n=page_size: self.client.api.trace.list(
+                    page=p,
+                    limit=n,
+                    name=name,
+                    from_timestamp=from_ts,
+                    to_timestamp=to_ts,
+                    tags=tags or None,
+                    environment=environment,
+                    order_by='timestamp.desc',
+                    # core=id/name/tags/timestamp/session, metrics=cost/latency,
+                    # io=input/output for previews.
+                    fields='core,metrics,io',
+                ),
+                description='list trace summaries',
+            )
+
+            data = list(getattr(response, 'data', []) or [])
+            if not data:
+                break
+
+            collected.extend(data)
+            page += 1
+
+        logger.info(f'Successfully loaded {len(collected[:limit])} trace summaries')
+        return collected[:limit]
+
     def fetch_traces(
         self,
         limit: int = 50,
@@ -473,21 +525,22 @@ class LangfuseTraceLoader(BaseTraceLoader):
             from_timestamp: Start timestamp for absolute mode (datetime or ISO string).
             to_timestamp: End timestamp for absolute mode (datetime or ISO string).
             tags: Filter by trace tags (AND semantics — all tags must be present).
-            name: Filter by trace name. Applied as a post-filter on fetched traces;
-                paginates through candidates until enough matches are found.
-                Requires fetch_full_traces=True; if False, a warning is emitted
-                and name filtering is skipped.
+            name: Filter by trace name. With fetch_full_traces=False it is applied
+                server-side via trace.list(). With fetch_full_traces=True it is
+                applied as a post-filter on fetched traces, paginating through
+                candidates until enough matches are found.
             environment: Filter by Langfuse environment (e.g. 'production').
             trace_ids: Fetch these specific IDs directly, bypassing discovery.
-            fetch_full_traces: If True (default), return full trace objects.
-                If False, return id-only stubs (SimpleNamespace with .id).
-                Name filtering is not supported with fetch_full_traces=False.
+            fetch_full_traces: If True (default), return full trace objects via
+                observations discovery + per-id fetch. If False, return lightweight
+                trace summaries (name/tags/timestamp/metrics) via trace.list().
             show_progress: Show a tqdm progress bar while fetching full traces.
             **deprecated_kwargs: Formerly passed to trace.list(). No longer used;
                 passing any value emits a deprecation warning.
 
         Returns:
-            List of raw Langfuse trace objects (full traces or id-only stubs).
+            List of raw Langfuse trace objects (full traces, or trace.list
+            summaries when fetch_full_traces=False).
         """
         if deprecated_kwargs:
             import warnings
@@ -569,19 +622,23 @@ class LangfuseTraceLoader(BaseTraceLoader):
         )
         logger.info(f'Fetching up to {limit} traces from Langfuse ({window_suffix})...')
 
+        # Summary path: trace.list() returns trace-level name/tags/metrics in one
+        # batched call and filters name/tags server-side. (The observations API
+        # used for full-trace discovery does not return trace name, so it cannot
+        # serve this path.) The full-trace path below keeps using observations
+        # discovery + per-id fetch.
+        if not fetch_full_traces:
+            return self._fetch_trace_summaries_via_list(
+                limit=limit,
+                from_ts=from_ts,
+                to_ts=to_ts,
+                tags=tags,
+                name=name,
+                environment=environment,
+            )
+
         # When name filtering is requested we must post-filter full trace objects
         # because the observations API does not reliably index trace name.
-        if name and not fetch_full_traces:
-            import warnings
-
-            warnings.warn(
-                'fetch_traces(): name filtering requires fetch_full_traces=True '
-                '(stubs carry only .id). The name filter will be ignored.',
-                UserWarning,
-                stacklevel=2,
-            )
-            name = None  # disable post-filter so callers aren't silently wrong
-
         if name:
             full_traces: List[Any] = []
             seen_ids: set = set()
@@ -624,12 +681,6 @@ class LangfuseTraceLoader(BaseTraceLoader):
             to_ts=to_ts,
         )
         logger.info(f'Found {len(trace_id_list)} unique trace IDs via observations API')
-
-        if not fetch_full_traces:
-            from types import SimpleNamespace
-
-            logger.info(f'Successfully loaded {len(trace_id_list)} trace stubs')
-            return [SimpleNamespace(id=tid) for tid in trace_id_list[:limit]]
 
         return _fetch_full_traces(trace_id_list)
 
