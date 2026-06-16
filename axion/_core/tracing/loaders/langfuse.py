@@ -721,7 +721,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
     def fetch_scores_for_session(
         self, session_id: str, pace: bool = True
     ) -> 'dict[str, list[TraceScore]]':
-        """Fetch all Langfuse eval scores for a session in one paginated call.
+        """
+        Fetch all Langfuse eval scores for a session in one paginated call.
 
         Returns a dict keyed by ``trace_id`` so callers can attach scores to each
         ``Trace`` without issuing a per-trace request.  On any error the warning is
@@ -779,7 +780,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
     def fetch_scores_for_trace(
         self, trace_id: str, pace: bool = True
     ) -> 'list[TraceScore]':
-        """Fetch Langfuse eval scores for a single trace.
+        """
+        Fetch Langfuse eval scores for a single trace.
 
         Prefer :meth:`fetch_scores_for_session` when processing a whole session
         to avoid N per-trace requests.  On any error the warning is logged and an
@@ -981,7 +983,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
         trace_name: Optional[str],
         trace_predicate: Optional[Callable[[Any], bool]],
     ) -> List[Any]:
-        """Filter session stub traces by name/predicate before enrichment.
+        """
+        Filter session stub traces by name/predicate before enrichment.
 
         Applied to the cheap stubs so non-matching traces are never fetched.
         """
