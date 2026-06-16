@@ -303,14 +303,16 @@ class TraceCollection:
 
     @staticmethod
     def _extract_trace_io(trace_obj: Any) -> tuple[Any, Any, Any, Any]:
-        """Extract raw input/output/id/timestamp from supported trace object shapes.
+        """
+        Extract raw input/output/id/timestamp from supported trace object shapes.
 
         Thin delegator to the shared helper in ``_io.py`` (kept for back-compat).
         """
         return extract_trace_io(trace_obj)
 
     def _from_traces(self, traces: List[Trace]) -> TraceCollection:
-        """Build a new TraceCollection from already-wrapped Trace objects.
+        """
+        Build a new TraceCollection from already-wrapped Trace objects.
 
         Scores attached to each Trace are preserved — rebuilding from raw objects
         would drop them.

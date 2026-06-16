@@ -228,7 +228,8 @@ class Trace(SmartAccess):
 
     @property
     def scores(self) -> List[TraceScore]:
-        """Eval scores attached to this trace from Langfuse.
+        """
+        Eval scores attached to this trace from Langfuse.
 
         Populated when the trace was fetched via ``Session.from_langfuse`` or
         ``TraceCollection.from_langfuse`` with ``fetch_scores=True``.

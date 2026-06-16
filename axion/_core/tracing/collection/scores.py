@@ -6,7 +6,8 @@ from typing import Any, Optional
 
 @dataclass(frozen=True)
 class TraceScore:
-    """Normalised representation of a Langfuse eval score attached to a trace.
+    """
+    Normalised representation of a Langfuse eval score attached to a trace.
 
     Covers all four Langfuse score types (NUMERIC, CATEGORICAL, BOOLEAN,
     CORRECTION). ``value`` is always present; ``string_value`` is set for
