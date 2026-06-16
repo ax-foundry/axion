@@ -120,12 +120,8 @@ def test_fetch_scores_for_session_groups_by_trace_id():
 def test_fetch_scores_for_session_paginates():
     api = MagicMock()
     api.get_many.side_effect = [
-        _scores_response(
-            [_raw_score('a', 1.0, trace_id='t1')], total_pages=2, page=1
-        ),
-        _scores_response(
-            [_raw_score('b', 0.5, trace_id='t2')], total_pages=2, page=2
-        ),
+        _scores_response([_raw_score('a', 1.0, trace_id='t1')], total_pages=2, page=1),
+        _scores_response([_raw_score('b', 0.5, trace_id='t2')], total_pages=2, page=2),
     ]
     loader = _loader(api)
     result = loader.fetch_scores_for_session('sess-1')
@@ -149,7 +145,6 @@ def test_fetch_scores_for_session_error_returns_empty():
 
 def test_session_from_langfuse_fetch_scores_attaches():
     from axion._core.tracing.collection.session import Session
-    from axion._core.tracing.collection.trace import Trace
 
     raw_trace = SimpleNamespace(id='trace-1', name='abby-web-chat', observations=[])
     fake_session = SimpleNamespace(id='sess-1')
@@ -193,7 +188,6 @@ def test_session_from_langfuse_fetch_scores_false_leaves_empty():
 
 def test_filter_preserves_scores():
     """filter() must not drop scores attached via fetch_scores=True."""
-    from axion._core.tracing.collection.trace import Trace
     from axion._core.tracing.collection.trace_collection import TraceCollection
 
     raw_a = SimpleNamespace(id='trace-a', name='keep', observations=[])

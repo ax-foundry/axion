@@ -35,6 +35,8 @@ class TraceScore:
             observation_id=getattr(raw, 'observation_id', None),
             string_value=getattr(raw, 'string_value', None),
             comment=getattr(raw, 'comment', None),
-            source=str(raw.source) if getattr(raw, 'source', None) is not None else None,
+            source=str(raw.source)
+            if getattr(raw, 'source', None) is not None
+            else None,
             timestamp=getattr(raw, 'timestamp', None),
         )
