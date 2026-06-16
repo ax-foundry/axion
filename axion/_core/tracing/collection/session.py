@@ -466,6 +466,7 @@ class Session:
         prompt_patterns: Any = None,
         show_progress: bool = True,
         enrich: bool = True,
+        fetch_scores: bool = False,
         turn_name: Optional[str] = None,
         turn_predicate: Optional[TurnPredicate] = None,
         turns_only: bool = True,
@@ -486,6 +487,12 @@ class Session:
         session's stub traces (a single API call). Stubs carry trace-level
         input/output -- enough to reconstruct the conversation -- but
         observation-level access (``by_type``/``tools``/``find_all``) will be empty.
+
+        ``fetch_scores`` (default ``False``): when ``True``, fetches all Langfuse
+        eval scores for the session in a single paginated API call and attaches
+        them to each ``Trace`` via ``trace.scores``.  Requires the loader to have
+        valid Langfuse credentials.  Adds roughly one paginated API call regardless
+        of session size; fail-soft (errors are logged, scores default to empty).
 
         ``turn_name``/``turn_predicate`` set the default turn selector applied by
         ``conversation()``/``to_dataset()``/``turn_count`` (overridable per-call).
@@ -515,7 +522,8 @@ class Session:
         if session_obj is None:
             # Build from the raw id so the Session is still usable/identifiable.
             session_obj = {'id': session_id}
-        return cls(
+
+        session = cls(
             session_obj,
             full_traces=full_traces,
             prompt_patterns=prompt_patterns,
@@ -523,6 +531,16 @@ class Session:
             turn_predicate=turn_predicate,
             turns_only=turns_only,
         )
+
+        if fetch_scores and hasattr(loader, 'fetch_scores_for_session'):
+            scores_by_trace = loader.fetch_scores_for_session(session_id)
+            for trace in session._traces:
+                tid = str(getattr(trace.raw, 'id', '') or '')
+                trace_scores = scores_by_trace.get(tid, [])
+                if trace_scores:
+                    trace._scores = trace_scores
+
+        return session
 
     def __len__(self) -> int:
         return len(self._traces)

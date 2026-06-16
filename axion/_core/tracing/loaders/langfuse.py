@@ -25,6 +25,7 @@ from axion.metrics.schema import DEFAULT_EXPLANATION
 T = TypeVar('T')
 
 if TYPE_CHECKING:
+    from axion._core.tracing.collection.scores import TraceScore
     from axion.dataset import Dataset, DatasetItem
     from axion.schema import EvaluationResult
 
@@ -716,6 +717,117 @@ class LangfuseTraceLoader(BaseTraceLoader):
         except Exception as e:
             logger.warning(f'Failed to fetch trace {trace_id}: {e}')
             return None
+
+    def fetch_scores_for_session(
+        self, session_id: str, pace: bool = True
+    ) -> 'dict[str, list[TraceScore]]':
+        """Fetch all Langfuse eval scores for a session in one paginated call.
+
+        Returns a dict keyed by ``trace_id`` so callers can attach scores to each
+        ``Trace`` without issuing a per-trace request.  On any error the warning is
+        logged and an empty dict is returned (fail-soft — a missing scores fetch
+        must never drop the item from the pipeline).
+
+        Args:
+            session_id: Langfuse session ID.
+            pace: Whether to apply request pacing after the final page.
+
+        Returns:
+            ``{trace_id: [TraceScore, ...]}`` — empty dict on failure or no scores.
+        """
+        from axion._core.tracing.collection.scores import TraceScore
+
+        if not self._client_initialized:
+            logger.warning(
+                f'fetch_scores_for_session: client not initialised (session={session_id})'
+            )
+            return {}
+
+        if not session_id:
+            logger.warning('fetch_scores_for_session called with empty session_id')
+            return {}
+
+        result: dict[str, list[TraceScore]] = {}
+        page = 1
+        try:
+            while True:
+                response = self._execute_with_retry(
+                    lambda p=page: self.client.api.scores.get_many(
+                        session_id=session_id, page=p
+                    ),
+                    description=f'fetch scores for session {session_id} page {page}',
+                )
+                for raw in response.data:
+                    score = TraceScore.from_langfuse(raw)
+                    tid = score.trace_id or ''
+                    result.setdefault(tid, []).append(score)
+
+                if page >= response.meta.total_pages:
+                    break
+                page += 1
+                if pace and self.request_pacing > 0:
+                    time.sleep(self.request_pacing)
+
+        except Exception as e:
+            logger.warning(
+                f'fetch_scores_for_session failed for session {session_id}: {e}'
+            )
+            return {}
+
+        return result
+
+    def fetch_scores_for_trace(
+        self, trace_id: str, pace: bool = True
+    ) -> 'list[TraceScore]':
+        """Fetch Langfuse eval scores for a single trace.
+
+        Prefer :meth:`fetch_scores_for_session` when processing a whole session
+        to avoid N per-trace requests.  On any error the warning is logged and an
+        empty list is returned.
+
+        Args:
+            trace_id: Langfuse trace ID.
+            pace: Whether to apply request pacing after the final page.
+
+        Returns:
+            List of :class:`TraceScore` objects; empty list on failure or no scores.
+        """
+        from axion._core.tracing.collection.scores import TraceScore
+
+        if not self._client_initialized:
+            logger.warning(
+                f'fetch_scores_for_trace: client not initialised (trace={trace_id})'
+            )
+            return []
+
+        if not trace_id:
+            logger.warning('fetch_scores_for_trace called with empty trace_id')
+            return []
+
+        scores: list[TraceScore] = []
+        page = 1
+        try:
+            while True:
+                response = self._execute_with_retry(
+                    lambda p=page: self.client.api.scores.get_many(
+                        trace_id=trace_id, page=p
+                    ),
+                    description=f'fetch scores for trace {trace_id} page {page}',
+                )
+                for raw in response.data:
+                    scores.append(TraceScore.from_langfuse(raw))
+
+                if page >= response.meta.total_pages:
+                    break
+                page += 1
+                if pace and self.request_pacing > 0:
+                    time.sleep(self.request_pacing)
+
+        except Exception as e:
+            logger.warning(f'fetch_scores_for_trace failed for trace {trace_id}: {e}')
+            return []
+
+        return scores
 
     def fetch_session(self, session_id: str, pace: bool = True) -> Optional[Any]:
         """

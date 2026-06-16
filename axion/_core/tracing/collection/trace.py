@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional
 
 from axion._core.logging import get_logger
 from axion._core.tracing.collection.models import ObservationsView, TraceView
+from axion._core.tracing.collection.scores import TraceScore
 from axion._core.tracing.collection.smart_access import SmartAccess, _normalize_key
 
 if TYPE_CHECKING:
@@ -160,6 +161,7 @@ class Trace(SmartAccess):
         self,
         trace_data: Any,
         prompt_patterns: Any = None,
+        scores: Optional[List[TraceScore]] = None,
     ):
         self._trace_obj, raw_observations = self._coerce_trace_input(trace_data)
 
@@ -173,6 +175,7 @@ class Trace(SmartAccess):
         self._prompt_patterns = prompt_patterns
         self._steps_cache: dict[str, TraceStep] = {}
         self._tree_roots_cache: Optional[list] = None
+        self._scores: List[TraceScore] = scores or []
         self._group_observations()
 
     @staticmethod
@@ -222,6 +225,16 @@ class Trace(SmartAccess):
     def observations(self) -> List[ObservationsView]:
         """Flat list of all observations."""
         return list(self._raw_observations)
+
+    @property
+    def scores(self) -> List[TraceScore]:
+        """Eval scores attached to this trace from Langfuse.
+
+        Populated when the trace was fetched via ``Session.from_langfuse`` or
+        ``TraceCollection.from_langfuse`` with ``fetch_scores=True``.
+        Returns an empty list when scores were not fetched.
+        """
+        return list(self._scores)
 
     @property
     def observation_types(self) -> List[str]:

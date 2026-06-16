@@ -48,6 +48,7 @@ class TraceCollection:
         loader: Any = None,
         show_progress: bool = True,
         prompt_patterns: Any = None,
+        fetch_scores: bool = False,
         **kwargs: Any,
     ) -> TraceCollection:
         """
@@ -63,6 +64,9 @@ class TraceCollection:
                 a new one is created from environment variables.
             show_progress: Show a tqdm progress bar while fetching.
             prompt_patterns: Optional PromptPatternsBase for variable extraction.
+            fetch_scores: When ``True``, fetch Langfuse eval scores per trace and
+                attach them to each ``Trace.scores``.  Adds one API call per trace;
+                fail-soft (errors logged, scores default to empty).
             **kwargs: Forwarded to ``LangfuseTraceLoader.fetch_traces()``.
         """
         if loader is None:
@@ -84,7 +88,15 @@ class TraceCollection:
                 **kwargs,
             )
 
-        return cls(raw_traces, prompt_patterns=prompt_patterns)
+        collection = cls(raw_traces, prompt_patterns=prompt_patterns)
+
+        if fetch_scores and hasattr(loader, 'fetch_scores_for_trace'):
+            for trace in collection:
+                tid = str(getattr(trace.raw, 'id', '') or '')
+                if tid:
+                    trace._scores = loader.fetch_scores_for_trace(tid)
+
+        return collection
 
     @classmethod
     def from_session(
@@ -94,6 +106,7 @@ class TraceCollection:
         loader: Any = None,
         show_progress: bool = True,
         prompt_patterns: Any = None,
+        fetch_scores: bool = False,
     ) -> TraceCollection:
         """
         Fetch all traces for a Langfuse session and return a TraceCollection.
@@ -104,6 +117,10 @@ class TraceCollection:
                 a new one is created from environment variables.
             show_progress: Show a tqdm progress bar while fetching.
             prompt_patterns: Optional PromptPatternsBase for variable extraction.
+            fetch_scores: When ``True``, fetch Langfuse eval scores for the session
+                in a single paginated API call (session-batch path) and attach them
+                to each ``Trace.scores``.  Fail-soft — errors are logged and scores
+                default to empty.
         """
         if loader is None:
             from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
@@ -111,7 +128,17 @@ class TraceCollection:
             loader = LangfuseTraceLoader()
 
         raw_traces = loader.get_session_traces(session_id, show_progress=show_progress)
-        return cls(raw_traces, prompt_patterns=prompt_patterns)
+        collection = cls(raw_traces, prompt_patterns=prompt_patterns)
+
+        if fetch_scores and hasattr(loader, 'fetch_scores_for_session'):
+            scores_by_trace = loader.fetch_scores_for_session(session_id)
+            for trace in collection:
+                tid = str(getattr(trace.raw, 'id', '') or '')
+                trace_scores = scores_by_trace.get(tid, [])
+                if trace_scores:
+                    trace._scores = trace_scores
+
+        return collection
 
     @classmethod
     def from_raw_traces(
@@ -283,9 +310,15 @@ class TraceCollection:
         return extract_trace_io(trace_obj)
 
     def _from_traces(self, traces: List[Trace]) -> TraceCollection:
-        """Build a new TraceCollection from already-wrapped Trace objects."""
-        raw = [t._trace_obj for t in traces]
-        return TraceCollection(raw, prompt_patterns=self._prompt_patterns)
+        """Build a new TraceCollection from already-wrapped Trace objects.
+
+        Scores attached to each Trace are preserved — rebuilding from raw objects
+        would drop them.
+        """
+        new_collection = TraceCollection.__new__(TraceCollection)
+        new_collection._traces = list(traces)
+        new_collection._prompt_patterns = self._prompt_patterns
+        return new_collection
 
     @staticmethod
     def _to_jsonable(value: Any) -> Any:

@@ -65,6 +65,30 @@ collection = TraceCollection.from_langfuse(
 )
 ```
 
+#### Attaching eval scores
+
+Pass `fetch_scores=True` to pull Langfuse automated eval scores for every trace and attach them as `trace.scores` (a list of `TraceScore`). Scores are fetched per-trace (one extra API call each); errors are logged and fail-soft (scores default to `[]`):
+
+```python
+collection = TraceCollection.from_langfuse(
+    trace_ids=['abc123', 'def456'],
+    loader=loader,
+    fetch_scores=True,
+)
+
+for score in collection[0].scores:
+    print(score.name, score.value, score.data_type)
+    # e.g. "hallucination" 1.0 "NUMERIC"
+    # e.g. "scope"         "completed_scope" "CATEGORICAL"  (score.string_value)
+```
+
+Scores are preserved through `filter()` and `filter_by()`:
+
+```python
+passing = collection.filter(lambda t: all(s.value >= 0.8 for s in t.scores))
+passing[0].scores   # still populated
+```
+
 ### From Session
 
 The `from_session()` factory fetches all traces for a Langfuse session:
@@ -78,6 +102,13 @@ loader = LangfuseTraceLoader()
 collection = TraceCollection.from_session(
     session_id='my-session-123',
     loader=loader,
+)
+
+# With eval scores — uses a single session-batch API call
+collection = TraceCollection.from_session(
+    session_id='my-session-123',
+    loader=loader,
+    fetch_scores=True,
 )
 
 # Convert directly to dataset for evaluation
@@ -618,12 +649,12 @@ result.publish_to_observability()
 
 | Method | Description |
 |--------|-------------|
-| `from_langfuse(trace_ids, limit, days_back, tags, name, loader, prompt_patterns)` | Fetch from Langfuse and wrap |
-| `from_session(session_id, loader, prompt_patterns)` | Fetch all traces for a session and wrap |
+| `from_langfuse(trace_ids, limit, days_back, tags, name, loader, prompt_patterns, fetch_scores)` | Fetch from Langfuse and wrap; `fetch_scores=True` attaches `TraceScore` objects per trace |
+| `from_session(session_id, loader, prompt_patterns, fetch_scores)` | Fetch all traces for a session and wrap; `fetch_scores=True` uses a single session-batch API call |
 | `from_raw_traces(raw_traces, prompt_patterns)` | Wrap pre-fetched trace objects |
 | `load_json(path, prompt_patterns)` | Load from a JSON file |
-| `filter(condition)` | Filter by lambda, returns new `TraceCollection` |
-| `filter_by(**kwargs)` | Filter by attribute equality |
+| `filter(condition)` | Filter by lambda, returns new `TraceCollection` (scores preserved) |
+| `filter_by(**kwargs)` | Filter by attribute equality (scores preserved) |
 | `to_dataset(name, transform)` | Convert to axion `Dataset` |
 | `save_json(path)` | Serialize to JSON file |
 | `to_list()` | Return raw trace objects |
@@ -640,6 +671,7 @@ result.publish_to_observability()
 | `trace.step_names` | List of observation group names |
 | `trace.steps` | Dict of step name to `TraceStep` |
 | `trace.observations` | Flat list of all observations |
+| `trace.scores` | List of `TraceScore` objects attached via `fetch_scores=True`; `[]` when not fetched |
 | `trace.raw` | Underlying raw trace object |
 | `trace.tree_roots` | List of root `ObservationNode`s (hierarchy) |
 | `trace.tree` | Single root node if exactly one root, else `None` |
@@ -650,6 +682,20 @@ result.publish_to_observability()
 | `trace.find_all(name, type)` | All nodes matching name and/or type across all roots |
 | `trace.<step_name>` | Access a step by name (fuzzy matching) |
 | `trace.<attribute>` | Access trace-level attributes (fuzzy matching) |
+
+### TraceScore
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | `str` | Score name (e.g. `"hallucination"`, `"scope"`) |
+| `value` | `float` | Numeric score value (present for all types) |
+| `data_type` | `str` | `"NUMERIC"`, `"CATEGORICAL"`, `"BOOLEAN"`, or `"CORRECTION"` |
+| `string_value` | `str \| None` | Human-readable value for CATEGORICAL/BOOLEAN/CORRECTION scores |
+| `trace_id` | `str \| None` | Langfuse trace ID |
+| `observation_id` | `str \| None` | Langfuse observation ID (set when score is observation-scoped) |
+| `comment` | `str \| None` | Optional comment attached to the score |
+| `source` | `str \| None` | Score source (e.g. `"API"`, `"ANNOTATION"`) |
+| `timestamp` | `datetime \| None` | When the score was recorded |
 
 ### TraceStep
 

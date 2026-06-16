@@ -10,6 +10,7 @@ from axion._core.tracing.collection.prompt_patterns import (
     PromptPatternsBase,
     create_extraction_pattern,
 )
+from axion._core.tracing.collection.scores import TraceScore
 from axion._core.tracing.collection.session import ConversationTurn, Session
 from axion._core.tracing.collection.session_collection import SessionCollection
 from axion._core.tracing.collection.smart_access import (
@@ -34,6 +35,7 @@ __all__ = [
     # Trace wrappers
     'Trace',
     'TraceStep',
+    'TraceScore',
     # Observation tree
     'ObservationNode',
     # Collection container
