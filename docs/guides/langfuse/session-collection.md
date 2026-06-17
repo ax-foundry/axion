@@ -85,6 +85,16 @@ For a single session, use `Session.from_langfuse()`:
 from axion.tracing import Session
 
 session = Session.from_langfuse('session-a', loader=loader)
+
+# With eval scores attached to each trace — one session-batch API call
+session = Session.from_langfuse(
+    'session-a',
+    loader=loader,
+    fetch_scores=True,
+)
+for trace in session:
+    for score in trace.scores:
+        print(trace.id, score.name, score.value)
 ```
 
 !!! info "Single vs. collection — missing-session behavior"
@@ -455,7 +465,7 @@ result.publish_to_observability()
 | `session.project_id` | Project id (tolerates `projectId`) |
 | `session.environment` | Session environment |
 | `session.metadata` | Full session metadata dict (all captured fields) |
-| `session.traces` | The session's traces as a `TraceCollection` |
+| `session.traces` | The session's traces as a `TraceCollection`; each `Trace` has `.scores` populated when `fetch_scores=True` was passed |
 | `session[i]` / iteration | Access traces (chronologically sorted) |
 | `session.conversation(name, is_turn, include_tools)` | Reconstruct `MultiTurnConversation`, or `None` |
 | `session.turn_count` | Number of traces counted as turns under the default selector |
@@ -467,7 +477,7 @@ result.publish_to_observability()
 | `session.find_all(name, type)` | All matching nodes across all traces |
 | `session.to_dataset(name, transform)` | Convert to a `Dataset` (one multi-turn item) |
 | `session.to_dict()` | Full metadata + JSON-able traces (round-trippable) |
-| `Session.from_langfuse(session_id, loader, prompt_patterns, show_progress, enrich, turn_name, turn_predicate, turns_only, trace_name, trace_predicate)` | Fetch a single session and wrap |
+| `Session.from_langfuse(session_id, loader, prompt_patterns, show_progress, enrich, fetch_scores, turn_name, turn_predicate, turns_only, trace_name, trace_predicate)` | Fetch a single session and wrap; `fetch_scores=True` attaches `TraceScore` objects to each trace via a single session-batch API call |
 
 ---
 
