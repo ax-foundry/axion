@@ -38,6 +38,7 @@ nav:
       - Factual Accuracy: metric-registry/composite/factual_accuracy.md
       - Answer Completeness: metric-registry/composite/answer_completeness.md
       - Answer Criteria: metric-registry/composite/answer_criteria.md
+      - Answer Conciseness: metric-registry/composite/answer_conciseness.md
       - Tone & Style Consistency: metric-registry/composite/tone_style_consistency.md
       - Citation Relevancy: metric-registry/composite/citation_relevancy.md
       - PII Leakage: metric-registry/composite/pii_leakage.md
@@ -60,6 +61,10 @@ nav:
       - Retrieval Metrics: metric-registry/heuristic/retrieval_metrics.md
     - Conversational:
       - Overview: metric-registry/conversational/index.md
+      - Conversation Flow: metric-registry/conversational/conversation_flow.md
+      - Conversation Efficiency: metric-registry/conversational/conversation_efficiency.md
+      - Goal Completion: metric-registry/conversational/goal_completion.md
+      - Persona & Tone Adherence: metric-registry/conversational/persona_tone_adherence.md
     - Tool:
       - Overview: metric-registry/tool/index.md
       - Tool Correctness: metric-registry/tool/tool_correctness.md
