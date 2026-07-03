@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://ax-foundry.github.io/axion/deep-dives/internals/environment/">
+        <link rel="canonical" href="https://ax-foundry.github.io/axion/metric-registry/conversational/persona_tone_adherence/">
       
       
-        <link rel="prev" href="../tracing/">
+        <link rel="prev" href="../goal_completion/">
       
       
-        <link rel="next" href="../logging/">
+        <link rel="next" href="../../tool/">
       
       
         
@@ -27,7 +27,7 @@
     
     
       
-        <title>Environment - Documentation</title>
+        <title>Persona & Tone Adherence - Documentation</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#axion-environment-settings" class="md-skip">
+        <a href="#persona-tone-adherence" class="md-skip">
           Skip to content
         </a>
       
@@ -217,15 +217,15 @@
         
       
         
-        <a href="../../../metric-registry/composite/"
-           class="md-header__section-link">
+        <a href="../../composite/"
+           class="md-header__section-link md-header__section-link--active">
           Metric Registry
         </a>
         
       
         
-        <a href="../../metrics/creating-metrics/"
-           class="md-header__section-link md-header__section-link--active">
+        <a href="../../../deep-dives/metrics/creating-metrics/"
+           class="md-header__section-link">
           Deep Dives
         </a>
         
@@ -345,6 +345,8 @@
   
   
   
+    
+  
   
     
     
@@ -352,11 +354,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../../metric-registry/composite/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../composite/" class="md-tabs__link">
           
   
   
@@ -379,8 +383,6 @@
   
   
   
-    
-  
   
     
     
@@ -388,13 +390,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../metrics/creating-metrics/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../deep-dives/metrics/creating-metrics/" class="md-tabs__link">
           
   
   
@@ -1395,8 +1395,10 @@
       
   
   
+    
   
   
+  
     
     
       
@@ -1412,21 +1414,22 @@
     
     
       
+        
+        
+      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
             
   
   
@@ -1444,7 +1447,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1504,10 +1507,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -1517,7 +1523,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../metric-registry/composite/" class="md-nav__link ">
+            <a href="../../composite/" class="md-nav__link ">
               
   
   
@@ -1537,7 +1543,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_1" id="__nav_4_1_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -1563,7 +1569,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/faithfulness/" class="md-nav__link">
+      <a href="../../composite/faithfulness/" class="md-nav__link">
         
   
   
@@ -1593,7 +1599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/answer_relevancy/" class="md-nav__link">
+      <a href="../../composite/answer_relevancy/" class="md-nav__link">
         
   
   
@@ -1623,7 +1629,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/factual_accuracy/" class="md-nav__link">
+      <a href="../../composite/factual_accuracy/" class="md-nav__link">
         
   
   
@@ -1653,7 +1659,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/answer_completeness/" class="md-nav__link">
+      <a href="../../composite/answer_completeness/" class="md-nav__link">
         
   
   
@@ -1683,7 +1689,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/answer_criteria/" class="md-nav__link">
+      <a href="../../composite/answer_criteria/" class="md-nav__link">
         
   
   
@@ -1713,7 +1719,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/answer_conciseness/" class="md-nav__link">
+      <a href="../../composite/answer_conciseness/" class="md-nav__link">
         
   
   
@@ -1743,7 +1749,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/tone_style_consistency/" class="md-nav__link">
+      <a href="../../composite/tone_style_consistency/" class="md-nav__link">
         
   
   
@@ -1773,7 +1779,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/citation_relevancy/" class="md-nav__link">
+      <a href="../../composite/citation_relevancy/" class="md-nav__link">
         
   
   
@@ -1803,7 +1809,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/pii_leakage/" class="md-nav__link">
+      <a href="../../composite/pii_leakage/" class="md-nav__link">
         
   
   
@@ -1833,7 +1839,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_relevancy/" class="md-nav__link">
+      <a href="../../composite/contextual_relevancy/" class="md-nav__link">
         
   
   
@@ -1863,7 +1869,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_recall/" class="md-nav__link">
+      <a href="../../composite/contextual_recall/" class="md-nav__link">
         
   
   
@@ -1893,7 +1899,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_precision/" class="md-nav__link">
+      <a href="../../composite/contextual_precision/" class="md-nav__link">
         
   
   
@@ -1923,7 +1929,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_ranking/" class="md-nav__link">
+      <a href="../../composite/contextual_ranking/" class="md-nav__link">
         
   
   
@@ -1953,7 +1959,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_sufficiency/" class="md-nav__link">
+      <a href="../../composite/contextual_sufficiency/" class="md-nav__link">
         
   
   
@@ -1983,7 +1989,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/composite/contextual_utilization/" class="md-nav__link">
+      <a href="../../composite/contextual_utilization/" class="md-nav__link">
         
   
   
@@ -2051,10 +2057,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -2064,7 +2073,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../metric-registry/heuristic/" class="md-nav__link ">
+            <a href="../../heuristic/" class="md-nav__link ">
               
   
   
@@ -2084,7 +2093,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -2110,7 +2119,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/exact_string_match/" class="md-nav__link">
+      <a href="../../heuristic/exact_string_match/" class="md-nav__link">
         
   
   
@@ -2140,7 +2149,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/contains_match/" class="md-nav__link">
+      <a href="../../heuristic/contains_match/" class="md-nav__link">
         
   
   
@@ -2170,7 +2179,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/levenshtein_ratio/" class="md-nav__link">
+      <a href="../../heuristic/levenshtein_ratio/" class="md-nav__link">
         
   
   
@@ -2200,7 +2209,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/sentence_bleu/" class="md-nav__link">
+      <a href="../../heuristic/sentence_bleu/" class="md-nav__link">
         
   
   
@@ -2230,7 +2239,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/pii_leakage_heuristic/" class="md-nav__link">
+      <a href="../../heuristic/pii_leakage_heuristic/" class="md-nav__link">
         
   
   
@@ -2260,7 +2269,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/citation_presence/" class="md-nav__link">
+      <a href="../../heuristic/citation_presence/" class="md-nav__link">
         
   
   
@@ -2290,7 +2299,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/latency/" class="md-nav__link">
+      <a href="../../heuristic/latency/" class="md-nav__link">
         
   
   
@@ -2320,7 +2329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/length_constraint/" class="md-nav__link">
+      <a href="../../heuristic/length_constraint/" class="md-nav__link">
         
   
   
@@ -2350,7 +2359,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/heuristic/retrieval_metrics/" class="md-nav__link">
+      <a href="../../heuristic/retrieval_metrics/" class="md-nav__link">
         
   
   
@@ -2385,6 +2394,8 @@
                 
   
   
+    
+  
   
   
     
@@ -2408,20 +2419,21 @@
       
       
         
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
+          
           
         
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../metric-registry/conversational/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -2441,13 +2453,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_3" id="__nav_4_3_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4_3">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2467,7 +2479,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/conversational/conversation_flow/" class="md-nav__link">
+      <a href="../conversation_flow/" class="md-nav__link">
         
   
   
@@ -2497,7 +2509,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/conversational/conversation_efficiency/" class="md-nav__link">
+      <a href="../conversation_efficiency/" class="md-nav__link">
         
   
   
@@ -2527,7 +2539,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/conversational/goal_completion/" class="md-nav__link">
+      <a href="../goal_completion/" class="md-nav__link">
         
   
   
@@ -2554,10 +2566,39 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../../metric-registry/conversational/persona_tone_adherence/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Persona & Tone Adherence
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -2575,6 +2616,139 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        At a Glance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="At a Glance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-by-step-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-Step Process
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metric-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metric Diagnostics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metric Diagnostics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signal-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signal Fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drift-incident-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Drift Incident Fields
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Scenarios
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-it-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why It Matters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -2609,10 +2783,13 @@
       
       
         
+          
+          
+        
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
@@ -2622,7 +2799,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../metric-registry/tool/" class="md-nav__link ">
+            <a href="../../tool/" class="md-nav__link ">
               
   
   
@@ -2642,7 +2819,7 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
@@ -2668,7 +2845,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../metric-registry/tool/tool_correctness/" class="md-nav__link">
+      <a href="../../tool/tool_correctness/" class="md-nav__link">
         
   
   
@@ -2710,10 +2887,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -2733,22 +2908,21 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -2766,7 +2940,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -2798,13 +2972,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -2813,7 +2984,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_1" >
         
           
-          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_1" id="__nav_5_1_label" tabindex="0">
             
   
   
@@ -2849,7 +3020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metrics/creating-metrics/" class="md-nav__link">
+      <a href="../../../deep-dives/metrics/creating-metrics/" class="md-nav__link">
         
   
   
@@ -2879,7 +3050,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metrics/yaml-metrics/" class="md-nav__link">
+      <a href="../../../deep-dives/metrics/yaml-metrics/" class="md-nav__link">
         
   
   
@@ -2914,7 +3085,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../metrics/composite-metrics/" class="md-nav__link">
+      <a href="../../../deep-dives/metrics/composite-metrics/" class="md-nav__link">
         
   
   
@@ -2966,13 +3137,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -2981,7 +3149,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
         
           
-          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
             
   
   
@@ -3017,7 +3185,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../runners/metric-runner/" class="md-nav__link">
+      <a href="../../../deep-dives/runners/metric-runner/" class="md-nav__link">
         
   
   
@@ -3047,7 +3215,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../runners/evaluation-runner/" class="md-nav__link">
+      <a href="../../../deep-dives/runners/evaluation-runner/" class="md-nav__link">
         
   
   
@@ -3077,7 +3245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../runners/api-runner/" class="md-nav__link">
+      <a href="../../../deep-dives/runners/api-runner/" class="md-nav__link">
         
   
   
@@ -3131,13 +3299,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -3146,7 +3311,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_3" >
         
           
-          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
             
   
   
@@ -3182,7 +3347,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../caliber/pattern-discovery/" class="md-nav__link">
+      <a href="../../../deep-dives/caliber/pattern-discovery/" class="md-nav__link">
         
   
   
@@ -3212,7 +3377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../caliber/example-selector/" class="md-nav__link">
+      <a href="../../../deep-dives/caliber/example-selector/" class="md-nav__link">
         
   
   
@@ -3260,13 +3425,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -3275,7 +3437,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_4" >
         
           
-          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
             
   
   
@@ -3311,7 +3473,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../synthetic/document-qa/" class="md-nav__link">
+      <a href="../../../deep-dives/synthetic/document-qa/" class="md-nav__link">
         
   
   
@@ -3363,13 +3525,10 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
@@ -3378,7 +3537,7 @@
         <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_5" >
         
           
-          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
             
   
   
@@ -3414,7 +3573,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../search/google/" class="md-nav__link">
+      <a href="../../../deep-dives/search/google/" class="md-nav__link">
         
   
   
@@ -3444,7 +3603,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../search/tavily/" class="md-nav__link">
+      <a href="../../../deep-dives/search/tavily/" class="md-nav__link">
         
   
   
@@ -3474,7 +3633,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../search/you/" class="md-nav__link">
+      <a href="../../../deep-dives/search/you/" class="md-nav__link">
         
   
   
@@ -3509,10 +3668,8 @@
                 
   
   
-    
   
   
-  
     
     
       
@@ -3527,21 +3684,20 @@
     
       
       
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
         
           
-          
         
-      
-    
-    
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" checked>
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_6" >
         
           
-          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
             
   
   
@@ -3559,7 +3715,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5_6">
             <span class="md-nav__icon md-icon"></span>
             
@@ -3577,7 +3733,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tracing/" class="md-nav__link">
+      <a href="../../../deep-dives/internals/tracing/" class="md-nav__link">
         
   
   
@@ -3604,42 +3760,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <polyline points="4 17 10 11 4 5"/>
-  <line x1="12" y1="19" x2="20" y2="19"/>
-</svg>
-  
-  <span class="md-ellipsis">
-    
-  
-    Environment
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../../deep-dives/internals/environment/" class="md-nav__link">
         
   
   
@@ -3660,277 +3784,6 @@
   
 
       </a>
-      
-        
-
-  
-
-<nav class="md-nav md-nav--secondary" aria-label="On this page">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      On this page
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#core-concepts" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Core Concepts
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-loading" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration Loading
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Configuration Loading">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#env-file-discovery" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        .env File Discovery
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-schema" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration Schema
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Configuration Schema">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#general-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        General Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#llm-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        LLM Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api-key-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        API Key Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#google-vertex-ai-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Google Vertex AI Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#web-search-api-keys" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Web Search API Keys
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#knowledge-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Knowledge Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#logging-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Logging Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tracing-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tracing Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#logfire-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Logfire Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#langfuse-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Langfuse Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#opik-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Opik Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#usage-in-code" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Usage in Code
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Usage in Code">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#accessing-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Accessing Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resolving-api-keys" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Resolving API Keys
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#auto-detecting-tracing-provider" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Auto-Detecting Tracing Provider
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#environment-variable-examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Environment Variable Examples
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#user-extension-namespace" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        User Extension Namespace
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -3943,7 +3796,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logging/" class="md-nav__link">
+      <a href="../../../deep-dives/internals/logging/" class="md-nav__link">
         
   
   
@@ -4457,33 +4310,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#core-concepts" class="md-nav__link">
+  <a href="#at-a-glance" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Core Concepts
+        At a Glance
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-loading" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Configuration Loading
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Configuration Loading">
+    <nav class="md-nav" aria-label="At a Glance">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#env-file-discovery" class="md-nav__link">
+  <a href="#step-by-step-process" class="md-nav__link">
     <span class="md-ellipsis">
       
-        .env File Discovery
+        Step-by-Step Process
       
     </span>
   </a>
@@ -4496,22 +4338,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#configuration-schema" class="md-nav__link">
+  <a href="#configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Configuration Schema
+        Configuration
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Configuration Schema">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metric-diagnostics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Metric Diagnostics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Metric Diagnostics">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#general-settings" class="md-nav__link">
+  <a href="#signal-fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        General Settings
+        Signal Fields
       
     </span>
   </a>
@@ -4519,109 +4372,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#llm-settings" class="md-nav__link">
+  <a href="#drift-incident-fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        LLM Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#api-key-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        API Key Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#google-vertex-ai-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Google Vertex AI Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#web-search-api-keys" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Web Search API Keys
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#knowledge-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Knowledge Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#logging-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Logging Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tracing-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Tracing Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#logfire-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Logfire Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#langfuse-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Langfuse Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#opik-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Opik Settings
+        Drift Incident Fields
       
     </span>
   </a>
@@ -4634,60 +4388,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage-in-code" class="md-nav__link">
+  <a href="#example-scenarios" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Usage in Code
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Usage in Code">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#accessing-settings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Accessing Settings
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#resolving-api-keys" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Resolving API Keys
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#auto-detecting-tracing-provider" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Auto-Detecting Tracing Provider
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#environment-variable-examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Environment Variable Examples
+        Example Scenarios
       
     </span>
   </a>
@@ -4695,10 +4399,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#user-extension-namespace" class="md-nav__link">
+  <a href="#why-it-matters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        User Extension Namespace
+        Why It Matters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference
       
     </span>
   </a>
@@ -4725,521 +4440,436 @@
   
 
 
-<h1 id="axion-environment-settings">Axion Environment &amp; Settings<a class="headerlink" href="#axion-environment-settings" title="Permanent link">&para;</a></h1>
-<p>This guide details the configuration management system for Axion, powered by pydantic-settings.</p>
-<h2 id="core-concepts">Core Concepts<a class="headerlink" href="#core-concepts" title="Permanent link">&para;</a></h2>
-<p>The configuration system is built on several key principles:</p>
-<p><strong>Schema-First Design</strong>: The <code>AxionConfig</code> class serves as the central schema. It's a Pydantic <code>BaseModel</code> that defines the shape of the configuration—all available fields, their types, and default values.</p>
-<p><strong>Environment Variable Loading</strong>: Settings are automatically loaded from environment variables and <code>.env</code> files using pydantic-settings.</p>
-<p><strong>Centralized Access</strong>: A single, global <code>settings</code> object is created at startup. This object is the source of truth for all configuration values throughout the application.</p>
-<h2 id="configuration-loading">Configuration Loading<a class="headerlink" href="#configuration-loading" title="Permanent link">&para;</a></h2>
-<p>The system loads settings with a clear order of precedence:</p>
-<ol>
-<li><strong>Environment Variables</strong>: System environment variables (highest priority)</li>
-<li><strong>.env File</strong>: Values loaded from the <code>.env</code> file</li>
-<li><strong>Default Values</strong>: Default values defined in the <code>AxionConfig</code> schema (lowest priority)</li>
-</ol>
-<h3 id="env-file-discovery">.env File Discovery<a class="headerlink" href="#env-file-discovery" title="Permanent link">&para;</a></h3>
-<p>The system automatically discovers your <code>.env</code> file:</p>
-<ol>
-<li>First checks for an explicit <code>ENV_PATH</code> environment variable</li>
-<li>Falls back to <code>find_dotenv()</code>, which searches the current and parent directories</li>
-</ol>
-<h2 id="configuration-schema">Configuration Schema<a class="headerlink" href="#configuration-schema" title="Permanent link">&para;</a></h2>
-<p>The following settings are available. Environment variables are case-insensitive.</p>
-<h3 id="general-settings">General Settings<a class="headerlink" href="#general-settings" title="Permanent link">&para;</a></h3>
+<h1 id="persona-tone-adherence">Persona &amp; Tone Adherence<a class="headerlink" href="#persona-tone-adherence" title="Permanent link">&para;</a></h1>
+<div style="border-left: 4px solid #1E3A5F; padding-left: 1rem; margin-bottom: 1.5rem;">
+<strong style="font-size: 1.1rem;">Evaluates whether the agent maintains its intended persona and tone consistently</strong><br>
+<span class="badge" style="margin-top: 0.5rem;">LLM-Powered</span>
+<span class="badge" style="background: #8b5cf6;">Multi-Turn</span>
+</div>
+
+<h2 id="at-a-glance">At a Glance<a class="headerlink" href="#at-a-glance" title="Permanent link">&para;</a></h2>
+<div class="grid-container">
+
+<div class="grid-item" style="text-align: center;">
+<span style="font-size: 2rem;">🎯</span><br>
+<strong>Score Range</strong><br>
+<code style="font-size: 1.1rem;">0.0</code> ──────── <code style="font-size: 1.1rem;">1.0</code><br>
+<small style="color: var(--md-text-muted);">1.0 = fully consistent persona</small>
+</div>
+
+<div class="grid-item" style="text-align: center;">
+<span style="font-size: 2rem;">⚡</span><br>
+<strong>Default Threshold</strong><br>
+<code style="font-size: 1.5rem; color: var(--md-primary);">0.5</code><br>
+<small style="color: var(--md-text-muted);">Pass/fail cutoff</small>
+</div>
+
+<div class="grid-item" style="text-align: center;">
+<span style="font-size: 2rem;">📋</span><br>
+<strong>Required Inputs</strong><br>
+<code>conversation</code><br>
+<small style="color: var(--md-text-muted);">Optional: <code>additional_input</code> (persona spec)</small>
+</div>
+
+</div>
+
+<div class="admonition abstract">
+<p class="admonition-title">What It Measures</p>
+<p>Persona &amp; Tone Adherence evaluates whether the agent <strong>maintains its intended persona and tone consistently</strong> throughout a conversation. It tracks tone consistency, formality level, language style alignment, and persona drift — the gradual (or sudden) departure from a specified character. When a persona specification is provided via <code>additional_input</code>, the metric evaluates against that explicit contract; without it, the metric infers the intended persona from early turns and assesses whether the agent held it.</p>
 <table>
 <thead>
 <tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Default</th>
-<th>Description</th>
+<th>Score</th>
+<th>Interpretation</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>debug</code></td>
-<td><code>DEBUG</code></td>
-<td><code>False</code></td>
-<td>Enable debug mode for verbose logging and diagnostics.</td>
+<td><strong>1.0</strong></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.41 13.41 6 19l1.41-1.42L1.83 12m20.41-6.42L11.66 16.17 7.5 12l-1.43 1.41L11.66 19l12-12M18 7l-1.41-1.42-6.35 6.35 1.42 1.41z"/></svg></span> Persona maintained perfectly — tone consistent across all turns</td>
 </tr>
 <tr>
-<td><code>port</code></td>
-<td><code>PORT</code></td>
-<td><code>8000</code></td>
-<td>The port the application will run on.</td>
+<td><strong>0.7+</strong></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 7 9 19l-5.5-5.5 1.41-1.41L9 16.17 19.59 5.59z"/></svg></span> Minor drift; overall character well-preserved</td>
 </tr>
 <tr>
-<td><code>hosts</code></td>
-<td><code>HOSTS</code></td>
-<td><code>['localhost']</code></td>
-<td>A list of allowed hostnames.</td>
+<td><strong>0.5</strong></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span> Threshold — noticeable inconsistencies in tone or persona</td>
+</tr>
+<tr>
+<td><strong>&lt; 0.5</strong></td>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span> Significant drift — agent's voice is inconsistent or misaligned with spec</td>
 </tr>
 </tbody>
 </table>
-<h3 id="llm-settings">LLM Settings<a class="headerlink" href="#llm-settings" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>llm_provider</code></td>
-<td><code>LLM_PROVIDER</code></td>
-<td><code>'openai'</code></td>
-<td>Default provider for language models.</td>
-</tr>
-<tr>
-<td><code>embedding_provider</code></td>
-<td><code>EMBEDDING_PROVIDER</code></td>
-<td><code>'openai'</code></td>
-<td>Default provider for embedding models.</td>
-</tr>
-<tr>
-<td><code>llm_model_name</code></td>
-<td><code>LLM_MODEL_NAME</code></td>
-<td><code>'gpt-4o'</code></td>
-<td>Default language model name.</td>
-</tr>
-<tr>
-<td><code>embedding_model_name</code></td>
-<td><code>EMBEDDING_MODEL_NAME</code></td>
-<td><code>'text-embedding-ada-002'</code></td>
-<td>Default embedding model name.</td>
-</tr>
-<tr>
-<td><code>api_base_url</code></td>
-<td><code>API_BASE_URL</code></td>
-<td><code>None</code></td>
-<td>Optional base URL for OpenAI-compatible APIs.</td>
-</tr>
-<tr>
-<td><code>litellm_verbose</code></td>
-<td><code>LITELLM_VERBOSE</code></td>
-<td><code>False</code></td>
-<td>Enable verbose logging for LiteLLM debugging.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="api-key-settings">API Key Settings<a class="headerlink" href="#api-key-settings" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>openai_api_key</code></td>
-<td><code>OPENAI_API_KEY</code></td>
-<td>API key for OpenAI models.</td>
-</tr>
-<tr>
-<td><code>anthropic_api_key</code></td>
-<td><code>ANTHROPIC_API_KEY</code></td>
-<td>API key for Anthropic Claude models.</td>
-</tr>
-<tr>
-<td><code>google_api_key</code></td>
-<td><code>GOOGLE_API_KEY</code></td>
-<td>API key for Google Gemini models.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="google-vertex-ai-settings">Google Vertex AI Settings<a class="headerlink" href="#google-vertex-ai-settings" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>vertex_project</code></td>
-<td><code>VERTEXAI_PROJECT</code></td>
-<td>GCP project ID for Vertex AI.</td>
-</tr>
-<tr>
-<td><code>vertex_location</code></td>
-<td><code>VERTEXAI_LOCATION</code></td>
-<td>GCP region for Vertex AI (e.g., <code>us-central1</code>).</td>
-</tr>
-<tr>
-<td><code>vertex_credentials</code></td>
-<td><code>GOOGLE_APPLICATION_CREDENTIALS</code></td>
-<td>Path to GCP service account JSON file.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="web-search-api-keys">Web Search API Keys<a class="headerlink" href="#web-search-api-keys" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>serpapi_key</code></td>
-<td><code>SERPAPI_KEY</code></td>
-<td>API key for SerpAPI.</td>
-</tr>
-<tr>
-<td><code>ydc_api_key</code></td>
-<td><code>YDC_API_KEY</code></td>
-<td>API key for You.com Search API.</td>
-</tr>
-<tr>
-<td><code>tavily_api_key</code></td>
-<td><code>TAVILY_API_KEY</code></td>
-<td>API key for Tavily Search API.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="knowledge-settings">Knowledge Settings<a class="headerlink" href="#knowledge-settings" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>llama_parse_api_key</code></td>
-<td><code>LLAMA_PARSE_API_KEY</code></td>
-<td>API key for LlamaParse.</td>
-</tr>
-<tr>
-<td><code>google_credentials_path</code></td>
-<td><code>GOOGLE_CREDENTIALS_PATH</code></td>
-<td>Path to Google Credentials JSON file.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="logging-settings">Logging Settings<a class="headerlink" href="#logging-settings" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>log_level</code></td>
-<td><code>LOG_LEVEL</code></td>
-<td><code>'INFO'</code></td>
-<td>The minimum logging level (<code>DEBUG</code>, <code>INFO</code>, <code>WARNING</code>, <code>ERROR</code>, <code>CRITICAL</code>).</td>
-</tr>
-<tr>
-<td><code>log_use_rich</code></td>
-<td><code>LOG_USE_RICH</code></td>
-<td><code>True</code></td>
-<td>Use rich for beautiful console output.</td>
-</tr>
-<tr>
-<td><code>log_format_string</code></td>
-<td><code>LOG_FORMAT_STRING</code></td>
-<td><code>None</code></td>
-<td>A custom format string for the console logger.</td>
-</tr>
-<tr>
-<td><code>log_file_path</code></td>
-<td><code>LOG_FILE_PATH</code></td>
-<td><code>None</code></td>
-<td>If set, logs will also be written to this file.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="tracing-settings">Tracing Settings<a class="headerlink" href="#tracing-settings" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>tracing_mode</code></td>
-<td><code>TRACING_MODE</code></td>
-<td><code>'noop'</code></td>
-<td>Controls tracing provider (see below).</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Available Tracing Modes:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Mode</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>noop</code></td>
-<td>Disabled (zero overhead). Default.</td>
-</tr>
-<tr>
-<td><code>logfire</code></td>
-<td>Pydantic Logfire for OpenTelemetry-based observability.</td>
-</tr>
-<tr>
-<td><code>otel</code></td>
-<td>Generic OpenTelemetry exporter.</td>
-</tr>
-<tr>
-<td><code>langfuse</code></td>
-<td>Langfuse LLM observability with cost tracking.</td>
-</tr>
-<tr>
-<td><code>opik</code></td>
-<td>Comet Opik LLM observability.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="logfire-settings">Logfire Settings<a class="headerlink" href="#logfire-settings" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>logfire_token</code></td>
-<td><code>LOGFIRE_TOKEN</code></td>
-<td><code>None</code></td>
-<td>API token for Logfire hosted mode.</td>
-</tr>
-<tr>
-<td><code>logfire_service_name</code></td>
-<td><code>LOGFIRE_SERVICE_NAME</code></td>
-<td><code>'axion'</code></td>
-<td>The service name that appears in Logfire.</td>
-</tr>
-<tr>
-<td><code>logfire_project_name</code></td>
-<td><code>LOGFIRE_PROJECT</code></td>
-<td><code>None</code></td>
-<td>Optional project name for Logfire.</td>
-</tr>
-<tr>
-<td><code>logfire_distributed_tracing</code></td>
-<td><code>DISTRIBUTED_TRACING</code></td>
-<td><code>True</code></td>
-<td>Toggles distributed tracing.</td>
-</tr>
-<tr>
-<td><code>logfire_console_logging</code></td>
-<td><code>CONSOLE_LOGGING</code></td>
-<td><code>False</code></td>
-<td>Toggles Logfire's console logging.</td>
-</tr>
-<tr>
-<td><code>otel_endpoint</code></td>
-<td><code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code></td>
-<td><code>None</code></td>
-<td>Custom OpenTelemetry endpoint.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="langfuse-settings">Langfuse Settings<a class="headerlink" href="#langfuse-settings" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>langfuse_public_key</code></td>
-<td><code>LANGFUSE_PUBLIC_KEY</code></td>
-<td><code>None</code></td>
-<td>Langfuse public key for authentication.</td>
-</tr>
-<tr>
-<td><code>langfuse_secret_key</code></td>
-<td><code>LANGFUSE_SECRET_KEY</code></td>
-<td><code>None</code></td>
-<td>Langfuse secret key for authentication.</td>
-</tr>
-<tr>
-<td><code>langfuse_base_url</code></td>
-<td><code>LANGFUSE_BASE_URL</code></td>
-<td><code>'https://cloud.langfuse.com'</code></td>
-<td>Langfuse API endpoint.</td>
-</tr>
-</tbody>
-</table>
-<h3 id="opik-settings">Opik Settings<a class="headerlink" href="#opik-settings" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Environment Variable</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>opik_api_key</code></td>
-<td><code>OPIK_API_KEY</code></td>
-<td><code>None</code></td>
-<td>Opik API key for authentication.</td>
-</tr>
-<tr>
-<td><code>opik_workspace</code></td>
-<td><code>OPIK_WORKSPACE</code></td>
-<td><code>None</code></td>
-<td>Opik workspace name.</td>
-</tr>
-<tr>
-<td><code>opik_project_name</code></td>
-<td><code>OPIK_PROJECT_NAME</code></td>
-<td><code>'axion'</code></td>
-<td>Opik project name for grouping traces.</td>
-</tr>
-<tr>
-<td><code>opik_base_url</code></td>
-<td><code>OPIK_URL_OVERRIDE</code></td>
-<td><code>'https://www.comet.com/opik/api'</code></td>
-<td>Opik API endpoint.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="usage-in-code">Usage in Code<a class="headerlink" href="#usage-in-code" title="Permanent link">&para;</a></h2>
-<h3 id="accessing-settings">Accessing Settings<a class="headerlink" href="#accessing-settings" title="Permanent link">&para;</a></h3>
-<p>Import the global <code>settings</code> object to access configuration values:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">def</span><span class="w"> </span><span class="nf">some_function</span><span class="p">():</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="c1"># Access settings directly</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Debug mode is enabled.&quot;</span><span class="p">)</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using LLM Provider: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">llm_provider</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Default Model: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">llm_model_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</div>
+<div class="grid-container">
+
+<div class="grid-item" style="border-left: 4px solid #10b981;">
+<strong style="color: #10b981;">✅ Use When</strong>
+<ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem;">
+<li>Branded chatbots or agents with a defined persona (name, voice, character)</li>
+<li>Checking for tone drift across long conversations</li>
+<li>Customer service agents where consistent tone is a brand requirement</li>
+<li>Validating that a system prompt persona specification is being honored</li>
+</ul>
+</div>
+
+<div class="grid-item" style="border-left: 4px solid #ef4444;">
+<strong style="color: #ef4444;">❌ Don't Use When</strong>
+<ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem;">
+<li>Internal tools with no defined persona where tone is irrelevant</li>
+<li>Factual accuracy assessment — use <a href="../composite/faithfulness.md">Faithfulness</a></li>
+<li>Goal outcome evaluation — use <a href="./goal_completion.md">Goal Completion</a></li>
+<li>Single-turn Q&A where there are no prior turns to drift from</li>
+</ul>
+</div>
+
+</div>
+
+<div class="admonition tip">
+<p class="admonition-title">Best Results: Provide a Persona Spec</p>
+<p>Pass the agent's persona description via <code>additional_input</code> for the most precise evaluation. Without it, the metric infers persona from early turns — which works, but is less precise than an explicit spec.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">conversation</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">],</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">additional_input</span><span class="o">=</span><span class="s2">&quot;You are Aria, a warm and professional customer success agent for Acme Corp. Maintain a friendly but formal tone. Never use slang. Always address users by first name.&quot;</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">)</span>
 </span></code></pre></div>
-<h3 id="resolving-api-keys">Resolving API Keys<a class="headerlink" href="#resolving-api-keys" title="Permanent link">&para;</a></h3>
-<p>Use <code>resolve_api_key()</code> to get API keys with proper fallback:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_api_key</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Prioritizes direct argument, falls back to settings</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">api_key</span> <span class="o">=</span> <span class="n">resolve_api_key</span><span class="p">(</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">api_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># or pass explicit key</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">key_name</span><span class="o">=</span><span class="s1">&#39;tavily_api_key&#39;</span><span class="p">,</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">service_name</span><span class="o">=</span><span class="s1">&#39;Tavily&#39;</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">)</span>
-</span></code></pre></div>
-<h3 id="auto-detecting-tracing-provider">Auto-Detecting Tracing Provider<a class="headerlink" href="#auto-detecting-tracing-provider" title="Permanent link">&para;</a></h3>
-<p>The system can auto-detect the tracing provider from environment variables:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">detect_tracing_provider</span><span class="p">,</span> <span class="n">list_tracing_providers</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Auto-detect based on which API keys are set</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">provider</span> <span class="o">=</span> <span class="n">detect_tracing_provider</span><span class="p">()</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected provider: </span><span class="si">{</span><span class="n">provider</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># List all available providers</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">providers</span> <span class="o">=</span> <span class="n">list_tracing_providers</span><span class="p">()</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="c1"># [&#39;noop&#39;, &#39;logfire&#39;, &#39;otel&#39;, &#39;langfuse&#39;, &#39;opik&#39;]</span>
-</span></code></pre></div>
-<p><strong>Auto-detection priority:</strong></p>
-<ol>
-<li>Explicit <code>TRACING_MODE</code> environment variable</li>
-<li><code>LANGFUSE_SECRET_KEY</code> set → <code>'langfuse'</code></li>
-<li><code>OPIK_API_KEY</code> set → <code>'opik'</code></li>
-<li><code>LOGFIRE_TOKEN</code> set → <code>'logfire'</code></li>
-<li><code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code> set → <code>'otel'</code></li>
-<li>Default → <code>'noop'</code></li>
-</ol>
-<h2 id="environment-variable-examples">Environment Variable Examples<a class="headerlink" href="#environment-variable-examples" title="Permanent link">&para;</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:5"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg></span> Basic</label><label for="__tabbed_1_2"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 2h2v18h18v2H2zm5 8h10v3H7zm4 5h10v3H11zM6 4h16v4h-2V6H8v2H6z"/></svg></span> Langfuse</label><label for="__tabbed_1_3"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.66 11.2c-.23-.3-.51-.56-.77-.82-.67-.6-1.43-1.03-2.07-1.66C13.33 7.26 13 4.85 13.95 3c-.95.23-1.78.75-2.49 1.32-2.59 2.08-3.61 5.75-2.39 8.9.04.1.08.2.08.33 0 .22-.15.42-.35.5-.23.1-.47.04-.66-.12a.6.6 0 0 1-.14-.17c-1.13-1.43-1.31-3.48-.55-5.12C5.78 10 4.87 12.3 5 14.47c.06.5.12 1 .29 1.5.14.6.41 1.2.71 1.73 1.08 1.73 2.95 2.97 4.96 3.22 2.14.27 4.43-.12 6.07-1.6 1.83-1.66 2.47-4.32 1.53-6.6l-.13-.26c-.21-.46-.77-1.26-.77-1.26m-3.16 6.3c-.28.24-.74.5-1.1.6-1.12.4-2.24-.16-2.9-.82 1.19-.28 1.9-1.16 2.11-2.05.17-.8-.15-1.46-.28-2.23-.12-.74-.1-1.37.17-2.06.19.38.39.76.63 1.06.77 1 1.98 1.44 2.24 2.8.04.14.06.28.06.43.03.82-.33 1.72-.93 2.27"/></svg></span> Logfire</label><label for="__tabbed_1_4"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m21 9-4-4v3h-7v2h7v3M7 11l-4 4 4 4v-3h7v-2H7z"/></svg></span> Multi-Provider</label><label for="__tabbed_1_5"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg></span> Search</label></div>
+</div>
+<hr />
+<details>
+<summary><strong style="font-size: 1.1rem;">How It Works</strong></summary>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg></span> Computation</label><label for="__tabbed_1_2"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12 16 7.36-5.73L21 9l-9-7-9 7 1.63 1.27M12 18.54l-7.38-5.73L3 14.07l9 7 9-7-1.63-1.27z"/></svg></span> Evaluation Dimensions</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># .env file</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nv">DEBUG</span><span class="o">=</span><span class="nb">false</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nv">LOG_LEVEL</span><span class="o">=</span>INFO
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nv">LLM_PROVIDER</span><span class="o">=</span>openai
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nv">LLM_MODEL_NAME</span><span class="o">=</span>gpt-4o
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nv">OPENAI_API_KEY</span><span class="o">=</span>sk-your-api-key
-</span></code></pre></div>
+<p>An <strong>Evaluator LLM</strong> reads the conversation — and the persona spec if provided — then assesses each agent turn for adherence across four evaluation dimensions. Drift incidents are catalogued with turn-level precision.</p>
+<h3 id="step-by-step-process">Step-by-Step Process<a class="headerlink" href="#step-by-step-process" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+    subgraph INPUT["📥 Inputs"]
+        A["conversation&lt;br/&gt;&lt;small&gt;List of {role, content} turns&lt;/small&gt;"]
+        B["additional_input&lt;br/&gt;&lt;small&gt;Persona spec (optional but recommended)&lt;/small&gt;"]
+    end
+
+    subgraph ESTABLISH["🔍 Persona Baseline"]
+        C["Extract or infer persona&lt;br/&gt;&lt;small&gt;From spec or early turns&lt;/small&gt;"]
+        D["Identify: tone, formality, style, character traits"]
+    end
+
+    subgraph ASSESS["⚖️ Per-Turn Assessment"]
+        E["Evaluate each agent turn&lt;br/&gt;against baseline dimensions"]
+        F["Flag drift incidents&lt;br/&gt;&lt;small&gt;Turn, dimension, severity&lt;/small&gt;"]
+    end
+
+    subgraph SCORE["📊 Scoring"]
+        G["Aggregate drift severity"]
+        H["Clamp to [0, 1]"]
+        I["Final Score"]
+    end
+
+    A &amp; B --&gt; C
+    C --&gt; D
+    D --&gt; E
+    E --&gt; F
+    F --&gt; G
+    G --&gt; H
+    H --&gt; I
+
+    style INPUT stroke:#1E3A5F,stroke-width:2px
+    style ESTABLISH stroke:#3b82f6,stroke-width:2px
+    style ASSESS stroke:#f59e0b,stroke-width:2px
+    style SCORE stroke:#10b981,stroke-width:2px
+    style I fill:#1E3A5F,stroke:#0F2440,stroke-width:3px,color:#fff</code></pre>
 </div>
 <div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># .env file</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nv">OPENAI_API_KEY</span><span class="o">=</span>sk-your-api-key
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nv">LANGFUSE_PUBLIC_KEY</span><span class="o">=</span>pk-lf-xxx
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="nv">LANGFUSE_SECRET_KEY</span><span class="o">=</span>sk-lf-xxx
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># TRACING_MODE is auto-detected from LANGFUSE_SECRET_KEY</span>
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># .env file</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nv">OPENAI_API_KEY</span><span class="o">=</span>sk-your-api-key
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nv">LOGFIRE_TOKEN</span><span class="o">=</span>your-logfire-token
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nv">LOGFIRE_SERVICE_NAME</span><span class="o">=</span>my-app
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># TRACING_MODE is auto-detected from LOGFIRE_TOKEN</span>
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># .env file</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="nv">OPENAI_API_KEY</span><span class="o">=</span>sk-your-openai-key
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="nv">ANTHROPIC_API_KEY</span><span class="o">=</span>sk-ant-your-anthropic-key
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="nv">GOOGLE_API_KEY</span><span class="o">=</span>your-google-key
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="c1"># Vertex AI</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="nv">VERTEXAI_PROJECT</span><span class="o">=</span>my-gcp-project
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="nv">VERTEXAI_LOCATION</span><span class="o">=</span>us-central1
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="nv">GOOGLE_APPLICATION_CREDENTIALS</span><span class="o">=</span>/path/to/service-account.json
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># .env file</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nv">TAVILY_API_KEY</span><span class="o">=</span>tvly-xxx
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="nv">SERPAPI_KEY</span><span class="o">=</span>xxx
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="nv">YDC_API_KEY</span><span class="o">=</span>xxx
-</span></code></pre></div>
+<div class="grid-container">
+<p><div class="grid-item" style="border-left: 4px solid #3b82f6; padding-left: 1rem;">
+<strong style="color: #3b82f6;">🎭 Tone Consistency</strong>
+<br><small>Does the agent maintain the same emotional register across turns? Tracks shifts from warm to curt, professional to casual, confident to uncertain.</small>
+</div></p>
+<p><div class="grid-item" style="border-left: 4px solid #f59e0b; padding-left: 1rem;">
+<strong style="color: #f59e0b;">📐 Formality Level</strong>
+<br><small>Does the agent hold a consistent formality level? Flags inappropriate contractions, slang, or sudden formality spikes in casual-persona agents.</small>
+</div></p>
+<p><div class="grid-item" style="border-left: 4px solid #10b981; padding-left: 1rem;">
+<strong style="color: #10b981;">✍️ Language Style Alignment</strong>
+<br><small>Does the agent's vocabulary, sentence structure, and phrasing match the specified or established style? Tracks divergence from the persona's linguistic fingerprint.</small>
+</div></p>
+<p><div class="grid-item" style="border-left: 4px solid #ef4444; padding-left: 1rem;">
+<strong style="color: #ef4444;">🌀 Persona Drift</strong>
+<br><small>Has the agent's overall character shifted? Catches compound drift where multiple small deviations across dimensions produce a meaningfully different persona by the end of the conversation.</small>
+</div></p>
 </div>
 </div>
 </div>
-<h2 id="user-extension-namespace">User Extension Namespace<a class="headerlink" href="#user-extension-namespace" title="Permanent link">&para;</a></h2>
-<p>The settings object includes an <code>ext</code> dictionary for custom user settings:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># Access custom settings</span>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">custom_value</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;my_custom_setting&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">)</span>
-</span></code></pre></div>
+</div>
+</details>
 <hr />
-<div class="ref-nav">
-<p><a class="md-button md-button--primary" href="../logging/">Logging <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a>
-<a class="md-button" href="../../../getting-started/installation/">Installation <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a>
-<a class="md-button" href="../../../guides/llm-providers/">LLM Providers <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span></a></p>
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 17v2h6v-2zM3 5v2h10V5zm10 16v-2h8v-2h-8v-2h-2v6zM7 9v2H3v2h4v2h2V9zm14 4v-2H11v2zm-6-4h2V7h4V5h-4V3h-2z"/></svg></span> Parameters</label><label for="__tabbed_2_2"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 5.14v14l11-7z"/></svg></span> Basic Usage (No Spec)</label><label for="__tabbed_2_3"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10 17-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9m-6-8L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5z"/></svg></span> With Persona Spec</label><label for="__tabbed_2_4"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4m0 2a2 2 0 0 0-2 2 2 2 0 0 0 2 2 2 2 0 0 0 2-2 2 2 0 0 0-2-2m-2 12c-.25 0-.46-.18-.5-.42l-.37-2.65c-.63-.25-1.17-.59-1.69-.99l-2.49 1.01c-.22.08-.49 0-.61-.22l-2-3.46a.493.493 0 0 1 .12-.64l2.11-1.66L4.5 12l.07-1-2.11-1.63a.493.493 0 0 1-.12-.64l2-3.46c.12-.22.39-.31.61-.22l2.49 1c.52-.39 1.06-.73 1.69-.98l.37-2.65c.04-.24.25-.42.5-.42h4c.25 0 .46.18.5.42l.37 2.65c.63.25 1.17.59 1.69.98l2.49-1c.22-.09.49 0 .61.22l2 3.46c.13.22.07.49-.12.64L19.43 11l.07 1-.07 1 2.11 1.63c.19.15.25.42.12.64l-2 3.46c-.12.22-.39.31-.61.22l-2.49-1c-.52.39-1.06.73-1.69.98l-.37 2.65c-.04.24-.25.42-.5.42zm1.25-18-.37 2.61c-1.2.25-2.26.89-3.03 1.78L5.44 7.35l-.75 1.3L6.8 10.2a5.55 5.55 0 0 0 0 3.6l-2.12 1.56.75 1.3 2.43-1.04c.77.88 1.82 1.52 3.01 1.76l.37 2.62h1.52l.37-2.61c1.19-.25 2.24-.89 3.01-1.77l2.43 1.04.75-1.3-2.12-1.55c.4-1.17.4-2.44 0-3.61l2.11-1.55-.75-1.3-2.41 1.04a5.42 5.42 0 0 0-3.03-1.77L12.75 4z"/></svg></span> With Runner</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mode</code></td>
+<td><code>EvaluationMode</code></td>
+<td><code>GRANULAR</code></td>
+<td>Evaluation detail level (<code>GRANULAR</code> or <code>HOLISTIC</code>)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tabbed-block">
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">PersonaToneAdherence</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">metric</span> <span class="o">=</span> <span class="n">PersonaToneAdherence</span><span class="p">()</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">conversation</span><span class="o">=</span><span class="p">[</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello, I have a billing question.&quot;</span><span class="p">},</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Good afternoon! I&#39;d be delighted to help. Could you share the details?&quot;</span><span class="p">},</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;My invoice seems wrong.&quot;</span><span class="p">},</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;yeah sure what&#39;s the issue lol&quot;</span><span class="p">},</span>  <span class="c1"># Drift detected</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="p">]</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p">)</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">metric</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">pretty</span><span class="p">())</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">PersonaToneAdherence</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">metric</span> <span class="o">=</span> <span class="n">PersonaToneAdherence</span><span class="p">()</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">persona_spec</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="s2">&quot;You are Aria, a warm and professional customer success agent for Acme Corp. &quot;</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="s2">&quot;Maintain a friendly but formal tone at all times. Never use contractions or slang. &quot;</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="s2">&quot;Always address users by their first name when known.&quot;</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="p">)</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>    <span class="n">conversation</span><span class="o">=</span><span class="p">[</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Hi, I&#39;m Sarah. I need help with my order.&quot;</span><span class="p">},</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello, Sarah! I am happy to assist. Could you share your order number?&quot;</span><span class="p">},</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;It&#39;s 4821.&quot;</span><span class="p">},</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;assistant&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Thanks Sarah, let me check that for you.&quot;</span><span class="p">},</span>  <span class="c1"># &quot;Thanks&quot; may drift</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="p">],</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="n">additional_input</span><span class="o">=</span><span class="n">persona_spec</span><span class="p">,</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="p">)</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">metric</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">pretty</span><span class="p">())</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">PersonaToneAdherence</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetricRunner</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">metric</span> <span class="o">=</span> <span class="n">PersonaToneAdherence</span><span class="p">()</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">runner</span> <span class="o">=</span> <span class="n">MetricRunner</span><span class="p">(</span><span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="n">metric</span><span class="p">])</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="k">for</span> <span class="n">item_result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Score: </span><span class="si">{</span><span class="n">item_result</span><span class="o">.</span><span class="n">score</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="k">for</span> <span class="n">drift</span> <span class="ow">in</span> <span class="n">item_result</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">drift_incidents</span><span class="p">:</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - Turn </span><span class="si">{</span><span class="n">drift</span><span class="o">.</span><span class="n">turn</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">drift</span><span class="o">.</span><span class="n">dimension</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">drift</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<hr />
+<h2 id="metric-diagnostics">Metric Diagnostics<a class="headerlink" href="#metric-diagnostics" title="Permanent link">&para;</a></h2>
+<p>Every evaluation is <strong>fully interpretable</strong>. Access detailed diagnostic results via <code>result.signals</code>.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">metric</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">pretty</span><span class="p">())</span>   <span class="c1"># Human-readable summary</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">result</span><span class="o">.</span><span class="n">signals</span>           <span class="c1"># Full diagnostic breakdown</span>
+</span></code></pre></div>
+<details>
+<summary><strong>📊 PersonaToneAdherenceResult Structure</strong></summary>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">PersonaToneAdherenceResult</span><span class="p">(</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="p">{</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="s2">&quot;overall_score&quot;</span><span class="p">:</span> <span class="mf">0.55</span><span class="p">,</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="s2">&quot;persona_baseline&quot;</span><span class="p">:</span> <span class="s2">&quot;Warm, formal, professional customer success agent. No contractions or slang.&quot;</span><span class="p">,</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="s2">&quot;drift_incidents&quot;</span><span class="p">:</span> <span class="p">[</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>        <span class="p">{</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>            <span class="s2">&quot;turn&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>            <span class="s2">&quot;dimension&quot;</span><span class="p">:</span> <span class="s2">&quot;formality&quot;</span><span class="p">,</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>            <span class="s2">&quot;severity&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;yeah sure what&#39;s the issue lol&#39; is highly informal and inconsistent with the established warm-professional persona.&quot;</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>        <span class="p">}</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="p">],</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="s2">&quot;dimension_scores&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>        <span class="s2">&quot;tone_consistency&quot;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>        <span class="s2">&quot;formality_level&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>        <span class="s2">&quot;language_style&quot;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>        <span class="s2">&quot;persona_drift&quot;</span><span class="p">:</span> <span class="mf">0.8</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>    <span class="p">},</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>    <span class="s2">&quot;reason&quot;</span><span class="p">:</span> <span class="s2">&quot;A severe formality breakdown in turn 4 significantly degraded the overall score. All other turns maintained appropriate tone and style.&quot;</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="p">}</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="signal-fields">Signal Fields<a class="headerlink" href="#signal-fields" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>overall_score</code></td>
+<td><code>float</code></td>
+<td>The 0–1 adherence score</td>
+</tr>
+<tr>
+<td><code>persona_baseline</code></td>
+<td><code>str</code></td>
+<td>Description of the persona used for evaluation (inferred or from spec)</td>
+</tr>
+<tr>
+<td><code>drift_incidents</code></td>
+<td><code>List</code></td>
+<td>Per-incident records with turn, dimension, severity, and description</td>
+</tr>
+<tr>
+<td><code>dimension_scores</code></td>
+<td><code>Dict</code></td>
+<td>Individual scores per evaluation dimension</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td><code>str</code></td>
+<td>Human-readable explanation of the overall score</td>
+</tr>
+</tbody>
+</table>
+<h3 id="drift-incident-fields">Drift Incident Fields<a class="headerlink" href="#drift-incident-fields" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>turn</code></td>
+<td><code>int</code></td>
+<td>Turn index (1-based) where drift occurred</td>
+</tr>
+<tr>
+<td><code>dimension</code></td>
+<td><code>str</code></td>
+<td>Dimension: <code>tone_consistency</code>, <code>formality_level</code>, <code>language_style</code>, or <code>persona_drift</code></td>
+</tr>
+<tr>
+<td><code>severity</code></td>
+<td><code>str</code></td>
+<td><code>low</code>, <code>medium</code>, or <code>high</code></td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td><code>str</code></td>
+<td>Specific explanation of the drift</td>
+</tr>
+</tbody>
+</table>
+</details>
+<hr />
+<h2 id="example-scenarios">Example Scenarios<a class="headerlink" href="#example-scenarios" title="Permanent link">&para;</a></h2>
+<details>
+<summary><strong>✅ Scenario 1: Perfect Adherence (Score: 1.0)</strong></summary>
+<div class="admonition success">
+<p class="admonition-title">Persona Maintained</p>
+<p><strong>Persona spec:</strong> "Friendly, concise, slightly informal tech support agent. Uses contractions. First-name basis."</p>
+<p><strong>Conversation:</strong> All 6 turns use consistent informal-friendly register, first names, and contractions throughout.</p>
+<p><strong>Drift incidents:</strong> 0</p>
+<p><strong>Final Score:</strong> <code>1.0</code> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M.41 13.41 6 19l1.41-1.42L1.83 12m20.41-6.42L11.66 16.17 7.5 12l-1.43 1.41L11.66 19l12-12M18 7l-1.41-1.42-6.35 6.35 1.42 1.41z"/></svg></span></p>
+</div>
+</details>
+<details>
+<summary><strong>⚠️ Scenario 2: Gradual Drift (Score: 0.6)</strong></summary>
+<div class="admonition warning">
+<p class="admonition-title">Compound Drift</p>
+<p><strong>Persona spec:</strong> "Professional, formal financial advisor persona. No slang. Complete sentences."</p>
+<p><strong>Drift incidents:</strong>
+- Turn 3: Used "no worries" (<code>formality_level</code>, medium)
+- Turn 5: Incomplete sentence fragment (<code>language_style</code>, low)
+- Turn 7: Switched to first-person casual ("I think maybe…") (<code>tone_consistency</code>, medium)</p>
+<p>By turn 7, the agent reads significantly more casual than the spec requires.</p>
+<p><strong>Final Score:</strong> <code>0.6</code> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14h-2V9h2m0 9h-2v-2h2M1 21h22L12 2z"/></svg></span></p>
+</div>
+</details>
+<details>
+<summary><strong>❌ Scenario 3: Severe Persona Break (Score: 0.2)</strong></summary>
+<div class="admonition failure">
+<p class="admonition-title">Persona Collapsed</p>
+<p><strong>Persona spec:</strong> "Calm, empathetic mental health support companion."</p>
+<p>A frustrated user made three repeated complaints. The agent's tone shifted to dismissive and curt by turn 5, directly contradicting the empathy requirement.</p>
+<p><strong>Drift incidents:</strong> 3 high-severity incidents across tone and persona dimensions.</p>
+<p><strong>Final Score:</strong> <code>0.2</code> <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></span></p>
+</div>
+</details>
+<hr />
+<h2 id="why-it-matters">Why It Matters<a class="headerlink" href="#why-it-matters" title="Permanent link">&para;</a></h2>
+<div class="grid-container">
+
+<div class="grid-item">
+<span style="font-size: 1.5rem;">🎭</span>
+<strong>Brand Consistency</strong>
+<p style="margin-top: 0.5rem; color: var(--md-text-secondary);">An agent that breaks persona mid-conversation erodes user trust and brand integrity. Persona & Tone Adherence provides a measurable signal for brand consistency at scale.</p>
+</div>
+
+<div class="grid-item">
+<span style="font-size: 1.5rem;">😤</span>
+<strong>Stress-Test Discovery</strong>
+<p style="margin-top: 0.5rem; color: var(--md-text-secondary);">Persona drift most commonly occurs under user pressure — repeated complaints, frustration, or adversarial inputs. This metric surfaces those vulnerabilities before deployment.</p>
+</div>
+
+<div class="grid-item">
+<span style="font-size: 1.5rem;">🔍</span>
+<strong>System Prompt Validation</strong>
+<p style="margin-top: 0.5rem; color: var(--md-text-secondary);">Pass the system prompt persona spec as <code>additional_input</code> to validate that the model actually honors your persona instructions — a critical check for production-ready branded agents.</p>
+</div>
+
+</div>
+
+<hr />
+<h2 id="quick-reference">Quick Reference<a class="headerlink" href="#quick-reference" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">TL;DR</p>
+<p><strong>Persona &amp; Tone Adherence</strong> = Does the agent maintain a consistent voice, tone, and character throughout the conversation — especially under user pressure?</p>
+<ul>
+<li><strong>Use it when:</strong> Your agent has a defined persona or brand voice that must be held consistently</li>
+<li><strong>Score interpretation:</strong> Higher = more consistent persona; 0.5 passes by default</li>
+<li><strong>Key tip:</strong> Pass the persona spec via <code>additional_input</code> for the most precise evaluation</li>
+</ul>
+</div>
+<div class="grid cards">
+<ul>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 7H5a2 2 0 0 0-2 2v8h2v-4h2v4h2V9a2 2 0 0 0-2-2m0 4H5V9h2m7-2h-4v10h2v-4h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2m0 4h-2V9h2m6 0v6h1v2h-4v-2h1V9h-1V7h4v2Z"/></svg></span> <strong>API Reference</strong></p>
+<p><a href="../../../reference/metrics/#persona-tone-adherence"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> <code>axion.metrics.PersonaToneAdherence</code></a></p>
+</li>
+<li>
+<p><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> <strong>Related Metrics</strong></p>
+<p><a href="../conversation_flow/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Conversation Flow</a> · <a href="../goal_completion/">Goal Completion</a> · <a href="../conversation_efficiency/">Conversation Efficiency</a></p>
+</li>
+</ul>
 </div>
 
 
@@ -5263,7 +4893,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 20, 2026 19:49:22 UTC">February 20, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 3, 2026 18:31:47 UTC">July 3, 2026</span>
   </span>
 
     
@@ -5273,7 +4903,7 @@
     <span class="md-icon" title="Created">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14.47 15.08 11 13V7h1.5v5.25l3.08 1.83c-.41.28-.79.62-1.11 1m-1.39 4.84c-.36.05-.71.08-1.08.08-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8c0 .37-.03.72-.08 1.08.69.1 1.33.32 1.92.64.1-.56.16-1.13.16-1.72 0-5.5-4.5-10-10-10S2 6.5 2 12s4.47 10 10 10c.59 0 1.16-.06 1.72-.16-.32-.59-.54-1.23-.64-1.92M18 15v3h-3v2h3v3h2v-3h3v-2h-3v-3z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 10, 2026 18:58:38 UTC">January 10, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="July 3, 2026 18:31:47 UTC">July 3, 2026</span>
   </span>
 
     
