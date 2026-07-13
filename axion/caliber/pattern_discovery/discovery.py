@@ -56,6 +56,11 @@ class PatternDiscovery:
     BERTOPIC_MIN_DOCUMENTS: int = 5
     BERTTOPIC_MIN_DOCUMENTS: int = BERTOPIC_MIN_DOCUMENTS
 
+    # BERTopic's default UMAP (n_neighbors=15) collapses to an empty array on small
+    # corpora, raising "Found array with 0 sample(s)". At or below this document count
+    # we build a UMAP whose n_neighbors/n_components are clamped to the corpus size.
+    BERTOPIC_SMALL_CORPUS_THRESHOLD: int = 15
+
     MAX_EXAMPLES_PER_PATTERN: int = 3
     EXAMPLE_PREVIEW_CHARS: int = 100
     TOPIC_NAME_WORDS: int = 3
@@ -240,6 +245,27 @@ class PatternDiscovery:
         patterns.sort(key=lambda p: p.count, reverse=True)
         return patterns
 
+    def _build_small_corpus_umap(self, n_docs: int) -> Any:
+        """Return a UMAP clamped to ``n_docs`` for small corpora, else None (BERTopic default).
+
+        BERTopic's default UMAP uses ``n_neighbors=15``/``n_components=5``; when the corpus
+        is smaller than that the reduction produces a zero-row array and ``fit_transform``
+        raises ``Found array with 0 sample(s)``. Clamping both to the corpus size keeps the
+        reduction well-defined so small-but-valid sets still cluster.
+        """
+        if n_docs > self.BERTOPIC_SMALL_CORPUS_THRESHOLD:
+            return None
+        try:
+            from umap import UMAP
+        except ImportError:
+            return None
+        return UMAP(
+            n_neighbors=max(2, min(15, n_docs - 1)),
+            n_components=max(2, min(5, n_docs - 2)),
+            metric='cosine',
+            random_state=42,
+        )
+
     @trace(name='cluster_evidence_with_bertopic')
     async def _cluster_evidence_with_bertopic(
         self, evidence: Dict[str, EvidenceItem]
@@ -263,21 +289,42 @@ class PatternDiscovery:
                 total_analyzed=len(evidence),
                 method=ClusteringMethod.BERTOPIC,
                 metadata={
-                    'error': f'Too few documents for BERTopic (min {self.BERTOPIC_MIN_DOCUMENTS})'
+                    'error': f'Too few documents for BERTopic (min {self.BERTOPIC_MIN_DOCUMENTS})',
+                    'reason': 'too_few_documents',
                 },
             )
 
         representation_model = KeyBERTInspired()
-        topic_model = BERTopic(
+        bertopic_kwargs: Dict[str, Any] = dict(
             embedding_model=self._bertopic_embedding_model,
             representation_model=representation_model,
             nr_topics='auto',
             min_topic_size=self._min_category_size,
             verbose=False,
         )
+        umap_model = self._build_small_corpus_umap(len(texts))
+        if umap_model is not None:
+            bertopic_kwargs['umap_model'] = umap_model
+        topic_model = BERTopic(**bertopic_kwargs)
 
-        topics, probs = topic_model.fit_transform(texts)
-        topic_info = topic_model.get_topic_info()
+        try:
+            topics, probs = topic_model.fit_transform(texts)
+            topic_info = topic_model.get_topic_info()
+        except Exception as e:
+            # Degenerate corpora (few or near-duplicate docs) can still break BERTopic's
+            # dimensionality reduction even with a clamped UMAP. Degrade gracefully so the
+            # caller (HYBRID) can fall back to LLM clustering instead of crashing the run.
+            logger.warning('BERTopic clustering failed (%s); returning no patterns.', e)
+            return PatternDiscoveryResult(
+                patterns=[],
+                uncategorized=record_ids,
+                total_analyzed=len(evidence),
+                method=ClusteringMethod.BERTOPIC,
+                metadata={
+                    'error': f'BERTopic clustering failed: {e}',
+                    'reason': 'bertopic_failed',
+                },
+            )
 
         patterns: List[DiscoveredPattern] = []
         uncategorized: List[str] = []
@@ -352,8 +399,22 @@ class PatternDiscovery:
         result = await self._cluster_evidence_with_bertopic(evidence)
 
         if not result.patterns:
-            result.method = ClusteringMethod.HYBRID
-            return result
+            # A deliberate too-few-documents early-out stays empty (too little signal to
+            # cluster). But a BERTopic failure, or a viable corpus that yielded no topics,
+            # falls back to LLM clustering so the evidence is grouped rather than dropped.
+            if result.metadata.get('reason') == 'too_few_documents':
+                result.method = ClusteringMethod.HYBRID
+                return result
+            logger.info(
+                'BERTopic produced no patterns (%s); falling back to LLM clustering.',
+                result.metadata.get('error', 'no topics'),
+            )
+            llm_result = await self._cluster_evidence_with_llm(evidence)
+            llm_result.method = ClusteringMethod.HYBRID
+            llm_result.metadata['bertopic_fallback'] = result.metadata.get(
+                'error', 'no topics'
+            )
+            return llm_result
 
         handler = self._get_label_handler()
 

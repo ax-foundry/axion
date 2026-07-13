@@ -7,6 +7,7 @@ from axion.caliber.pattern_discovery import (
     ClusteringMethod,
     ClusteringOutput,
     DiscoveredPattern,
+    EvidenceItem,
     LabelInput,
     LabelOutput,
     PatternCategory,
@@ -359,6 +360,114 @@ class TestHybridClustering:
         discovery = PatternDiscovery(model_name='gpt-4o')
         assert discovery._label_handler is None
         # Handler created on first access (not testing actual call to avoid API)
+
+
+class TestBertopicSmallCorpusResilience:
+    """BERTopic's default UMAP crashes on small corpora; these pin the resilience fix."""
+
+    def test_build_small_corpus_umap_clamps_for_small_n(self):
+        discovery = PatternDiscovery()
+        # Above the threshold → None (BERTopic default UMAP).
+        assert discovery._build_small_corpus_umap(100) is None
+        # At/below the threshold → a UMAP clamped to the corpus size.
+        umap = discovery._build_small_corpus_umap(11)
+        if umap is None:  # umap-learn not installed alongside bertopic
+            pytest.skip('umap not installed')
+        assert umap.n_neighbors == 10  # min(15, 11 - 1)
+        assert umap.n_components == 5  # min(5, 11 - 2)
+
+    @requires_bertopic
+    @pytest.mark.asyncio
+    async def test_bertopic_small_corpus_does_not_crash(self):
+        """11 short docs used to raise 'Found array with 0 sample(s)'; now it clusters."""
+        from axion.caliber.pattern_discovery import EvidenceItem
+
+        texts = [
+            'Landscaping risk with tree service exposure needs higher-hazard review.',
+            'Home-based architecture consulting approved automatically for BPP coverage.',
+            'Liquor store with 90% alcohol sales must not auto-decline.',
+            'Apartment building frame construction over 1.5M exposure referred.',
+            'Class code mismatch between declared DBA and observed operations.',
+            'Retail NOC home-based risk needs actual operations verification.',
+            'Chemical manufacturing exposure flagged for subcontractor work.',
+            'Convenience store with fuel sales requires environmental review.',
+            'Contractor landscape gardening with snow removal add-on service.',
+            'Restaurant with liquor license and live entertainment exposure.',
+            'Auto repair shop with paint booth fire hazard classification.',
+        ]
+        evidence = {
+            f'e{i}': EvidenceItem(id=f'e{i}', text=t) for i, t in enumerate(texts)
+        }
+
+        discovery = PatternDiscovery(min_category_size=2)
+        result = await discovery._cluster_evidence_with_bertopic(evidence)
+
+        assert result.method == ClusteringMethod.BERTOPIC
+        assert result.metadata.get('error') is None
+        assert result.patterns  # small-but-valid corpus produced at least one topic
+
+    @pytest.mark.asyncio
+    async def test_hybrid_falls_back_to_llm_on_bertopic_failure(self, monkeypatch):
+        """A BERTopic failure (not a too-few early-out) routes HYBRID to LLM clustering."""
+        discovery = PatternDiscovery(model_name='gpt-4o')
+        evidence = {'e1': EvidenceItem(id='e1', text='some note')}
+
+        async def _failed_bertopic(_ev):
+            return PatternDiscoveryResult(
+                patterns=[],
+                uncategorized=['e1'],
+                total_analyzed=1,
+                method=ClusteringMethod.BERTOPIC,
+                metadata={'error': 'boom', 'reason': 'bertopic_failed'},
+            )
+
+        async def _llm(_ev):
+            return PatternDiscoveryResult(
+                patterns=[
+                    DiscoveredPattern(
+                        category='c', description='d', count=1, record_ids=['e1']
+                    )
+                ],
+                uncategorized=[],
+                total_analyzed=1,
+                method=ClusteringMethod.LLM,
+                metadata={},
+            )
+
+        monkeypatch.setattr(
+            discovery, '_cluster_evidence_with_bertopic', _failed_bertopic
+        )
+        monkeypatch.setattr(discovery, '_cluster_evidence_with_llm', _llm)
+
+        result = await discovery._cluster_evidence_hybrid(evidence)
+        assert result.method == ClusteringMethod.HYBRID
+        assert len(result.patterns) == 1  # served by the LLM fallback
+        assert result.metadata['bertopic_fallback'] == 'boom'
+
+    @pytest.mark.asyncio
+    async def test_hybrid_too_few_documents_stays_empty(self, monkeypatch):
+        """A deliberate too-few-documents early-out is NOT sent to the LLM fallback."""
+        discovery = PatternDiscovery(model_name='gpt-4o')
+        evidence = {'e1': EvidenceItem(id='e1', text='some note')}
+
+        async def _too_few(_ev):
+            return PatternDiscoveryResult(
+                patterns=[],
+                uncategorized=['e1'],
+                total_analyzed=1,
+                method=ClusteringMethod.BERTOPIC,
+                metadata={'error': 'too few', 'reason': 'too_few_documents'},
+            )
+
+        async def _llm(_ev):  # pragma: no cover - must not be called
+            raise AssertionError('LLM fallback must not run for too_few_documents')
+
+        monkeypatch.setattr(discovery, '_cluster_evidence_with_bertopic', _too_few)
+        monkeypatch.setattr(discovery, '_cluster_evidence_with_llm', _llm)
+
+        result = await discovery._cluster_evidence_hybrid(evidence)
+        assert result.method == ClusteringMethod.HYBRID
+        assert result.patterns == []
 
 
 class TestPatternDiscoveryMethodDispatch:
