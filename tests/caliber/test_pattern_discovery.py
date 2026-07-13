@@ -340,7 +340,11 @@ class TestHybridClustering:
     @pytest.mark.asyncio
     async def test_hybrid_too_few_documents(self):
         """Test Hybrid with too few documents returns early with correct method."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        # small_corpus_llm_fallback defaults on (small corpora route to LLM); disable it
+        # to assert the too-few-documents early-out contract.
+        discovery = PatternDiscovery(
+            model_name='gpt-4o', small_corpus_llm_fallback=False
+        )
 
         # Only 3 items - below BERTOPIC_MIN_DOCUMENTS
         annotations = {
@@ -376,6 +380,31 @@ class TestBertopicSmallCorpusResilience:
         assert umap.n_neighbors == 10  # min(15, 11 - 1)
         assert umap.n_components == 5  # min(5, 11 - 2)
 
+    def test_boundary_tracks_configured_n_neighbors(self):
+        """The small-corpus boundary derives from n_neighbors, not a hardcoded 15."""
+        # A caller that raises n_neighbors moves the boundary with it.
+        discovery = PatternDiscovery(bertopic_n_neighbors=30)
+        assert discovery._bertopic_n_neighbors == 30
+        # 25 docs is safe under the default 15 but below a custom 30 → must clamp.
+        umap = discovery._build_small_corpus_umap(25)
+        if umap is None:
+            pytest.skip('umap not installed')
+        assert umap.n_neighbors == 24  # min(30, 25 - 1)
+
+    def test_custom_n_neighbors_honored_on_large_corpus(self):
+        """A non-default n_neighbors is applied even on large corpora (never a no-op)."""
+        discovery = PatternDiscovery(bertopic_n_neighbors=8)
+        umap = discovery._build_small_corpus_umap(500)
+        if umap is None:
+            pytest.skip('umap not installed')
+        # Default path returns None here; the override forces a clamped UMAP instead.
+        assert umap.n_neighbors == 8  # min(8, 500 - 1)
+
+    def test_default_large_corpus_untouched(self):
+        """Default n_neighbors + large corpus → None (BERTopic builds its own UMAP)."""
+        discovery = PatternDiscovery()  # default n_neighbors=15
+        assert discovery._build_small_corpus_umap(500) is None
+
     @requires_bertopic
     @pytest.mark.asyncio
     async def test_bertopic_small_corpus_does_not_crash(self):
@@ -409,7 +438,10 @@ class TestBertopicSmallCorpusResilience:
     @pytest.mark.asyncio
     async def test_hybrid_falls_back_to_llm_on_bertopic_failure(self, monkeypatch):
         """A BERTopic failure (not a too-few early-out) routes HYBRID to LLM clustering."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        # Opt out of the small-corpus short-circuit to exercise the bertopic-failure path.
+        discovery = PatternDiscovery(
+            model_name='gpt-4o', small_corpus_llm_fallback=False
+        )
         evidence = {'e1': EvidenceItem(id='e1', text='some note')}
 
         async def _failed_bertopic(_ev):
@@ -447,7 +479,10 @@ class TestBertopicSmallCorpusResilience:
     @pytest.mark.asyncio
     async def test_hybrid_too_few_documents_stays_empty(self, monkeypatch):
         """A deliberate too-few-documents early-out is NOT sent to the LLM fallback."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        # With the small-corpus short-circuit off, the too-few contract still holds.
+        discovery = PatternDiscovery(
+            model_name='gpt-4o', small_corpus_llm_fallback=False
+        )
         evidence = {'e1': EvidenceItem(id='e1', text='some note')}
 
         async def _too_few(_ev):
@@ -468,6 +503,80 @@ class TestBertopicSmallCorpusResilience:
         result = await discovery._cluster_evidence_hybrid(evidence)
         assert result.method == ClusteringMethod.HYBRID
         assert result.patterns == []
+
+    @pytest.mark.asyncio
+    async def test_hybrid_small_corpus_routes_to_llm(self, monkeypatch):
+        """With the fallback on (default), a corpus <= n_neighbors skips BERTopic."""
+        discovery = PatternDiscovery(model_name='gpt-4o')  # fallback on, n_neighbors=15
+        evidence = {
+            f'e{i}': EvidenceItem(id=f'e{i}', text=f'note {i}') for i in range(10)
+        }
+
+        async def _bertopic(_ev):  # pragma: no cover - must not be called
+            raise AssertionError('BERTopic must not run for a small HYBRID corpus')
+
+        async def _llm(ev):
+            return PatternDiscoveryResult(
+                patterns=[
+                    DiscoveredPattern(
+                        category='c', description='d', count=10, record_ids=list(ev)
+                    )
+                ],
+                uncategorized=[],
+                total_analyzed=10,
+                method=ClusteringMethod.LLM,
+                metadata={},
+            )
+
+        monkeypatch.setattr(discovery, '_cluster_evidence_with_bertopic', _bertopic)
+        monkeypatch.setattr(discovery, '_cluster_evidence_with_llm', _llm)
+
+        result = await discovery._cluster_evidence_hybrid(evidence)
+        assert result.method == ClusteringMethod.HYBRID
+        assert result.metadata['small_corpus_llm_fallback'] == 10
+        assert len(result.patterns) == 1
+
+    @pytest.mark.asyncio
+    async def test_hybrid_large_corpus_runs_bertopic(self, monkeypatch):
+        """Above the boundary the short-circuit does not fire — BERTopic is attempted."""
+        discovery = PatternDiscovery(model_name='gpt-4o')  # n_neighbors=15
+        evidence = {
+            f'e{i}': EvidenceItem(id=f'e{i}', text=f'note {i}') for i in range(20)
+        }
+        entered = {'bertopic': False}
+
+        async def _bertopic(ev):
+            entered['bertopic'] = True  # short-circuit was skipped
+            return PatternDiscoveryResult(
+                patterns=[],
+                uncategorized=list(ev),
+                total_analyzed=20,
+                method=ClusteringMethod.BERTOPIC,
+                metadata={'error': 'boom', 'reason': 'bertopic_failed'},
+            )
+
+        async def _llm(ev):
+            return PatternDiscoveryResult(
+                patterns=[
+                    DiscoveredPattern(
+                        category='c', description='d', count=20, record_ids=list(ev)
+                    )
+                ],
+                uncategorized=[],
+                total_analyzed=20,
+                method=ClusteringMethod.LLM,
+                metadata={},
+            )
+
+        monkeypatch.setattr(discovery, '_cluster_evidence_with_bertopic', _bertopic)
+        monkeypatch.setattr(discovery, '_cluster_evidence_with_llm', _llm)
+
+        result = await discovery._cluster_evidence_hybrid(evidence)
+        assert entered['bertopic'] is True
+        assert 'small_corpus_llm_fallback' not in result.metadata
+        assert (
+            result.metadata['bertopic_fallback'] == 'boom'
+        )  # bertopic-failure fallback
 
 
 class TestPatternDiscoveryMethodDispatch:

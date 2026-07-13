@@ -56,10 +56,18 @@ class PatternDiscovery:
     BERTOPIC_MIN_DOCUMENTS: int = 5
     BERTTOPIC_MIN_DOCUMENTS: int = BERTOPIC_MIN_DOCUMENTS
 
-    # BERTopic's default UMAP (n_neighbors=15) collapses to an empty array on small
-    # corpora, raising "Found array with 0 sample(s)". At or below this document count
-    # we build a UMAP whose n_neighbors/n_components are clamped to the corpus size.
-    BERTOPIC_SMALL_CORPUS_THRESHOLD: int = 15
+    # Mirrors BERTopic's built-in UMAP defaults (bertopic._bertopic constructs
+    # UMAP(n_neighbors=15, n_components=5, min_dist=0.0, metric='cosine')). UMAP's k-NN
+    # graph requires n_samples > n_neighbors, so any corpus with n_docs <= n_neighbors
+    # collapses to a zero-row array and fit_transform raises "Found array with
+    # 0 sample(s)". The small-corpus boundary is therefore exactly the *effective*
+    # n_neighbors (see ``bertopic_n_neighbors`` below) — not a magic constant — so
+    # raising n_neighbors scales the guard automatically.
+    BERTOPIC_DEFAULT_N_NEIGHBORS: int = 15
+    BERTOPIC_DEFAULT_N_COMPONENTS: int = 5
+    # Back-compat alias for callers that referenced the boundary directly; the boundary
+    # equals the default n_neighbors.
+    BERTOPIC_SMALL_CORPUS_THRESHOLD: int = BERTOPIC_DEFAULT_N_NEIGHBORS
 
     MAX_EXAMPLES_PER_PATTERN: int = 3
     EXAMPLE_PREVIEW_CHARS: int = 100
@@ -75,6 +83,8 @@ class PatternDiscovery:
         max_notes: int = 50,
         min_category_size: int = 2,
         bertopic_embedding_model: Any = 'all-MiniLM-L6-v2',
+        bertopic_n_neighbors: Optional[int] = None,
+        small_corpus_llm_fallback: bool = True,
         metadata_config: Optional[MetadataConfig] = None,
         excerpt_fn: Optional[ExcerptFn] = None,
         seed: Optional[int] = None,
@@ -87,6 +97,18 @@ class PatternDiscovery:
         self._max_notes = max_notes
         self._min_category_size = min_category_size
         self._bertopic_embedding_model = bertopic_embedding_model
+        # Effective UMAP n_neighbors; also the small-corpus boundary. Defaults to
+        # BERTopic's own default so behavior is unchanged unless a caller overrides it.
+        self._bertopic_n_neighbors = (
+            bertopic_n_neighbors
+            if bertopic_n_neighbors is not None
+            else self.BERTOPIC_DEFAULT_N_NEIGHBORS
+        )
+        # For HYBRID on a corpus at/below the small-corpus boundary (n_neighbors),
+        # cluster with the LLM instead of a clamped BERTopic run. Topic modeling on so
+        # few docs is degenerate (near-zero-variance embeddings → matmul warnings), and
+        # LLM grouping handles small sets better. Explicit BERTOPIC still clamps-and-runs.
+        self._small_corpus_llm_fallback = small_corpus_llm_fallback
         self._metadata_config = metadata_config or MetadataConfig()
         self._excerpt_fn = excerpt_fn
         self._seed = seed
@@ -246,24 +268,38 @@ class PatternDiscovery:
         return patterns
 
     def _build_small_corpus_umap(self, n_docs: int) -> Any:
-        """Return a UMAP clamped to ``n_docs`` for small corpora, else None (BERTopic default).
+        """Return a UMAP clamped to ``n_docs``/the configured ``n_neighbors``, or None to
+        let BERTopic build its own default reduction.
 
-        BERTopic's default UMAP uses ``n_neighbors=15``/``n_components=5``; when the corpus
-        is smaller than that the reduction produces a zero-row array and ``fit_transform``
-        raises ``Found array with 0 sample(s)``. Clamping both to the corpus size keeps the
-        reduction well-defined so small-but-valid sets still cluster.
+        UMAP's k-NN graph requires ``n_samples > n_neighbors``; with the effective
+        ``n_neighbors`` (``self._bertopic_n_neighbors``, default 15) any corpus of
+        ``n_docs <= n_neighbors`` reduces to a zero-row array and ``fit_transform``
+        raises ``Found array with 0 sample(s)``. Clamping both ``n_neighbors`` and
+        ``n_components`` to the corpus size keeps the reduction well-defined so
+        small-but-valid sets still cluster. The boundary tracks the effective
+        ``n_neighbors``, so raising it scales the guard with no magic constants.
+
+        Returns None only when the default ``n_neighbors`` is in effect *and* the corpus
+        is large enough for it — that path leaves BERTopic's default UMAP untouched. A
+        caller-supplied ``n_neighbors`` is always honored (a clamped UMAP is built even
+        on large corpora) so the override is never silently ignored.
         """
-        if n_docs > self.BERTOPIC_SMALL_CORPUS_THRESHOLD:
+        n_neighbors = self._bertopic_n_neighbors
+        is_default = n_neighbors == self.BERTOPIC_DEFAULT_N_NEIGHBORS
+        if is_default and n_docs > n_neighbors:
             return None
         try:
             from umap import UMAP
         except ImportError:
             return None
+        # Mirror BERTopic's default UMAP (min_dist=0.0, cosine) so large-corpus quality is
+        # unchanged when an override is set; clamp to keep the reduction well-defined.
         return UMAP(
-            n_neighbors=max(2, min(15, n_docs - 1)),
-            n_components=max(2, min(5, n_docs - 2)),
+            n_neighbors=max(2, min(n_neighbors, n_docs - 1)),
+            n_components=max(2, min(self.BERTOPIC_DEFAULT_N_COMPONENTS, n_docs - 2)),
+            min_dist=0.0,
             metric='cosine',
-            random_state=42,
+            random_state=self._seed if self._seed is not None else 42,
         )
 
     @trace(name='cluster_evidence_with_bertopic')
@@ -396,6 +432,24 @@ class PatternDiscovery:
     async def _cluster_evidence_hybrid(
         self, evidence: Dict[str, EvidenceItem]
     ) -> PatternDiscoveryResult:
+        # Small corpora are routed straight to LLM clustering — BERTopic's UMAP/HDBSCAN
+        # reduction is degenerate below the n_neighbors boundary even when clamped, so
+        # LLM grouping yields better patterns than a forced topic model. Opt out with
+        # small_corpus_llm_fallback=False to keep the clamped-BERTopic behavior.
+        if self._small_corpus_llm_fallback:
+            n_text = sum(1 for item in evidence.values() if item.text)
+            if n_text <= self._bertopic_n_neighbors:
+                logger.info(
+                    'Small corpus (%d docs <= n_neighbors=%d); using LLM clustering for '
+                    'HYBRID instead of BERTopic.',
+                    n_text,
+                    self._bertopic_n_neighbors,
+                )
+                llm_result = await self._cluster_evidence_with_llm(evidence)
+                llm_result.method = ClusteringMethod.HYBRID
+                llm_result.metadata['small_corpus_llm_fallback'] = n_text
+                return llm_result
+
         result = await self._cluster_evidence_with_bertopic(evidence)
 
         if not result.patterns:
