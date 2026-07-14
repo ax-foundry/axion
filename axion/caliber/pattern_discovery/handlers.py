@@ -81,9 +81,9 @@ Guidelines:
 - Notes that don't fit any clear pattern should be marked as uncategorized
 """
 
-DEFAULT_EVIDENCE_CLUSTERING_INSTRUCTION = """You are an expert at analyzing text evidence and discovering patterns.
+DEFAULT_EVIDENCE_CLUSTERING_INSTRUCTION_TEMPLATE = """You are an expert at analyzing text evidence and discovering patterns.
 
-Analyze the provided items and group them into 3-6 meaningful categories based on common themes, issues, or patterns.
+Analyze the provided items and group them into {category_range} meaningful categories based on common themes, issues, or patterns.
 
 For each category:
 1. Provide a short, descriptive name (2-4 words)
@@ -97,6 +97,31 @@ Guidelines:
 - Items that don't fit any clear pattern should be marked as uncategorized
 """
 
+
+def evidence_category_range(n_items: int) -> str:
+    """Category-count range scaled to corpus size, e.g. ``'3-6'``.
+
+    A fixed "3-6 categories" forces the same granularity onto a 10-item corpus and a
+    170-item one, over-merging large corpora. Roughly one category per 5-12 items,
+    floored at 2 and capped at 15, with the span kept >= 2 so the LLM has latitude.
+    """
+    lo = min(15, max(2, n_items // 12))
+    hi = min(15, max(lo + 2, n_items // 5))
+    return f'{lo}-{hi}'
+
+
+def default_evidence_clustering_instruction(n_items: int) -> str:
+    """Render the evidence-clustering instruction with a corpus-scaled category range."""
+    return DEFAULT_EVIDENCE_CLUSTERING_INSTRUCTION_TEMPLATE.format(
+        category_range=evidence_category_range(n_items)
+    )
+
+
+# Back-compat constant: the historical fixed-range instruction.
+DEFAULT_EVIDENCE_CLUSTERING_INSTRUCTION = (
+    DEFAULT_EVIDENCE_CLUSTERING_INSTRUCTION_TEMPLATE.format(category_range='3-6')
+)
+
 DEFAULT_DISTILLATION_INSTRUCTION_TEMPLATE = """You are an expert at synthesizing clusters of related evidence into actionable learnings.
 
 Given a cluster of related items, produce one or more learning artifacts that capture the key insight.
@@ -105,7 +130,11 @@ For each learning:
 1. Title: A concise 2-8 word actionable title
 2. Content: A synthesized insight in prose form
 3. Tags: Categorical tags for organization
-4. Confidence: 0.0-1.0 reflecting how well-supported the learning is
+4. Confidence: 0.0-1.0, anchored to the supporting evidence:
+   - 0.9+: >= 10 consistent supporting items, no counterexamples
+   - 0.75-0.89: 5-9 supporting items, at most weak counterexamples
+   - 0.6-0.74: 3-4 supporting items, or notable counterexamples
+   - < 0.6: weak or mixed support
 5. Supporting item IDs: ONLY cite item_ids from the provided cluster's item_ids list
 6. Recommended actions: Actionable bullet points (at least one for high-confidence learnings)
 7. Counterexamples: Item IDs that contradict the main pattern (if any, from this cluster only)
