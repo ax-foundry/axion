@@ -120,6 +120,10 @@ class EvidencePipeline:
         tag_normalizer: Optional[Callable[[List[str]], List[str]]] = None,
         bertopic_embedding_model: Any = 'all-MiniLM-L6-v2',
         tracer: Optional[Any] = None,
+        # New params stay at the end so existing positional callers are unaffected.
+        cluster_model_name: Optional[str] = None,
+        cluster_llm=None,
+        cluster_llm_provider: Optional[str] = None,
     ) -> None:
         self._method = method
         self._recurrence_threshold = recurrence_threshold
@@ -140,14 +144,18 @@ class EvidencePipeline:
         self._deduper = deduper
         self._tag_normalizer = tag_normalizer or default_tag_normalizer
 
-        # Build default strategies if not provided
+        # Build default strategies if not provided.
+        # cluster_llm / cluster_model_name / cluster_llm_provider let clustering (and
+        # BERTopic label refinement) run on a different model than distillation — e.g.
+        # a temperature-0 model for stable cluster assignments while distillation stays
+        # on a fixed-temperature reasoning model. Unset -> both share the main llm.
         if clusterer is not None:
             self._clusterer: EvidenceClusterer = clusterer
         else:
             discovery = PatternDiscovery(
-                model_name=model_name,
-                llm=llm,
-                llm_provider=llm_provider,
+                model_name=cluster_model_name or model_name,
+                llm=cluster_llm if cluster_llm is not None else llm,
+                llm_provider=cluster_llm_provider or llm_provider,
                 instruction=clustering_instruction,
                 max_notes=max_items,
                 min_category_size=min_category_size,

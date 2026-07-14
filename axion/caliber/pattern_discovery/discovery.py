@@ -14,6 +14,7 @@ from axion.caliber.pattern_discovery._utils import (
     format_metadata_header,
 )
 from axion.caliber.pattern_discovery.handlers import (
+    DEFAULT_EVIDENCE_CLUSTERING_INSTRUCTION,
     ClusteringOutput,
     EvidenceClusteringHandler,
     EvidenceClusteringInput,
@@ -21,6 +22,7 @@ from axion.caliber.pattern_discovery.handlers import (
     LabelInput,
     LabelOutput,
     LabelRefinementHandler,
+    default_evidence_clustering_instruction,
 )
 from axion.caliber.pattern_discovery.models import (
     ClusteringMethod,
@@ -114,20 +116,33 @@ class PatternDiscovery:
         self._seed = seed
         self.tracer = init_tracer('base', tracer=tracer)
 
-        # Lazily initialized handlers
-        self._evidence_clustering_handler: Optional[EvidenceClusteringHandler] = None
+        # Lazily initialized handlers. Clustering handlers are cached per rendered
+        # instruction: with the default instruction the category range scales with
+        # corpus size (see ``evidence_category_range``), so different corpus sizes can
+        # need different handler instances within one PatternDiscovery lifetime.
+        self._evidence_clustering_handlers: Dict[str, EvidenceClusteringHandler] = {}
         self._label_handler: Optional[LabelRefinementHandler] = None
 
-    def _get_evidence_clustering_handler(self) -> EvidenceClusteringHandler:
-        if self._evidence_clustering_handler is None:
-            self._evidence_clustering_handler = EvidenceClusteringHandler(
+    def _get_evidence_clustering_handler(
+        self, n_items: Optional[int] = None
+    ) -> EvidenceClusteringHandler:
+        if self._instruction is not None:
+            instruction = self._instruction  # caller-supplied: never rescaled
+        elif n_items is not None:
+            instruction = default_evidence_clustering_instruction(n_items)
+        else:
+            instruction = DEFAULT_EVIDENCE_CLUSTERING_INSTRUCTION
+        handler = self._evidence_clustering_handlers.get(instruction)
+        if handler is None:
+            handler = EvidenceClusteringHandler(
                 model_name=self._model_name,
                 llm=self._llm,
                 llm_provider=self._llm_provider,
-                instruction=self._instruction,
+                instruction=instruction,
                 tracer=self.tracer,
             )
-        return self._evidence_clustering_handler
+            self._evidence_clustering_handlers[instruction] = handler
+        return handler
 
     def _get_label_handler(self) -> LabelRefinementHandler:
         if self._label_handler is None:
@@ -226,7 +241,7 @@ class PatternDiscovery:
             notes.append(EvidenceNote(item_id=eid, text=item.text, context=context))
 
         input_data = EvidenceClusteringInput(items=notes)
-        handler = self._get_evidence_clustering_handler()
+        handler = self._get_evidence_clustering_handler(n_items=len(notes))
         output: ClusteringOutput = await handler.execute(input_data)
 
         patterns = self._output_to_patterns(output, items_with_text)
@@ -267,33 +282,35 @@ class PatternDiscovery:
         patterns.sort(key=lambda p: p.count, reverse=True)
         return patterns
 
-    def _build_small_corpus_umap(self, n_docs: int) -> Any:
-        """Return a UMAP clamped to ``n_docs``/the configured ``n_neighbors``, or None to
-        let BERTopic build its own default reduction.
+    def _build_umap(self, n_docs: int) -> Any:
+        """Return a seeded UMAP mirroring BERTopic's defaults, clamped to ``n_docs``.
 
-        UMAP's k-NN graph requires ``n_samples > n_neighbors``; with the effective
-        ``n_neighbors`` (``self._bertopic_n_neighbors``, default 15) any corpus of
+        Always building the UMAP (rather than deferring to BERTopic's own on large
+        corpora) exists for one reason: BERTopic constructs its default UMAP with
+        ``random_state=None``, so cluster membership is stochastic run-to-run.
+        Downstream recurrence thresholds then kill/birth whole learnings on boundary
+        jitter. Seeding with ``self._seed`` (or 42 when unseeded) makes the reduction
+        deterministic; every other parameter matches BERTopic's built-in default
+        (``n_neighbors=15, n_components=5, min_dist=0.0, metric='cosine'``), so
+        clustering quality is unchanged.
+
+        Clamping handles small corpora: UMAP's k-NN graph requires
+        ``n_samples > n_neighbors``; with the effective ``n_neighbors``
+        (``self._bertopic_n_neighbors``, default 15) any corpus of
         ``n_docs <= n_neighbors`` reduces to a zero-row array and ``fit_transform``
         raises ``Found array with 0 sample(s)``. Clamping both ``n_neighbors`` and
         ``n_components`` to the corpus size keeps the reduction well-defined so
         small-but-valid sets still cluster. The boundary tracks the effective
         ``n_neighbors``, so raising it scales the guard with no magic constants.
 
-        Returns None only when the default ``n_neighbors`` is in effect *and* the corpus
-        is large enough for it — that path leaves BERTopic's default UMAP untouched. A
-        caller-supplied ``n_neighbors`` is always honored (a clamped UMAP is built even
-        on large corpora) so the override is never silently ignored.
+        Returns None only when ``umap`` is not importable (BERTopic then falls back to
+        its own default reduction — unseeded, but at least functional).
         """
-        n_neighbors = self._bertopic_n_neighbors
-        is_default = n_neighbors == self.BERTOPIC_DEFAULT_N_NEIGHBORS
-        if is_default and n_docs > n_neighbors:
-            return None
         try:
             from umap import UMAP
         except ImportError:
             return None
-        # Mirror BERTopic's default UMAP (min_dist=0.0, cosine) so large-corpus quality is
-        # unchanged when an override is set; clamp to keep the reduction well-defined.
+        n_neighbors = self._bertopic_n_neighbors
         return UMAP(
             n_neighbors=max(2, min(n_neighbors, n_docs - 1)),
             n_components=max(2, min(self.BERTOPIC_DEFAULT_N_COMPONENTS, n_docs - 2)),
@@ -301,6 +318,9 @@ class PatternDiscovery:
             metric='cosine',
             random_state=self._seed if self._seed is not None else 42,
         )
+
+    # Back-compat alias — the method previously only produced a UMAP for small corpora.
+    _build_small_corpus_umap = _build_umap
 
     @trace(name='cluster_evidence_with_bertopic')
     async def _cluster_evidence_with_bertopic(
@@ -338,7 +358,7 @@ class PatternDiscovery:
             min_topic_size=self._min_category_size,
             verbose=False,
         )
-        umap_model = self._build_small_corpus_umap(len(texts))
+        umap_model = self._build_umap(len(texts))
         if umap_model is not None:
             bertopic_kwargs['umap_model'] = umap_model
         topic_model = BERTopic(**bertopic_kwargs)

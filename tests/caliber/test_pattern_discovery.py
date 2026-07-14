@@ -369,12 +369,10 @@ class TestHybridClustering:
 class TestBertopicSmallCorpusResilience:
     """BERTopic's default UMAP crashes on small corpora; these pin the resilience fix."""
 
-    def test_build_small_corpus_umap_clamps_for_small_n(self):
+    def test_build_umap_clamps_for_small_n(self):
         discovery = PatternDiscovery()
-        # Above the threshold → None (BERTopic default UMAP).
-        assert discovery._build_small_corpus_umap(100) is None
-        # At/below the threshold → a UMAP clamped to the corpus size.
-        umap = discovery._build_small_corpus_umap(11)
+        # At/below the boundary → a UMAP clamped to the corpus size.
+        umap = discovery._build_umap(11)
         if umap is None:  # umap-learn not installed alongside bertopic
             pytest.skip('umap not installed')
         assert umap.n_neighbors == 10  # min(15, 11 - 1)
@@ -386,7 +384,7 @@ class TestBertopicSmallCorpusResilience:
         discovery = PatternDiscovery(bertopic_n_neighbors=30)
         assert discovery._bertopic_n_neighbors == 30
         # 25 docs is safe under the default 15 but below a custom 30 → must clamp.
-        umap = discovery._build_small_corpus_umap(25)
+        umap = discovery._build_umap(25)
         if umap is None:
             pytest.skip('umap not installed')
         assert umap.n_neighbors == 24  # min(30, 25 - 1)
@@ -394,16 +392,40 @@ class TestBertopicSmallCorpusResilience:
     def test_custom_n_neighbors_honored_on_large_corpus(self):
         """A non-default n_neighbors is applied even on large corpora (never a no-op)."""
         discovery = PatternDiscovery(bertopic_n_neighbors=8)
-        umap = discovery._build_small_corpus_umap(500)
+        umap = discovery._build_umap(500)
         if umap is None:
             pytest.skip('umap not installed')
-        # Default path returns None here; the override forces a clamped UMAP instead.
         assert umap.n_neighbors == 8  # min(8, 500 - 1)
 
-    def test_default_large_corpus_untouched(self):
-        """Default n_neighbors + large corpus → None (BERTopic builds its own UMAP)."""
-        discovery = PatternDiscovery()  # default n_neighbors=15
-        assert discovery._build_small_corpus_umap(500) is None
+    def test_default_large_corpus_seeded(self):
+        """Default n_neighbors + large corpus → a UMAP mirroring BERTopic's defaults but
+        seeded. BERTopic's own default UMAP has random_state=None → stochastic clusters
+        run-to-run; this pins the determinism fix."""
+        discovery = PatternDiscovery()  # default n_neighbors=15, no seed
+        umap = discovery._build_umap(500)
+        if umap is None:
+            pytest.skip('umap not installed')
+        assert umap.n_neighbors == 15
+        assert umap.n_components == 5
+        assert umap.min_dist == 0.0
+        assert umap.metric == 'cosine'
+        assert umap.random_state == 42  # unseeded discovery still deterministic
+
+    def test_umap_uses_configured_seed(self):
+        discovery = PatternDiscovery(seed=7)
+        umap = discovery._build_umap(500)
+        if umap is None:
+            pytest.skip('umap not installed')
+        assert umap.random_state == 7
+
+    def test_build_small_corpus_umap_alias(self):
+        """Back-compat: the old method name still resolves to the new builder."""
+        discovery = PatternDiscovery()
+        assert PatternDiscovery._build_small_corpus_umap is PatternDiscovery._build_umap
+        umap = discovery._build_small_corpus_umap(11)
+        if umap is None:
+            pytest.skip('umap not installed')
+        assert umap.n_neighbors == 10
 
     @requires_bertopic
     @pytest.mark.asyncio
