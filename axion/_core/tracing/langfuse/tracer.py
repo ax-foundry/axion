@@ -69,6 +69,12 @@ class LangfuseTracer(BaseTracer):
     _shared_client: Optional[Langfuse] = None
     _shared_client_key: Optional[tuple] = None
 
+    # Warn about missing setup once per process, not once per tracer — metric
+    # instantiation constructs a tracer each time, and repeating the same
+    # warning for every metric is pure noise (subsequent hits log at DEBUG).
+    _warned_not_installed: bool = False
+    _warned_no_credentials: bool = False
+
     def __init__(
         self,
         metadata_type: str = 'default',
@@ -189,14 +195,24 @@ class LangfuseTracer(BaseTracer):
     def _initialize_client(self) -> None:
         """Initialize the Langfuse client."""
         if not LANGFUSE_AVAILABLE:
-            logger.warning('langfuse package not installed. Run: pip install langfuse')
+            message = 'langfuse package not installed. Run: pip install langfuse'
+            if LangfuseTracer._warned_not_installed:
+                logger.debug(message)
+            else:
+                LangfuseTracer._warned_not_installed = True
+                logger.warning(message)
             return
 
         if not self._public_key or not self._secret_key:
-            logger.warning(
+            message = (
                 'Langfuse credentials not configured. '
                 'Set LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY environment variables.'
             )
+            if LangfuseTracer._warned_no_credentials:
+                logger.debug(message)
+            else:
+                LangfuseTracer._warned_no_credentials = True
+                logger.warning(message)
             return
 
         try:
