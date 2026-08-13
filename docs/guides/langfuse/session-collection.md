@@ -76,6 +76,18 @@ sc = SessionCollection.from_langfuse(
 )
 ```
 
+Eval scores are **not** attached unless you ask for them. Without `fetch_scores=True`, `trace.scores` is empty even for traces that carry scores in Langfuse, so a metric rolling up per-trace scores reads nothing and silently produces no value:
+
+```python
+sc = SessionCollection.from_langfuse(
+    session_ids=['session-a', 'session-b'],
+    loader=loader,
+    fetch_scores=True,   # one session-batch API call per session
+)
+```
+
+Scores attach only to the traces a session keeps. With the default `turns_only=True`, non-turn traces are pruned during construction, so scores on those traces are unreachable — pass `turns_only=False` when you need them.
+
 !!! note "Explicit session IDs"
     v1 fetches by explicit `session_ids` only. Not-found ids are **skipped** (logged at WARNING), so the collection contains only sessions that exist.
 
@@ -445,7 +457,7 @@ result.publish_to_observability()
 
 | Method | Description |
 |--------|-------------|
-| `from_langfuse(session_ids, loader, prompt_patterns, show_progress, enrich, turn_name, turn_predicate, turns_only, trace_name, trace_predicate)` | Fetch sessions from Langfuse and wrap |
+| `from_langfuse(session_ids, loader, prompt_patterns, show_progress, enrich, fetch_scores, turn_name, turn_predicate, turns_only, trace_name, trace_predicate)` | Fetch sessions from Langfuse and wrap; `fetch_scores=True` attaches `TraceScore` objects to each trace, one session-batch API call per session |
 | `load_json(path, prompt_patterns, turn_name, turn_predicate, turns_only)` | Load from a JSON file |
 | `filter(condition)` | Filter by lambda, returns new `SessionCollection` |
 | `filter_by(**kwargs)` | Filter by attribute equality |
