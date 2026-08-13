@@ -265,7 +265,7 @@ def _session_loader(scores_by_session):
 
     def _get(session_id, **kwargs):
         raw = SimpleNamespace(
-            id=f'trace-{session_id}', name='dwayne-web-chat', observations=[]
+            id=f'trace-{session_id}', name='chat-turn', observations=[]
         )
         return SimpleNamespace(id=session_id), [raw]
 
@@ -281,14 +281,12 @@ def test_session_collection_from_langfuse_fetch_scores_attaches_per_session():
         {
             'sess-1': {
                 'trace-sess-1': [
-                    TraceScore(
-                        name='Dwayne Turn Accuracy', value=0.6, data_type='NUMERIC'
-                    )
+                    TraceScore(name='accuracy', value=0.6, data_type='NUMERIC')
                 ]
             },
             'sess-2': {
                 'trace-sess-2': [
-                    TraceScore(name='Tool Reliability', value=1.0, data_type='NUMERIC')
+                    TraceScore(name='reliability', value=1.0, data_type='NUMERIC')
                 ]
             },
         }
@@ -300,7 +298,7 @@ def test_session_collection_from_langfuse_fetch_scores_attaches_per_session():
 
     # One paginated call per session, not per trace.
     assert loader.fetch_scores_for_session.call_count == 2
-    assert collection[0][0].scores[0].name == 'Dwayne Turn Accuracy'
+    assert collection[0][0].scores[0].name == 'accuracy'
     assert collection[1][0].scores[0].value == 1.0
 
 
@@ -332,9 +330,9 @@ def test_session_collection_fetch_scores_reaches_only_retained_traces():
     """
     from axion._core.tracing.collection.session_collection import SessionCollection
 
-    turn = SimpleNamespace(id='trace-turn', name='dwayne-web-chat', observations=[])
+    turn = SimpleNamespace(id='trace-turn', name='chat-turn', observations=[])
     pipeline = SimpleNamespace(
-        id='trace-pipeline', name='dwayne-pipeline', observations=[]
+        id='trace-pipeline', name='pipeline-run', observations=[]
     )
 
     loader = MagicMock()
@@ -351,7 +349,7 @@ def test_session_collection_fetch_scores_reaches_only_retained_traces():
         ['sess-1'],
         loader=loader,
         fetch_scores=True,
-        turn_name='dwayne-web-chat',
+        turn_name='chat-turn',
         turns_only=True,
     )
 
@@ -364,7 +362,7 @@ def test_session_collection_fetch_scores_noop_on_loader_without_support():
     """A loader with no score API must not raise — the helper guards on it."""
     from axion._core.tracing.collection.session_collection import SessionCollection
 
-    raw = SimpleNamespace(id='trace-1', name='dwayne-web-chat', observations=[])
+    raw = SimpleNamespace(id='trace-1', name='chat-turn', observations=[])
     loader = MagicMock(spec=['get_session_with_traces'])
     loader.get_session_with_traces.return_value = (SimpleNamespace(id='sess-1'), [raw])
 
