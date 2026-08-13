@@ -493,6 +493,9 @@ class Session:
         them to each ``Trace`` via ``trace.scores``.  Requires the loader to have
         valid Langfuse credentials.  Adds roughly one paginated API call regardless
         of session size; fail-soft (errors are logged, scores default to empty).
+        Scores land only on the traces the session still holds, so under
+        ``turns_only=True`` a score attached to a non-turn trace is unreachable;
+        pass ``turns_only=False`` when those traces carry scores you need.
 
         ``turn_name``/``turn_predicate`` set the default turn selector applied by
         ``conversation()``/``to_dataset()``/``turn_count`` (overridable per-call).
@@ -532,13 +535,8 @@ class Session:
             turns_only=turns_only,
         )
 
-        if fetch_scores and hasattr(loader, 'fetch_scores_for_session'):
-            scores_by_trace = loader.fetch_scores_for_session(session_id)
-            for trace in session._traces:
-                tid = str(getattr(trace.raw, 'id', '') or '')
-                trace_scores = scores_by_trace.get(tid, [])
-                if trace_scores:
-                    trace._scores = trace_scores
+        if fetch_scores:
+            _attach_langfuse_scores(session, loader, session_id)
 
         return session
 
@@ -560,6 +558,27 @@ class Session:
         return (
             f"<Session id='{self.id}' traces={len(self._traces)} turns={cached_turns}>"
         )
+
+
+def _attach_langfuse_scores(session: Session, loader: Any, session_id: str) -> None:
+    """
+    Back-fill Langfuse eval scores onto an already-built session's traces.
+
+    Runs after construction because the traces have to exist to be matched by id,
+    which also means a session built with ``turns_only=True`` has already dropped
+    its non-turn traces and those scores have nowhere to land.
+
+    One paginated call per session, and a no-op against a loader that cannot
+    fetch scores, so a caller need not know which loader it holds.
+    """
+    if not hasattr(loader, 'fetch_scores_for_session'):
+        return
+    scores_by_trace = loader.fetch_scores_for_session(session_id)
+    for trace in session._traces:
+        tid = str(getattr(trace.raw, 'id', '') or '')
+        trace_scores = scores_by_trace.get(tid, [])
+        if trace_scores:
+            trace._scores = trace_scores
 
 
 def _build_conversation(
