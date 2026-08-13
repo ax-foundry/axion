@@ -5,7 +5,11 @@ from pathlib import Path
 from typing import Any, Callable, List, Optional
 
 from axion._core.logging import get_logger
-from axion._core.tracing.collection.session import Session, TurnPredicate
+from axion._core.tracing.collection.session import (
+    Session,
+    TurnPredicate,
+    _attach_langfuse_scores,
+)
 
 logger = get_logger(__name__)
 
@@ -57,6 +61,7 @@ class SessionCollection:
         prompt_patterns: Any = None,
         show_progress: bool = True,
         enrich: bool = True,
+        fetch_scores: bool = False,
         turn_name: Optional[str] = None,
         turn_predicate: Optional[TurnPredicate] = None,
         turns_only: bool = True,
@@ -83,6 +88,13 @@ class SessionCollection:
                 reconstructable from trace-level I/O, but observation-level access
                 (``by_type``/``tools``/``find_all``) will be empty. Much faster for
                 conversation-only workflows over many sessions.
+            fetch_scores: When ``True``, fetch each session's Langfuse eval scores
+                and attach them to the matching ``Trace`` via ``trace.scores``.
+                Off by default because it costs one extra paginated call per
+                session; without it ``trace.scores`` is empty even though the
+                underlying fetch returned scores, so any metric rolling up
+                per-turn scores silently sees nothing. Scores reach only the
+                traces the session retains -- see ``turns_only``.
             turn_name: Default turn trace name applied to every session's
                 ``conversation()``/``to_dataset()``/``turn_count`` (e.g.
                 ``'chat-turn'``); overridable per-call. Reliable -- bypasses
@@ -120,16 +132,17 @@ class SessionCollection:
             if session_obj is None:
                 logger.warning('Session %s not found; skipping.', session_id)
                 continue
-            sessions.append(
-                Session(
-                    session_obj,
-                    full_traces=full_traces,
-                    prompt_patterns=prompt_patterns,
-                    turn_name=turn_name,
-                    turn_predicate=turn_predicate,
-                    turns_only=turns_only,
-                )
+            session = Session(
+                session_obj,
+                full_traces=full_traces,
+                prompt_patterns=prompt_patterns,
+                turn_name=turn_name,
+                turn_predicate=turn_predicate,
+                turns_only=turns_only,
             )
+            if fetch_scores:
+                _attach_langfuse_scores(session, loader, session_id)
+            sessions.append(session)
 
         return cls(
             sessions,

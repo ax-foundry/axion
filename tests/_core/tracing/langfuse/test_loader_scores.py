@@ -252,3 +252,124 @@ def test_trace_collection_from_session_fetch_scores_false():
 
     loader.fetch_scores_for_session.assert_not_called()
     assert collection[0].scores == []
+
+
+# ---------------------------------------------------------------------------
+# SessionCollection.from_langfuse — fetch_scores=True
+# ---------------------------------------------------------------------------
+
+
+def _session_loader(scores_by_session):
+    """A loader returning one single-trace session per id, with canned scores."""
+    loader = MagicMock()
+
+    def _get(session_id, **kwargs):
+        raw = SimpleNamespace(
+            id=f'trace-{session_id}', name='dwayne-web-chat', observations=[]
+        )
+        return SimpleNamespace(id=session_id), [raw]
+
+    loader.get_session_with_traces.side_effect = _get
+    loader.fetch_scores_for_session.side_effect = lambda sid: scores_by_session[sid]
+    return loader
+
+
+def test_session_collection_from_langfuse_fetch_scores_attaches_per_session():
+    from axion._core.tracing.collection.session_collection import SessionCollection
+
+    loader = _session_loader(
+        {
+            'sess-1': {
+                'trace-sess-1': [
+                    TraceScore(
+                        name='Dwayne Turn Accuracy', value=0.6, data_type='NUMERIC'
+                    )
+                ]
+            },
+            'sess-2': {
+                'trace-sess-2': [
+                    TraceScore(name='Tool Reliability', value=1.0, data_type='NUMERIC')
+                ]
+            },
+        }
+    )
+
+    collection = SessionCollection.from_langfuse(
+        ['sess-1', 'sess-2'], loader=loader, fetch_scores=True, turns_only=False
+    )
+
+    # One paginated call per session, not per trace.
+    assert loader.fetch_scores_for_session.call_count == 2
+    assert collection[0][0].scores[0].name == 'Dwayne Turn Accuracy'
+    assert collection[1][0].scores[0].value == 1.0
+
+
+def test_session_collection_from_langfuse_defaults_to_no_scores():
+    """The default has to stay off, matching the three sibling constructors.
+
+    This is also the regression: a session-grain metric rolling up per-turn
+    scores saw them empty here while the same traces carried scores everywhere
+    else, so it scored None rather than failing.
+    """
+    from axion._core.tracing.collection.session_collection import SessionCollection
+
+    loader = _session_loader({'sess-1': {}})
+
+    collection = SessionCollection.from_langfuse(
+        ['sess-1'], loader=loader, turns_only=False
+    )
+
+    loader.fetch_scores_for_session.assert_not_called()
+    assert collection[0][0].scores == []
+
+
+def test_session_collection_fetch_scores_reaches_only_retained_traces():
+    """turns_only prunes before the back-fill, so pruned traces keep no scores.
+
+    Documented rather than fixed: the traces have to exist to be matched by id,
+    and widening the back-fill to pruned traces would resurrect what the caller
+    asked to drop.
+    """
+    from axion._core.tracing.collection.session_collection import SessionCollection
+
+    turn = SimpleNamespace(id='trace-turn', name='dwayne-web-chat', observations=[])
+    pipeline = SimpleNamespace(
+        id='trace-pipeline', name='dwayne-pipeline', observations=[]
+    )
+
+    loader = MagicMock()
+    loader.get_session_with_traces.return_value = (
+        SimpleNamespace(id='sess-1'),
+        [turn, pipeline],
+    )
+    loader.fetch_scores_for_session.return_value = {
+        'trace-turn': [TraceScore(name='kept', value=1.0, data_type='NUMERIC')],
+        'trace-pipeline': [TraceScore(name='pruned', value=0.0, data_type='NUMERIC')],
+    }
+
+    collection = SessionCollection.from_langfuse(
+        ['sess-1'],
+        loader=loader,
+        fetch_scores=True,
+        turn_name='dwayne-web-chat',
+        turns_only=True,
+    )
+
+    session = collection[0]
+    assert len(session) == 1
+    assert session[0].scores[0].name == 'kept'
+
+
+def test_session_collection_fetch_scores_noop_on_loader_without_support():
+    """A loader with no score API must not raise — the helper guards on it."""
+    from axion._core.tracing.collection.session_collection import SessionCollection
+
+    raw = SimpleNamespace(id='trace-1', name='dwayne-web-chat', observations=[])
+    loader = MagicMock(spec=['get_session_with_traces'])
+    loader.get_session_with_traces.return_value = (SimpleNamespace(id='sess-1'), [raw])
+
+    collection = SessionCollection.from_langfuse(
+        ['sess-1'], loader=loader, fetch_scores=True, turns_only=False
+    )
+
+    assert collection[0][0].scores == []
