@@ -146,7 +146,7 @@ def test_fetch_scores_for_session_error_returns_empty():
 def test_session_from_langfuse_fetch_scores_attaches():
     from axion._core.tracing.collection.session import Session
 
-    raw_trace = SimpleNamespace(id='trace-1', name='abby-web-chat', observations=[])
+    raw_trace = SimpleNamespace(id='trace-1', name='chat-turn', observations=[])
     fake_session = SimpleNamespace(id='sess-1')
 
     loader = MagicMock()
@@ -167,7 +167,7 @@ def test_session_from_langfuse_fetch_scores_attaches():
 def test_session_from_langfuse_fetch_scores_false_leaves_empty():
     from axion._core.tracing.collection.session import Session
 
-    raw_trace = SimpleNamespace(id='trace-1', name='abby-web-chat', observations=[])
+    raw_trace = SimpleNamespace(id='trace-1', name='chat-turn', observations=[])
     fake_session = SimpleNamespace(id='sess-1')
 
     loader = MagicMock()
