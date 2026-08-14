@@ -14,6 +14,7 @@ from axion._core.tracing.collection._io import (
     extract_trace_io,
 )
 from axion._core.tracing.collection.observation_node import ObservationNode
+from axion._core.tracing.collection.scores import attach_langfuse_scores
 from axion._core.tracing.collection.smart_access import SmartAccess
 from axion._core.tracing.collection.trace import Trace
 
@@ -117,10 +118,10 @@ class TraceCollection:
                 a new one is created from environment variables.
             show_progress: Show a tqdm progress bar while fetching.
             prompt_patterns: Optional PromptPatternsBase for variable extraction.
-            fetch_scores: When ``True``, fetch Langfuse eval scores for the session
-                in a single paginated API call (session-batch path) and attach them
-                to each ``Trace.scores``.  Fail-soft — errors are logged and scores
-                default to empty.
+            fetch_scores: When ``True``, attach the session's Langfuse eval scores
+                to each ``Trace.scores`` — session-level scores from one paginated
+                API call, trace-level scores read off the trace payload at no extra
+                request.  Fail-soft — errors are logged and scores default to empty.
         """
         if loader is None:
             from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
@@ -130,13 +131,8 @@ class TraceCollection:
         raw_traces = loader.get_session_traces(session_id, show_progress=show_progress)
         collection = cls(raw_traces, prompt_patterns=prompt_patterns)
 
-        if fetch_scores and hasattr(loader, 'fetch_scores_for_session'):
-            scores_by_trace = loader.fetch_scores_for_session(session_id)
-            for trace in collection:
-                tid = str(getattr(trace.raw, 'id', '') or '')
-                trace_scores = scores_by_trace.get(tid, [])
-                if trace_scores:
-                    trace._scores = trace_scores
+        if fetch_scores:
+            attach_langfuse_scores(collection, loader, session_id)
 
         return collection
 

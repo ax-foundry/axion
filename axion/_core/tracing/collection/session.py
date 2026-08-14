@@ -17,6 +17,7 @@ from axion._core.tracing.collection._io import (
     safe_json_load,
 )
 from axion._core.tracing.collection.observation_node import ObservationNode
+from axion._core.tracing.collection.scores import attach_langfuse_scores
 from axion._core.tracing.collection.trace import Trace
 from axion._core.tracing.collection.trace_collection import TraceCollection
 
@@ -488,11 +489,12 @@ class Session:
         input/output -- enough to reconstruct the conversation -- but
         observation-level access (``by_type``/``tools``/``find_all``) will be empty.
 
-        ``fetch_scores`` (default ``False``): when ``True``, fetches all Langfuse
-        eval scores for the session in a single paginated API call and attaches
-        them to each ``Trace`` via ``trace.scores``.  Requires the loader to have
-        valid Langfuse credentials.  Adds roughly one paginated API call regardless
-        of session size; fail-soft (errors are logged, scores default to empty).
+        ``fetch_scores`` (default ``False``): when ``True``, attaches the session's
+        Langfuse eval scores to each ``Trace`` via ``trace.scores``.  Session-level
+        scores come from one paginated API call regardless of session size;
+        trace-level scores are read off the trace payload at no extra request.
+        Requires the loader to have valid Langfuse credentials; fail-soft (errors
+        are logged, scores default to empty).
         Scores land only on the traces the session still holds, so under
         ``turns_only=True`` a score attached to a non-turn trace is unreachable;
         pass ``turns_only=False`` when those traces carry scores you need.
@@ -561,24 +563,8 @@ class Session:
 
 
 def _attach_langfuse_scores(session: Session, loader: Any, session_id: str) -> None:
-    """
-    Back-fill Langfuse eval scores onto an already-built session's traces.
-
-    Runs after construction because the traces have to exist to be matched by id,
-    which also means a session built with ``turns_only=True`` has already dropped
-    its non-turn traces and those scores have nowhere to land.
-
-    One paginated call per session, and a no-op against a loader that cannot
-    fetch scores, so a caller need not know which loader it holds.
-    """
-    if not hasattr(loader, 'fetch_scores_for_session'):
-        return
-    scores_by_trace = loader.fetch_scores_for_session(session_id)
-    for trace in session._traces:
-        tid = str(getattr(trace.raw, 'id', '') or '')
-        trace_scores = scores_by_trace.get(tid, [])
-        if trace_scores:
-            trace._scores = trace_scores
+    """Back-fill Langfuse eval scores onto an already-built session's traces."""
+    attach_langfuse_scores(session._traces, loader, session_id)
 
 
 def _build_conversation(

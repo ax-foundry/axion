@@ -86,6 +86,9 @@ sc = SessionCollection.from_langfuse(
 )
 ```
 
+Both kinds of score are covered.
+Langfuse's session-scoped score query returns only scores carrying a `sessionId` of their own, which a score written against a trace does not have; those per-trace scores are read off the trace payload instead, at no extra request.
+
 Scores attach only to the traces a session keeps. With the default `turns_only=True`, non-turn traces are pruned during construction, so scores on those traces are unreachable — pass `turns_only=False` when you need them.
 
 !!! note "Explicit session IDs"

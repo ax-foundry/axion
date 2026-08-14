@@ -722,7 +722,11 @@ class LangfuseTraceLoader(BaseTraceLoader):
         self, session_id: str, pace: bool = True
     ) -> 'dict[str, list[TraceScore]]':
         """
-        Fetch all Langfuse eval scores for a session in one paginated call.
+        Fetch a session's Langfuse eval scores in one paginated call.
+
+        The API filters on a score's own ``sessionId``, which is unset on a score
+        written against a trace, so the result covers session-level scores only;
+        per-trace scores come off the trace payload instead.
 
         Returns a dict keyed by ``trace_id`` so callers can attach scores to each
         ``Trace`` without issuing a per-trace request.  On any error the warning is

@@ -371,3 +371,72 @@ def test_session_collection_fetch_scores_noop_on_loader_without_support():
     )
 
     assert collection[0][0].scores == []
+
+
+def test_fetch_scores_falls_back_to_scores_on_the_trace_payload():
+    """Langfuse's session score query only returns scores carrying a sessionId.
+
+    A score written against a trace has none, so it is recovered from the trace
+    payload, which already carries it.
+    """
+    from axion._core.tracing.collection.session_collection import SessionCollection
+
+    raw = SimpleNamespace(
+        id='trace-1',
+        name='chat-turn',
+        observations=[],
+        scores=[_raw_score('accuracy', 0.75)],
+    )
+    loader = MagicMock()
+    loader.get_session_with_traces.return_value = (SimpleNamespace(id='sess-1'), [raw])
+    loader.fetch_scores_for_session.return_value = {}
+
+    collection = SessionCollection.from_langfuse(
+        ['sess-1'], loader=loader, fetch_scores=True, turns_only=False
+    )
+
+    scores = collection[0][0].scores
+    assert [(s.name, s.value) for s in scores] == [('accuracy', 0.75)]
+
+
+def test_session_query_scores_take_precedence_over_the_trace_payload():
+    from axion._core.tracing.collection.session_collection import SessionCollection
+
+    raw = SimpleNamespace(
+        id='trace-1',
+        name='chat-turn',
+        observations=[],
+        scores=[_raw_score('accuracy', 0.75)],
+    )
+    loader = MagicMock()
+    loader.get_session_with_traces.return_value = (SimpleNamespace(id='sess-1'), [raw])
+    loader.fetch_scores_for_session.return_value = {
+        'trace-1': [TraceScore(name='accuracy', value=1.0, data_type='NUMERIC')],
+    }
+
+    collection = SessionCollection.from_langfuse(
+        ['sess-1'], loader=loader, fetch_scores=True, turns_only=False
+    )
+
+    assert [s.value for s in collection[0][0].scores] == [1.0]
+
+
+def test_unusable_trace_payload_scores_are_skipped_not_raised():
+    """Some Langfuse payloads carry bare score ids rather than score objects."""
+    from axion._core.tracing.collection.session_collection import SessionCollection
+
+    raw = SimpleNamespace(
+        id='trace-1',
+        name='chat-turn',
+        observations=[],
+        scores=['score-id-1', _raw_score('accuracy', 0.5)],
+    )
+    loader = MagicMock()
+    loader.get_session_with_traces.return_value = (SimpleNamespace(id='sess-1'), [raw])
+    loader.fetch_scores_for_session.return_value = {}
+
+    collection = SessionCollection.from_langfuse(
+        ['sess-1'], loader=loader, fetch_scores=True, turns_only=False
+    )
+
+    assert [s.name for s in collection[0][0].scores] == ['accuracy']
