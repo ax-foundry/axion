@@ -32,6 +32,14 @@ class ToolCorrectness(BaseMetric):
     - Name-only matching (default): Only tool names must match
     - Parameter matching: Tool names and input parameters must match with various strategies
     - Strict matching: Tool names, parameters, and order must match exactly
+
+    In flexible-order mode the ``scoring`` argument selects what the score
+    measures. The default, ``recall``, answers "were the expected tools called?"
+    and is blind to extra calls: an agent that calls every tool it has scores
+    1.0. ``precision`` answers "were the calls made the expected ones?" and is
+    blind to omissions. ``f1`` requires both. Which one is right depends on what
+    the case is testing — an over-calling agent is invisible to recall, and an
+    agent that skips a required lookup is invisible to precision.
     """
 
     def __init__(
@@ -40,6 +48,7 @@ class ToolCorrectness(BaseMetric):
         strict_order: bool = False,
         parameter_matching_strategy: Literal['exact', 'subset', 'fuzzy'] = 'exact',
         fuzzy_threshold: float = 0.8,
+        scoring: Literal['recall', 'precision', 'f1'] = 'recall',
         **kwargs,
     ):
         """
@@ -53,6 +62,14 @@ class ToolCorrectness(BaseMetric):
                 - "subset": Called args must contain all expected args (can have extras)
                 - "fuzzy": Similarity-based matching with threshold
             fuzzy_threshold: Threshold for fuzzy matching (0.0 to 1.0)
+            scoring: What the flexible-order score measures:
+                - "recall": matched / expected — did it call what was expected
+                  (default; extra calls do not lower the score)
+                - "precision": matched / called — were its calls the expected
+                  ones (missing calls do not lower the score)
+                - "f1": harmonic mean of the two — penalises both
+                Ignored when strict_order is True, which is already all-or-nothing
+                on both counts.
             **kwargs: Additional arguments passed to BaseMetric
         """
         super().__init__(**kwargs)
@@ -60,6 +77,7 @@ class ToolCorrectness(BaseMetric):
         self.strict_order = strict_order
         self.parameter_matching_strategy = parameter_matching_strategy
         self.fuzzy_threshold = fuzzy_threshold
+        self.scoring = scoring
 
     @trace(name='ToolCorrectness.execute', capture_args=True, capture_response=True)
     async def execute(self, item: DatasetItem) -> MetricEvaluationResult:
@@ -158,8 +176,11 @@ class ToolCorrectness(BaseMetric):
             else:
                 missing_or_incorrect.append(expected_tool)
 
-        # The score is recall: number of correctly called tools / number of expected tools.
-        score = len(matched_pairs) / len(expected_tools)
+        score = self._score(
+            matched=len(matched_pairs),
+            expected=len(expected_tools),
+            called=len(tools_called),
+        )
 
         explanation_parts = []
         if matched_pairs:
@@ -188,7 +209,33 @@ class ToolCorrectness(BaseMetric):
         else:
             explanation = '; '.join(explanation_parts)
 
+        # Name the mode in the explanation: the same score means different things
+        # under each, and 'Unexpected tools' appears in the text whether or not
+        # it cost anything.
+        explanation = f'[{self.scoring}] {explanation}'
+
         return score, explanation
+
+    def _score(self, matched: int, expected: int, called: int) -> float:
+        """Combine the match counts into the configured score.
+
+        `expected` is non-zero by the time this is reached — an empty
+        expectation is answered by execute() before any matching happens.
+        `called` can be zero, which is precision's only undefined case: no calls
+        were made, so none of them were wrong. That scores 1.0, and recall
+        carries the failure.
+        """
+        recall = matched / expected
+        if self.scoring == 'recall':
+            return recall
+
+        precision = matched / called if called else 1.0
+        if self.scoring == 'precision':
+            return precision
+
+        if not recall or not precision:
+            return 0.0
+        return 2 * precision * recall / (precision + recall)
 
     def _tools_match(self, called_tool: ToolCall, expected_tool: ToolCall) -> bool:
         """Check if two tools match based on the configured criteria."""
