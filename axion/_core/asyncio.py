@@ -444,18 +444,28 @@ def run_async_function(
 
     if loop and loop.is_running():
         # Already inside a running event loop (e.g., Jupyter), run in a thread
-        result_container = {}
+        result_container: dict[str, Any] = {}
 
         def thread_runner():
-            new_loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(new_loop)
-            result = new_loop.run_until_complete(async_func(*args, **kwargs))
-            result_container['result'] = result
-            new_loop.close()
+            # asyncio.run, not a hand-rolled new_event_loop/run_until_complete/
+            # close: it cancels whatever tasks are still pending and shuts down
+            # async generators before closing the loop. A library that starts a
+            # background task on first use (litellm's LoggingWorker is the one
+            # that surfaced this) would otherwise be left with a task bound to a
+            # loop that no longer exists, and raise 'Event loop is closed' from
+            # inside an unrelated later step.
+            try:
+                result_container['result'] = asyncio.run(async_func(*args, **kwargs))
+            except BaseException as exc:  # noqa: BLE001 — re-raised on the caller's thread
+                result_container['error'] = exc
 
         thread = threading.Thread(target=thread_runner)
         thread.start()
         thread.join()
+        # A failure inside the thread used to surface as a KeyError on the line
+        # below, hiding the real traceback. Re-raise it where the caller is.
+        if 'error' in result_container:
+            raise result_container['error']
         return result_container['result']
     else:
         return asyncio.run(async_func(*args, **kwargs))
