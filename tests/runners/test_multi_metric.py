@@ -592,3 +592,115 @@ class TestExpandMultiMetrics:
         # Should keep original score when expansion fails
         assert len(expanded.results[0].score_results) == 1
         assert expanded.results[0].score_results[0].name == 'TestMetric'
+
+
+class MockThresholdMetric:
+    """Multi-metric whose sub-metrics carry thresholds of their own."""
+
+    __module__ = 'axion.metrics.something'
+
+    def __init__(self, inverse_scoring_metric: bool = False):
+        self.is_multi_metric = True
+        self.include_parent_score = False
+        self.sub_metric_prefix = False
+        self.threshold = 0.5
+        self.cost_estimate = 0.0
+        self.name = 'ThresholdBundle'
+        self.inverse_scoring_metric = inverse_scoring_metric
+
+    async def execute(self, input_data: DatasetItem, **kwargs):
+        return MetricEvaluationResult(score=0.6, explanation='bundle')
+
+    def get_sub_metrics(self, result: MetricEvaluationResult):
+        return [
+            # Stricter than the parent: 0.7 clears 0.5 but not 0.8.
+            SubMetricResult(name='strict', score=0.7, threshold=0.8),
+            # Lenient than the parent: 0.1 clears 0.0 but not 0.5.
+            SubMetricResult(name='floor', score=0.1, threshold=0.0),
+            # No threshold of its own, so the parent's applies.
+            SubMetricResult(name='inherit', score=0.9),
+        ]
+
+
+class TestSubMetricThresholds:
+    """A sub-metric is judged against the threshold recorded beside it."""
+
+    @pytest.mark.asyncio
+    async def test_sub_metric_uses_own_threshold_not_parent(self, sample_dataset_item):
+        """A stricter sub-threshold fails a score the parent's would pass."""
+        runner = AxionRunner(
+            metric=MockThresholdMetric(), metric_name='ThresholdBundle'
+        )
+
+        scores = {s.name: s for s in await runner.execute(sample_dataset_item)}
+
+        strict = scores['strict']
+        assert strict.threshold == 0.8
+        assert strict.passed is False
+
+    @pytest.mark.asyncio
+    async def test_zero_threshold_is_preserved(self, sample_dataset_item):
+        """A threshold of 0 is a threshold, not an absent one."""
+        runner = AxionRunner(
+            metric=MockThresholdMetric(), metric_name='ThresholdBundle'
+        )
+
+        scores = {s.name: s for s in await runner.execute(sample_dataset_item)}
+
+        floor = scores['floor']
+        assert floor.threshold == 0.0
+        assert floor.passed is True
+
+    @pytest.mark.asyncio
+    async def test_sub_metric_without_threshold_inherits_parent(
+        self, sample_dataset_item
+    ):
+        """Absent a threshold of its own, a sub-metric takes the parent's."""
+        runner = AxionRunner(
+            metric=MockThresholdMetric(), metric_name='ThresholdBundle'
+        )
+
+        scores = {s.name: s for s in await runner.execute(sample_dataset_item)}
+
+        inherit = scores['inherit']
+        assert inherit.threshold == 0.5
+        assert inherit.passed is True
+
+    @pytest.mark.asyncio
+    async def test_recorded_threshold_is_the_one_applied(self, sample_dataset_item):
+        """Every sub-metric's verdict agrees with its own recorded threshold."""
+        runner = AxionRunner(
+            metric=MockThresholdMetric(), metric_name='ThresholdBundle'
+        )
+
+        for score in await runner.execute(sample_dataset_item):
+            assert score.passed == (score.score >= score.threshold)
+
+    @pytest.mark.asyncio
+    async def test_inverse_scoring_applies_to_sub_thresholds(self, sample_dataset_item):
+        """Inverse scoring compares against the sub-metric's own threshold."""
+        runner = AxionRunner(
+            metric=MockThresholdMetric(inverse_scoring_metric=True),
+            metric_name='ThresholdBundle',
+        )
+
+        for score in await runner.execute(sample_dataset_item):
+            assert score.passed == (score.score < score.threshold)
+
+    @pytest.mark.asyncio
+    async def test_cost_estimate_does_not_mutate_sub_metric_metadata(
+        self, sample_dataset_item
+    ):
+        """Lifting cost_estimate to its own column leaves the result untouched."""
+        metric = MockThresholdMetric()
+        sub_metrics = metric.get_sub_metrics(MetricEvaluationResult(score=0.6))
+        sub_metrics[0].metadata['cost_estimate'] = 0.25
+
+        runner = AxionRunner(metric=metric, metric_name='ThresholdBundle')
+        metric.get_sub_metrics = lambda result: sub_metrics
+
+        scores = {s.name: s for s in await runner.execute(sample_dataset_item)}
+
+        assert scores['strict'].cost_estimate == 0.25
+        assert 'cost_estimate' not in scores['strict'].metadata
+        assert sub_metrics[0].metadata['cost_estimate'] == 0.25
