@@ -278,3 +278,72 @@ def _answer(name):
     return JevResponse.model_validate(
         {'model': 'jev-1.13.0', 'answers': {name: ANSWERS[name]}}
     ).answers[name]
+
+
+class TestCalibration:
+    def test_a_threshold_can_be_moved_per_instance(self):
+        instance = GroundingForTest(question_thresholds={'supported': 0.4})
+
+        assert instance.questions['supported'].threshold == 0.4
+
+    def test_moving_one_threshold_leaves_the_others_alone(self):
+        instance = GroundingForTest(question_thresholds={'supported': 0.4})
+
+        assert instance.questions['severity'].threshold == 0.5
+        assert instance.questions['failure'].threshold is None
+
+    def test_a_threshold_can_be_removed(self):
+        """None means 'inherit the parent's', which is a real calibration."""
+        instance = GroundingForTest(question_thresholds={'severity': None})
+
+        assert instance.questions['severity'].threshold is None
+
+    def test_the_declared_questions_are_not_recalibrated(self):
+        """Writing through to the class would move every other instance's bar."""
+        calibrated = GroundingForTest(question_thresholds={'supported': 0.4})
+        default = GroundingForTest()
+
+        assert calibrated.questions['supported'].threshold == 0.4
+        assert default.questions['supported'].threshold == 0.8
+        assert GroundingForTest.questions['supported'].threshold == 0.8
+        assert RUBRICS['supported'].threshold == 0.8
+
+    def test_an_unknown_question_is_refused(self):
+        with pytest.raises(MetricValidationError) as excinfo:
+            GroundingForTest(question_thresholds={'supprted': 0.4})
+
+        assert 'supprted' in str(excinfo.value)
+
+    def test_the_state_template_can_be_replaced_per_instance(self):
+        instance = GroundingForTest(state_template='Just: {actual_output}')
+
+        assert instance.build_state(item()) == (
+            'Just: I confirmed this against the filed rate pages.'
+        )
+        assert GroundingForTest.state_template.startswith('Answer:')
+
+    @pytest.mark.asyncio
+    async def test_a_calibrated_threshold_decides_the_sub_metric(self):
+        """The whole point: the same answer passes for one agent, fails another."""
+        strict = GroundingForTest(jev_client=fake_client())
+        lenient = GroundingForTest(
+            jev_client=fake_client(), question_thresholds={'supported': 0.01}
+        )
+
+        def supported(scores):
+            return next(score for score in scores if score.name.endswith('_supported'))
+
+        strict_scores = (
+            await MetricRunnerFactory()
+            .create_executor(strict, threshold=0.7)
+            .execute(item())
+        )
+        lenient_scores = (
+            await MetricRunnerFactory()
+            .create_executor(lenient, threshold=0.7)
+            .execute(item())
+        )
+
+        # Jev answered 0.02, which clears 0.01 and not the declared 0.8.
+        assert supported(strict_scores).passed is False
+        assert supported(lenient_scores).passed is True
