@@ -140,6 +140,23 @@ class AxionConfig(BaseModel):
         default=None, description='API key for Google Gemini models.'
     )
 
+    # TypeSafe Jev — a decision endpoint, not a chat model, so it is configured
+    # here rather than through the LLM registry.
+    typesafe_api_key: Optional[str] = Field(
+        default=None, description='API key for TypeSafe Jev.'
+    )
+    typesafe_base_url: str = Field(
+        default='https://api.typesafe.ai/v1',
+        description='Base URL for the TypeSafe API. Point this at a gateway to route through one.',
+    )
+    typesafe_model: str = Field(
+        default='jev-latest',
+        description=(
+            'Jev model id. The spelling depends on the route: TypeSafe direct uses '
+            "'jev-latest' or a pinned 'jev-1.13.0', and gateways rename it."
+        ),
+    )
+
     # Google Vertex AI
     vertex_project: Optional[str] = Field(
         default=None,
