@@ -138,6 +138,11 @@ class JevMetric(BaseMetric):
                     threshold=0.8,
                 ),
             }
+
+    The declared thresholds are the metric's defaults, not its settings. Each
+    instance may be handed `question_thresholds` to move any of them, so one
+    metric can be held to a different bar for each agent it grades without a
+    subclass per agent.
     """
 
     # Jev is not a chat model and is not reached through the LLM registry, so
@@ -151,12 +156,25 @@ class JevMetric(BaseMetric):
     questions: ClassVar[Dict[str, JevRubric]] = {}
     state_template: ClassVar[Optional[str]] = None
 
-    def __init__(self, *args, jev_client: Optional[JevClient] = None, **kwargs):
+    def __init__(
+        self,
+        *args,
+        jev_client: Optional[JevClient] = None,
+        question_thresholds: Optional[Dict[str, Optional[float]]] = None,
+        state_template: Optional[str] = None,
+        **kwargs,
+    ):
         """
         Args:
             jev_client: A client to reuse. When omitted, each call makes and
                 closes its own, which is the safe default where metric
                 instances are built per request and never disposed of.
+            question_thresholds: Per-question thresholds for this instance,
+                by question name. One agent's idea of a passing grounding
+                probability is not another's, so the bar is configuration
+                rather than a subclass.
+            state_template: Overrides the class template for this instance,
+                for an agent whose traces render differently.
         """
         super().__init__(*args, **kwargs)
         self._jev_client = jev_client
@@ -164,6 +182,39 @@ class JevMetric(BaseMetric):
             raise MetricValidationError(
                 f'{type(self).__name__} asks Jev nothing; declare `questions`.'
             )
+        if state_template is not None:
+            self.state_template = state_template
+        self.questions = self._calibrated(question_thresholds)
+
+    def _calibrated(
+        self, thresholds: Optional[Dict[str, Optional[float]]]
+    ) -> Dict[str, JevRubric]:
+        """Copy the declared questions with this instance's thresholds applied.
+
+        The copy is the point: the declared questions live on the class, and
+        writing a threshold into them would recalibrate every other instance
+        of the metric in the process.
+        """
+        if not thresholds:
+            return dict(self.questions)
+
+        unknown = set(thresholds) - set(self.questions)
+        if unknown:
+            # Silently ignoring these would leave a miscalibrated metric
+            # looking correctly configured, which is the failure that takes
+            # longest to notice.
+            raise MetricValidationError(
+                f'{type(self).__name__} has no question named '
+                f'{sorted(unknown)}; it asks {sorted(self.questions)}.'
+            )
+        return {
+            name: (
+                rubric.model_copy(update={'threshold': thresholds[name]})
+                if name in thresholds
+                else rubric
+            )
+            for name, rubric in self.questions.items()
+        }
 
     def build_state(self, item: DatasetItem) -> str:
         """Render the material Jev judges.
