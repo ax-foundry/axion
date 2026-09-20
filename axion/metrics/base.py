@@ -1,6 +1,7 @@
 from typing import (
     Any,
     Callable,
+    ClassVar,
     Dict,
     Generic,
     Iterator,
@@ -42,6 +43,16 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
 
     _default_instructions = 'JUDGE INSTRUCTIONS'
     _input_item = DatasetItem
+
+    # Whether this metric reaches an LLM to produce its score. A metric that
+    # decides by other means — a heuristic, or a call to a service with its own
+    # non-chat API — sets this False and is then constructed without resolving a
+    # model and without credentials for one.
+    #
+    # The alternative for such a metric has been to tag itself 'heuristic', which
+    # takes the same branch but states something untrue: the tag is displayed in
+    # the registry and read as a claim about how the metric decides.
+    requires_llm: ClassVar[bool] = True
 
     input_model: Type[InputModel] = DatasetItem
     output_model: Type[OutputModel] = MetricEvaluationResult
@@ -163,20 +174,24 @@ class BaseMetric(LLMHandler, Generic[InputModel, OutputModel]):
         # This is a hack to support heuristic metrics.
         # Check if this is a heuristic metric (doesn't use LLM)
         is_heuristic = 'heuristic' in getattr(getattr(self, 'config', None), 'tags', [])
+        # `requires_llm = False` is the explicit form of the same thing, for a
+        # metric that is not heuristic but still never calls a chat model.
+        needs_no_llm = is_heuristic or not self.requires_llm
 
         # Priority: explicit llm > registry default
         if llm is not None:
             self.llm = llm
-        elif is_heuristic:
-            # Heuristic metrics don't need an LLM
+        elif needs_no_llm:
+            # Nothing is ever asked of this handle; it exists so the rest of the
+            # machinery has something non-None to hold.
             self.llm = MockLLM()
         else:
             # Get LLM from registry (uses defaults if model_name/llm_provider are None)
             registry = LLMRegistry(llm_provider)
             self.llm = registry.get_llm(model_name)
 
-        # For heuristic metrics, set model info to None
-        if is_heuristic and llm is None:
+        # A metric that reaches no model reports no model.
+        if needs_no_llm and llm is None:
             self.model_name = None
             self.llm_provider = None
         else:

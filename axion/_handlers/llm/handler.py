@@ -113,10 +113,17 @@ class LLMHandler(BaseHandler, Generic[InputModel, OutputModel]):
         """Initialize LLM handler."""
         super().__init__(**kwargs)
         self._validate_llm_requirements()
-        self._initialize_client()
+        # A subclass that declares it reaches no chat model is not given one, and
+        # does not configure the global LiteLLM client on everyone else's behalf.
+        if getattr(self, 'requires_llm', True):
+            self._initialize_client()
 
     def _initialize_client(self):
-        """Configure LiteLLM settings for API calls."""
+        """Configure LiteLLM settings for API calls.
+
+        The settings written here are LiteLLM module globals, so they outlive
+        this instance and apply to every caller in the process.
+        """
         # LiteLLM reads API keys from env vars automatically:
         # OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY, etc.
         # Configure custom base URL if needed (for proxies/gateways)
