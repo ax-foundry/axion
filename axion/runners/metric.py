@@ -95,16 +95,26 @@ class BaseMetricRunner(ABC):
         """Ensures that retrieved content is always a list of strings."""
         return [content] if isinstance(content, str) else content or []
 
-    def _has_passed(self, score: float) -> Optional[bool]:
-        """Determines if a score meets the defined threshold."""
-        if score is None or np.isnan(score) or self.threshold is None:
+    def _has_passed(
+        self, score: float, threshold: Optional[float] = None
+    ) -> Optional[bool]:
+        """Determines if a score meets a threshold.
+
+        Args:
+            score: The score to judge.
+            threshold: The threshold to judge against. Defaults to the metric's
+                own. Sub-metrics pass theirs explicitly, so that the threshold a
+                score is judged against is always the one recorded beside it.
+        """
+        threshold = self.threshold if threshold is None else threshold
+        if score is None or np.isnan(score) or threshold is None:
             return None
         comparator = (
             operator.lt
             if getattr(self.metric, 'inverse_scoring_metric', False)
             else operator.ge
         )
-        return comparator(score, self.threshold)
+        return comparator(score, threshold)
 
     @property
     def metric_name(self) -> str:
@@ -864,25 +874,26 @@ class AxionRunner(BaseMetricRunner):
             else:
                 sub_metric_category = metric_category
 
-            # Determine threshold: sub-metric specific > parent metric default
-            sub_threshold = sub.threshold or self.threshold
+            # Determine threshold: sub-metric specific > parent metric default.
+            # Tested against None rather than falsiness so that a threshold of 0
+            # survives instead of falling back to the parent's.
+            sub_threshold = self.threshold if sub.threshold is None else sub.threshold
 
-            # Determine pass/fail for sub-metric
+            # Determine pass/fail for sub-metric, against its own threshold
             if sub_metric_category == MetricCategory.ANALYSIS:
                 sub_passed = None
-            elif not np.isnan(sub_score) and sub_threshold is not None:
-                sub_passed = self._has_passed(sub_score)
             else:
-                sub_passed = None
+                sub_passed = self._has_passed(sub_score, sub_threshold)
 
             # Build sub-metric metadata
-            # Extract cost_estimate from metadata if provided (for multi-metric cost distribution)
-            sub_cost_estimate = sub.metadata.pop('cost_estimate', None)
+            # cost_estimate rides in metadata for multi-metric cost distribution and
+            # is lifted to its own column. Read without mutating the caller's result.
+            sub_cost_estimate = sub.metadata.get('cost_estimate')
 
             sub_metadata = {
                 'group': sub.group,
                 'source_metric': self.metric_name,
-                **sub.metadata,
+                **{k: v for k, v in sub.metadata.items() if k != 'cost_estimate'},
             }
 
             scores.append(
