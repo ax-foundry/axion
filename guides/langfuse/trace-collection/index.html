@@ -3371,6 +3371,8 @@
       
         
       
+        
+      
     
     
     
@@ -3470,6 +3472,36 @@
     
   
     YAML-Based Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deep-dives/metrics/jev-metrics/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Jev-Backed Metrics
   
 
     
@@ -5278,7 +5310,7 @@
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Fetch and wrap traces in one step</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abc123&#39;</span><span class="p">,</span> <span class="s1">&#39;def456&#39;</span><span class="p">],</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">'abc123'</span><span class="p">,</span> <span class="s1">'def456'</span><span class="p">],</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">)</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
@@ -5295,13 +5327,13 @@
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TraceCollection</span><span class="p">,</span> <span class="n">LangfuseTraceLoader</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">loader</span> <span class="o">=</span> <span class="n">LangfuseTraceLoader</span><span class="p">(</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">public_key</span><span class="o">=</span><span class="s1">&#39;pk-lf-...&#39;</span><span class="p">,</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">secret_key</span><span class="o">=</span><span class="s1">&#39;sk-lf-...&#39;</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">public_key</span><span class="o">=</span><span class="s1">'pk-lf-...'</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">secret_key</span><span class="o">=</span><span class="s1">'sk-lf-...'</span><span class="p">,</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">)</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="c1"># Fetch by trace IDs</span>
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abc123&#39;</span><span class="p">,</span> <span class="s1">&#39;def456&#39;</span><span class="p">],</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">'abc123'</span><span class="p">,</span> <span class="s1">'def456'</span><span class="p">],</span>
 </span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">)</span>
 </span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>
@@ -5309,23 +5341,23 @@
 </span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
 </span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>    <span class="n">limit</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
 </span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="n">days_back</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;production&#39;</span><span class="p">],</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;baseball-rules-agent&#39;</span><span class="p">,</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s1">'production'</span><span class="p">],</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">'baseball-rules-agent'</span><span class="p">,</span>
 </span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
 </span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="p">)</span>
 </span></code></pre></div>
 <h4 id="attaching-eval-scores">Attaching eval scores<a class="headerlink" href="#attaching-eval-scores" title="Permanent link">&para;</a></h4>
 <p>Pass <code>fetch_scores=True</code> to pull Langfuse automated eval scores for every trace and attach them as <code>trace.scores</code> (a list of <code>TraceScore</code>). Scores are fetched per-trace (one extra API call each); errors are logged and fail-soft (scores default to <code>[]</code>):</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abc123&#39;</span><span class="p">,</span> <span class="s1">&#39;def456&#39;</span><span class="p">],</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">'abc123'</span><span class="p">,</span> <span class="s1">'def456'</span><span class="p">],</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="n">fetch_scores</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="p">)</span>
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="k">for</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scores</span><span class="p">:</span>
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">score</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">score</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">score</span><span class="o">.</span><span class="n">data_type</span><span class="p">)</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="c1"># e.g. &quot;hallucination&quot; 1.0 &quot;NUMERIC&quot;</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="c1"># e.g. &quot;scope&quot;         &quot;completed_scope&quot; &quot;CATEGORICAL&quot;  (score.string_value)</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="c1"># e.g. "hallucination" 1.0 "NUMERIC"</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="c1"># e.g. "scope"         "completed_scope" "CATEGORICAL"  (score.string_value)</span>
 </span></code></pre></div>
 <p>Scores are preserved through <code>filter()</code> and <code>filter_by()</code>:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">passing</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="nb">all</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="mf">0.8</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">scores</span><span class="p">))</span>
@@ -5339,19 +5371,19 @@
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># Fetch all traces in a session</span>
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_session</span><span class="p">(</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">session_id</span><span class="o">=</span><span class="s1">&#39;my-session-123&#39;</span><span class="p">,</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">session_id</span><span class="o">=</span><span class="s1">'my-session-123'</span><span class="p">,</span>
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="p">)</span>
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
 </span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="c1"># With eval scores — uses a single session-batch API call</span>
 </span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_session</span><span class="p">(</span>
-</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">session_id</span><span class="o">=</span><span class="s1">&#39;my-session-123&#39;</span><span class="p">,</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>    <span class="n">session_id</span><span class="o">=</span><span class="s1">'my-session-123'</span><span class="p">,</span>
 </span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
 </span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>    <span class="n">fetch_scores</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="p">)</span>
 </span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>
 </span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="c1"># Convert directly to dataset for evaluation</span>
-</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;session-eval&#39;</span><span class="p">)</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'session-eval'</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="from-pre-fetched-traces">From Pre-fetched Traces<a class="headerlink" href="#from-pre-fetched-traces" title="Permanent link">&para;</a></h3>
 <p>If you already have raw traces from <code>loader.fetch_traces()</code> or <code>loader.fetch_trace()</code>:</p>
@@ -5359,12 +5391,12 @@
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_raw_traces</span><span class="p">(</span><span class="n">traces</span><span class="p">)</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Or wrap a single trace</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">trace</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">fetch_trace</span><span class="p">(</span><span class="s1">&#39;abc123&#39;</span><span class="p">)</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">trace</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">fetch_trace</span><span class="p">(</span><span class="s1">'abc123'</span><span class="p">)</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="p">([</span><span class="n">trace</span><span class="p">])</span>
 </span></code></pre></div>
 <h3 id="from-json">From JSON<a class="headerlink" href="#from-json" title="Permanent link">&para;</a></h3>
 <p>Load a previously saved snapshot:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">load_json</span><span class="p">(</span><span class="s1">&#39;traces.json&#39;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">load_json</span><span class="p">(</span><span class="s1">'traces.json'</span><span class="p">)</span>
 </span></code></pre></div>
 <hr />
 <h2 id="exploring-traces">Exploring Traces<a class="headerlink" href="#exploring-traces" title="Permanent link">&para;</a></h2>
@@ -5379,12 +5411,12 @@
 </span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">trace</span><span class="o">.</span><span class="n">latency</span>       <span class="c1"># Response latency</span>
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
 </span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1"># Fuzzy matching: snake_case and camelCase resolve to the same key</span>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="n">trace</span><span class="o">.</span><span class="n">created_at</span>    <span class="c1"># Resolves to &#39;createdAt&#39; if present</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="n">trace</span><span class="o">.</span><span class="n">created_at</span>    <span class="c1"># Resolves to 'createdAt' if present</span>
 </span></code></pre></div>
 <h3 id="step-navigation">Step Navigation<a class="headerlink" href="#step-navigation" title="Permanent link">&para;</a></h3>
 <p>Observations are grouped by name into steps. Access them by name directly on the trace:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># List all step names</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">trace</span><span class="o">.</span><span class="n">step_names</span>    <span class="c1"># [&#39;rule-lookup&#39;, &#39;play-analysis&#39;, &#39;ruling&#39;]</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">trace</span><span class="o">.</span><span class="n">step_names</span>    <span class="c1"># ['rule-lookup', 'play-analysis', 'ruling']</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1"># Access a step by name</span>
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">step</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">ruling</span>
@@ -5401,13 +5433,13 @@
 </span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="n">step</span><span class="o">.</span><span class="n">generation</span><span class="o">.</span><span class="n">output</span>  <span class="c1"># Generation output</span>
 </span></code></pre></div>
 <p>Bracket access also works, which is useful for step names with special characters:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">step</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="s1">&#39;rule-lookup&#39;</span><span class="p">]</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">step</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="s1">'rule-lookup'</span><span class="p">]</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">step</span><span class="o">.</span><span class="n">generation</span><span class="o">.</span><span class="n">output</span>
 </span></code></pre></div>
 <h3 id="multi-observation-steps">Multi-Observation Steps<a class="headerlink" href="#multi-observation-steps" title="Permanent link">&para;</a></h3>
 <p>When a step contains multiple observations of the same type (e.g. a step called five times), iterate or index directly on the step:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">step</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="s1">&#39;llm.uw_referral_clearing.clear_referral&#39;</span><span class="p">]</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1"># &lt;TraceStep name=&#39;...&#39; types=[&#39;GENERATION&#39;, &#39;GENERATION&#39;, &#39;GENERATION&#39;, &#39;GENERATION&#39;, &#39;GENERATION&#39;]&gt;</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">step</span> <span class="o">=</span> <span class="n">trace</span><span class="p">[</span><span class="s1">'llm.uw_referral_clearing.clear_referral'</span><span class="p">]</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="c1"># &lt;TraceStep name='...' types=['GENERATION', 'GENERATION', 'GENERATION', 'GENERATION', 'GENERATION']&gt;</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Iterate all observations</span>
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">step</span><span class="p">:</span>
@@ -5428,7 +5460,7 @@
 <div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># All of these resolve to the same step</span>
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="n">trace</span><span class="o">.</span><span class="n">ruling</span>            <span class="c1"># Exact match</span>
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">trace</span><span class="o">.</span><span class="n">Ruling</span>            <span class="c1"># Case-insensitive</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">trace</span><span class="o">.</span><span class="n">play_analysis</span>     <span class="c1"># Matches &#39;playAnalysis&#39;</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">trace</span><span class="o">.</span><span class="n">play_analysis</span>     <span class="c1"># Matches 'playAnalysis'</span>
 </span></code></pre></div>
 <hr />
 <h2 id="prompt-variable-extraction">Prompt Variable Extraction<a class="headerlink" href="#prompt-variable-extraction" title="Permanent link">&para;</a></h2>
@@ -5443,18 +5475,18 @@
 </span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseballRulesPatterns</span><span class="p">(</span><span class="n">PromptPatternsBase</span><span class="p">):</span>
 </span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="nd">@classmethod</span>
 </span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_patterns_ruling</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>        <span class="n">h_situation</span> <span class="o">=</span> <span class="s1">&#39;GAME SITUATION&#39;</span>
-</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>        <span class="n">h_rules</span> <span class="o">=</span> <span class="s1">&#39;APPLICABLE RULES&#39;</span>
-</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>        <span class="n">h_precedents</span> <span class="o">=</span> <span class="s1">&#39;HISTORICAL PRECEDENTS&#39;</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>        <span class="n">h_situation</span> <span class="o">=</span> <span class="s1">'GAME SITUATION'</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>        <span class="n">h_rules</span> <span class="o">=</span> <span class="s1">'APPLICABLE RULES'</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>        <span class="n">h_precedents</span> <span class="o">=</span> <span class="s1">'HISTORICAL PRECEDENTS'</span>
 </span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>        <span class="k">return</span> <span class="p">{</span>
-</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>            <span class="s1">&#39;game_situation&#39;</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>            <span class="s1">'game_situation'</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
 </span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>                <span class="n">h_situation</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">h_rules</span><span class="p">)</span>
 </span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>            <span class="p">),</span>
-</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>            <span class="s1">&#39;applicable_rules&#39;</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
+</span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>            <span class="s1">'applicable_rules'</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
 </span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>                <span class="n">h_rules</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">h_precedents</span><span class="p">)</span>
 </span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>            <span class="p">),</span>
-</span><span id="__span-12-19"><a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>            <span class="s1">&#39;historical_precedents&#39;</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
-</span><span id="__span-12-20"><a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>                <span class="n">h_precedents</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span>
+</span><span id="__span-12-19"><a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>            <span class="s1">'historical_precedents'</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
+</span><span id="__span-12-20"><a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>                <span class="n">h_precedents</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'$'</span>
 </span><span id="__span-12-21"><a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>            <span class="p">),</span>
 </span><span id="__span-12-22"><a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a>        <span class="p">}</span>
 </span></code></pre></div>
@@ -5462,14 +5494,14 @@
 <h3 id="using-patterns">Using Patterns<a class="headerlink" href="#using-patterns" title="Permanent link">&para;</a></h3>
 <p>Pass your patterns class when creating the collection:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abc123&#39;</span><span class="p">],</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">'abc123'</span><span class="p">],</span>
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
 </span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">prompt_patterns</span><span class="o">=</span><span class="n">BaseballRulesPatterns</span><span class="p">,</span>
 </span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="p">)</span>
 </span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
 </span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="c1"># Extract variables from a step</span>
 </span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="n">variables</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ruling</span><span class="o">.</span><span class="n">extract_variables</span><span class="p">()</span>
-</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="c1"># {&#39;game_situation&#39;: &#39;runners on first and second, one out&#39;, &#39;applicable_rules&#39;: &#39;...&#39;, ...}</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="c1"># {'game_situation': 'runners on first and second, one out', 'applicable_rules': '...', ...}</span>
 </span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>
 </span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="c1"># Or access via dot-notation</span>
 </span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="n">collection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ruling</span><span class="o">.</span><span class="n">variables</span>
@@ -5501,7 +5533,7 @@
 </span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>
 </span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="c1"># Walk the entire trace (pre-order depth-first, works with any number of roots)</span>
 </span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">trace</span><span class="o">.</span><span class="n">walk</span><span class="p">():</span>
-</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &quot;</span> <span class="o">*</span> <span class="n">node</span><span class="o">.</span><span class="n">depth</span> <span class="o">+</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"  "</span> <span class="o">*</span> <span class="n">node</span><span class="o">.</span><span class="n">depth</span> <span class="o">+</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </span></code></pre></div>
 <p><code>trace.walk()</code> traverses all roots in order, so it works whether the trace has one root or many. You can also walk a single node's subtree with <code>node.walk()</code>.</p>
 <h3 id="observationnode-properties">ObservationNode Properties<a class="headerlink" href="#observationnode-properties" title="Permanent link">&para;</a></h3>
@@ -5530,42 +5562,42 @@
 <h4 id="trace-level-search">Trace-Level Search<a class="headerlink" href="#trace-level-search" title="Permanent link">&para;</a></h4>
 <p><code>trace.find()</code> searches across <strong>all</strong> roots and returns the first match:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Find by name (across all roots)</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">gen</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;recommendation:ai.generateText&#39;</span><span class="p">)</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">gen</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'recommendation:ai.generateText'</span><span class="p">)</span>
 </span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
 </span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Find by type</span>
-</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="n">first_gen</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;GENERATION&#39;</span><span class="p">)</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="n">first_gen</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">'GENERATION'</span><span class="p">)</span>
 </span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>
 </span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="c1"># Find by both (AND)</span>
-</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="n">specific</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ruling&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;GENERATION&#39;</span><span class="p">)</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="n">specific</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'ruling'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">'GENERATION'</span><span class="p">)</span>
 </span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>
 </span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="c1"># Returns None when no match</span>
-</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="n">trace</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;nonexistent&#39;</span><span class="p">)</span>  <span class="c1"># None</span>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="n">trace</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'nonexistent'</span><span class="p">)</span>  <span class="c1"># None</span>
 </span></code></pre></div>
 <h4 id="node-level-search">Node-Level Search<a class="headerlink" href="#node-level-search" title="Permanent link">&para;</a></h4>
 <p><code>node.find()</code> searches within a single node's subtree:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">root</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">tree</span>  <span class="c1"># only works when a single root exists</span>
 </span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
 </span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="c1"># Find by name within this subtree</span>
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="n">gen</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;recommendation:ai.generateText&#39;</span><span class="p">)</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="n">gen</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'recommendation:ai.generateText'</span><span class="p">)</span>
 </span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>
 </span><span id="__span-18-6"><a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="c1"># Find by type</span>
-</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="n">first_gen</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;GENERATION&#39;</span><span class="p">)</span>
+</span><span id="__span-18-7"><a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="n">first_gen</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s1">'GENERATION'</span><span class="p">)</span>
 </span><span id="__span-18-8"><a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>
 </span><span id="__span-18-9"><a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="c1"># Find by both (AND)</span>
-</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="n">specific</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ruling&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;GENERATION&#39;</span><span class="p">)</span>
+</span><span id="__span-18-10"><a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="n">specific</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'ruling'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">'GENERATION'</span><span class="p">)</span>
 </span><span id="__span-18-11"><a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>
 </span><span id="__span-18-12"><a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="c1"># Returns None when no match</span>
-</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;nonexistent&#39;</span><span class="p">)</span>  <span class="c1"># None</span>
+</span><span id="__span-18-13"><a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'nonexistent'</span><span class="p">)</span>  <span class="c1"># None</span>
 </span></code></pre></div>
 <p>Bracket access searches descendants by name first, then falls back to observation field lookup:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Find a descendant node by name</span>
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">gen_node</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s1">&#39;recommendation:ai.generateText&#39;</span><span class="p">]</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">gen_node</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s1">'recommendation:ai.generateText'</span><span class="p">]</span>
 </span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>
 </span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="c1"># Falls back to observation field when no descendant matches</span>
-</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="n">trace_id</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="n">trace_id</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span>
 </span><span id="__span-19-6"><a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>
 </span><span id="__span-19-7"><a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="c1"># Raises KeyError when neither found</span>
-</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="n">root</span><span class="p">[</span><span class="s1">&#39;nonexistent&#39;</span><span class="p">]</span>  <span class="c1"># KeyError</span>
+</span><span id="__span-19-8"><a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="n">root</span><span class="p">[</span><span class="s1">'nonexistent'</span><span class="p">]</span>  <span class="c1"># KeyError</span>
 </span></code></pre></div>
 <h3 id="iteration-and-containment">Iteration and Containment<a class="headerlink" href="#iteration-and-containment" title="Permanent link">&para;</a></h3>
 <p>Nodes support standard Python iteration protocols:</p>
@@ -5579,7 +5611,7 @@
 </span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="nb">len</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>            <span class="c1"># 3</span>
 </span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>
 </span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="c1"># Check if a name exists anywhere in the subtree</span>
-</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="s1">&#39;recommendation:ai.generateText&#39;</span> <span class="ow">in</span> <span class="n">root</span>  <span class="c1"># True</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="s1">'recommendation:ai.generateText'</span> <span class="ow">in</span> <span class="n">root</span>  <span class="c1"># True</span>
 </span></code></pre></div>
 <h3 id="collection-level-access">Collection-Level Access<a class="headerlink" href="#collection-level-access" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="c1"># Get tree_roots for every trace in the collection</span>
@@ -5596,19 +5628,19 @@
 <p>Use <code>by_type()</code> to pull all observations of a given type from a trace, regardless of their name.</p>
 <h3 id="discovering-types">Discovering Types<a class="headerlink" href="#discovering-types" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">trace</span> <span class="o">=</span> <span class="n">collection</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="n">trace</span><span class="o">.</span><span class="n">observation_types</span>   <span class="c1"># e.g. [&#39;SPAN&#39;, &#39;GENERATION&#39;, &#39;EVENT&#39;, &#39;TOOL&#39;]</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="n">trace</span><span class="o">.</span><span class="n">observation_types</span>   <span class="c1"># e.g. ['SPAN', 'GENERATION', 'EVENT', 'TOOL']</span>
 </span></code></pre></div>
 <h3 id="extracting-by-type">Extracting by Type<a class="headerlink" href="#extracting-by-type" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># All LLM calls</span>
-</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="n">generations</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">by_type</span><span class="p">(</span><span class="s1">&#39;GENERATION&#39;</span><span class="p">)</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="n">generations</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">by_type</span><span class="p">(</span><span class="s1">'GENERATION'</span><span class="p">)</span>
 </span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
 </span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># All tool calls</span>
-</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="n">tools</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">by_type</span><span class="p">(</span><span class="s1">&#39;TOOL&#39;</span><span class="p">)</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="n">tools</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">by_type</span><span class="p">(</span><span class="s1">'TOOL'</span><span class="p">)</span>
 </span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="k">for</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">tools</span><span class="p">:</span>
 </span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">obs</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
 </span><span id="__span-23-8"><a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>
 </span><span id="__span-23-9"><a id="__codelineno-23-9" name="__codelineno-23-9" href="#__codelineno-23-9"></a><span class="c1"># All spans</span>
-</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a><span class="n">spans</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">by_type</span><span class="p">(</span><span class="s1">&#39;SPAN&#39;</span><span class="p">)</span>
+</span><span id="__span-23-10"><a id="__codelineno-23-10" name="__codelineno-23-10" href="#__codelineno-23-10"></a><span class="n">spans</span> <span class="o">=</span> <span class="n">trace</span><span class="o">.</span><span class="n">by_type</span><span class="p">(</span><span class="s1">'SPAN'</span><span class="p">)</span>
 </span></code></pre></div>
 <p><code>by_type()</code> is case-insensitive and returns a flat list of <code>ObservationsView</code> objects in the order they appear in the trace.</p>
 <div class="admonition note">
@@ -5619,23 +5651,23 @@
 <h2 id="filtering">Filtering<a class="headerlink" href="#filtering" title="Permanent link">&para;</a></h2>
 <h3 id="lambda-filter">Lambda Filter<a class="headerlink" href="#lambda-filter" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># Filter by any condition</span>
-</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="n">prod_traces</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="s1">&#39;production&#39;</span> <span class="ow">in</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="p">[]))</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="n">prod_traces</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="s1">'production'</span> <span class="ow">in</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">tags</span> <span class="ow">or</span> <span class="p">[]))</span>
 </span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="n">long_traces</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">latency</span> <span class="o">&gt;</span> <span class="mf">5.0</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="attribute-filter">Attribute Filter<a class="headerlink" href="#attribute-filter" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># Simple attribute equality</span>
-</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="n">by_name</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;baseball-rules-agent&#39;</span><span class="p">)</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="n">by_name</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'baseball-rules-agent'</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Both methods return a new <code>TraceCollection</code>.</p>
 <hr />
 <h2 id="serialization">Serialization<a class="headerlink" href="#serialization" title="Permanent link">&para;</a></h2>
 <h3 id="save-and-load-json">Save and Load JSON<a class="headerlink" href="#save-and-load-json" title="Permanent link">&para;</a></h3>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="c1"># Save to disk</span>
-</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="n">collection</span><span class="o">.</span><span class="n">save_json</span><span class="p">(</span><span class="s1">&#39;traces/snapshot.json&#39;</span><span class="p">)</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="n">collection</span><span class="o">.</span><span class="n">save_json</span><span class="p">(</span><span class="s1">'traces/snapshot.json'</span><span class="p">)</span>
 </span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>
 </span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="c1"># Load later (with optional patterns)</span>
 </span><span id="__span-26-5"><a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="n">loaded</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">load_json</span><span class="p">(</span>
-</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>    <span class="s1">&#39;traces/snapshot.json&#39;</span><span class="p">,</span>
+</span><span id="__span-26-6"><a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>    <span class="s1">'traces/snapshot.json'</span><span class="p">,</span>
 </span><span id="__span-26-7"><a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>    <span class="n">prompt_patterns</span><span class="o">=</span><span class="n">BaseballRulesPatterns</span><span class="p">,</span>
 </span><span id="__span-26-8"><a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a><span class="p">)</span>
 </span></code></pre></div>
@@ -5648,7 +5680,7 @@
 <p><code>to_dataset()</code> converts a <code>TraceCollection</code> into an axion <code>Dataset</code> for evaluation.</p>
 <h3 id="default-conversion">Default Conversion<a class="headerlink" href="#default-conversion" title="Permanent link">&para;</a></h3>
 <p>Without a transform, <code>to_dataset()</code> extracts <code>query</code> from trace input and <code>actual_output</code> from trace output using standard key detection (<code>query</code>, <code>question</code>, <code>input</code>, <code>response</code>, <code>answer</code>, etc.):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;my-eval&#39;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'my-eval'</span><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="custom-transform">Custom Transform<a class="headerlink" href="#custom-transform" title="Permanent link">&para;</a></h3>
 <p>For complex trace structures, pass a transform function. The transform receives a <code>Trace</code> and returns either a <code>DatasetItem</code> or a <code>dict</code> of fields:</p>
@@ -5663,18 +5695,18 @@
 </span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>
 </span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>    <span class="k">return</span> <span class="n">DatasetItem</span><span class="p">(</span>
 </span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>        <span class="nb">id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
-</span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>        <span class="n">query</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;What is the correct ruling for play </span><span class="si">{</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">?&#39;</span><span class="p">,</span>
-</span><span id="__span-29-10"><a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>        <span class="n">actual_output</span><span class="o">=</span><span class="n">gen</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ruling&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+</span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>        <span class="n">query</span><span class="o">=</span><span class="sa">f</span><span class="s1">'What is the correct ruling for play </span><span class="si">{</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s1">?'</span><span class="p">,</span>
+</span><span id="__span-29-10"><a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>        <span class="n">actual_output</span><span class="o">=</span><span class="n">gen</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'ruling'</span><span class="p">,</span> <span class="s1">''</span><span class="p">),</span>
 </span><span id="__span-29-11"><a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a>        <span class="n">trace_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
 </span><span id="__span-29-12"><a id="__codelineno-29-12" name="__codelineno-29-12" href="#__codelineno-29-12"></a>        <span class="n">observation_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">gen</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
 </span><span id="__span-29-13"><a id="__codelineno-29-13" name="__codelineno-29-13" href="#__codelineno-29-13"></a>        <span class="n">additional_output</span><span class="o">=</span><span class="p">{</span>
-</span><span id="__span-29-14"><a id="__codelineno-29-14" name="__codelineno-29-14" href="#__codelineno-29-14"></a>            <span class="s1">&#39;explanation&#39;</span><span class="p">:</span> <span class="n">gen</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;explanation&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
-</span><span id="__span-29-15"><a id="__codelineno-29-15" name="__codelineno-29-15" href="#__codelineno-29-15"></a>            <span class="s1">&#39;rule_citations&#39;</span><span class="p">:</span> <span class="n">gen</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rule_citations&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+</span><span id="__span-29-14"><a id="__codelineno-29-14" name="__codelineno-29-14" href="#__codelineno-29-14"></a>            <span class="s1">'explanation'</span><span class="p">:</span> <span class="n">gen</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'explanation'</span><span class="p">,</span> <span class="s1">''</span><span class="p">),</span>
+</span><span id="__span-29-15"><a id="__codelineno-29-15" name="__codelineno-29-15" href="#__codelineno-29-15"></a>            <span class="s1">'rule_citations'</span><span class="p">:</span> <span class="n">gen</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'rule_citations'</span><span class="p">,</span> <span class="p">[]),</span>
 </span><span id="__span-29-16"><a id="__codelineno-29-16" name="__codelineno-29-16" href="#__codelineno-29-16"></a>        <span class="p">},</span>
 </span><span id="__span-29-17"><a id="__codelineno-29-17" name="__codelineno-29-17" href="#__codelineno-29-17"></a>    <span class="p">)</span>
 </span><span id="__span-29-18"><a id="__codelineno-29-18" name="__codelineno-29-18" href="#__codelineno-29-18"></a>
 </span><span id="__span-29-19"><a id="__codelineno-29-19" name="__codelineno-29-19" href="#__codelineno-29-19"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span>
-</span><span id="__span-29-20"><a id="__codelineno-29-20" name="__codelineno-29-20" href="#__codelineno-29-20"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;rulings-eval&#39;</span><span class="p">,</span>
+</span><span id="__span-29-20"><a id="__codelineno-29-20" name="__codelineno-29-20" href="#__codelineno-29-20"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">'rulings-eval'</span><span class="p">,</span>
 </span><span id="__span-29-21"><a id="__codelineno-29-21" name="__codelineno-29-21" href="#__codelineno-29-21"></a>    <span class="n">transform</span><span class="o">=</span><span class="n">extract_ruling</span><span class="p">,</span>
 </span><span id="__span-29-22"><a id="__codelineno-29-22" name="__codelineno-29-22" href="#__codelineno-29-22"></a><span class="p">)</span>
 </span></code></pre></div>
@@ -5682,13 +5714,13 @@
 <div class="tabbed-block">
 <div class="language-python highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">simple_transform</span><span class="p">(</span><span class="n">trace</span><span class="p">):</span>
 </span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>    <span class="k">return</span> <span class="p">{</span>
-</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>        <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">input</span><span class="p">),</span>
-</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>        <span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">output</span><span class="p">),</span>
-</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>        <span class="s1">&#39;trace_id&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>        <span class="s1">'query'</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">input</span><span class="p">),</span>
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>        <span class="s1">'actual_output'</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">output</span><span class="p">),</span>
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>        <span class="s1">'trace_id'</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
 </span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>    <span class="p">}</span>
 </span><span id="__span-30-7"><a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a>
 </span><span id="__span-30-8"><a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span>
-</span><span id="__span-30-9"><a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;simple-eval&#39;</span><span class="p">,</span>
+</span><span id="__span-30-9"><a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>    <span class="n">name</span><span class="o">=</span><span class="s1">'simple-eval'</span><span class="p">,</span>
 </span><span id="__span-30-10"><a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a>    <span class="n">transform</span><span class="o">=</span><span class="n">simple_transform</span><span class="p">,</span>
 </span><span id="__span-30-11"><a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a><span class="p">)</span>
 </span></code></pre></div>
@@ -5716,14 +5748,14 @@
 </span><span id="__span-31-16"><a id="__codelineno-31-16" name="__codelineno-31-16" href="#__codelineno-31-16"></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseballRulesPatterns</span><span class="p">(</span><span class="n">PromptPatternsBase</span><span class="p">):</span>
 </span><span id="__span-31-17"><a id="__codelineno-31-17" name="__codelineno-31-17" href="#__codelineno-31-17"></a>    <span class="nd">@classmethod</span>
 </span><span id="__span-31-18"><a id="__codelineno-31-18" name="__codelineno-31-18" href="#__codelineno-31-18"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_patterns_ruling</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-</span><span id="__span-31-19"><a id="__codelineno-31-19" name="__codelineno-31-19" href="#__codelineno-31-19"></a>        <span class="n">h_situation</span> <span class="o">=</span> <span class="s1">&#39;GAME SITUATION&#39;</span>
-</span><span id="__span-31-20"><a id="__codelineno-31-20" name="__codelineno-31-20" href="#__codelineno-31-20"></a>        <span class="n">h_rules</span> <span class="o">=</span> <span class="s1">&#39;APPLICABLE RULES&#39;</span>
+</span><span id="__span-31-19"><a id="__codelineno-31-19" name="__codelineno-31-19" href="#__codelineno-31-19"></a>        <span class="n">h_situation</span> <span class="o">=</span> <span class="s1">'GAME SITUATION'</span>
+</span><span id="__span-31-20"><a id="__codelineno-31-20" name="__codelineno-31-20" href="#__codelineno-31-20"></a>        <span class="n">h_rules</span> <span class="o">=</span> <span class="s1">'APPLICABLE RULES'</span>
 </span><span id="__span-31-21"><a id="__codelineno-31-21" name="__codelineno-31-21" href="#__codelineno-31-21"></a>        <span class="k">return</span> <span class="p">{</span>
-</span><span id="__span-31-22"><a id="__codelineno-31-22" name="__codelineno-31-22" href="#__codelineno-31-22"></a>            <span class="s1">&#39;game_situation&#39;</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
+</span><span id="__span-31-22"><a id="__codelineno-31-22" name="__codelineno-31-22" href="#__codelineno-31-22"></a>            <span class="s1">'game_situation'</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
 </span><span id="__span-31-23"><a id="__codelineno-31-23" name="__codelineno-31-23" href="#__codelineno-31-23"></a>                <span class="n">h_situation</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">h_rules</span><span class="p">)</span>
 </span><span id="__span-31-24"><a id="__codelineno-31-24" name="__codelineno-31-24" href="#__codelineno-31-24"></a>            <span class="p">),</span>
-</span><span id="__span-31-25"><a id="__codelineno-31-25" name="__codelineno-31-25" href="#__codelineno-31-25"></a>            <span class="s1">&#39;applicable_rules&#39;</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
-</span><span id="__span-31-26"><a id="__codelineno-31-26" name="__codelineno-31-26" href="#__codelineno-31-26"></a>                <span class="n">h_rules</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;$&#39;</span>
+</span><span id="__span-31-25"><a id="__codelineno-31-25" name="__codelineno-31-25" href="#__codelineno-31-25"></a>            <span class="s1">'applicable_rules'</span><span class="p">:</span> <span class="n">create_extraction_pattern</span><span class="p">(</span>
+</span><span id="__span-31-26"><a id="__codelineno-31-26" name="__codelineno-31-26" href="#__codelineno-31-26"></a>                <span class="n">h_rules</span><span class="p">,</span> <span class="sa">r</span><span class="s1">'$'</span>
 </span><span id="__span-31-27"><a id="__codelineno-31-27" name="__codelineno-31-27" href="#__codelineno-31-27"></a>            <span class="p">),</span>
 </span><span id="__span-31-28"><a id="__codelineno-31-28" name="__codelineno-31-28" href="#__codelineno-31-28"></a>        <span class="p">}</span>
 </span><span id="__span-31-29"><a id="__codelineno-31-29" name="__codelineno-31-29" href="#__codelineno-31-29"></a>
@@ -5731,7 +5763,7 @@
 </span><span id="__span-31-31"><a id="__codelineno-31-31" name="__codelineno-31-31" href="#__codelineno-31-31"></a><span class="c1"># 2. Fetch traces</span>
 </span><span id="__span-31-32"><a id="__codelineno-31-32" name="__codelineno-31-32" href="#__codelineno-31-32"></a><span class="n">loader</span> <span class="o">=</span> <span class="n">LangfuseTraceLoader</span><span class="p">()</span>
 </span><span id="__span-31-33"><a id="__codelineno-31-33" name="__codelineno-31-33" href="#__codelineno-31-33"></a><span class="n">collection</span> <span class="o">=</span> <span class="n">TraceCollection</span><span class="o">.</span><span class="n">from_langfuse</span><span class="p">(</span>
-</span><span id="__span-31-34"><a id="__codelineno-31-34" name="__codelineno-31-34" href="#__codelineno-31-34"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;abc123&#39;</span><span class="p">,</span> <span class="s1">&#39;def456&#39;</span><span class="p">],</span>
+</span><span id="__span-31-34"><a id="__codelineno-31-34" name="__codelineno-31-34" href="#__codelineno-31-34"></a>    <span class="n">trace_ids</span><span class="o">=</span><span class="p">[</span><span class="s1">'abc123'</span><span class="p">,</span> <span class="s1">'def456'</span><span class="p">],</span>
 </span><span id="__span-31-35"><a id="__codelineno-31-35" name="__codelineno-31-35" href="#__codelineno-31-35"></a>    <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span>
 </span><span id="__span-31-36"><a id="__codelineno-31-36" name="__codelineno-31-36" href="#__codelineno-31-36"></a>    <span class="n">prompt_patterns</span><span class="o">=</span><span class="n">BaseballRulesPatterns</span><span class="p">,</span>
 </span><span id="__span-31-37"><a id="__codelineno-31-37" name="__codelineno-31-37" href="#__codelineno-31-37"></a><span class="p">)</span>
@@ -5739,8 +5771,8 @@
 </span><span id="__span-31-39"><a id="__codelineno-31-39" name="__codelineno-31-39" href="#__codelineno-31-39"></a><span class="c1"># 3. Explore</span>
 </span><span id="__span-31-40"><a id="__codelineno-31-40" name="__codelineno-31-40" href="#__codelineno-31-40"></a><span class="k">for</span> <span class="n">trace</span> <span class="ow">in</span> <span class="n">collection</span><span class="p">:</span>
 </span><span id="__span-31-41"><a id="__codelineno-31-41" name="__codelineno-31-41" href="#__codelineno-31-41"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">trace</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">trace</span><span class="o">.</span><span class="n">step_names</span><span class="p">)</span>
-</span><span id="__span-31-42"><a id="__codelineno-31-42" name="__codelineno-31-42" href="#__codelineno-31-42"></a>    <span class="k">if</span> <span class="s1">&#39;ruling&#39;</span> <span class="ow">in</span> <span class="n">trace</span><span class="o">.</span><span class="n">step_names</span><span class="p">:</span>
-</span><span id="__span-31-43"><a id="__codelineno-31-43" name="__codelineno-31-43" href="#__codelineno-31-43"></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  variables:&#39;</span><span class="p">,</span> <span class="n">trace</span><span class="o">.</span><span class="n">ruling</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+</span><span id="__span-31-42"><a id="__codelineno-31-42" name="__codelineno-31-42" href="#__codelineno-31-42"></a>    <span class="k">if</span> <span class="s1">'ruling'</span> <span class="ow">in</span> <span class="n">trace</span><span class="o">.</span><span class="n">step_names</span><span class="p">:</span>
+</span><span id="__span-31-43"><a id="__codelineno-31-43" name="__codelineno-31-43" href="#__codelineno-31-43"></a>        <span class="nb">print</span><span class="p">(</span><span class="s1">'  variables:'</span><span class="p">,</span> <span class="n">trace</span><span class="o">.</span><span class="n">ruling</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
 </span><span id="__span-31-44"><a id="__codelineno-31-44" name="__codelineno-31-44" href="#__codelineno-31-44"></a>
 </span><span id="__span-31-45"><a id="__codelineno-31-45" name="__codelineno-31-45" href="#__codelineno-31-45"></a>
 </span><span id="__span-31-46"><a id="__codelineno-31-46" name="__codelineno-31-46" href="#__codelineno-31-46"></a><span class="c1"># 4. Define extraction transform</span>
@@ -5754,12 +5786,12 @@
 </span><span id="__span-31-54"><a id="__codelineno-31-54" name="__codelineno-31-54" href="#__codelineno-31-54"></a>
 </span><span id="__span-31-55"><a id="__codelineno-31-55" name="__codelineno-31-55" href="#__codelineno-31-55"></a>
 </span><span id="__span-31-56"><a id="__codelineno-31-56" name="__codelineno-31-56" href="#__codelineno-31-56"></a><span class="c1"># 5. Convert to Dataset and evaluate</span>
-</span><span id="__span-31-57"><a id="__codelineno-31-57" name="__codelineno-31-57" href="#__codelineno-31-57"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;baseball-rules-eval&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">extract_ruling</span><span class="p">)</span>
+</span><span id="__span-31-57"><a id="__codelineno-31-57" name="__codelineno-31-57" href="#__codelineno-31-57"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">to_dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">'baseball-rules-eval'</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">extract_ruling</span><span class="p">)</span>
 </span><span id="__span-31-58"><a id="__codelineno-31-58" name="__codelineno-31-58" href="#__codelineno-31-58"></a>
 </span><span id="__span-31-59"><a id="__codelineno-31-59" name="__codelineno-31-59" href="#__codelineno-31-59"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">evaluation_runner</span><span class="p">(</span>
 </span><span id="__span-31-60"><a id="__codelineno-31-60" name="__codelineno-31-60" href="#__codelineno-31-60"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 </span><span id="__span-31-61"><a id="__codelineno-31-61" name="__codelineno-31-61" href="#__codelineno-31-61"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">(),</span> <span class="n">Faithfulness</span><span class="p">()],</span>
-</span><span id="__span-31-62"><a id="__codelineno-31-62" name="__codelineno-31-62" href="#__codelineno-31-62"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">&#39;Baseball Rules Evaluation&#39;</span><span class="p">,</span>
+</span><span id="__span-31-62"><a id="__codelineno-31-62" name="__codelineno-31-62" href="#__codelineno-31-62"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">'Baseball Rules Evaluation'</span><span class="p">,</span>
 </span><span id="__span-31-63"><a id="__codelineno-31-63" name="__codelineno-31-63" href="#__codelineno-31-63"></a><span class="p">)</span>
 </span><span id="__span-31-64"><a id="__codelineno-31-64" name="__codelineno-31-64" href="#__codelineno-31-64"></a>
 </span><span id="__span-31-65"><a id="__codelineno-31-65" name="__codelineno-31-65" href="#__codelineno-31-65"></a><span class="c1"># 6. Publish scores back to Langfuse</span>

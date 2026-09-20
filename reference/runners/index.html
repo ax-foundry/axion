@@ -2787,6 +2787,8 @@
       
         
       
+        
+      
     
     
     
@@ -2886,6 +2888,36 @@
     
   
     YAML-Based Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deep-dives/metrics/jev-metrics/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Jev-Backed Metrics
   
 
     
@@ -5536,7 +5568,7 @@ Supports Anthropic (explicit caching) and OpenAI (automatic). Defaults to False.
   </span>
 
 <a href="#axion.runners.MetricRunner" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">MetricRunner</span><span class="p">(</span><span class="n">metrics</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">=</span> <span class="s1">&#39;MetricRunner&#39;</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">=</span> <span class="s1">&#39;Orchestrates evaluation metrics&#39;</span><span class="p">,</span> <span class="n">max_concurrent</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">summary_generator</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion.runners.summary.BaseSummary">BaseSummary</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="axion.runners.summary.MetricSummary">MetricSummary</span></span><span class="p">(),</span> <span class="n">cache_manager</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion._core.cache.CacheManager (axion._core.cache.manager.CacheManager)" href="#axion._core.cache.CacheManager">CacheManager</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">error_config</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.schema.ErrorConfig
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">MetricRunner</span><span class="p">(</span><span class="n">metrics</span><span class="p">:</span> <span class="n"><span title="typing.List">List</span></span><span class="p">[</span><span class="n"><span title="typing.Any">Any</span></span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">=</span> <span class="s1">'MetricRunner'</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">=</span> <span class="s1">'Orchestrates evaluation metrics'</span><span class="p">,</span> <span class="n">max_concurrent</span><span class="p">:</span> <span class="n"><span title="int">int</span></span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">thresholds</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="typing.Dict">Dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="float">float</span></span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">summary_generator</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion.runners.summary.BaseSummary">BaseSummary</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="axion.runners.summary.MetricSummary">MetricSummary</span></span><span class="p">(),</span> <span class="n">cache_manager</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-internal" title="axion._core.cache.CacheManager (axion._core.cache.manager.CacheManager)" href="#axion._core.cache.CacheManager">CacheManager</a></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">error_config</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="axion.schema.ErrorConfig
 
 
   
@@ -5546,7 +5578,7 @@ Supports Anthropic (explicit caching) and OpenAI (automatic). Defaults to False.
 
   
       dataclass
-  " href="../schema/#axion.schema.ErrorConfig">ErrorConfig</a></span><span class="p">(),</span> <span class="n">tracer</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion._core.tracing.handlers.BaseTraceHandler">BaseTraceHandler</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Metric Runner Dataset&#39;</span><span class="p">,</span> <span class="n">enable_internal_caching</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">trace_granularity</span><span class="p">:</span> <span class="n"><span title="axion._core.types.TraceGranularity">TraceGranularity</span></span> <span class="o">=</span> <span class="n"><span title="axion._core.types.TraceGranularity.SEPARATE">SEPARATE</span></span><span class="p">,</span> <span class="n">flush_per_metric</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+  " href="../schema/#axion.schema.ErrorConfig">ErrorConfig</a></span><span class="p">(),</span> <span class="n">tracer</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="axion._core.tracing.handlers.BaseTraceHandler">BaseTraceHandler</span></span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Metric Runner Dataset'</span><span class="p">,</span> <span class="n">enable_internal_caching</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">trace_granularity</span><span class="p">:</span> <span class="n"><span title="axion._core.types.TraceGranularity">TraceGranularity</span></span> <span class="o">=</span> <span class="n"><span title="axion._core.types.TraceGranularity.SEPARATE">SEPARATE</span></span><span class="p">,</span> <span class="n">flush_per_metric</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents first">
@@ -5824,7 +5856,7 @@ Supports Anthropic (explicit caching) and OpenAI (automatic). Defaults to False.
   </span>
 
 <a href="#axion._core.cache.CacheConfig" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">CacheConfig</span><span class="p">(</span><span class="n">use_cache</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">write_cache</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cache_type</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">=</span> <span class="s1">&#39;memory&#39;</span><span class="p">,</span> <span class="n">cache_dir</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;.cache&#39;</span><span class="p">,</span> <span class="n">cache_task</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">CacheConfig</span><span class="p">(</span><span class="n">use_cache</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">write_cache</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cache_type</span><span class="p">:</span> <span class="n"><span title="str">str</span></span> <span class="o">=</span> <span class="s1">'memory'</span><span class="p">,</span> <span class="n">cache_dir</span><span class="p">:</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">]</span> <span class="o">=</span> <span class="s1">'.cache'</span><span class="p">,</span> <span class="n">cache_task</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents first">

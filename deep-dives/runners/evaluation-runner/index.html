@@ -2792,6 +2792,8 @@
       
         
       
+        
+      
     
     
     
@@ -2894,6 +2896,36 @@
     
   
     YAML-Based Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../metrics/jev-metrics/" class="md-nav__link">
+        
+  
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>
+  
+  <span class="md-ellipsis">
+    
+  
+    Jev-Backed Metrics
   
 
     
@@ -4449,9 +4481,9 @@ runner handles the rest.</p>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Prepare dataset with existing outputs</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">DatasetItem</span><span class="p">(</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">query</span><span class="o">=</span><span class="s2">&quot;How do I reset my password?&quot;</span><span class="p">,</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="n">actual_output</span><span class="o">=</span><span class="s2">&quot;To reset your password, click &#39;Forgot Password&#39; on the login page...&quot;</span><span class="p">,</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="n">expected_output</span><span class="o">=</span><span class="s2">&quot;Navigate to login, click &#39;Forgot Password&#39;, and follow the reset link.&quot;</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">query</span><span class="o">=</span><span class="s2">"How do I reset my password?"</span><span class="p">,</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="n">actual_output</span><span class="o">=</span><span class="s2">"To reset your password, click 'Forgot Password' on the login page..."</span><span class="p">,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>        <span class="n">expected_output</span><span class="o">=</span><span class="s2">"Navigate to login, click 'Forgot Password', and follow the reset link."</span>
 </span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="p">),</span>
 </span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>    <span class="c1"># More items...</span>
 </span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p">]</span>
@@ -4460,11 +4492,11 @@ runner handles the rest.</p>
 </span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
 </span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 </span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Basic Evaluation&quot;</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"Basic Evaluation"</span>
 </span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="p">)</span>
 </span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Evaluation Name: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">evaluation_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Success rate: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">success_rate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Evaluation Name: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">evaluation_name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Success rate: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">success_rate</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -4477,28 +4509,28 @@ input fields.</p>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">data_item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">query</span><span class="o">=</span><span class="s2">&quot;How do I reset my password?&quot;</span><span class="p">,</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">expected_output</span><span class="o">=</span><span class="s2">&quot;Navigate to login, click &#39;Forgot Password&#39;, and follow the reset link.&quot;</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="n">query</span><span class="o">=</span><span class="s2">"How do I reset my password?"</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">expected_output</span><span class="o">=</span><span class="s2">"Navigate to login, click 'Forgot Password', and follow the reset link."</span><span class="p">,</span>
 </span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">)</span>
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># Task returns a dictionary (can be async or sync)</span>
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_task</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
 </span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="k">return</span> <span class="p">{</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="s1">&#39;response&#39;</span><span class="p">:</span> <span class="s2">&quot;To reset your password, click &#39;Forgot Password&#39; on the login page.&quot;</span><span class="p">,</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="s1">&#39;latency&#39;</span><span class="p">:</span> <span class="mf">1.3</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>        <span class="s1">'response'</span><span class="p">:</span> <span class="s2">"To reset your password, click 'Forgot Password' on the login page."</span><span class="p">,</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>        <span class="s1">'latency'</span><span class="p">:</span> <span class="mf">1.3</span>
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>    <span class="p">}</span>
 </span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
 </span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
 </span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="p">[</span><span class="n">data_item</span><span class="p">],</span>
 </span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="n">task</span><span class="o">=</span><span class="n">my_task</span><span class="p">,</span>
 </span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span>
-</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="n">AnswerRelevancy</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4o&#39;</span><span class="p">),</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="n">AnswerRelevancy</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">'gpt-4o'</span><span class="p">),</span>
 </span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="n">Latency</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">1.5</span><span class="p">),</span>
 </span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>    <span class="p">],</span>
 </span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>    <span class="n">max_concurrent</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>    <span class="n">scoring_key_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="s1">&#39;response&#39;</span><span class="p">},</span>  <span class="c1"># Map task keys → metric fields</span>
-</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">&#39;Custom Setup&#39;</span><span class="p">,</span>
-</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;model_version&quot;</span><span class="p">:</span> <span class="s2">&quot;v2.1&quot;</span><span class="p">},</span>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>    <span class="n">scoring_key_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">'actual_output'</span><span class="p">:</span> <span class="s1">'response'</span><span class="p">},</span>  <span class="c1"># Map task keys → metric fields</span>
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s1">'Custom Setup'</span><span class="p">,</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"model_version"</span><span class="p">:</span> <span class="s2">"v2.1"</span><span class="p">},</span>
 </span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>    <span class="n">cache_config</span><span class="o">=</span><span class="n">CacheConfig</span><span class="p">(</span><span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
 </span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="p">)</span>
 </span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>
@@ -4523,37 +4555,37 @@ Each metric is automatically routed to the correct executor.</p>
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># Create evaluation dataset</span>
 </span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span>
 </span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="p">{</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;01&#39;</span><span class="p">,</span>
-</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>        <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s2">&quot;How do I reset my password?&quot;</span><span class="p">,</span>
-</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>        <span class="s1">&#39;expected_output&#39;</span><span class="p">:</span> <span class="s2">&quot;Navigate to login, click &#39;Forgot Password&#39;, and follow the reset link.&quot;</span><span class="p">,</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>        <span class="s1">'id'</span><span class="p">:</span> <span class="s1">'01'</span><span class="p">,</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>        <span class="s1">'query'</span><span class="p">:</span> <span class="s2">"How do I reset my password?"</span><span class="p">,</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>        <span class="s1">'expected_output'</span><span class="p">:</span> <span class="s2">"Navigate to login, click 'Forgot Password', and follow the reset link."</span><span class="p">,</span>
 </span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>    <span class="p">},</span>
 </span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>    <span class="p">{</span>
-</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>        <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;02&#39;</span><span class="p">,</span>
-</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>        <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="s2">&quot;How do I update my billing information?&quot;</span><span class="p">,</span>
-</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>        <span class="s1">&#39;expected_output&#39;</span><span class="p">:</span> <span class="s2">&quot;Go to Account Settings, select Billing, and update your payment method.&quot;</span><span class="p">,</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>        <span class="s1">'id'</span><span class="p">:</span> <span class="s1">'02'</span><span class="p">,</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a>        <span class="s1">'query'</span><span class="p">:</span> <span class="s2">"How do I update my billing information?"</span><span class="p">,</span>
+</span><span id="__span-3-22"><a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a>        <span class="s1">'expected_output'</span><span class="p">:</span> <span class="s2">"Go to Account Settings, select Billing, and update your payment method."</span><span class="p">,</span>
 </span><span id="__span-3-23"><a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>    <span class="p">}</span>
 </span><span id="__span-3-24"><a id="__codelineno-3-24" name="__codelineno-3-24" href="#__codelineno-3-24"></a><span class="p">])</span>
 </span><span id="__span-3-25"><a id="__codelineno-3-25" name="__codelineno-3-25" href="#__codelineno-3-25"></a>
 </span><span id="__span-3-26"><a id="__codelineno-3-26" name="__codelineno-3-26" href="#__codelineno-3-26"></a><span class="c1"># Define evaluation metrics across frameworks</span>
 </span><span id="__span-3-27"><a id="__codelineno-3-27" name="__codelineno-3-27" href="#__codelineno-3-27"></a><span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span>
 </span><span id="__span-3-28"><a id="__codelineno-3-28" name="__codelineno-3-28" href="#__codelineno-3-28"></a>    <span class="n">Faithfulness</span><span class="p">(</span><span class="n">llm</span><span class="o">=</span><span class="n">LiteLLMRagas</span><span class="p">()),</span>
-</span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a>    <span class="n">AnswerCompleteness</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">&#39;gpt-4&#39;</span><span class="p">),</span>
+</span><span id="__span-3-29"><a id="__codelineno-3-29" name="__codelineno-3-29" href="#__codelineno-3-29"></a>    <span class="n">AnswerCompleteness</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">'gpt-4'</span><span class="p">),</span>
 </span><span id="__span-3-30"><a id="__codelineno-3-30" name="__codelineno-3-30" href="#__codelineno-3-30"></a>    <span class="n">AnswerRelevancyMetric</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">LiteLLMDeepEval</span><span class="p">()),</span>
 </span><span id="__span-3-31"><a id="__codelineno-3-31" name="__codelineno-3-31" href="#__codelineno-3-31"></a>    <span class="n">Latency</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 </span><span id="__span-3-32"><a id="__codelineno-3-32" name="__codelineno-3-32" href="#__codelineno-3-32"></a><span class="p">]</span>
 </span><span id="__span-3-33"><a id="__codelineno-3-33" name="__codelineno-3-33" href="#__codelineno-3-33"></a>
 </span><span id="__span-3-34"><a id="__codelineno-3-34" name="__codelineno-3-34" href="#__codelineno-3-34"></a><span class="c1"># Configure the evaluation</span>
 </span><span id="__span-3-35"><a id="__codelineno-3-35" name="__codelineno-3-35" href="#__codelineno-3-35"></a><span class="n">config</span> <span class="o">=</span> <span class="n">EvaluationConfig</span><span class="p">(</span>
-</span><span id="__span-3-36"><a id="__codelineno-3-36" name="__codelineno-3-36" href="#__codelineno-3-36"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Advanced Configuration Eval&quot;</span><span class="p">,</span>
+</span><span id="__span-3-36"><a id="__codelineno-3-36" name="__codelineno-3-36" href="#__codelineno-3-36"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"Advanced Configuration Eval"</span><span class="p">,</span>
 </span><span id="__span-3-37"><a id="__codelineno-3-37" name="__codelineno-3-37" href="#__codelineno-3-37"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataframe</span><span class="p">,</span>
 </span><span id="__span-3-38"><a id="__codelineno-3-38" name="__codelineno-3-38" href="#__codelineno-3-38"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
 </span><span id="__span-3-39"><a id="__codelineno-3-39" name="__codelineno-3-39" href="#__codelineno-3-39"></a>    <span class="n">task</span><span class="o">=</span><span class="n">api_runner</span><span class="p">,</span>
 </span><span id="__span-3-40"><a id="__codelineno-3-40" name="__codelineno-3-40" href="#__codelineno-3-40"></a>    <span class="n">max_concurrent</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-</span><span id="__span-3-41"><a id="__codelineno-3-41" name="__codelineno-3-41" href="#__codelineno-3-41"></a>    <span class="n">cache_config</span><span class="o">=</span><span class="n">CacheConfig</span><span class="p">(</span><span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_type</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">),</span>
+</span><span id="__span-3-41"><a id="__codelineno-3-41" name="__codelineno-3-41" href="#__codelineno-3-41"></a>    <span class="n">cache_config</span><span class="o">=</span><span class="n">CacheConfig</span><span class="p">(</span><span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cache_type</span><span class="o">=</span><span class="s1">'memory'</span><span class="p">),</span>
 </span><span id="__span-3-42"><a id="__codelineno-3-42" name="__codelineno-3-42" href="#__codelineno-3-42"></a>    <span class="n">error_config</span><span class="o">=</span><span class="n">ErrorConfig</span><span class="p">(</span><span class="n">skip_on_missing_params</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-</span><span id="__span-3-43"><a id="__codelineno-3-43" name="__codelineno-3-43" href="#__codelineno-3-43"></a>    <span class="n">thresholds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;faithfulness&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">&quot;answer_completeness&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">},</span>
-</span><span id="__span-3-44"><a id="__codelineno-3-44" name="__codelineno-3-44" href="#__codelineno-3-44"></a>    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;model_version&quot;</span><span class="p">:</span> <span class="s2">&quot;v2.1&quot;</span><span class="p">},</span>
-</span><span id="__span-3-45"><a id="__codelineno-3-45" name="__codelineno-3-45" href="#__codelineno-3-45"></a>    <span class="n">dataset_name</span><span class="o">=</span><span class="s1">&#39;Advanced Configuration Dataset&#39;</span>
+</span><span id="__span-3-43"><a id="__codelineno-3-43" name="__codelineno-3-43" href="#__codelineno-3-43"></a>    <span class="n">thresholds</span><span class="o">=</span><span class="p">{</span><span class="s2">"faithfulness"</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">"answer_completeness"</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">},</span>
+</span><span id="__span-3-44"><a id="__codelineno-3-44" name="__codelineno-3-44" href="#__codelineno-3-44"></a>    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"model_version"</span><span class="p">:</span> <span class="s2">"v2.1"</span><span class="p">},</span>
+</span><span id="__span-3-45"><a id="__codelineno-3-45" name="__codelineno-3-45" href="#__codelineno-3-45"></a>    <span class="n">dataset_name</span><span class="o">=</span><span class="s1">'Advanced Configuration Dataset'</span>
 </span><span id="__span-3-46"><a id="__codelineno-3-46" name="__codelineno-3-46" href="#__codelineno-3-46"></a><span class="p">)</span>
 </span><span id="__span-3-47"><a id="__codelineno-3-47" name="__codelineno-3-47" href="#__codelineno-3-47"></a>
 </span><span id="__span-3-48"><a id="__codelineno-3-48" name="__codelineno-3-48" href="#__codelineno-3-48"></a><span class="c1"># Run the evaluation</span>
@@ -4576,10 +4608,10 @@ Each metric is automatically routed to the correct executor.</p>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 </span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;My Experiment&quot;</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"My Experiment"</span><span class="p">,</span>
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">task</span><span class="o">=</span><span class="n">my_task_function</span><span class="p">,</span>
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">max_concurrent</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">thresholds</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;question_answer_relevance&quot;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">}</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">thresholds</span><span class="o">=</span><span class="p">{</span><span class="s2">"question_answer_relevance"</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">}</span>
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="p">)</span>
 </span></code></pre></div>
 </div>
@@ -4588,13 +4620,13 @@ Each metric is automatically routed to the correct executor.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">EvaluationRunner</span><span class="p">,</span> <span class="n">EvaluationConfig</span><span class="p">,</span> <span class="n">CacheConfig</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">config</span> <span class="o">=</span> <span class="n">EvaluationConfig</span><span class="p">(</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Advanced Experiment&quot;</span><span class="p">,</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"Advanced Experiment"</span><span class="p">,</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="n">task</span><span class="o">=</span><span class="n">generation_task</span><span class="p">,</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">scoring_key_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="s1">&#39;response&#39;</span><span class="p">},</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">evaluation_description</span><span class="o">=</span><span class="s2">&quot;Evaluating new model version&quot;</span><span class="p">,</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;model_version&quot;</span><span class="p">:</span> <span class="s2">&quot;v2.1&quot;</span><span class="p">},</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">scoring_key_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">'actual_output'</span><span class="p">:</span> <span class="s1">'response'</span><span class="p">},</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="n">evaluation_description</span><span class="o">=</span><span class="s2">"Evaluating new model version"</span><span class="p">,</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"model_version"</span><span class="p">:</span> <span class="s2">"v2.1"</span><span class="p">},</span>
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">cache_config</span><span class="o">=</span><span class="n">CacheConfig</span><span class="p">(</span><span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
 </span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="n">max_concurrent</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
 </span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>    <span class="n">show_progress</span><span class="o">=</span><span class="kc">True</span>
@@ -4613,12 +4645,12 @@ return output data. Supports both sync and async functions.</p>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">simple_task</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple synchronous task function.&quot;&quot;&quot;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="sd">"""Simple synchronous task function."""</span>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="n">response</span> <span class="o">=</span> <span class="n">your_model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">query</span><span class="p">)</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="k">return</span> <span class="p">{</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        <span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>        <span class="s1">&#39;generation_time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        <span class="s1">'actual_output'</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>        <span class="s1">'generation_time'</span><span class="p">:</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 </span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="p">}</span>
 </span></code></pre></div>
 </div>
@@ -4631,7 +4663,7 @@ return output data. Supports both sync and async functions.</p>
 </span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>
 </span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">pydantic_task</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Output</span><span class="p">:</span>
 </span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="k">return</span> <span class="n">Output</span><span class="p">(</span>
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>        <span class="n">response</span><span class="o">=</span><span class="s2">&quot;To reset your password...&quot;</span><span class="p">,</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>        <span class="n">response</span><span class="o">=</span><span class="s2">"To reset your password..."</span><span class="p">,</span>
 </span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>        <span class="n">latency</span><span class="o">=</span><span class="mf">1.3</span>
 </span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    <span class="p">)</span>
 </span></code></pre></div>
@@ -4639,15 +4671,15 @@ return output data. Supports both sync and async functions.</p>
 <div class="tabbed-block">
 <div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRunner</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">api_runner</span> <span class="o">=</span> <span class="n">APIRunner</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;my_chatbot&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;api_url&#39;</span><span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="s1">&#39;api_key&#39;</span><span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">}})</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">api_runner</span> <span class="o">=</span> <span class="n">APIRunner</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s1">'my_chatbot'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'api_url'</span><span class="p">:</span> <span class="s1">'...'</span><span class="p">,</span> <span class="s1">'api_key'</span><span class="p">:</span> <span class="s1">'...'</span><span class="p">}})</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
 </span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># Pass the API runner directly as the task</span>
 </span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
 </span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 </span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="n">task</span><span class="o">=</span><span class="n">api_runner</span><span class="p">,</span>
 </span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="n">scoring_key_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="s1">&#39;response&#39;</span><span class="p">},</span>
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;API Evaluation&quot;</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="n">scoring_key_mapping</span><span class="o">=</span><span class="p">{</span><span class="s1">'actual_output'</span><span class="p">:</span> <span class="s1">'response'</span><span class="p">},</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"API Evaluation"</span>
 </span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="p">)</span>
 </span></code></pre></div>
 </div>
@@ -4657,21 +4689,21 @@ return output data. Supports both sync and async functions.</p>
 <p>Use <code>scoring_key_mapping</code> to bridge the gap between task output keys and metric input fields:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Your task returns this structure</span>
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">task_output</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="s1">&#39;generated_text&#39;</span><span class="p">:</span> <span class="s2">&quot;The answer is...&quot;</span><span class="p">,</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="s1">&#39;source_documents&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;doc1&quot;</span><span class="p">,</span> <span class="s2">&quot;doc2&quot;</span><span class="p">],</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="s1">&#39;model_confidence&#39;</span><span class="p">:</span> <span class="mf">0.95</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>    <span class="s1">'generated_text'</span><span class="p">:</span> <span class="s2">"The answer is..."</span><span class="p">,</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="s1">'source_documents'</span><span class="p">:</span> <span class="p">[</span><span class="s2">"doc1"</span><span class="p">,</span> <span class="s2">"doc2"</span><span class="p">],</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="s1">'model_confidence'</span><span class="p">:</span> <span class="mf">0.95</span>
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="p">}</span>
 </span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
 </span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="c1"># But metrics expect this structure</span>
 </span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="n">metric_expected</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="s2">&quot;The answer is...&quot;</span><span class="p">,</span>
-</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="s1">&#39;retrieved_content&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;doc1&quot;</span><span class="p">,</span> <span class="s2">&quot;doc2&quot;</span><span class="p">]</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="s1">'actual_output'</span><span class="p">:</span> <span class="s2">"The answer is..."</span><span class="p">,</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="s1">'retrieved_content'</span><span class="p">:</span> <span class="p">[</span><span class="s2">"doc1"</span><span class="p">,</span> <span class="s2">"doc2"</span><span class="p">]</span>
 </span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="p">}</span>
 </span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>
 </span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="c1"># Use key mapping to bridge the gap</span>
 </span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="n">scoring_key_mapping</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>    <span class="s1">&#39;actual_output&#39;</span><span class="p">:</span> <span class="s1">&#39;generated_text&#39;</span><span class="p">,</span>
-</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>    <span class="s1">&#39;retrieved_content&#39;</span><span class="p">:</span> <span class="s1">&#39;source_documents&#39;</span><span class="p">,</span>
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>    <span class="s1">'actual_output'</span><span class="p">:</span> <span class="s1">'generated_text'</span><span class="p">,</span>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>    <span class="s1">'retrieved_content'</span><span class="p">:</span> <span class="s1">'source_documents'</span><span class="p">,</span>
 </span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="p">}</span>
 </span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>
 </span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
@@ -4679,7 +4711,7 @@ return output data. Supports both sync and async functions.</p>
 </span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>    <span class="n">task</span><span class="o">=</span><span class="n">my_task</span><span class="p">,</span>
 </span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
 </span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>    <span class="n">scoring_key_mapping</span><span class="o">=</span><span class="n">scoring_key_mapping</span><span class="p">,</span>
-</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Mapped Evaluation&quot;</span>
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"Mapped Evaluation"</span>
 </span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="response-format">Response Format<a class="headerlink" href="#response-format" title="Permanent link">&para;</a></h2>
@@ -4737,8 +4769,8 @@ return output data. Supports both sync and async functions.</p>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">cache_config</span> <span class="o">=</span> <span class="n">CacheConfig</span><span class="p">(</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>          <span class="c1"># Enable caching</span>
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="n">cache_task</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>         <span class="c1"># Cache task outputs</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="n">cache_type</span><span class="o">=</span><span class="s1">&#39;disk&#39;</span><span class="p">,</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="n">cache_dir</span><span class="o">=</span><span class="s1">&#39;cache/&#39;</span><span class="p">,</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="n">cache_type</span><span class="o">=</span><span class="s1">'disk'</span><span class="p">,</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="n">cache_dir</span><span class="o">=</span><span class="s1">'cache/'</span><span class="p">,</span>
 </span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="p">)</span>
 </span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>
 </span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
@@ -4746,7 +4778,7 @@ return output data. Supports both sync and async functions.</p>
 </span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="n">task</span><span class="o">=</span><span class="n">expensive_task</span><span class="p">,</span>
 </span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
 </span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>    <span class="n">cache_config</span><span class="o">=</span><span class="n">cache_config</span><span class="p">,</span>
-</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Cached Evaluation&quot;</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"Cached Evaluation"</span>
 </span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="p">)</span>
 </span></code></pre></div>
 </div>
@@ -4762,7 +4794,7 @@ re-processing it on every call.</p>
 </span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
 </span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 </span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">Faithfulness</span><span class="p">(),</span> <span class="n">AnswerRelevancy</span><span class="p">()],</span>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Cached Evaluation&quot;</span><span class="p">,</span>
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"Cached Evaluation"</span><span class="p">,</span>
 </span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>    <span class="n">enable_prompt_caching</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="p">)</span>
 </span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>
@@ -4773,7 +4805,7 @@ re-processing it on every call.</p>
 </span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>        <span class="n">Faithfulness</span><span class="p">(</span><span class="n">enable_prompt_caching</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
 </span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>        <span class="n">AnswerRelevancy</span><span class="p">(),</span>  <span class="c1"># caching disabled for this metric</span>
 </span><span id="__span-11-18"><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>    <span class="p">],</span>
-</span><span id="__span-11-19"><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Selective Caching&quot;</span><span class="p">,</span>
+</span><span id="__span-11-19"><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"Selective Caching"</span><span class="p">,</span>
 </span><span id="__span-11-20"><a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="p">)</span>
 </span></code></pre></div>
 <p><strong>Provider behavior:</strong></p>
@@ -4815,22 +4847,22 @@ for observability.</p>
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>    <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
 </span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;Model Comparison v2.1&quot;</span><span class="p">,</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">evaluation_description</span><span class="o">=</span><span class="s2">&quot;Comparing new model against baseline&quot;</span><span class="p">,</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"Model Comparison v2.1"</span><span class="p">,</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">evaluation_description</span><span class="o">=</span><span class="s2">"Comparing new model against baseline"</span><span class="p">,</span>
 </span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>    <span class="n">evaluation_metadata</span><span class="o">=</span><span class="p">{</span>
-</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>        <span class="s1">&#39;model_version&#39;</span><span class="p">:</span> <span class="s1">&#39;v2.1.0&#39;</span><span class="p">,</span>
-</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>        <span class="s1">&#39;baseline_version&#39;</span><span class="p">:</span> <span class="s1">&#39;v1.9.2&#39;</span><span class="p">,</span>
-</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>        <span class="s1">&#39;dataset_version&#39;</span><span class="p">:</span> <span class="s1">&#39;eval_set_march_2024&#39;</span><span class="p">,</span>
-</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>        <span class="s1">&#39;environment&#39;</span><span class="p">:</span> <span class="s1">&#39;staging&#39;</span><span class="p">,</span>
-</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>        <span class="s1">&#39;researcher&#39;</span><span class="p">:</span> <span class="s1">&#39;data_science_team&#39;</span><span class="p">,</span>
-</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>        <span class="s1">&#39;tags&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;comparison&#39;</span><span class="p">,</span> <span class="s1">&#39;monthly_eval&#39;</span><span class="p">,</span> <span class="s1">&#39;production_candidate&#39;</span><span class="p">]</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>        <span class="s1">'model_version'</span><span class="p">:</span> <span class="s1">'v2.1.0'</span><span class="p">,</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>        <span class="s1">'baseline_version'</span><span class="p">:</span> <span class="s1">'v1.9.2'</span><span class="p">,</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>        <span class="s1">'dataset_version'</span><span class="p">:</span> <span class="s1">'eval_set_march_2024'</span><span class="p">,</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>        <span class="s1">'environment'</span><span class="p">:</span> <span class="s1">'staging'</span><span class="p">,</span>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>        <span class="s1">'researcher'</span><span class="p">:</span> <span class="s1">'data_science_team'</span><span class="p">,</span>
+</span><span id="__span-12-13"><a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>        <span class="s1">'tags'</span><span class="p">:</span> <span class="p">[</span><span class="s1">'comparison'</span><span class="p">,</span> <span class="s1">'monthly_eval'</span><span class="p">,</span> <span class="s1">'production_candidate'</span><span class="p">]</span>
 </span><span id="__span-12-14"><a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>    <span class="p">},</span>
-</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>    <span class="n">run_id</span><span class="o">=</span><span class="s2">&quot;evaluation_2024_03_15_001&quot;</span>
+</span><span id="__span-12-15"><a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>    <span class="n">run_id</span><span class="o">=</span><span class="s2">"evaluation_2024_03_15_001"</span>
 </span><span id="__span-12-16"><a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a><span class="p">)</span>
 </span><span id="__span-12-17"><a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>
 </span><span id="__span-12-18"><a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a><span class="c1"># Access metadata in results</span>
-</span><span id="__span-12-19"><a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model version: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;model_version&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-12-20"><a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Environment: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;environment&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="__span-12-19"><a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Model version: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">'model_version'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-12-20"><a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Environment: </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">'environment'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
@@ -4861,8 +4893,8 @@ enabled (Langfuse or Opik), you get full observability of every LLM call.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="p">[</span><span class="n">AnswerRelevancy</span><span class="p">()],</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;RAG Quality Check&quot;</span><span class="p">,</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="n">trace_granularity</span><span class="o">=</span><span class="s1">&#39;single_trace&#39;</span>  <span class="c1"># or &#39;separate&#39;</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"RAG Quality Check"</span><span class="p">,</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="n">trace_granularity</span><span class="o">=</span><span class="s1">'single_trace'</span>  <span class="c1"># or 'separate'</span>
 </span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="p">)</span>
 </span></code></pre></div>
 <p><strong>Trace hierarchy</strong> produced by the runner:</p>
@@ -4876,10 +4908,10 @@ enabled (Langfuse or Opik), you get full observability of every LLM call.</p>
 </span></code></pre></div>
 <p><strong>Enabling tracing:</strong></p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TRACING_MODE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;langfuse&#39;</span>
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANGFUSE_PUBLIC_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;pk-lf-...&#39;</span>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANGFUSE_SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sk-lf-...&#39;</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LANGFUSE_BASE_URL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;https://us.cloud.langfuse.com&#39;</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'TRACING_MODE'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'langfuse'</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'LANGFUSE_PUBLIC_KEY'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'pk-lf-...'</span>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'LANGFUSE_SECRET_KEY'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'sk-lf-...'</span>
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'LANGFUSE_BASE_URL'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'https://us.cloud.langfuse.com'</span>
 </span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
 </span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion._core.tracing</span><span class="w"> </span><span class="kn">import</span> <span class="n">configure_tracing</span>
 </span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="n">configure_tracing</span><span class="p">()</span>
@@ -4888,7 +4920,7 @@ enabled (Langfuse or Opik), you get full observability of every LLM call.</p>
 </span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="n">results</span> <span class="o">=</span> <span class="n">evaluation_runner</span><span class="p">(</span>
 </span><span id="__span-15-12"><a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>    <span class="n">evaluation_inputs</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
 </span><span id="__span-15-13"><a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>    <span class="n">scoring_metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
-</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">&quot;My Evaluation&quot;</span>
+</span><span id="__span-15-14"><a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>    <span class="n">evaluation_name</span><span class="o">=</span><span class="s2">"My Evaluation"</span>
 </span><span id="__span-15-15"><a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a><span class="p">)</span>
 </span></code></pre></div>
 <p>See the <a href="../../internals/tracing/">Tracing Documentation</a> for more configuration options.</p>
