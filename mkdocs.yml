@@ -72,6 +72,7 @@ nav:
     - Metrics:
       - Creating Custom Metrics: deep-dives/metrics/creating-metrics.md
       - YAML-Based Metrics: deep-dives/metrics/yaml-metrics.md
+      - Jev-Backed Metrics: deep-dives/metrics/jev-metrics.md
       - Composite Metrics: deep-dives/metrics/composite-metrics.md
     - Runners:
       - Metric Runner: deep-dives/runners/metric-runner.md
