@@ -32,7 +32,8 @@ def init(
             If None, auto-detects from environment variables.
         log_level: Logging level ('DEBUG', 'INFO', 'WARNING', 'ERROR').
             If None, uses LOG_LEVEL env var or 'INFO'.
-        log_rich: Enable rich formatting. If None, uses LOG_RICH env var.
+        log_rich: Enable rich formatting. If None, uses LOG_USE_RICH env var,
+            falling back to rich only when stderr is a TTY.
 
     Example:
         >>> import axion

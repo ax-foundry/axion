@@ -195,8 +195,20 @@ class AxionConfig(BaseModel):
     log_level: LogLevel = Field(
         default='INFO', description='The minimum logging level.'
     )
-    log_use_rich: bool = Field(
-        default=True, description='Use rich for beautiful, formatted logging output.'
+    log_use_rich: Optional[bool] = Field(
+        default=None,
+        description=(
+            'Use rich for formatted console output. Unset resolves to whether '
+            'stderr is a TTY, so a container or log collector gets plain lines.'
+        ),
+    )
+    log_json: Optional[bool] = Field(
+        default=None,
+        description=(
+            'Emit one JSON object per record (severity, message, logger, time). '
+            'Unset means JSON only when rich is also unset and stderr is not a '
+            'TTY, so containers get structured lines. Ignored when rich is on.'
+        ),
     )
     log_format_string: Optional[str] = Field(
         default=None, description='A custom format string for the console logger.'
