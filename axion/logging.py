@@ -11,7 +11,8 @@ Quick Start:
 
 Environment Variables:
     - LOG_LEVEL: Logging level (DEBUG, INFO, WARNING, ERROR)
-    - LOG_RICH: Enable rich formatting (true/false)
+    - LOG_USE_RICH: Enable rich formatting (true/false); unset = only on a TTY
+    - LOG_JSON: One JSON object per record (true/false); unset = when rich is also unset and stderr is not a TTY
     - LOG_FILE: Optional log file path
 
 Public API:
@@ -31,6 +32,7 @@ Public API:
 """
 
 from axion._core.logging import (
+    JsonFormatter,
     LoguruHandler,
     RichLogger,
     clear_logging_config,
@@ -43,6 +45,7 @@ from axion._core.logging import (
 
 __all__ = [
     'clear_logging_config',
+    'JsonFormatter',
     'configure_logging',
     'get_logger',
     'is_logging_configured',

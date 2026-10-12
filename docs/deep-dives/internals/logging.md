@@ -43,7 +43,8 @@ Configuration is handled via environment variables or by calling `configure_logg
 | Setting | Environment Variable | Default | Description |
 |---------|---------------------|---------|-------------|
 | `log_level` | `LOG_LEVEL` | `'INFO'` | Minimum logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`). |
-| `log_use_rich` | `LOG_USE_RICH` | `True` | Use rich for beautiful console output. |
+| `log_use_rich` | `LOG_USE_RICH` | `None` | Use rich for console output. Unset means rich only when stderr is a TTY. |
+| `log_json` | `LOG_JSON` | `None` | One JSON object per record (`severity`, `message`, `logger`, `time`, extras). Unset means JSON when `LOG_USE_RICH` is also unset and stderr is not a TTY. |
 | `log_format_string` | `LOG_FORMAT_STRING` | `None` | A custom format string for the logger. |
 | `log_file_path` | `LOG_FILE_PATH` | `None` | If set, logs will be written to this file. |
 

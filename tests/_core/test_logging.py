@@ -1,11 +1,14 @@
 import asyncio
+import json
 import logging
+import sys
 
 import pytest
 
 from axion._core.logging import (
     DEFAULT_LOG_LEVEL,
     RICH_AVAILABLE,
+    JsonFormatter,
     _log_stats,
     _to_bool,
     clear_logging_config,
@@ -262,3 +265,69 @@ def test_to_bool_function():
     assert _to_bool('no') is False
     assert _to_bool('other') is False
     assert _to_bool(None) is False
+
+
+def test_non_tty_default_emits_json_lines(capsys, monkeypatch):
+    """
+    Without an explicit choice, a non-interactive stderr gets one JSON object
+    per record carrying the keys a log collector promotes.
+    """
+    monkeypatch.setattr('axion._core.logging._stderr_is_tty', lambda: False)
+    monkeypatch.setattr('axion._core.logging.settings.log_use_rich', None)
+    monkeypatch.setattr('axion._core.logging.settings.log_json', None)
+    configure_logging(level='INFO')
+    logger = get_logger('json_logger')
+
+    logger.warning('disk %s full', 'almost', extra={'tenant': 'mgt'})
+
+    lines = [ln for ln in capsys.readouterr().err.splitlines() if ln.strip()]
+    assert len(lines) == 1
+    record = json.loads(lines[0])
+    assert record['severity'] == 'WARNING'
+    assert record['message'] == 'disk almost full'
+    assert record['logger'] == 'json_logger'
+    assert record['tenant'] == 'mgt'
+    assert record['time'].endswith('Z')
+
+
+def test_tty_default_prefers_rich(monkeypatch):
+    """An interactive stderr keeps the rich handler when nothing is configured."""
+    monkeypatch.setattr('axion._core.logging._stderr_is_tty', lambda: True)
+    monkeypatch.setattr('axion._core.logging.settings.log_use_rich', None)
+    monkeypatch.setattr('axion._core.logging.settings.log_json', None)
+    configure_logging(level='INFO')
+
+    handler = logging.getLogger().handlers[0]
+    if RICH_AVAILABLE:
+        assert type(handler).__name__ == 'RichHandler'
+    else:
+        assert not isinstance(handler.formatter, JsonFormatter)
+
+
+def test_explicit_rich_off_without_json_keeps_plain_text(capsys, monkeypatch):
+    """use_rich=False alone still emits the plain text format, as before."""
+    monkeypatch.setattr('axion._core.logging._stderr_is_tty', lambda: False)
+    monkeypatch.setattr('axion._core.logging.settings.log_json', None)
+    configure_logging(level='INFO', use_rich=False)
+    get_logger('plain_logger').info('plain message')
+
+    captured = capsys.readouterr().err
+    assert 'plain message' in captured
+    assert 'plain_logger' in captured
+    assert not captured.lstrip().startswith('{')
+
+
+def test_json_formatter_folds_exception_text():
+    """A traceback lands under ``exception`` and the line stays one JSON object."""
+    formatter = JsonFormatter()
+    try:
+        raise ValueError('boom')
+    except ValueError:
+        record = logging.LogRecord(
+            'x', logging.ERROR, __file__, 1, 'failed', None, sys.exc_info()
+        )
+    out = json.loads(formatter.format(record))
+    assert out['severity'] == 'ERROR'
+    assert out['message'] == 'failed'
+    assert 'ValueError: boom' in out['exception']
+    assert '\n' not in formatter.format(record)

@@ -28,10 +28,79 @@ except ImportError:
     LOGURU_AVAILABLE = False
 
 # --- Global State ---
+# Cloud Logging reads these names from a JSON line and promotes them to the
+# entry's severity/timestamp; other collectors fall back on the same keys.
+_JSON_RECORD_RESERVED = frozenset(
+    {
+        'name',
+        'msg',
+        'args',
+        'levelname',
+        'levelno',
+        'pathname',
+        'filename',
+        'module',
+        'exc_info',
+        'exc_text',
+        'stack_info',
+        'lineno',
+        'funcName',
+        'created',
+        'msecs',
+        'relativeCreated',
+        'thread',
+        'threadName',
+        'processName',
+        'process',
+        'message',
+        'asctime',
+        'taskName',
+    }
+)
+
 _log_stats: Dict[str, Dict[str, int]] = {}
 _session_start_time: float = time.monotonic()
 _logging_configured = False
 DEFAULT_LOG_LEVEL = 'INFO'
+
+
+class JsonFormatter(logging.Formatter):
+    """One JSON object per record, with the keys log collectors key on.
+
+    ``severity`` is the Python level name, which Cloud Logging maps onto its own
+    severity enum directly. Extra attributes attached via ``logger.info(...,
+    extra={...})`` are folded in at the top level; a traceback lands under
+    ``exception`` as text.
+    """
+
+    def format(self, record: logging.LogRecord) -> str:
+        payload: Dict[str, Any] = {
+            'severity': record.levelname,
+            'message': record.getMessage(),
+            'logger': record.name,
+            'time': time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(record.created))
+            + f'.{int(record.msecs):03d}Z',
+        }
+        for key, value in record.__dict__.items():
+            if key in _JSON_RECORD_RESERVED or key.startswith('_'):
+                continue
+            payload[key] = value
+        if record.exc_info:
+            payload['exception'] = self.formatException(record.exc_info)
+        elif record.exc_text:
+            payload['exception'] = record.exc_text
+        if record.stack_info:
+            payload['stack'] = self.formatStack(record.stack_info)
+        return json.dumps(payload, default=str, ensure_ascii=False)
+
+
+def _stderr_is_tty() -> bool:
+    stream = getattr(sys, 'stderr', None)
+    isatty = getattr(stream, 'isatty', None)
+    try:
+        return bool(isatty()) if callable(isatty) else False
+    except (ValueError, OSError):
+        return False
 
 
 def _to_bool(value: Union[str, bool]) -> bool:
@@ -245,6 +314,7 @@ def configure_logging(
     use_rich: Optional[bool] = None,
     format_string: Optional[str] = None,
     file_path: Optional[str] = None,
+    json_lines: Optional[bool] = None,
 ) -> None:
     """
     Configure the logging system.
@@ -255,9 +325,14 @@ def configure_logging(
     Args:
         level: Log level ('DEBUG', 'INFO', 'WARNING', 'ERROR').
             If None, uses LOG_LEVEL env var or 'INFO'.
-        use_rich: Enable rich formatting. If None, uses LOG_RICH env var.
-        format_string: Custom log format string.
+        use_rich: Enable rich formatting. If None, uses the LOG_USE_RICH env
+            var, and when that is unset too, rich only when stderr is a TTY.
+        format_string: Custom log format string. Applies to the plain-text
+            console handler and the file handler; ignored by rich and JSON.
         file_path: Log file path. If None, uses LOG_FILE env var.
+        json_lines: Emit one JSON object per record. If None, uses the LOG_JSON
+            env var, and when that is unset too, JSON only when rich was left
+            unset and stderr is not a TTY. Rich wins when both are on.
 
     Example:
         >>> configure_logging(level='DEBUG', use_rich=True)
@@ -271,7 +346,7 @@ def configure_logging(
 
     # Check if any explicit parameters were provided
     has_explicit_params = any(
-        p is not None for p in [level, use_rich, format_string, file_path]
+        p is not None for p in [level, use_rich, format_string, file_path, json_lines]
     )
 
     # Skip only if already configured AND no explicit parameters given
@@ -285,7 +360,13 @@ def configure_logging(
     # 1. Resolve configuration, prioritizing direct arguments over global settings.
     final_level = level or settings.log_level
     # A specific check for `is not None` is needed for bools, as `False` is a valid override.
-    final_use_rich = use_rich if use_rich is not None else settings.log_use_rich
+    chosen_rich = use_rich if use_rich is not None else settings.log_use_rich
+    final_use_rich = chosen_rich if chosen_rich is not None else _stderr_is_tty()
+    final_json = json_lines if json_lines is not None else settings.log_json
+    if final_json is None:
+        # Only the fully unconfigured, non-interactive case goes structured;
+        # an explicit use_rich=False keeps the plain text it always produced.
+        final_json = chosen_rich is None and not final_use_rich
     final_format_string = format_string or settings.log_format_string
     final_file_path = file_path or settings.log_file_path
 
@@ -299,14 +380,17 @@ def configure_logging(
 
     # 3. Standalone Configuration
     init_logger.debug(
-        f'--- Configuring standalone logging. Level: {final_level}, Rich: {final_use_rich} ---'
+        f'--- Configuring standalone logging. Level: {final_level}, '
+        f'Rich: {final_use_rich}, JSON: {final_json} ---'
     )
     handler = StreamHandler()
-    formatter = None
+    formatter: logging.Formatter
 
     if final_use_rich and RICH_AVAILABLE:
         handler = RichHandler(rich_tracebacks=True, show_path=False, markup=True)
         formatter = logging.Formatter('%(message)s', datefmt='[%X]')
+    elif final_json:
+        formatter = JsonFormatter()
     elif final_format_string:
         formatter = logging.Formatter(final_format_string)
     else:
