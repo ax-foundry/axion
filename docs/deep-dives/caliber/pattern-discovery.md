@@ -156,7 +156,7 @@ graph LR
 | **Sanitize** | Optional async text cleaning | `sanitizer=` (implements `Sanitizer` protocol) |
 | **Cluster** | Groups evidence into themes | `method=`, `clusterer=` (implements `EvidenceClusterer`) |
 | **Pre-filter** | Drops clusters spanning fewer than `recurrence_threshold` distinct recurrence keys | `recurrence_threshold=`, `recurrence_key_fn=` |
-| **Distill** | LLM converts each cluster into a learning artifact; sees up to 5 examples spread across recurrence keys, each with its id | `domain_context=`, `max_concurrent_distillations=` |
+| **Distill** | LLM converts each cluster into a learning artifact; sees up to `max_examples_per_cluster` (default 5) examples spread across recurrence keys, each with its id | `domain_context=`, `max_examples_per_cluster=`, `max_concurrent_distillations=` |
 | **Validate** | Repairs hallucinated IDs, enforces quality gates | Automatic |
 | **Recurrence** | Ensures learnings span multiple unique sources | `recurrence_threshold=` |
 | **Tag normalize** | Lowercase, deduplicate, cap at 10 tags | Automatic |
@@ -214,6 +214,10 @@ result.coverage            # accounting: where every item ended up (below)
 result.records             # list[LearningRecord] — same order as learnings, with
                            # provenance, score, cluster, and sink outcome
 result.failed_clusters     # list[FailedCluster] — clusters whose distillation raised
+result.clusters_without_learnings  # list[ClusterWithoutLearnings] — distilled fine,
+                                   # produced nothing, with the candidate/drop counts
+result.learnings_dropped_invalid           # candidates whose cited ids were all outside the cluster
+result.learnings_dropped_below_recurrence  # candidates whose cited ids spanned too few keys
 ```
 
 ### Learning Records and Provenance
@@ -267,8 +271,13 @@ Both are now visible and configurable:
 | Parameter | Default | Effect |
 |-----------|---------|--------|
 | `result.failed_clusters` | always | Category, error, and item count for every cluster that failed to distill |
+| `result.clusters_without_learnings` | always | Every surviving cluster that distilled without error but produced no learning, with how many candidates the writer returned and why each was dropped |
 | `fail_on_all_errors=True` | `False` | Raise `RuntimeError` when every surviving cluster failed, instead of returning an empty result |
 | `sink_on_error='continue'` | `'raise'` | Record the error on `LearningRecord.sink_error`, keep writing the rest. `sink_ids` lists successes only |
+
+A cluster can also distill cleanly and still yield nothing.
+Models that follow `domain_context` closely return no candidates when the context does not describe the evidence, and a writer that cites one id per learning loses every candidate to the recurrence check.
+Both show up in `clusters_without_learnings` with the candidate and drop counts, so an empty result can be traced to the stage that emptied it.
 
 ### Coverage Accounting
 

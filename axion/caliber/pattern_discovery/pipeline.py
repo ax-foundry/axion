@@ -1,4 +1,5 @@
 import asyncio
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import (
     Any,
@@ -46,6 +47,7 @@ from axion.caliber.pattern_discovery.handlers import (
 )
 from axion.caliber.pattern_discovery.models import (
     ClusteringMethod,
+    ClusterWithoutLearnings,
     DiscoveredPattern,
     EvidenceItem,
     FailedCluster,
@@ -109,6 +111,17 @@ class _DefaultWriter:
         return output.learnings
 
 
+@dataclass
+class _ClusterDistillation:
+    """What one cluster's distillation produced, before cross-cluster steps."""
+
+    candidates: int = 0
+    repairs: int = 0
+    dropped_invalid: int = 0
+    dropped_below_recurrence: int = 0
+    records: List[LearningRecord] = field(default_factory=list)
+
+
 class EvidencePipeline:
     """Orchestrates evidence → clusters → KB-ready learnings."""
 
@@ -154,6 +167,7 @@ class EvidencePipeline:
         fail_on_all_errors: bool = False,
         sink_on_error: Literal['raise', 'continue'] = 'raise',
         sampler: Optional[SamplerFn] = None,
+        max_examples_per_cluster: Optional[int] = None,
     ) -> None:
         self._method = method
         self._recurrence_threshold = recurrence_threshold
@@ -161,6 +175,13 @@ class EvidencePipeline:
         if max_learnings_per_cluster < 1:
             raise ValueError('max_learnings_per_cluster must be >= 1')
         self._max_learnings_per_cluster = max_learnings_per_cluster
+        # How many members the writer is shown per cluster. Cited support is
+        # drawn from these, so the cap bounds a learning's distinct-key count.
+        if max_examples_per_cluster is None:
+            max_examples_per_cluster = self.MAX_EXAMPLES_PER_CLUSTER
+        if max_examples_per_cluster < 1:
+            raise ValueError('max_examples_per_cluster must be >= 1')
+        self._max_examples_per_cluster = max_examples_per_cluster
         self._max_items = max_items
         # How evidence is cut down to max_items. The default is a uniform
         # hash/seeded sample; recurrence_balanced_sampler(key_fn) keeps parents
@@ -288,7 +309,7 @@ class EvidencePipeline:
 
         async def _process_cluster(
             pattern: DiscoveredPattern,
-        ) -> tuple[List[LearningRecord], int]:
+        ) -> '_ClusterDistillation':
             async with semaphore:
                 return await self._distill_and_validate(
                     pattern, evidence_dict, clustering_result, method, timestamp
@@ -299,6 +320,9 @@ class EvidencePipeline:
 
         records: List[LearningRecord] = []
         failed_clusters: List[FailedCluster] = []
+        clusters_without_learnings: List[ClusterWithoutLearnings] = []
+        dropped_invalid = 0
+        dropped_below_recurrence = 0
         for pattern, res in zip(surviving_patterns, results):
             if isinstance(res, BaseException):
                 logger.warning(
@@ -312,9 +336,26 @@ class EvidencePipeline:
                     )
                 )
                 continue
-            cluster_records, repairs = res
-            total_repairs += repairs
-            records.extend(cluster_records)
+            total_repairs += res.repairs
+            dropped_invalid += res.dropped_invalid
+            dropped_below_recurrence += res.dropped_below_recurrence
+            records.extend(res.records)
+            if not res.records:
+                logger.info(
+                    f'Cluster "{pattern.category}" produced no learning: '
+                    f'{res.candidates} candidate(s), {res.dropped_invalid} with no '
+                    f'valid support, {res.dropped_below_recurrence} below the '
+                    f'recurrence threshold'
+                )
+                clusters_without_learnings.append(
+                    ClusterWithoutLearnings(
+                        category=pattern.category,
+                        item_count=len(pattern.record_ids),
+                        candidates=res.candidates,
+                        dropped_invalid=res.dropped_invalid,
+                        dropped_below_recurrence=res.dropped_below_recurrence,
+                    )
+                )
 
         if (
             self._fail_on_all_errors
@@ -394,6 +435,9 @@ class EvidencePipeline:
             coverage=coverage,
             records=records,
             failed_clusters=failed_clusters,
+            clusters_without_learnings=clusters_without_learnings,
+            learnings_dropped_invalid=dropped_invalid,
+            learnings_dropped_below_recurrence=dropped_below_recurrence,
         )
 
     def _make_record(
@@ -510,8 +554,8 @@ class EvidencePipeline:
         clustering_result: PatternDiscoveryResult,
         method: Optional[ClusteringMethod],
         timestamp: str,
-    ) -> tuple[List[LearningRecord], int]:
-        """Returns (records for the validated learnings, total_repairs)."""
+    ) -> '_ClusterDistillation':
+        """Distill one cluster and validate what the writer returned."""
         # Build ClusterForDistillation. Examples are spread across recurrence keys
         # so one prolific source cannot fill every slot, and each carries its id so
         # the writer can cite text it actually saw.
@@ -521,7 +565,7 @@ class EvidencePipeline:
         example_ids = round_robin_by_key(
             pattern.record_ids,
             evidence,
-            self.MAX_EXAMPLES_PER_CLUSTER,
+            self._max_examples_per_cluster,
             self._recurrence_key_fn,
         )
         for rid in example_ids:
@@ -560,10 +604,14 @@ class EvidencePipeline:
 
         cluster_ids = set(pattern.record_ids)
 
-        def _validate(raw: Any) -> tuple[Optional[LearningArtifact], int]:
+        outcome = _ClusterDistillation(candidates=len(raw_learnings))
+
+        def _validate(raw: Any) -> Optional[LearningArtifact]:
             artifact, repairs = validate_learning(raw, cluster_ids)
+            outcome.repairs += repairs
             if artifact is None:
-                return None, repairs
+                outcome.dropped_invalid += 1
+                return None
             # Recurrence check on validated supporting IDs
             if not check_recurrence(
                 artifact.supporting_item_ids,
@@ -571,10 +619,9 @@ class EvidencePipeline:
                 self._recurrence_threshold,
                 self._recurrence_key_fn,
             ):
-                return None, repairs
-            return artifact, repairs
-
-        total_repairs = 0
+                outcome.dropped_below_recurrence += 1
+                return None
+            return artifact
 
         def _record(artifact: LearningArtifact) -> LearningRecord:
             return self._make_record(
@@ -586,13 +633,11 @@ class EvidencePipeline:
             sorted_learnings = sorted(
                 raw_learnings, key=lambda learning: learning.confidence, reverse=True
             )[: self._max_learnings_per_cluster]
-            validated: List[LearningRecord] = []
             for raw in sorted_learnings:
-                artifact, repairs = _validate(raw)
-                total_repairs += repairs
+                artifact = _validate(raw)
                 if artifact is not None:
-                    validated.append(_record(artifact))
-            return validated, total_repairs
+                    outcome.records.append(_record(artifact))
+            return outcome
 
         # Scored path: validate everything first so the score sees repaired
         # support, then keep the best-scored candidates. Truncating by confidence
@@ -601,9 +646,9 @@ class EvidencePipeline:
         # the one the record keeps.
         scored: List[LearningRecord] = []
         for raw in raw_learnings:
-            artifact, repairs = _validate(raw)
-            total_repairs += repairs
+            artifact = _validate(raw)
             if artifact is not None:
                 scored.append(_record(artifact))
         scored.sort(key=lambda rec: rec.score, reverse=True)  # stable
-        return scored[: self._max_learnings_per_cluster], total_repairs
+        outcome.records = scored[: self._max_learnings_per_cluster]
+        return outcome

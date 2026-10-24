@@ -38,6 +38,7 @@ from axion.caliber.pattern_discovery.handlers import (
 )
 from axion.caliber.pattern_discovery.models import (
     ClusteringMethod,
+    ClusterWithoutLearnings,
     DiscoveredPattern,
     EvidenceItem,
     FailedCluster,
@@ -70,6 +71,7 @@ __all__ = [
     'EvidenceItem',
     'LearningArtifact',
     'LearningRecord',
+    'ClusterWithoutLearnings',
     'FailedCluster',
     'PipelineResult',
     'Provenance',
