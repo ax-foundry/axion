@@ -82,6 +82,11 @@ class TestRecurrenceBalancedSampler:
 
 
 class TestPipelineSamplerHook:
+    def test_sampler_imports_from_caliber(self):
+        from axion.caliber import recurrence_balanced_sampler as exported
+
+        assert exported is recurrence_balanced_sampler
+
     @pytest.mark.asyncio
     async def test_default_sampler_unchanged(self):
         evidence = make_grouped_evidence(4, 5)
