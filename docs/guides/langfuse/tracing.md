@@ -56,12 +56,12 @@ with tracer.span('my-operation') as span:
     span.set_input({'query': 'How do I upgrade my plan?'})
 
     response = client.chat.completions.create(
-        model='gpt-4o',
+        model='gpt-6-sol',
         messages=[{'role': 'user', 'content': 'How do I upgrade my plan?'}]
     )
 
     span.set_output({'response': response.choices[0].message.content})
-    span.set_attribute('model', 'gpt-4o')
+    span.set_attribute('model', 'gpt-6-sol')
     span.set_attribute('tokens', response.usage.total_tokens)
 
 tracer.flush()
@@ -90,7 +90,7 @@ with tracer.span('llm-call') as span:
     span.set_input({
         'query': user_question,
         'context': retrieved_chunks,
-        'model': 'gpt-4o'
+        'model': 'gpt-6-sol'
     })
 
     # Your LLM call

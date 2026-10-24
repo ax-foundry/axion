@@ -116,7 +116,7 @@ class AxionConfig(BaseModel):
         default='openai', description='Default provider for embedding models.'
     )
     llm_model_name: str = Field(
-        default='gpt-4o', description='Default language model name.'
+        default='gpt-6-sol', description='Default language model name.'
     )
     embedding_model_name: str = Field(
         default='text-embedding-ada-002', description='Default embedding model name.'

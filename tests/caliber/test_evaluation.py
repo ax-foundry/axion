@@ -16,7 +16,7 @@ class TestCaliberMetric:
         """Test basic initialization."""
         metric = CaliberMetric(
             instruction='Score 1 if accurate, 0 otherwise.',
-            model_name='gpt-4o',
+            model_name='gpt-6-sol',
             llm_provider='openai',
         )
         assert metric.instruction == 'Score 1 if accurate, 0 otherwise.'
@@ -39,7 +39,7 @@ class TestCaliberMetric:
         ]
         metric = CaliberMetric(
             instruction='Score 1 if correct.',
-            model_name='gpt-4o',
+            model_name='gpt-6-sol',
             examples=examples,
         )
         assert len(metric.examples) == 1
@@ -61,7 +61,7 @@ class TestEvaluationRunner:
         """Test initialization."""
         config = EvaluationConfig(
             criteria='Score 1 if accurate.',
-            model_name='gpt-4o',
+            model_name='gpt-6-sol',
         )
         runner = EvaluationRunner(config, max_concurrent=10)
         assert runner._config == config
@@ -347,17 +347,17 @@ class TestEvaluationConfig:
         """Test creating config with minimal fields."""
         config = EvaluationConfig(criteria='Score 1 if good.')
         assert config.criteria == 'Score 1 if good.'
-        assert config.model_name == 'gpt-4o'  # default
+        assert config.model_name == 'gpt-6-sol'  # default
 
     def test_create_full(self):
         """Test creating config with all fields."""
         config = EvaluationConfig(
             criteria='Score 1 if accurate.',
-            model_name='gpt-4o-mini',
+            model_name='gpt-6-luna',
             llm_provider='openai',
             system_prompt='You are an evaluator.',
         )
-        assert config.model_name == 'gpt-4o-mini'
+        assert config.model_name == 'gpt-6-luna'
         assert config.llm_provider == 'openai'
         assert config.system_prompt == 'You are an evaluator.'
 

@@ -116,7 +116,7 @@ class PromptOptimizationHandler(LLMHandler[OptimizeInput, OptimizeOutput]):
         Initialize the prompt optimization handler.
 
         Args:
-            model_name: Name of the LLM model (e.g., 'gpt-4o', 'claude-sonnet-4-20250514')
+            model_name: Name of the LLM model (e.g., 'gpt-6-sol', 'claude-sonnet-4-20250514')
             llm: Pre-configured LLM instance
             llm_provider: LLM provider ('openai', 'anthropic')
             instruction: Custom instruction to override default
@@ -164,7 +164,7 @@ class PromptOptimizer:
         >>> criteria = "Evaluate whether the response is accurate."
         >>> system_prompt = "You are an evaluator..."
         >>>
-        >>> optimizer = PromptOptimizer(model_name='gpt-4o', llm_provider='openai')
+        >>> optimizer = PromptOptimizer(model_name='gpt-6-sol', llm_provider='openai')
         >>> optimized = await optimizer.optimize(results, criteria, system_prompt)
         >>>
         >>> print(f'Optimized criteria: {optimized.optimized_criteria}')
@@ -182,7 +182,7 @@ class PromptOptimizer:
         Initialize PromptOptimizer.
 
         Args:
-            model_name: Name of the LLM model (e.g., 'gpt-4o', 'claude-sonnet-4-20250514')
+            model_name: Name of the LLM model (e.g., 'gpt-6-sol', 'claude-sonnet-4-20250514')
             llm: Pre-configured LLM instance
             llm_provider: LLM provider ('openai', 'anthropic')
             instruction: Custom instruction to override default optimization prompt

@@ -77,7 +77,7 @@ class AnnotationState(StrictBaseModel):
 class EvaluationConfig(StrictBaseModel):
     """Configuration for LLM evaluation."""
 
-    model_name: str = Field(default='gpt-4o', description='LLM model name')
+    model_name: str = Field(default='gpt-6-sol', description='LLM model name')
     llm_provider: Optional[str] = Field(
         default=None, description='LLM provider (openai, anthropic, etc.)'
     )

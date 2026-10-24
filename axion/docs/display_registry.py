@@ -2086,7 +2086,7 @@ from axion.llm_registry import LLMRegistry
 settings.llm_provider = "llm_gateway"
 
 registry = LLMRegistry()
-llm = registry.get_llm(model_name="gpt-4o")
+llm = registry.get_llm(model_name="gpt-6-sol")
 embedding_model = registry.get_embedding_model(model_name="text-embedding-3-small")
 
 # Option 2: Direct provider instantiation
@@ -2125,7 +2125,7 @@ registry = LLMRegistry(
 )
 
 # Standard OpenAI models via LlamaIndex
-llm = registry.get_llm(model_name="gpt-4o")
+llm = registry.get_llm(model_name="gpt-6-sol")
 embedding_model = registry.get_embedding_model(model_name="text-embedding-3-small")"""
         else:
             config_example = f"""# {class_name} configuration
@@ -2206,11 +2206,10 @@ print(response.text)"""
             <h4>Commonly Supported Models</h4>
             <h5>Language Models:</h5>
             <ul>
-                <li><code>gpt-4o</code> - Latest GPT-4 Optimized model</li>
-                <li><code>gpt-4o-mini</code> - Faster, cost-effective GPT-4 variant</li>
-                <li><code>gpt-4</code> - Standard GPT-4 model</li>
-                <li><code>gpt-3.5-turbo</code> - Fast and efficient model</li>
-                <li><code>o1</code> - Advanced reasoning model</li>
+                <li><code>gpt-6-sol</code> - Flagship GPT-6 model</li>
+                <li><code>gpt-6-luna</code> - Faster, cost-effective GPT-6 variant</li>
+                <li><code>gpt-6-astra</code> - Largest GPT-6 model for the hardest tasks</li>
+                <li><code>o3</code> - Advanced reasoning model</li>
             </ul>
             <h5>Embedding Models:</h5>
             <ul>
@@ -2278,7 +2277,7 @@ print(response.text)"""
             <h4>Cost Estimation</h4>
             <p>Uses the centralized <code>LLMCostEstimator</code> with model-specific pricing:</p>
             <ul>
-                <li>Supports popular models like GPT-4o, GPT-3.5-Turbo, O1</li>
+                <li>Supports popular models like GPT-6, GPT-5, O3</li>
                 <li>Calculates costs per 1,000 tokens for prompt and completion</li>
                 <li>Falls back to default pricing for unknown models</li>
                 <li>Pricing based on published OpenAI rates</li>
@@ -2376,7 +2375,7 @@ from axion.llm_registry import Settings
 # Method 1: Direct attribute setting
 Settings.llm_provider = "llm_gateway"
 Settings.embedding_provider = "llm_gateway"
-Settings.llm_model = "gpt-4o"
+Settings.llm_model = "gpt-6-sol"
 Settings.embedding_model = "text-embedding-3-small"
 Settings.api_key = "your-api-key"
 Settings.base_url = "http://localhost:8000/v1"
@@ -2385,7 +2384,7 @@ Settings.base_url = "http://localhost:8000/v1"
 import os
 os.environ["LLM_PROVIDER"] = "llm_gateway"
 os.environ["EMBEDDING_PROVIDER"] = "llm_gateway"
-os.environ["LLM_MODEL"] = "gpt-4o"
+os.environ["LLM_MODEL"] = "gpt-6-sol"
 os.environ["EMBEDDING_MODEL"] = "text-embedding-3-small"
 os.environ["OPENAI_API_KEY"] = "your-api-key"
 os.environ["OPENAI_BASE_URL"] = "http://localhost:8000/v1"
@@ -2398,7 +2397,7 @@ llm = registry.get_llm()  # Uses Settings.llm_model
 embedding = registry.get_embedding_model()  # Uses Settings.embedding_model
 
 # Override at call time
-llm_override = registry.get_llm(model="gpt-3.5-turbo", provider="llama_index")"""
+llm_override = registry.get_llm(model="gpt-6-luna", provider="llama_index")"""
 
     def get_details_content(self, key: str, item: Any) -> str:
         return f"""
@@ -2416,9 +2415,9 @@ llm_override = registry.get_llm(model="gpt-3.5-turbo", provider="llama_index")""
             <h4>Configuration Precedence</h4>
             <p>Settings are resolved in the following order (highest to lowest priority):</p>
             <ol>
-                <li><strong>Direct method arguments:</strong> <code>registry.get_llm(model="gpt-4", provider="openai")</code></li>
-                <li><strong>Settings class attributes:</strong> <code>Settings.llm_model = "gpt-4"</code></li>
-                <li><strong>Environment variables:</strong> <code>LLM_MODEL=gpt-4</code></li>
+                <li><strong>Direct method arguments:</strong> <code>registry.get_llm(model="gpt-6-sol", provider="openai")</code></li>
+                <li><strong>Settings class attributes:</strong> <code>Settings.llm_model = "gpt-6-sol"</code></li>
+                <li><strong>Environment variables:</strong> <code>LLM_MODEL=gpt-6-sol</code></li>
                 <li><strong>Hardcoded defaults:</strong> Built-in fallback values</li>
             </ol>
 

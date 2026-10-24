@@ -310,7 +310,7 @@ item.update_runtime(
 )
 
 # Merge additional metadata
-item.merge_metadata({"model": "gpt-4", "temperature": 0.7})
+item.merge_metadata({"model": "gpt-6-sol", "temperature": 0.7})
 ```
 
 ### Tool Extraction by Tag

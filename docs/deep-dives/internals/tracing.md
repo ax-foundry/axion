@@ -357,7 +357,7 @@ with tracer.span('my-operation') as span:
 # Log LLM calls with token usage
 tracer.log_llm_call(
     name='chat_completion',
-    model='gpt-4',
+    model='gpt-6-sol',
     prompt='Hello, how are you?',
     response='I am doing well, thank you!',
     usage={
@@ -394,7 +394,7 @@ configure_tracing()
 tracer = Tracer('llm')
 
 # Create spans that appear in Opik dashboard
-with tracer.span('my-operation', model='gpt-4') as span:
+with tracer.span('my-operation', model='gpt-6-sol') as span:
     # Your code here
     span.set_input({'query': 'Hello, how are you?'})
     span.set_output({'response': 'I am doing well!'})
@@ -403,7 +403,7 @@ with tracer.span('my-operation', model='gpt-4') as span:
 # Log LLM calls with token usage
 tracer.log_llm_call(
     name='chat_completion',
-    model='gpt-4',
+    model='gpt-6-sol',
     provider='openai',
     prompt='Hello, how are you?',
     response='I am doing well, thank you!',

@@ -37,7 +37,7 @@ class SimpleOutput(BaseModel):
 class MockLLM:
     """Mock LLM that mimics the expected interface."""
 
-    def __init__(self, model: str = 'gpt-4o', temperature: float = 0.0):
+    def __init__(self, model: str = 'gpt-6-sol', temperature: float = 0.0):
         self.model = model
         self.temperature = temperature
 
@@ -73,13 +73,13 @@ class TestLiteLLMModelRouting:
     @pytest.mark.parametrize(
         'model_name,expected_provider',
         [
-            ('gpt-4o', 'openai'),
-            ('gpt-4o-mini', 'openai'),
+            ('gpt-6-sol', 'openai'),
+            ('gpt-6-luna', 'openai'),
             ('anthropic/claude-3-5-sonnet-20241022', 'anthropic'),
             ('anthropic/claude-3-opus-20240229', 'anthropic'),
             ('gemini/gemini-1.5-pro', 'gemini'),
             ('gemini/gemini-1.5-flash', 'gemini'),
-            ('azure/gpt-4o', 'azure'),
+            ('azure/gpt-6-sol', 'azure'),
             ('ollama/llama3', 'ollama'),
         ],
     )
@@ -118,7 +118,7 @@ class TestLiteLLMCostEstimation:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
 
         handler = TestHandler()
         expected_cost = 0.00123
@@ -145,7 +145,7 @@ class TestLiteLLMCostEstimation:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
 
         handler = TestHandler()
         expected_cost = 0.00456
@@ -174,7 +174,7 @@ class TestLiteLLMCostEstimation:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
 
         handler = TestHandler()
 
@@ -196,7 +196,7 @@ class TestLiteLLMCostEstimation:
 
                     # Verify fallback was used
                     mock_estimator.assert_called_once_with(
-                        model_name='gpt-4o',
+                        model_name='gpt-6-sol',
                         prompt_tokens=1000,
                         completion_tokens=500,
                     )
@@ -214,7 +214,7 @@ class TestLiteLLMExceptionMapping:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
             max_retries = 1  # Reduce retries for faster test
             max_rate_limit_retries = 1  # Also reduce rate limit retries
 
@@ -224,7 +224,7 @@ class TestLiteLLMExceptionMapping:
             mock_acompletion.side_effect = litellm.exceptions.RateLimitError(
                 message='Rate limit exceeded',
                 llm_provider='openai',
-                model='gpt-4o',
+                model='gpt-6-sol',
             )
 
             from axion._core.error import GenerationError
@@ -245,7 +245,7 @@ class TestLiteLLMExceptionMapping:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
             max_retries = 1
 
         handler = TestHandler()
@@ -254,7 +254,7 @@ class TestLiteLLMExceptionMapping:
             mock_acompletion.side_effect = litellm.exceptions.AuthenticationError(
                 message='Invalid API key',
                 llm_provider='openai',
-                model='gpt-4o',
+                model='gpt-6-sol',
             )
 
             from axion._core.error import GenerationError
@@ -278,7 +278,7 @@ class TestLiteLLMStructuredOutput:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
 
         handler = TestHandler()
 
@@ -306,7 +306,7 @@ class TestLiteLLMStructuredOutput:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
 
         handler = TestHandler()
 
@@ -350,13 +350,13 @@ class TestProviderDetection:
             instruction = 'Test'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
 
         handler = TestHandler()
         metadata = handler.get_execution_metadata()
 
         assert metadata['provider'] == 'openai'
-        assert metadata['model_name'] == 'gpt-4o'
+        assert metadata['model_name'] == 'gpt-6-sol'
 
 
 class TestSystemInstructionIdempotency:
@@ -367,7 +367,7 @@ class TestSystemInstructionIdempotency:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
 
         handler = TestHandler()
 
@@ -382,7 +382,7 @@ class TestSystemInstructionIdempotency:
             instruction = 'Do the thing.\n\n[JSON_RULES]\nReturn JSON only.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
 
         handler = TestHandler()
         s = handler._system_instruction()
@@ -396,7 +396,7 @@ class TestParserModeOutputSanitization:
     @pytest.mark.asyncio
     async def test_parser_mode_strips_json_code_fences_from_logged_response(self):
         class ParserMockLLM:
-            def __init__(self, model: str = 'gpt-4o', temperature: float = 0.0):
+            def __init__(self, model: str = 'gpt-6-sol', temperature: float = 0.0):
                 self.model = model
                 self.temperature = temperature
 
@@ -413,7 +413,7 @@ class TestParserModeOutputSanitization:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = ParserMockLLM(model='gpt-4o')
+            llm = ParserMockLLM(model='gpt-6-sol')
             as_structured_llm = False
 
         handler = TestHandler()
@@ -442,7 +442,7 @@ class TestRateLimitRetryBehavior:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
             fallback_to_parser = True
             max_retries = 1
             max_rate_limit_retries = 1
@@ -453,7 +453,7 @@ class TestRateLimitRetryBehavior:
             mock_acompletion.side_effect = litellm.exceptions.RateLimitError(
                 message='Rate limit exceeded',
                 llm_provider='openai',
-                model='gpt-4o',
+                model='gpt-6-sol',
             )
 
             from axion._core.error import GenerationError
@@ -472,7 +472,7 @@ class TestRateLimitRetryBehavior:
 
         class ParserFallbackLLM:
             def __init__(self):
-                self.model = 'gpt-4o'
+                self.model = 'gpt-6-sol'
                 self.temperature = 0.0
 
             def complete(self, **kwargs):
@@ -510,7 +510,7 @@ class TestRateLimitRetryBehavior:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
             rate_limit_jitter = 5.0
             rate_limit_buffer = 2.0
 
@@ -545,7 +545,7 @@ class TestRateLimitRetryBehavior:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
 
         handler = TestHandler()
 
@@ -569,7 +569,7 @@ class TestPromptCaching:
             instruction = 'Answer the question.'
             input_model = SimpleInput
             output_model = SimpleOutput
-            llm = MockLLM(model='gpt-4o')
+            llm = MockLLM(model='gpt-6-sol')
 
         handler = TestHandler(enable_prompt_caching=enable_prompt_caching)
         if examples is not None:

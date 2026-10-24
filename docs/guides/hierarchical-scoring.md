@@ -131,7 +131,7 @@ metric:
   Relevance:
     class: 'answer_relevancy'
     metric_name: 'Relevancy'
-    model_name: 'gpt-4.1'
+    model_name: 'gpt-6-sol'
   Faithfulness:
     class: 'faithfulness'
 

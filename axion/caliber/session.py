@@ -61,7 +61,7 @@ class CalibrationSession:
         >>> # Step 3: Evaluate
         >>> result = await session.evaluate(
         ...     criteria="Score 1 if accurate, 0 otherwise",
-        ...     model_name="gpt-4o"
+        ...     model_name="gpt-6-sol"
         ... )
         >>>
         >>> # Optional: Analysis
@@ -240,7 +240,7 @@ class CalibrationSession:
     async def evaluate(
         self,
         criteria: str,
-        model_name: str = 'gpt-4o',
+        model_name: str = 'gpt-6-sol',
         llm_provider: Optional[str] = None,
         system_prompt: Optional[str] = None,
         on_progress: Optional[Callable[[int, int], None]] = None,
@@ -250,7 +250,7 @@ class CalibrationSession:
 
         Args:
             criteria: The LLM-as-judge evaluation criteria
-            model_name: LLM model name (default: gpt-4o)
+            model_name: LLM model name (default: gpt-6-sol)
             llm_provider: LLM provider (optional)
             system_prompt: System prompt for evaluator (optional)
             on_progress: Progress callback (current, total)
@@ -287,7 +287,7 @@ class CalibrationSession:
     def evaluate_sync(
         self,
         criteria: str,
-        model_name: str = 'gpt-4o',
+        model_name: str = 'gpt-6-sol',
         llm_provider: Optional[str] = None,
         system_prompt: Optional[str] = None,
         on_progress: Optional[Callable[[int, int], None]] = None,

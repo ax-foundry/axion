@@ -39,7 +39,7 @@ from axion.dataset import DatasetItem
 #   Relevance:
 #     class: 'answer_relevancy'
 #     metric_name: 'Relevancy'
-#     model_name: 'gpt-4.1'
+#     model_name: 'gpt-6-sol'
 #     relevancy_mode: 'task'
 # model:
 #   ANSWER_QUALITY:
@@ -53,7 +53,7 @@ config = {
     'metric': {
         'Relevance': AnswerRelevancy(
             metric_name='Relevancy',
-            model_name='gpt-4.1',
+            model_name='gpt-6-sol',
             relevancy_mode='task',
         ),
     },
@@ -126,7 +126,7 @@ results = evaluation_runner(
     evaluation_inputs=[data_item],
     task=dictionary_task_output, # or pydantic_task_output, api_runner
     scoring_metrics=[
-        AnswerRelevancy(model_name='gpt-4o'),
+        AnswerRelevancy(model_name='gpt-6-sol'),
         Latency(threshold=1.5),
     ],
     max_concurrent=5,
@@ -173,8 +173,8 @@ dataframe = pd.DataFrame([
 ])
 
 # Configure LLM models for third-party metrics
-deepeval_model = LiteLLMDeepEval(model='gpt-4') # Optional
-ragas_model = LiteLLMRagas(model='gpt-4') # Optional
+deepeval_model = LiteLLMDeepEval(model='gpt-6-sol') # Optional
+ragas_model = LiteLLMRagas(model='gpt-6-sol') # Optional
 
 # Configure the task to evaluate
 api_runner = ExampleAPIRunner(config='...')
@@ -182,7 +182,7 @@ api_runner = ExampleAPIRunner(config='...')
 # Define evaluation metrics
 metrics = [
     Faithfulness(llm=ragas_model),
-    AnswerCompleteness(model_name='gpt-4.1'),
+    AnswerCompleteness(model_name='gpt-6-sol'),
     AnswerRelevancyMetric(model=deepeval_model),
 ]
 

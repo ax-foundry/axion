@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict
 
 from axion._core.logging import get_logger
 from axion._core.tracing import trace
+from axion.llm_registry import is_fixed_temperature_model, resolve_temperature
 
 logger = get_logger(__name__)
 
@@ -66,7 +67,7 @@ class LiteLLMRagas(BaseRagasLLM):
         >>> from axion.integrations.models.litellm_ragas import LiteLLMRagas
         >>> from ragas.metrics import Faithfulness
         >>>
-        >>> llm = LiteLLMRagas(model='gpt-4o')
+        >>> llm = LiteLLMRagas(model='gpt-6-sol')
         >>> metric = Faithfulness(llm=llm)
         >>> # After evaluation:
         >>> print(metric.llm.cost_estimate)
@@ -74,8 +75,8 @@ class LiteLLMRagas(BaseRagasLLM):
 
     def __init__(
         self,
-        model: str = 'gpt-4o',
-        temperature: float = 0.0,
+        model: str = 'gpt-6-sol',
+        temperature: Optional[float] = None,
         run_config: Optional[RunConfig] = None,
         multiple_completion_supported: bool = False,
         cache: Optional[Any] = None,
@@ -86,8 +87,10 @@ class LiteLLMRagas(BaseRagasLLM):
         Initialize the LiteLLM RAGAS wrapper.
 
         Args:
-            model: LiteLLM-compatible model name (e.g., 'gpt-4o', 'anthropic/claude-3-5-sonnet')
-            temperature: Generation temperature (default 0.0 for deterministic outputs)
+            model: LiteLLM-compatible model name (e.g., 'gpt-6-sol', 'anthropic/claude-3-5-sonnet')
+            temperature: Generation temperature. Defaults to 0.0, except for
+                reasoning models (GPT-6, GPT-5.4, o-series), which only accept
+                1.0 and always get it, including on per-call overrides.
             run_config: Optional RAGAS run configuration
             multiple_completion_supported: Whether model supports multiple completions
             cache: Optional cache interface
@@ -104,7 +107,8 @@ class LiteLLMRagas(BaseRagasLLM):
         )
 
         self.model = model
-        self._temperature = temperature
+        self._fixed_temperature = is_fixed_temperature_model(model)
+        self._temperature = resolve_temperature(model, temperature)
         self.rate_limit_buffer = rate_limit_buffer
         self.max_retries = max_retries
 
@@ -305,7 +309,7 @@ class LiteLLMRagas(BaseRagasLLM):
             return litellm.completion(
                 model=self.model,
                 messages=[{'role': 'user', 'content': prompt_str}],
-                temperature=temperature or self._temperature,
+                temperature=self._request_temperature(temperature),
                 n=n,
                 stop=stop,
             )
@@ -355,7 +359,7 @@ class LiteLLMRagas(BaseRagasLLM):
             return await litellm.acompletion(
                 model=self.model,
                 messages=[{'role': 'user', 'content': prompt_str}],
-                temperature=temperature or self._temperature,
+                temperature=self._request_temperature(temperature),
                 n=n,
                 stop=stop,
             )
@@ -375,3 +379,13 @@ class LiteLLMRagas(BaseRagasLLM):
     def get_temperature(self, n: int) -> float:
         """Get the temperature to use for n completions."""
         return self._temperature
+
+    def _request_temperature(self, requested: Optional[float]) -> float:
+        """Per-call temperature: the caller's value unless the model pins it.
+
+        RAGAS passes its own near-zero default on every call, which reasoning
+        models reject, so those models always send 1.0.
+        """
+        if self._fixed_temperature:
+            return 1.0
+        return requested or self._temperature

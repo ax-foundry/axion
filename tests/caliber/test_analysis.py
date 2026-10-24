@@ -75,7 +75,7 @@ class TestMisalignmentAnalysis:
             ],
             summary='LLM tends to be too lenient.',
             recommendations=['Be more strict on vague responses.'],
-            metadata={'model': 'gpt-4o'},
+            metadata={'model': 'gpt-6-sol'},
         )
         assert analysis.total_misaligned == 10
         assert analysis.false_positives == 6
@@ -226,18 +226,18 @@ class TestMisalignmentAnalyzer:
     def test_init_custom(self):
         """Test initialization with custom params."""
         analyzer = MisalignmentAnalyzer(
-            model_name='gpt-4o',
+            model_name='gpt-6-sol',
             llm_provider='openai',
             max_examples=20,
         )
-        assert analyzer._model_name == 'gpt-4o'
+        assert analyzer._model_name == 'gpt-6-sol'
         assert analyzer._llm_provider == 'openai'
         assert analyzer._max_examples == 20
 
     @pytest.mark.asyncio
     async def test_analyze_perfect_alignment(self):
         """Test analysis with no misalignments."""
-        analyzer = MisalignmentAnalyzer(model_name='gpt-4o')
+        analyzer = MisalignmentAnalyzer(model_name='gpt-6-sol')
         results = [
             {
                 'record_id': 'r1',

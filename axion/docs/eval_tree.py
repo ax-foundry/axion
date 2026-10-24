@@ -50,15 +50,15 @@ def yaml_template(key: str, item: Any) -> str:
     return """# Save this as: my_tree.yaml
 metric: # Definition of metrics and parameters
   answer_relevancy:
-    model_name: gpt-4o
+    model_name: gpt-6-sol
     threshold: 0.5
   contextual_relevancy:
-    model_name: gpt-4o
+    model_name: gpt-6-sol
     threshold: 0.5
   citation_presence:
     resource_similarity_threshold: 0.8
   faithfulness:
-    model_name: gpt-4o
+    model_name: gpt-6-sol
     class: "deepeval.metrics.FaithfulnessMetric"
     threshold: 0.5
 

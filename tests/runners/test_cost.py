@@ -22,10 +22,10 @@ class TestTokenUsage:
 
     def test_init_with_values(self):
         """Test TokenUsage initialization with values."""
-        usage = TokenUsage(input_tokens=100, output_tokens=50, model='gpt-4o')
+        usage = TokenUsage(input_tokens=100, output_tokens=50, model='gpt-6-sol')
         assert usage.input_tokens == 100
         assert usage.output_tokens == 50
-        assert usage.model == 'gpt-4o'
+        assert usage.model == 'gpt-6-sol'
 
     def test_total_tokens(self):
         """Test total_tokens property."""
@@ -42,7 +42,7 @@ class TestTokenUsage:
 
     def test_compute_cost_with_model(self):
         """Test compute_cost using LLMCostEstimator."""
-        usage = TokenUsage(input_tokens=1000, output_tokens=500, model='gpt-4o')
+        usage = TokenUsage(input_tokens=1000, output_tokens=500, model='gpt-6-sol')
         cost = usage.compute_cost()
         assert cost > 0  # Should get a non-zero cost from LLMCostEstimator
 
@@ -54,12 +54,12 @@ class TestTokenUsage:
 
     def test_addition(self):
         """Test TokenUsage addition."""
-        usage1 = TokenUsage(input_tokens=100, output_tokens=50, model='gpt-4o')
+        usage1 = TokenUsage(input_tokens=100, output_tokens=50, model='gpt-6-sol')
         usage2 = TokenUsage(input_tokens=200, output_tokens=100)
         combined = usage1 + usage2
         assert combined.input_tokens == 300
         assert combined.output_tokens == 150
-        assert combined.model == 'gpt-4o'  # Takes first non-empty model
+        assert combined.model == 'gpt-6-sol'  # Takes first non-empty model
 
 
 class TestCostResult:
@@ -80,12 +80,12 @@ class TestCostResult:
             cost_estimate=0.05,
             token_usage=usage,
             source='ragas_llm',
-            details={'model': 'gpt-4o'},
+            details={'model': 'gpt-6-sol'},
         )
         assert result.cost_estimate == 0.05
         assert result.token_usage is usage
         assert result.source == 'ragas_llm'
-        assert result.details == {'model': 'gpt-4o'}
+        assert result.details == {'model': 'gpt-6-sol'}
 
     def test_addition(self):
         """Test CostResult addition."""
@@ -234,7 +234,7 @@ class TestCostExtractor:
             cost_estimate = 0.05
             input_tokens = 100
             output_tokens = 50
-            model = 'gpt-4o'
+            model = 'gpt-6-sol'
 
         class MetricWithTokens:
             llm = MockLLM()
@@ -244,7 +244,7 @@ class TestCostExtractor:
         assert result.token_usage is not None
         assert result.token_usage.input_tokens == 100
         assert result.token_usage.output_tokens == 50
-        assert result.token_usage.model == 'gpt-4o'
+        assert result.token_usage.model == 'gpt-6-sol'
 
 
 class TestCostAggregator:
@@ -283,7 +283,7 @@ class TestCostAggregator:
                 cost_estimate = 0.05
                 input_tokens = 100
                 output_tokens = 50
-                model = 'gpt-4o'
+                model = 'gpt-6-sol'
 
             llm = LLM()
 
@@ -303,7 +303,7 @@ class TestCostAggregator:
                 cost_estimate = 0.05
                 input_tokens = 1000
                 output_tokens = 500
-                model = 'gpt-4o'
+                model = 'gpt-6-sol'
 
             llm = LLM()
 

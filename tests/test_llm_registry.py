@@ -91,7 +91,7 @@ def reset_settings_and_env(monkeypatch):
     original_base_url = settings.api_base_url
 
     # Set to a known default state for testing
-    monkeypatch.setattr(settings, 'llm_model_name', 'gpt-4o')
+    monkeypatch.setattr(settings, 'llm_model_name', 'gpt-6-sol')
     monkeypatch.setattr(settings, 'openai_api_key', 'test-key')
     monkeypatch.setattr(settings, 'api_base_url', None)
 
@@ -120,12 +120,12 @@ def test_llm_cost_estimator_delegates_to_litellm():
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', DeprecationWarning)
             cost = LLMCostEstimator.estimate(
-                model_name='gpt-4o', prompt_tokens=1000, completion_tokens=1000
+                model_name='gpt-6-sol', prompt_tokens=1000, completion_tokens=1000
             )
         # litellm.cost_per_token returns tuple (prompt_cost, completion_cost)
         assert cost == pytest.approx(0.0125)
         mock_cost.assert_called_once_with(
-            model='gpt-4o', prompt_tokens=1000, completion_tokens=1000
+            model='gpt-6-sol', prompt_tokens=1000, completion_tokens=1000
         )
 
 
@@ -203,8 +203,8 @@ def test_all_providers_inherit_from_base():
 def test_openai_provider_no_prefix():
     """Tests that OpenAI provider doesn't add a prefix."""
     registry = LLMRegistry(provider='openai')
-    llm = registry.get_llm('gpt-4o')
-    assert llm.model == 'gpt-4o'
+    llm = registry.get_llm('gpt-6-sol')
+    assert llm.model == 'gpt-6-sol'
     assert llm._provider == 'openai'
 
 
@@ -261,7 +261,7 @@ def test_vertex_ai_provider_no_double_prefix():
 def test_litellm_wrapper_created_by_openai():
     """Tests that OpenAI provider returns LiteLLMWrapper."""
     registry = LLMRegistry(provider='openai')
-    llm = registry.get_llm('gpt-4o')
+    llm = registry.get_llm('gpt-6-sol')
     assert isinstance(llm, LiteLLMWrapper)
 
 
@@ -287,16 +287,16 @@ def test_litellm_wrapper_created_by_vertex_ai():
 
 
 def test_litellm_wrapper_temperature_default():
-    """Tests that LiteLLMWrapper has default temperature of 0.0."""
+    """The default model is a reasoning model, so its temperature defaults to 1.0."""
     registry = LLMRegistry(provider='openai')
-    llm = registry.get_llm('gpt-4o')
-    assert llm.temperature == 0.0
+    llm = registry.get_llm('gpt-6-sol')
+    assert llm.temperature == 1.0
 
 
 def test_litellm_wrapper_temperature_custom():
     """Tests that custom temperature is passed through."""
     registry = LLMRegistry(provider='openai')
-    llm = registry.get_llm('gpt-4o', temperature=0.7)
+    llm = registry.get_llm('gpt-6-sol', temperature=0.7)
     assert llm.temperature == 0.7
 
 
@@ -340,7 +340,7 @@ def test_registry_cost_direct_argument_precedence():
             warnings.simplefilter('ignore', DeprecationWarning)
             registry = LLMRegistry(api_key='mock-key')
             cost = registry.estimate_cost(
-                model_name='gpt-3.5-turbo',
+                model_name='gpt-6-luna',
                 provider='mock_gateway',
                 prompt_tokens=2000,
                 completion_tokens=1000,
@@ -352,7 +352,7 @@ def test_registry_cost_direct_argument_precedence():
 def test_registry_cost_settings_precedence(monkeypatch):
     """Tests that Settings class attributes are used when no direct arguments are provided."""
     monkeypatch.setattr(settings, 'llm_provider', 'mock_gateway')
-    monkeypatch.setattr(settings, 'llm_model_name', 'gpt-4')
+    monkeypatch.setattr(settings, 'llm_model_name', 'gpt-6-sol')
     monkeypatch.setattr(settings, 'openai_api_key', 'mock-key')
 
     with patch('litellm.cost_per_token', return_value=(0.003, 0.012)):
@@ -391,7 +391,7 @@ def test_locked_registry_cost_estimation():
             warnings.simplefilter('ignore', DeprecationWarning)
             registry = LLMRegistry(provider='mock_gateway')
             cost = registry.estimate_cost(
-                model_name='gpt-4o-mini', prompt_tokens=1000, completion_tokens=3000
+                model_name='gpt-6-luna', prompt_tokens=1000, completion_tokens=3000
             )
             # LiteLLM mock returns (0.00015, 0.0018) = 0.00195
             assert cost == pytest.approx(0.00195)
@@ -406,7 +406,7 @@ def test_locked_registry_ignores_provider_argument():
             # This provider argument should be ignored
             cost = registry.estimate_cost(
                 provider='mock_no_embeddings',
-                model_name='gpt-4',
+                model_name='gpt-6-sol',
                 prompt_tokens=100,
                 completion_tokens=100,
             )
@@ -430,11 +430,11 @@ def test_provider_switching_via_flexible_registry():
     registry = LLMRegistry()
 
     # Switch to different providers
-    llm_openai = registry.get_llm('gpt-4o', provider='openai')
+    llm_openai = registry.get_llm('gpt-6-sol', provider='openai')
     llm_anthropic = registry.get_llm('claude-3-5-sonnet-20241022', provider='anthropic')
     llm_gemini = registry.get_llm('gemini-1.5-pro', provider='gemini')
 
-    assert llm_openai.model == 'gpt-4o'
+    assert llm_openai.model == 'gpt-6-sol'
     assert llm_anthropic.model == 'anthropic/claude-3-5-sonnet-20241022'
     assert llm_gemini.model == 'gemini/gemini-1.5-pro'
 
@@ -457,3 +457,20 @@ def test_base_provider_create_llm_not_abstract():
     llm = provider.create_llm('test-model')
     assert isinstance(llm, LiteLLMWrapper)
     assert llm.model == 'mock/test-model'  # Should have prefix applied
+
+
+@pytest.mark.parametrize(
+    'model, expected',
+    [
+        ('gpt-6-sol', 1.0),
+        ('gpt-6-luna', 1.0),
+        ('openai/gpt-6-astra', 1.0),
+        ('gpt-5.4', 1.0),
+        ('o3-mini', 1.0),
+        ('anthropic/claude-sonnet-4-20250514', 0.0),
+        ('gemini/gemini-2.5-pro', 0.0),
+    ],
+)
+def test_reasoning_models_default_to_fixed_temperature(model, expected):
+    """Models that reject temperature=0 are pinned to 1.0 unless overridden."""
+    assert LiteLLMWrapper(model=model).temperature == expected

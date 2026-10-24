@@ -123,7 +123,7 @@ result = await evaluation_runner(
 stats = result.publish_as_experiment(
     dataset_name='my-rag-eval-dataset',
     run_name='experiment-v1',
-    run_metadata={'model': 'gpt-4o', 'version': '2.0'},
+    run_metadata={'model': 'gpt-6-sol', 'version': '2.0'},
     tags=['offline', 'baseline'],
 )
 

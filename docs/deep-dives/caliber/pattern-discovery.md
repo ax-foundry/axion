@@ -46,7 +46,7 @@ evidence = [
     EvidenceItem(id='bug_4', text='Currency formatting broken for EUR prices'),
 ]
 
-discovery = PatternDiscovery(model_name='gpt-4o-mini', min_category_size=2)
+discovery = PatternDiscovery(model_name='gpt-6-luna', min_category_size=2)
 result = await discovery.discover_from_evidence(evidence)
 
 for pattern in result.patterns:
@@ -63,7 +63,7 @@ from axion.caliber import EvidencePipeline, InMemorySink, MetadataConfig
 sink = InMemorySink()
 
 pipeline = EvidencePipeline(
-    model_name='gpt-4o-mini',
+    model_name='gpt-6-luna',
     recurrence_threshold=2,
     min_category_size=2,
     domain_context='E-commerce platform bug triage',
@@ -168,7 +168,7 @@ graph LR
 ```python
 pipeline = EvidencePipeline(
     # LLM settings
-    model_name='gpt-4o-mini',
+    model_name='gpt-6-luna',
     llm_provider='openai',
 
     # Clustering
@@ -348,7 +348,7 @@ annotations = {
     'rec_2': AnnotatedItem(record_id='rec_2', score=0, notes='Too verbose'),
 }
 
-discovery = PatternDiscovery(model_name='gpt-4o-mini')
+discovery = PatternDiscovery(model_name='gpt-6-luna')
 result = await discovery.discover(annotations, method=ClusteringMethod.LLM)
 ```
 
@@ -362,7 +362,7 @@ The `InsightExtractor` bridges evaluation issues with this pipeline. It converts
 from axion.reporting import IssueExtractor, InsightExtractor
 
 issues = IssueExtractor().extract_from_evaluation(results)
-insights = await InsightExtractor(model_name='gpt-4o-mini').analyze(issues)
+insights = await InsightExtractor(model_name='gpt-6-luna').analyze(issues)
 
 for pattern in insights.patterns:
     if pattern.is_cross_metric:

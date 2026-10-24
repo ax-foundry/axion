@@ -127,7 +127,7 @@ class TestOpikSpan:
         """Test span gracefully skips operations when Opik not available."""
         from axion._core.tracing.opik.span import OpikSpan
 
-        span = OpikSpan(mock_tracer, 'test-op', {'model': 'gpt-4'})
+        span = OpikSpan(mock_tracer, 'test-op', {'model': 'gpt-6-sol'})
         with span:
             assert span._opik_span is None
             assert span._opik_context is None
@@ -163,7 +163,7 @@ class TestOpikSpanWithAttributes:
         """Test span type is 'llm' when model attribute is present."""
         from axion._core.tracing.opik.span import OpikSpan
 
-        span = OpikSpan(mock_tracer, 'llm-call', {'model': 'gpt-4'})
+        span = OpikSpan(mock_tracer, 'llm-call', {'model': 'gpt-6-sol'})
         # When Opik is not available, we can't verify the span type
         # but we can verify the span is created without errors
         with span:

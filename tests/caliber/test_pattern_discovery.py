@@ -99,7 +99,7 @@ class TestPatternDiscoveryResult:
             uncategorized=['r6'],
             total_analyzed=6,
             method=ClusteringMethod.LLM,
-            metadata={'model': 'gpt-4o'},
+            metadata={'model': 'gpt-6-sol'},
         )
         assert len(result.patterns) == 2
         assert result.uncategorized == ['r6']
@@ -174,12 +174,12 @@ class TestPatternDiscovery:
     def test_init_custom(self):
         """Test initialization with custom params."""
         discovery = PatternDiscovery(
-            model_name='gpt-4o',
+            model_name='gpt-6-sol',
             llm_provider='openai',
             max_notes=100,
             min_category_size=3,
         )
-        assert discovery._model_name == 'gpt-4o'
+        assert discovery._model_name == 'gpt-6-sol'
         assert discovery._llm_provider == 'openai'
         assert discovery._max_notes == 100
         assert discovery._min_category_size == 3
@@ -242,7 +242,7 @@ class TestPatternDiscoveryEmptyInput:
     @pytest.mark.asyncio
     async def test_discover_no_notes(self):
         """Test discovery with no annotations having notes."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        discovery = PatternDiscovery(model_name='gpt-6-sol')
         annotations = {
             'r1': AnnotatedItem(record_id='r1', score=1, notes=None),
             'r2': AnnotatedItem(record_id='r2', score=0, notes=None),
@@ -343,7 +343,7 @@ class TestHybridClustering:
         # small_corpus_llm_fallback defaults on (small corpora route to LLM); disable it
         # to assert the too-few-documents early-out contract.
         discovery = PatternDiscovery(
-            model_name='gpt-4o', small_corpus_llm_fallback=False
+            model_name='gpt-6-sol', small_corpus_llm_fallback=False
         )
 
         # Only 3 items - below BERTOPIC_MIN_DOCUMENTS
@@ -361,7 +361,7 @@ class TestHybridClustering:
 
     def test_label_handler_lazy_init(self):
         """Test that label handler is lazily initialized."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        discovery = PatternDiscovery(model_name='gpt-6-sol')
         assert discovery._label_handler is None
         # Handler created on first access (not testing actual call to avoid API)
 
@@ -462,7 +462,7 @@ class TestBertopicSmallCorpusResilience:
         """A BERTopic failure (not a too-few early-out) routes HYBRID to LLM clustering."""
         # Opt out of the small-corpus short-circuit to exercise the bertopic-failure path.
         discovery = PatternDiscovery(
-            model_name='gpt-4o', small_corpus_llm_fallback=False
+            model_name='gpt-6-sol', small_corpus_llm_fallback=False
         )
         evidence = {'e1': EvidenceItem(id='e1', text='some note')}
 
@@ -503,7 +503,7 @@ class TestBertopicSmallCorpusResilience:
         """A deliberate too-few-documents early-out is NOT sent to the LLM fallback."""
         # With the small-corpus short-circuit off, the too-few contract still holds.
         discovery = PatternDiscovery(
-            model_name='gpt-4o', small_corpus_llm_fallback=False
+            model_name='gpt-6-sol', small_corpus_llm_fallback=False
         )
         evidence = {'e1': EvidenceItem(id='e1', text='some note')}
 
@@ -529,7 +529,9 @@ class TestBertopicSmallCorpusResilience:
     @pytest.mark.asyncio
     async def test_hybrid_small_corpus_routes_to_llm(self, monkeypatch):
         """With the fallback on (default), a corpus <= n_neighbors skips BERTopic."""
-        discovery = PatternDiscovery(model_name='gpt-4o')  # fallback on, n_neighbors=15
+        discovery = PatternDiscovery(
+            model_name='gpt-6-sol'
+        )  # fallback on, n_neighbors=15
         evidence = {
             f'e{i}': EvidenceItem(id=f'e{i}', text=f'note {i}') for i in range(10)
         }
@@ -561,7 +563,7 @@ class TestBertopicSmallCorpusResilience:
     @pytest.mark.asyncio
     async def test_hybrid_large_corpus_runs_bertopic(self, monkeypatch):
         """Above the boundary the short-circuit does not fire — BERTopic is attempted."""
-        discovery = PatternDiscovery(model_name='gpt-4o')  # n_neighbors=15
+        discovery = PatternDiscovery(model_name='gpt-6-sol')  # n_neighbors=15
         evidence = {
             f'e{i}': EvidenceItem(id=f'e{i}', text=f'note {i}') for i in range(20)
         }
@@ -607,7 +609,7 @@ class TestPatternDiscoveryMethodDispatch:
     @pytest.mark.asyncio
     async def test_discover_dispatches_to_llm(self):
         """Test discover() dispatches to LLM method."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        discovery = PatternDiscovery(model_name='gpt-6-sol')
         annotations = {
             'r1': AnnotatedItem(record_id='r1', score=0, notes=None),
         }
@@ -634,7 +636,7 @@ class TestPatternDiscoveryMethodDispatch:
     @pytest.mark.asyncio
     async def test_discover_dispatches_to_hybrid(self):
         """Test discover() dispatches to Hybrid method."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        discovery = PatternDiscovery(model_name='gpt-6-sol')
         annotations = {
             'r1': AnnotatedItem(record_id='r1', score=0, notes='Note 1'),
             'r2': AnnotatedItem(record_id='r2', score=0, notes='Note 2'),

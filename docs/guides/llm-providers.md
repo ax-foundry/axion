@@ -12,11 +12,11 @@ from axion.llm_registry import LLMRegistry
 
 # Create a registry locked to a provider
 registry = LLMRegistry(provider='openai')
-llm = registry.get_llm('gpt-4o')
+llm = registry.get_llm('gpt-6-sol')
 
 # Or use flexible mode to switch providers
 registry = LLMRegistry()
-llm_openai = registry.get_llm('gpt-4o', provider='openai')
+llm_openai = registry.get_llm('gpt-6-sol', provider='openai')
 llm_claude = registry.get_llm('claude-3-5-sonnet-20241022', provider='anthropic')
 ```
 
@@ -26,7 +26,7 @@ llm_claude = registry.get_llm('claude-3-5-sonnet-20241022', provider='anthropic'
 <div class="rule-card">
 <span class="rule-card__number">&#x2713;</span>
 <p class="rule-card__title">OpenAI</p>
-<p class="rule-card__desc">GPT-4o, GPT-4, o1, o3, etc. Embeddings supported. Auth: <code>OPENAI_API_KEY</code></p>
+<p class="rule-card__desc">GPT-6, GPT-5, o1, o3, etc. Embeddings supported. Auth: <code>OPENAI_API_KEY</code></p>
 </div>
 <div class="rule-card">
 <span class="rule-card__number">&#x2713;</span>
@@ -51,8 +51,8 @@ llm_claude = registry.get_llm('claude-3-5-sonnet-20241022', provider='anthropic'
 registry = LLMRegistry(provider='openai')
 
 # LLM
-llm = registry.get_llm('gpt-4o')
-llm = registry.get_llm('gpt-4o-mini', temperature=0.7)
+llm = registry.get_llm('gpt-6-sol')
+llm = registry.get_llm('gpt-6-luna', temperature=0.7)
 llm = registry.get_llm('o1-preview')
 
 # Embeddings

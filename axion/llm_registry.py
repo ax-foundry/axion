@@ -19,7 +19,7 @@ class LLMCostEstimator:
 
     Example:
     ```
-    cost = LLMCostEstimator.estimate("gpt-4o", prompt_tokens=1500, completion_tokens=500)
+    cost = LLMCostEstimator.estimate("gpt-6-sol", prompt_tokens=1500, completion_tokens=500)
 
     # Recommended:
     response = litellm.completion(...)
@@ -180,8 +180,8 @@ class MockLLM:
         pass
 
 
-def _is_fixed_temperature_model(model: str) -> bool:
-    """Check if a model doesn't support temperature=0.0 (e.g., GPT-5, o1, o3 reasoning models)."""
+def is_fixed_temperature_model(model: str) -> bool:
+    """Check if a model doesn't support temperature=0.0 (e.g., GPT-6, GPT-5.4, o1, o3 reasoning models)."""
     from axion._handlers.llm.models import fixed_temperature_model_prefixes
 
     model_lower = model.lower()
@@ -189,6 +189,20 @@ def _is_fixed_temperature_model(model: str) -> bool:
     if '/' in model_lower:
         model_lower = model_lower.split('/')[-1]
     return any(model_lower.startswith(p) for p in fixed_temperature_model_prefixes)
+
+
+_is_fixed_temperature_model = is_fixed_temperature_model
+
+
+def resolve_temperature(model: str, requested: Optional[float]) -> float:
+    """Temperature to send for ``model``.
+
+    Reasoning models reject every temperature but 1.0, so they always get 1.0.
+    Any other model gets ``requested``, or 0.0 when the caller gave none.
+    """
+    if is_fixed_temperature_model(model):
+        return 1.0
+    return 0.0 if requested is None else requested
 
 
 class LiteLLMWrapper:
@@ -200,7 +214,7 @@ class LiteLLMWrapper:
     different providers (OpenAI, Anthropic, Gemini, etc.).
 
     The wrapper stores:
-    - model: The LiteLLM-compatible model name (e.g., 'gpt-4o', 'anthropic/claude-3-5-sonnet')
+    - model: The LiteLLM-compatible model name (e.g., 'gpt-6-sol', 'anthropic/claude-3-5-sonnet')
     - temperature: Generation temperature (default 0.0 for deterministic outputs)
     - provider: The provider name for metadata/logging purposes
     - Additional kwargs for provider-specific configurations
@@ -208,7 +222,7 @@ class LiteLLMWrapper:
     Example:
         >>> from axion.llm_registry import LLMRegistry
         >>> registry = LLMRegistry(provider='openai')
-        >>> llm = registry.get_llm('gpt-4o')
+        >>> llm = registry.get_llm('gpt-6-sol')
         >>> response = llm.complete('What is 2+2?')
         >>> print(response.text)
     """
@@ -233,7 +247,7 @@ class LiteLLMWrapper:
         """
         self.model = model
         if temperature is None:
-            self.temperature = 1.0 if _is_fixed_temperature_model(model) else 0.0
+            self.temperature = resolve_temperature(model, None)
         else:
             self.temperature = temperature
         self._provider = provider
@@ -262,7 +276,7 @@ class LiteLLMWrapper:
             CompletionResponse with the generated text
 
         Example:
-            >>> llm = LLMRegistry(provider='openai', api_key='sk-...').get_llm('gpt-4o')
+            >>> llm = LLMRegistry(provider='openai', api_key='sk-...').get_llm('gpt-6-sol')
             >>> response = llm.complete('What is the capital of France?')
             >>> print(response.text)
         """
@@ -298,7 +312,7 @@ class LiteLLMWrapper:
 
         Example:
             >>> import asyncio
-            >>> llm = LLMRegistry(provider='openai', api_key='sk-...').get_llm('gpt-4o')
+            >>> llm = LLMRegistry(provider='openai', api_key='sk-...').get_llm('gpt-6-sol')
             >>> response = asyncio.run(llm.acomplete('What is 2+2?'))
             >>> print(response.text)
         """
@@ -333,7 +347,7 @@ class LiteLLMWrapper:
             CompletionResponse with the generated text
 
         Example:
-            >>> llm = LLMRegistry(provider='openai', api_key='sk-...').get_llm('gpt-4o')
+            >>> llm = LLMRegistry(provider='openai', api_key='sk-...').get_llm('gpt-6-sol')
             >>> messages = [
             ...     {'role': 'system', 'content': 'You are a helpful assistant.'},
             ...     {'role': 'user', 'content': 'Hello!'}
@@ -708,18 +722,18 @@ class OpenAIProvider(BaseProvider):
     """
     Provider for OpenAI models via LiteLLM.
 
-    Supports all OpenAI models including GPT-4, GPT-4o, GPT-3.5, o1, o3, etc.
+    Supports all OpenAI models including GPT-6, GPT-5, o1, o3, etc.
     Model names are passed directly to LiteLLM without prefixing.
 
     Example:
         >>> registry = LLMRegistry(provider='openai')
-        >>> llm = registry.get_llm('gpt-4o')
-        >>> llm = registry.get_llm('gpt-4o-mini')
+        >>> llm = registry.get_llm('gpt-6-sol')
+        >>> llm = registry.get_llm('gpt-6-luna')
         >>> llm = registry.get_llm('o1-preview')
     """
 
     LITELLM_PREFIX = ''  # OpenAI is LiteLLM's default, no prefix needed
-    DEFAULT_LLM_MODEL = 'gpt-4o'
+    DEFAULT_LLM_MODEL = 'gpt-6-sol'
     DEFAULT_EMBEDDING_MODEL = 'text-embedding-ada-002'
 
     def __init__(self, api_key: Optional[str] = None, **credentials):

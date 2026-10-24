@@ -48,7 +48,7 @@ The following settings are available. Environment variables are case-insensitive
 |---------|---------------------|---------|-------------|
 | `llm_provider` | `LLM_PROVIDER` | `'openai'` | Default provider for language models. |
 | `embedding_provider` | `EMBEDDING_PROVIDER` | `'openai'` | Default provider for embedding models. |
-| `llm_model_name` | `LLM_MODEL_NAME` | `'gpt-4o'` | Default language model name. |
+| `llm_model_name` | `LLM_MODEL_NAME` | `'gpt-6-sol'` | Default language model name. |
 | `embedding_model_name` | `EMBEDDING_MODEL_NAME` | `'text-embedding-ada-002'` | Default embedding model name. |
 | `api_base_url` | `API_BASE_URL` | `None` | Optional base URL for OpenAI-compatible APIs. |
 | `litellm_verbose` | `LITELLM_VERBOSE` | `False` | Enable verbose logging for LiteLLM debugging. |
@@ -205,7 +205,7 @@ providers = list_tracing_providers()
     DEBUG=false
     LOG_LEVEL=INFO
     LLM_PROVIDER=openai
-    LLM_MODEL_NAME=gpt-4o
+    LLM_MODEL_NAME=gpt-6-sol
     OPENAI_API_KEY=sk-your-api-key
     ```
 
