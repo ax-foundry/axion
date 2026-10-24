@@ -201,8 +201,8 @@ class TestScoring:
             'spread',
             'confident-one-parent',
         ]
-        assert result.records[0].score == pytest.approx(3.6)
-        assert result.records[1].score == pytest.approx(1.95)
+        assert result.records[0].score == pytest.approx(6.6)
+        assert result.records[1].score == pytest.approx(2.95)
 
     @pytest.mark.asyncio
     async def test_score_fn_drives_candidate_selection(self):
@@ -288,7 +288,65 @@ class TestScoring:
         la = LearningArtifact('t', 'c', [], 0.7, ['a'])
         prov = Provenance(distinct_key_count=4)
         assert score_by_confidence(la, prov, []) == 0.7
-        assert score_by_distinct_keys(la, prov, []) == pytest.approx(4.7)
+        assert score_by_distinct_keys(la, prov, []) == pytest.approx(8.7)
+
+    def test_distinct_keys_strictly_dominate_confidence(self):
+        from axion.caliber.pattern_discovery.models import (
+            LearningArtifact,
+            Provenance,
+        )
+
+        sure_one = score_by_distinct_keys(
+            LearningArtifact('t', 'c', [], 1.0, ['a']),
+            Provenance(distinct_key_count=1),
+            [],
+        )
+        unsure_two = score_by_distinct_keys(
+            LearningArtifact('t', 'c', [], 0.0, ['a', 'b']),
+            Provenance(distinct_key_count=2),
+            [],
+        )
+        assert unsure_two > sure_one
+
+    @pytest.mark.asyncio
+    async def test_scorer_sees_complete_provenance_at_selection(self):
+        """A scorer may use any provenance field, including at the per-cluster cap."""
+        evidence = make_grouped_evidence(3, 2)
+        ids = list(evidence)
+        writer = ListWriter(
+            [
+                _learning(['p0_i0', 'p0_i1'], 0.9, 'from-parent-0'),
+                _learning(['p1_i0', 'p1_i1'], 0.5, 'from-parent-1'),
+            ]
+        )
+        seen = []
+
+        def prefer_parent_1(learning, provenance, items):
+            seen.append(provenance)
+            share = provenance.supporting_count / provenance.total_analyzed
+            return share + (1.0 if provenance.source_ref == 'parent_1' else 0.0)
+
+        result = await EvidencePipeline(
+            clusterer=ScriptedClusterer([ids]),
+            writer=writer,
+            recurrence_threshold=1,
+            max_learnings_per_cluster=1,
+            score_fn=prefer_parent_1,
+        ).run(evidence)
+        assert [la.title for la in result.learnings] == ['from-parent-1']
+        assert all(p.total_analyzed == 6 for p in seen)
+        assert all(p.timestamp and p.clustering_method for p in seen)
+        assert result.records[0].score == pytest.approx(2 / 6 + 1.0)
+        assert result.records[0].provenance.source_ref == 'parent_1'
+
+    def test_public_names_import_from_caliber(self):
+        from axion.caliber import (  # noqa: F401
+            FailedCluster,
+            LearningRecord,
+            LowCoverageError,
+            score_by_confidence,
+            score_by_distinct_keys,
+        )
 
 
 # --------------------------------------------------------------------------- #

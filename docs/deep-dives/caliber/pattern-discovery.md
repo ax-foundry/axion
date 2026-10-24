@@ -231,7 +231,8 @@ Beyond the original fields it carries:
 ### Ranking
 
 Learnings are ordered by LLM confidence unless you pass `score_fn(learning, provenance, supporting_items) -> float`.
-Two scorers ship: `score_by_confidence` (the default) and `score_by_distinct_keys` (independent recurrence first, confidence as tie-break).
+Two scorers ship: `score_by_confidence` (the default) and `score_by_distinct_keys` (independent recurrence first, confidence as tie-break; one more distinct key always outranks any confidence).
+The scorer receives the same complete `Provenance` the sink does, so it may read any field, including `source_ref`, `total_analyzed`, and `metadata`.
 A custom scorer can read anything on the items, for example a weight carried in metadata:
 
 ```python

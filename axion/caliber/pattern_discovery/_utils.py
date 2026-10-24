@@ -516,7 +516,8 @@ def score_by_distinct_keys(
     """
     Rank by independent recurrence, confidence as tie-break.
 
-    ``distinct_key_count`` dominates; confidence (in ``[0, 1]``) only orders
-    learnings with the same number of distinct keys.
+    ``distinct_key_count`` strictly dominates: one more distinct key outranks
+    any confidence, and confidence (in ``[0, 1]``) only orders learnings with
+    the same number of distinct keys.
     """
-    return provenance.distinct_key_count + learning.confidence
+    return 2 * provenance.distinct_key_count + learning.confidence

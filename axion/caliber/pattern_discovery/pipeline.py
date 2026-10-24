@@ -273,20 +273,20 @@ class EvidencePipeline:
 
         # Distill + Validate (bounded concurrency)
         total_repairs = 0
+        timestamp = datetime.now(timezone.utc).isoformat()
         semaphore = asyncio.Semaphore(self._max_concurrent)
 
         async def _process_cluster(
             pattern: DiscoveredPattern,
-        ) -> tuple[List[LearningArtifact], int]:
+        ) -> tuple[List[LearningRecord], int]:
             async with semaphore:
                 return await self._distill_and_validate(
-                    pattern, evidence_dict, clustering_result
+                    pattern, evidence_dict, clustering_result, method, timestamp
                 )
 
         tasks = [_process_cluster(p) for p in surviving_patterns]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        timestamp = datetime.now(timezone.utc).isoformat()
         records: List[LearningRecord] = []
         failed_clusters: List[FailedCluster] = []
         for pattern, res in zip(surviving_patterns, results):
@@ -302,14 +302,9 @@ class EvidencePipeline:
                     )
                 )
                 continue
-            learnings, repairs = res
+            cluster_records, repairs = res
             total_repairs += repairs
-            for la in learnings:
-                records.append(
-                    self._make_record(
-                        la, pattern, evidence_dict, clustering_result, method, timestamp
-                    )
-                )
+            records.extend(cluster_records)
 
         if (
             self._fail_on_all_errors
@@ -398,6 +393,12 @@ class EvidencePipeline:
         method: Optional[ClusteringMethod],
         timestamp: str,
     ) -> LearningRecord:
+        """Build the complete provenance for a learning and score it once.
+
+        This is the only place provenance is constructed, so a ``score_fn``
+        sees the same fields during selection as it does in the final
+        ordering and in what the sink receives.
+        """
         supporting_items = [
             evidence[sid] for sid in learning.supporting_item_ids if sid in evidence
         ]
@@ -495,8 +496,10 @@ class EvidencePipeline:
         pattern: DiscoveredPattern,
         evidence: Dict[str, EvidenceItem],
         clustering_result: PatternDiscoveryResult,
-    ) -> tuple[List[LearningArtifact], int]:
-        """Returns (validated_learnings, total_repairs)."""
+        method: Optional[ClusteringMethod],
+        timestamp: str,
+    ) -> tuple[List[LearningRecord], int]:
+        """Returns (records for the validated learnings, total_repairs)."""
         # Build ClusterForDistillation. Examples are spread across recurrence keys
         # so one prolific source cannot fill every slot, and each carries its id so
         # the writer can cite text it actually saw.
@@ -560,43 +563,35 @@ class EvidencePipeline:
             return artifact, repairs
 
         total_repairs = 0
-        validated: List[LearningArtifact] = []
+
+        def _record(artifact: LearningArtifact) -> LearningRecord:
+            return self._make_record(
+                artifact, pattern, evidence, clustering_result, method, timestamp
+            )
 
         if self._custom_score_fn is None:
             # Default path: truncate by confidence, then validate.
             sorted_learnings = sorted(
                 raw_learnings, key=lambda learning: learning.confidence, reverse=True
             )[: self._max_learnings_per_cluster]
+            validated: List[LearningRecord] = []
             for raw in sorted_learnings:
                 artifact, repairs = _validate(raw)
                 total_repairs += repairs
                 if artifact is not None:
-                    validated.append(artifact)
+                    validated.append(_record(artifact))
             return validated, total_repairs
 
         # Scored path: validate everything first so the score sees repaired
         # support, then keep the best-scored candidates. Truncating by confidence
-        # first would discard a learning the caller's score prefers.
-        scored: List[tuple[float, int, LearningArtifact]] = []
-        for index, raw in enumerate(raw_learnings):
+        # first would discard a learning the caller's score prefers. Each
+        # candidate is scored against its complete provenance, and that score is
+        # the one the record keeps.
+        scored: List[LearningRecord] = []
+        for raw in raw_learnings:
             artifact, repairs = _validate(raw)
             total_repairs += repairs
-            if artifact is None:
-                continue
-            supporting_items = [
-                evidence[sid] for sid in artifact.supporting_item_ids if sid in evidence
-            ]
-            distinct_keys = {self._recurrence_key_fn(item) for item in supporting_items}
-            preview = Provenance(
-                cluster_category=pattern.category,
-                supporting_count=len(artifact.supporting_item_ids),
-                distinct_keys=sorted(distinct_keys),
-                distinct_key_count=len(distinct_keys),
-                cluster_size=len(pattern.record_ids),
-                cited_support_count=len(supporting_items),
-            )
-            score = float(self._custom_score_fn(artifact, preview, supporting_items))
-            scored.append((score, index, artifact))
-        scored.sort(key=lambda t: (-t[0], t[1]))
-        validated = [a for _, _, a in scored[: self._max_learnings_per_cluster]]
-        return validated, total_repairs
+            if artifact is not None:
+                scored.append(_record(artifact))
+        scored.sort(key=lambda rec: rec.score, reverse=True)  # stable
+        return scored[: self._max_learnings_per_cluster], total_repairs
