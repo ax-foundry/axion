@@ -3424,6 +3424,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#coverage-accounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Accounting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grouped-evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grouped Evidence
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3531,10 +3553,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#cluster-output-repair" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cluster Output Repair
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#hallucinated-id-repair" class="md-nav__link">
     <span class="md-ellipsis">
       
         Hallucinated ID Repair
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#input-integrity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input Integrity
       
     </span>
   </a>
@@ -4703,6 +4747,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#coverage-accounting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coverage Accounting
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#grouped-evidence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grouped Evidence
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4810,10 +4876,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#cluster-output-repair" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cluster Output Repair
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#hallucinated-id-repair" class="md-nav__link">
     <span class="md-ellipsis">
       
         Hallucinated ID Repair
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#input-integrity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input Integrity
       
     </span>
   </a>
@@ -5061,12 +5149,12 @@
 </tr>
 <tr>
 <td><strong>Pre-filter</strong></td>
-<td>Drops clusters below <code>recurrence_threshold</code></td>
-<td><code>recurrence_threshold=</code></td>
+<td>Drops clusters spanning fewer than <code>recurrence_threshold</code> distinct recurrence keys</td>
+<td><code>recurrence_threshold=</code>, <code>recurrence_key_fn=</code></td>
 </tr>
 <tr>
 <td><strong>Distill</strong></td>
-<td>LLM converts each cluster into a learning artifact</td>
+<td>LLM converts each cluster into a learning artifact; sees up to 5 examples spread across recurrence keys, each with its id</td>
 <td><code>domain_context=</code>, <code>max_concurrent_distillations=</code></td>
 </tr>
 <tr>
@@ -5135,18 +5223,81 @@
 </span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">result</span><span class="o">.</span><span class="n">deduplicated_count</span>  <span class="c1"># learnings removed by deduper</span>
 </span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">result</span><span class="o">.</span><span class="n">validation_repairs</span>  <span class="c1"># count of hallucinated-ID repairs</span>
 </span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">result</span><span class="o">.</span><span class="n">sink_ids</span>            <span class="c1"># IDs returned by the sink after persistence</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">result</span><span class="o">.</span><span class="n">input_count</span>         <span class="c1"># items handed to run(), before sampling</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="n">result</span><span class="o">.</span><span class="n">sampled_out</span>         <span class="c1"># items dropped to fit max_items</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="n">result</span><span class="o">.</span><span class="n">duplicates_dropped</span>  <span class="c1"># exact repeats collapsed from a sequence input</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="n">result</span><span class="o">.</span><span class="n">coverage</span>            <span class="c1"># accounting: where every item ended up (below)</span>
 </span></code></pre></div>
+<h3 id="coverage-accounting">Coverage Accounting<a class="headerlink" href="#coverage-accounting" title="Permanent link">&para;</a></h3>
+<p>Every item handed to <code>run()</code> ends up in exactly one bucket, so a model that quietly drops items is distinguishable from filters you configured.
+<code>result.coverage</code> (and <code>PatternDiscoveryResult.metadata['coverage']</code> for standalone clustering) carries:</p>
+<table>
+<thead>
+<tr>
+<th>Bucket</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sampled_out</code></td>
+<td>Dropped to fit <code>max_items</code> before clustering</td>
+</tr>
+<tr>
+<td><code>ineligible</code></td>
+<td>Empty text, never submitted</td>
+</tr>
+<tr>
+<td><code>assigned</code></td>
+<td>Placed in a surviving pattern</td>
+</tr>
+<tr>
+<td><code>uncategorized</code></td>
+<td>The model said it fits no pattern</td>
+</tr>
+<tr>
+<td><code>filtered_small_cluster</code></td>
+<td>Placed in a pattern smaller than <code>min_category_size</code></td>
+</tr>
+<tr>
+<td><code>filtered_below_threshold</code></td>
+<td>Placed in a cluster the pipeline pre-filter dropped</td>
+</tr>
+<tr>
+<td><code>omitted_by_model</code></td>
+<td>Submitted, but returned in neither a pattern nor <code>uncategorized</code> (<code>omitted_ids</code> lists them)</td>
+</tr>
+<tr>
+<td><code>ratio</code></td>
+<td>Model coverage: share of <em>submitted</em> items the model placed anywhere. Filters never count against it</td>
+</tr>
+</tbody>
+</table>
+<p>The buckets are mutually exclusive and sum to <code>input_count</code> less <code>sampled_out</code> and <code>duplicates_dropped</code>; an item whose cluster the pipeline pre-filter dropped is counted in <code>filtered_below_threshold</code>, not <code>assigned</code>.
+Every key is present on every result, including results that never reached a model (blank-only input, too few documents) and results from a custom <code>clusterer</code> that reports no coverage of its own, in which case the buckets are derived from what it returned.
+Set <code>min_coverage=0.9</code> to log a warning when <code>ratio</code> falls below it (the result gets <code>coverage['below_min'] = True</code>); add <code>raise_on_low_coverage=True</code> to raise <code>LowCoverageError</code> instead.
+<code>clustering_excerpt_chars=</code> caps the text per item sent to the clustering call; the default sends full text.</p>
+<h3 id="grouped-evidence">Grouped Evidence<a class="headerlink" href="#grouped-evidence" title="Permanent link">&para;</a></h3>
+<p>When several items hang off one parent (chunks of a conversation, findings on a ticket), set <code>recurrence_key_fn</code> to the parent so recurrence counts parents, not items:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">EvidencePipeline</span><span class="p">(</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="o">...</span><span class="p">,</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">recurrence_threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">recurrence_key_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">source_ref</span> <span class="ow">or</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="p">)</span>
+</span></code></pre></div>
+<p>With a key in place the pipeline pre-filters clusters by distinct keys, spreads distillation examples round-robin across keys, and passes <code>distinct_source_count</code> to the distiller so its confidence anchors to independent sources.
+Ten items from one parent are one observation.</p>
 <h2 id="metadata-handling">Metadata Handling<a class="headerlink" href="#metadata-handling" title="Permanent link">&para;</a></h2>
 <h3 id="metadataconfig">MetadataConfig<a class="headerlink" href="#metadataconfig" title="Permanent link">&para;</a></h3>
 <p>Control how metadata flows through the pipeline:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetadataConfig</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">config</span> <span class="o">=</span> <span class="n">MetadataConfig</span><span class="p">(</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="n">include_in_clustering</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>      <span class="c1"># attach metadata to clustering prompts</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="n">include_in_distillation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>    <span class="c1"># attach metadata to distillation prompts</span>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">allowed_keys</span><span class="o">=</span><span class="p">{</span><span class="s1">'severity'</span><span class="p">,</span> <span class="s1">'platform'</span><span class="p">},</span>  <span class="c1"># only these keys pass through</span>
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="n">denied_keys</span><span class="o">=</span><span class="nb">set</span><span class="p">(),</span>               <span class="c1"># explicit denylist (PII defaults apply)</span>
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetadataConfig</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">config</span> <span class="o">=</span> <span class="n">MetadataConfig</span><span class="p">(</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">include_in_clustering</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>      <span class="c1"># attach metadata to clustering prompts</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="n">include_in_distillation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>    <span class="c1"># attach metadata to distillation prompts</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="n">allowed_keys</span><span class="o">=</span><span class="p">{</span><span class="s1">'severity'</span><span class="p">,</span> <span class="s1">'platform'</span><span class="p">},</span>  <span class="c1"># only these keys pass through</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="n">denied_keys</span><span class="o">=</span><span class="nb">set</span><span class="p">(),</span>               <span class="c1"># explicit denylist (PII defaults apply)</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="p">)</span>
 </span></code></pre></div>
 <h3 id="pii-safety">PII Safety<a class="headerlink" href="#pii-safety" title="Permanent link">&para;</a></h3>
 <p>By default, metadata keys matching common PII patterns are excluded:</p>
@@ -5156,7 +5307,7 @@
 <p>These are filtered before any data reaches an LLM. You can customize the denylist via <code>MetadataConfig.denied_keys</code>.</p>
 <h3 id="metadata-in-clusters">Metadata in Clusters<a class="headerlink" href="#metadata-in-clusters" title="Permanent link">&para;</a></h3>
 <p>When <code>include_in_clustering=True</code>, each evidence note sent to the LLM includes a compact header:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>[meta: severity=high, platform=ios] Checkout button unresponsive on mobile Safari
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>[meta: severity=high, platform=ios] Checkout button unresponsive on mobile Safari
 </span></code></pre></div>
 <p>During distillation, cluster-level metadata is aggregated into frequency distributions so the LLM sees patterns like "severity: high (3), medium (1)".</p>
 <h2 id="plugins">Plugins<a class="headerlink" href="#plugins" title="Permanent link">&para;</a></h2>
@@ -5165,36 +5316,36 @@
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Dict-based storage, ideal for testing and notebooks:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemorySink</span>
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">sink</span> <span class="o">=</span> <span class="n">InMemorySink</span><span class="p">()</span>
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">evidence</span><span class="p">)</span>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="k">for</span> <span class="n">sid</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">sink</span><span class="o">.</span><span class="n">artifacts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s1">'artifact'</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'provenance'</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemorySink</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">sink</span> <span class="o">=</span> <span class="n">InMemorySink</span><span class="p">()</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">evidence</span><span class="p">)</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="k">for</span> <span class="n">sid</span><span class="p">,</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">sink</span><span class="o">.</span><span class="n">artifacts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s1">'artifact'</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'provenance'</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
 <p>Appends each artifact as a JSON line to a file:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonlSink</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">sink</span> <span class="o">=</span> <span class="n">JsonlSink</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">'learnings.jsonl'</span><span class="p">)</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">evidence</span><span class="p">)</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="c1"># Each learning is appended as one JSON line</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonlSink</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">sink</span> <span class="o">=</span> <span class="n">JsonlSink</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">'learnings.jsonl'</span><span class="p">)</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">evidence</span><span class="p">)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="c1"># Each learning is appended as one JSON line</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
 <p>Implement the <code>ArtifactSink</code> protocol:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArtifactSink</span><span class="p">,</span> <span class="n">LearningArtifact</span><span class="p">,</span> <span class="n">Provenance</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">DatabaseSink</span><span class="p">:</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>        <span class="n">artifact</span><span class="p">:</span> <span class="n">LearningArtifact</span><span class="p">,</span>
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>        <span class="n">provenance</span><span class="p">:</span> <span class="n">Provenance</span><span class="p">,</span>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>        <span class="c1"># persist to your database</span>
-</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>        <span class="k">return</span> <span class="n">record_id</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArtifactSink</span><span class="p">,</span> <span class="n">LearningArtifact</span><span class="p">,</span> <span class="n">Provenance</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="k">class</span><span class="w"> </span><span class="nc">DatabaseSink</span><span class="p">:</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>        <span class="n">artifact</span><span class="p">:</span> <span class="n">LearningArtifact</span><span class="p">,</span>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>        <span class="n">provenance</span><span class="p">:</span> <span class="n">Provenance</span><span class="p">,</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>        <span class="c1"># persist to your database</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>        <span class="k">return</span> <span class="n">record_id</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -5204,56 +5355,62 @@
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p>Case-insensitive title matching — lightweight, no external dependencies:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryDeduper</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">deduper</span> <span class="o">=</span> <span class="n">InMemoryDeduper</span><span class="p">()</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemoryDeduper</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">deduper</span> <span class="o">=</span> <span class="n">InMemoryDeduper</span><span class="p">()</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
 <p>Cosine similarity on OpenAI embeddings (threshold defaults to 0.85):</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddingDeduper</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">deduper</span> <span class="o">=</span> <span class="n">EmbeddingDeduper</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>  <span class="c1"># requires axion[embeddings]</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddingDeduper</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="n">deduper</span> <span class="o">=</span> <span class="n">EmbeddingDeduper</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>  <span class="c1"># requires axion[embeddings]</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
 <h2 id="validation-quality-gates">Validation &amp; Quality Gates<a class="headerlink" href="#validation-quality-gates" title="Permanent link">&para;</a></h2>
 <p>The pipeline automatically validates every learning artifact:</p>
+<h3 id="cluster-output-repair">Cluster Output Repair<a class="headerlink" href="#cluster-output-repair" title="Permanent link">&para;</a></h3>
+<p>Raw clustering output is validated before anything trusts it: ids that were never submitted are dropped, repeats within a pattern are collapsed, and <code>uncategorized</code> loses unknown ids and ids that are also assigned.
+Counts are in <code>PatternDiscoveryResult.metadata['cluster_repairs']</code>.
+Items may appear in more than one pattern by default; pass <code>disjoint_clusters=True</code> to keep only the first assignment.</p>
 <h3 id="hallucinated-id-repair">Hallucinated ID Repair<a class="headerlink" href="#hallucinated-id-repair" title="Permanent link">&para;</a></h3>
-<p>If the LLM references item IDs that don't exist in the cluster, they are silently removed. If <strong>all</strong> IDs are invalid, the learning is dropped entirely.</p>
+<p>If the LLM references item IDs that don't exist in the cluster, they are silently removed. Repeated supporting ids are collapsed, and an id cannot be both support and counterexample for the same learning. If <strong>all</strong> supporting IDs are invalid, the learning is dropped entirely.</p>
+<h3 id="input-integrity">Input Integrity<a class="headerlink" href="#input-integrity" title="Permanent link">&para;</a></h3>
+<p>A sequence input may repeat an item only if the repeats are identical (they are collapsed and counted in <code>duplicates_dropped</code>). Two different items sharing an id raise <code>ValueError</code>.</p>
 <h3 id="confidence-demotion">Confidence Demotion<a class="headerlink" href="#confidence-demotion" title="Permanent link">&para;</a></h3>
 <p>Learnings with <code>confidence &gt;= 0.7</code> but <strong>no recommended actions</strong> are demoted to <code>confidence = 0.69</code> — the reasoning being that a high-confidence insight should be actionable.</p>
 <h3 id="recurrence-checking">Recurrence Checking<a class="headerlink" href="#recurrence-checking" title="Permanent link">&para;</a></h3>
-<p>A learning must be backed by evidence from multiple unique sources (controlled by <code>recurrence_threshold</code>). Two chunks from the same conversation count as one source — the check uses <code>source_ref</code> to deduplicate.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Standalone usage</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber.pattern_discovery._utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_learning</span>
-</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
-</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="n">repaired</span><span class="p">,</span> <span class="n">repair_count</span> <span class="o">=</span> <span class="n">validate_learning</span><span class="p">(</span><span class="n">raw_learning</span><span class="p">,</span> <span class="n">cluster_item_ids</span><span class="p">)</span>
+<p>A learning must be backed by evidence from multiple unique sources (controlled by <code>recurrence_threshold</code>). The source of an item is whatever <code>recurrence_key_fn</code> returns; the default is the item id, so pass a key (for example <code>lambda item: item.source_ref or item.id</code>) to make two chunks from the same conversation count as one source.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Standalone usage</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber.pattern_discovery._utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_learning</span>
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="n">repaired</span><span class="p">,</span> <span class="n">repair_count</span> <span class="o">=</span> <span class="n">validate_learning</span><span class="p">(</span><span class="n">raw_learning</span><span class="p">,</span> <span class="n">cluster_item_ids</span><span class="p">)</span>
 </span></code></pre></div>
 <h2 id="legacy-api">Legacy API<a class="headerlink" href="#legacy-api" title="Permanent link">&para;</a></h2>
 <p>The original <code>discover()</code> method still works for annotation-based workflows:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">PatternDiscovery</span><span class="p">,</span> <span class="n">AnnotatedItem</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="n">annotations</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    <span class="s1">'rec_1'</span><span class="p">:</span> <span class="n">AnnotatedItem</span><span class="p">(</span><span class="n">record_id</span><span class="o">=</span><span class="s1">'rec_1'</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="s1">'Missing context'</span><span class="p">),</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="s1">'rec_2'</span><span class="p">:</span> <span class="n">AnnotatedItem</span><span class="p">(</span><span class="n">record_id</span><span class="o">=</span><span class="s1">'rec_2'</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="s1">'Too verbose'</span><span class="p">),</span>
-</span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="p">}</span>
-</span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>
-</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="n">discovery</span> <span class="o">=</span> <span class="n">PatternDiscovery</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">'gpt-6-luna'</span><span class="p">)</span>
-</span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">discover</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">ClusteringMethod</span><span class="o">.</span><span class="n">LLM</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.caliber</span><span class="w"> </span><span class="kn">import</span> <span class="n">PatternDiscovery</span><span class="p">,</span> <span class="n">AnnotatedItem</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">annotations</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="s1">'rec_1'</span><span class="p">:</span> <span class="n">AnnotatedItem</span><span class="p">(</span><span class="n">record_id</span><span class="o">=</span><span class="s1">'rec_1'</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="s1">'Missing context'</span><span class="p">),</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="s1">'rec_2'</span><span class="p">:</span> <span class="n">AnnotatedItem</span><span class="p">(</span><span class="n">record_id</span><span class="o">=</span><span class="s1">'rec_2'</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">notes</span><span class="o">=</span><span class="s1">'Too verbose'</span><span class="p">),</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="p">}</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="n">discovery</span> <span class="o">=</span> <span class="n">PatternDiscovery</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">'gpt-6-luna'</span><span class="p">)</span>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">discovery</span><span class="o">.</span><span class="n">discover</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">ClusteringMethod</span><span class="o">.</span><span class="n">LLM</span><span class="p">)</span>
 </span></code></pre></div>
 <p>This is equivalent to converting annotations to <code>EvidenceItem</code> objects and calling <code>discover_from_evidence()</code>. The conversion happens automatically via the compatibility layer.</p>
 <h2 id="using-with-evaluation-issues">Using with Evaluation Issues<a class="headerlink" href="#using-with-evaluation-issues" title="Permanent link">&para;</a></h2>
 <p>The <code>InsightExtractor</code> bridges evaluation issues with this pipeline. It converts <code>ExtractedIssue</code> objects (from the <a href="../../../guides/issue-extraction/">Issue Extractor</a>) into <code>EvidenceItem</code> objects and runs them through <code>EvidencePipeline</code> to discover cross-metric patterns:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">IssueExtractor</span><span class="p">,</span> <span class="n">InsightExtractor</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="n">issues</span> <span class="o">=</span> <span class="n">IssueExtractor</span><span class="p">()</span><span class="o">.</span><span class="n">extract_from_evaluation</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
-</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="n">insights</span> <span class="o">=</span> <span class="k">await</span> <span class="n">InsightExtractor</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">'gpt-6-luna'</span><span class="p">)</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
-</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
-</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">insights</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>
-</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>    <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">is_cross_metric</span><span class="p">:</span>
-</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">metrics_involved</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">axion.reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">IssueExtractor</span><span class="p">,</span> <span class="n">InsightExtractor</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="n">issues</span> <span class="o">=</span> <span class="n">IssueExtractor</span><span class="p">()</span><span class="o">.</span><span class="n">extract_from_evaluation</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="n">insights</span> <span class="o">=</span> <span class="k">await</span> <span class="n">InsightExtractor</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s1">'gpt-6-luna'</span><span class="p">)</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">issues</span><span class="p">)</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">insights</span><span class="o">.</span><span class="n">patterns</span><span class="p">:</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">is_cross_metric</span><span class="p">:</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">pattern</span><span class="o">.</span><span class="n">category</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">metrics_involved</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span></code></pre></div>
 <p>See the <a href="../../../guides/insight-extraction/">Cross-Metric Insight Extraction Guide</a> for full details.</p>
 <h2 id="api-summary">API Summary<a class="headerlink" href="#api-summary" title="Permanent link">&para;</a></h2>
@@ -5321,7 +5478,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 24, 2026 21:44:23 UTC">October 24, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 24, 2026 21:44:36 UTC">October 24, 2026</span>
   </span>
 
     
