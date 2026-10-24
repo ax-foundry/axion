@@ -27,7 +27,7 @@ dependencies = [
 "loguru>=0.7.2",
 "nest-asyncio",
 "numpy",
-"litellm>=1.52.0",
+"litellm>=1.104.0",
 "openai>=1.0.0",
 "pandas",
 "protobuf",

@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from axion._core.logging import get_logger
 from axion._core.tracing import trace
+from axion.llm_registry import resolve_temperature
 
 logger = get_logger(__name__)
 
@@ -42,17 +43,19 @@ class LiteLLMDeepEval(DeepEvalBaseLLM):
     def __init__(
         self,
         model: str = 'gpt-6-sol',
-        temperature: float = 0.0,
+        temperature: Optional[float] = None,
     ):
         """
         Initialize the LiteLLM DeepEval wrapper.
 
         Args:
             model: LiteLLM-compatible model name (e.g., 'gpt-6-sol', 'anthropic/claude-3-5-sonnet')
-            temperature: Generation temperature (default 0.0 for deterministic outputs)
+            temperature: Generation temperature. Defaults to 0.0, except for
+                reasoning models (GPT-6, GPT-5.4, o-series), which only accept
+                1.0 and always get it.
         """
         self.model_name = model
-        self._temperature = temperature
+        self._temperature = resolve_temperature(model, temperature)
         self._accumulated_cost = 0.0
         self._accumulated_prompt_tokens = 0
         self._accumulated_completion_tokens = 0

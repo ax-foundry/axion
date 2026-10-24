@@ -180,7 +180,7 @@ class MockLLM:
         pass
 
 
-def _is_fixed_temperature_model(model: str) -> bool:
+def is_fixed_temperature_model(model: str) -> bool:
     """Check if a model doesn't support temperature=0.0 (e.g., GPT-6, GPT-5.4, o1, o3 reasoning models)."""
     from axion._handlers.llm.models import fixed_temperature_model_prefixes
 
@@ -189,6 +189,20 @@ def _is_fixed_temperature_model(model: str) -> bool:
     if '/' in model_lower:
         model_lower = model_lower.split('/')[-1]
     return any(model_lower.startswith(p) for p in fixed_temperature_model_prefixes)
+
+
+_is_fixed_temperature_model = is_fixed_temperature_model
+
+
+def resolve_temperature(model: str, requested: Optional[float]) -> float:
+    """Temperature to send for ``model``.
+
+    Reasoning models reject every temperature but 1.0, so they always get 1.0.
+    Any other model gets ``requested``, or 0.0 when the caller gave none.
+    """
+    if is_fixed_temperature_model(model):
+        return 1.0
+    return 0.0 if requested is None else requested
 
 
 class LiteLLMWrapper:
@@ -233,7 +247,7 @@ class LiteLLMWrapper:
         """
         self.model = model
         if temperature is None:
-            self.temperature = 1.0 if _is_fixed_temperature_model(model) else 0.0
+            self.temperature = resolve_temperature(model, None)
         else:
             self.temperature = temperature
         self._provider = provider
