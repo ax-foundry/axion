@@ -5,7 +5,7 @@ from axion.caliber.pattern_discovery._compat import (
     normalize_annotations,
 )
 from axion.caliber.pattern_discovery._utils import MetadataConfig
-from axion.caliber.pattern_discovery.discovery import PatternDiscovery
+from axion.caliber.pattern_discovery.discovery import LowCoverageError, PatternDiscovery
 from axion.caliber.pattern_discovery.display import (
     display_learnings,
     display_patterns,
@@ -23,6 +23,7 @@ from axion.caliber.pattern_discovery.handlers import (
     EvidenceClusteringHandler,
     EvidenceClusteringInput,
     EvidenceNote,
+    ExampleItem,
     LabelInput,
     LabelOutput,
     LabelRefinementHandler,
@@ -81,12 +82,14 @@ __all__ = [
     'EvidenceClusteringHandler',
     'EvidenceClusteringInput',
     'EvidenceNote',
+    'ExampleItem',
     'LearningArtifactOutput',
     # Handler classes
     'LabelRefinementHandler',
     'PatternClusteringHandler',
     # Discovery
     'PatternDiscovery',
+    'LowCoverageError',
     # Pipeline
     'ArtifactWriter',
     'EvidenceClusterer',

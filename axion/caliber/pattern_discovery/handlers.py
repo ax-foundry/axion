@@ -130,12 +130,16 @@ For each learning:
 1. Title: A concise 2-8 word actionable title
 2. Content: A synthesized insight in prose form
 3. Tags: Categorical tags for organization
-4. Confidence: 0.0-1.0, anchored to the supporting evidence:
-   - 0.9+: >= 10 consistent supporting items, no counterexamples
-   - 0.75-0.89: 5-9 supporting items, at most weak counterexamples
-   - 0.6-0.74: 3-4 supporting items, or notable counterexamples
+4. Confidence: 0.0-1.0, anchored to INDEPENDENT supporting evidence. Several items
+   from the same source are one observation, not several. When the cluster gives a
+   distinct_source_count, treat it as the ceiling on independent observations:
+   - 0.9+: >= 10 independent supporting observations, no counterexamples
+   - 0.75-0.89: 5-9 independent observations, at most weak counterexamples
+   - 0.6-0.74: 3-4 independent observations, or notable counterexamples
    - < 0.6: weak or mixed support
-5. Supporting item IDs: ONLY cite item_ids from the provided cluster's item_ids list
+5. Supporting item IDs: ONLY cite item_ids from the provided cluster's item_ids list.
+   Prefer ids whose text you were shown (each entry in examples carries its item_id);
+   cite an unseen member only when the category description clearly covers it
 6. Recommended actions: Actionable bullet points (at least one for high-confidence learnings)
 7. Counterexamples: Item IDs that contradict the main pattern (if any, from this cluster only)
 8. Scope: When this learning applies
@@ -239,14 +243,30 @@ class EvidenceClusteringInput(StrictBaseModel):
     items: List[EvidenceNote]
 
 
+class ExampleItem(StrictBaseModel):
+    """One example shown to the distiller, with the id it may cite for it."""
+
+    item_id: str
+    text: str
+
+
 class ClusterForDistillation(StrictBaseModel):
-    """A cluster ready for distillation into learnings."""
+    """A cluster ready for distillation into learnings.
+
+    ``item_ids`` is cluster membership. ``examples`` carries the subset whose
+    text the writer is shown, each with its id, so cited support can be traced to
+    text the model saw. ``example_texts`` repeats the same texts without ids for
+    writers that predate ``examples``. ``distinct_source_count`` is the number of
+    independent recurrence keys in the cluster when the caller supplied one.
+    """
 
     category: str
     description: str
     item_ids: List[str]
     example_texts: List[str]
     metadata_summary: Optional[str] = None
+    examples: List[ExampleItem] = Field(default_factory=list)
+    distinct_source_count: Optional[int] = None
 
 
 class DistillationInput(StrictBaseModel):

@@ -134,11 +134,12 @@ def validate_learning(
     """
     Validate and repair a learning artifact.
 
-    1. ``supporting_item_ids`` must be a subset of ``cluster_item_ids``.
-       Remove invalid IDs and track repair count.
+    1. ``supporting_item_ids`` must be a subset of ``cluster_item_ids`` and
+       contain no repeats. Remove invalid/repeated IDs and track repair count.
        Return ``None`` if ALL supporting_item_ids are invalid.
-    2. ``counterexamples`` must be a subset of ``cluster_item_ids``.
-       Remove invalid, track repairs.
+    2. ``counterexamples`` must be a subset of ``cluster_item_ids``, contain no
+       repeats, and not overlap ``supporting_item_ids``. Remove invalid, track
+       repairs.
     3. If ``confidence >= min_actions_confidence`` and no ``recommended_actions``:
        demote confidence to ``min_actions_confidence - 0.01``.
 
@@ -147,17 +148,30 @@ def validate_learning(
     """
     repairs = 0
 
-    # Validate supporting_item_ids
-    valid_supporting = [
-        sid for sid in learning.supporting_item_ids if sid in cluster_item_ids
-    ]
+    # Validate supporting_item_ids: in-cluster, de-duplicated, order preserved
+    valid_supporting: List[str] = []
+    seen_supporting: Set[str] = set()
+    for sid in learning.supporting_item_ids:
+        if sid in cluster_item_ids and sid not in seen_supporting:
+            valid_supporting.append(sid)
+            seen_supporting.add(sid)
     repairs += len(learning.supporting_item_ids) - len(valid_supporting)
 
     if not valid_supporting:
         return None, repairs
 
-    # Validate counterexamples
-    valid_counter = [cid for cid in learning.counterexamples if cid in cluster_item_ids]
+    # Validate counterexamples: in-cluster, de-duplicated, and never also cited as
+    # support (an id cannot both support and contradict the same learning)
+    valid_counter: List[str] = []
+    seen_counter: Set[str] = set()
+    for cid in learning.counterexamples:
+        if (
+            cid in cluster_item_ids
+            and cid not in seen_supporting
+            and cid not in seen_counter
+        ):
+            valid_counter.append(cid)
+            seen_counter.add(cid)
     repairs += len(learning.counterexamples) - len(valid_counter)
 
     # Quality gate: high confidence requires recommended_actions
@@ -257,3 +271,220 @@ def default_tag_normalizer(tags: List[str]) -> List[str]:
         if len(result) >= DEFAULT_MAX_TAGS:
             break
     return result
+
+
+def group_ids_by_key(
+    item_ids: List[str],
+    evidence: Dict[str, EvidenceItem],
+    key_fn: RecurrenceKeyFn = default_recurrence_key,
+) -> Dict[str, List[str]]:
+    """Group item ids by recurrence key, preserving first-seen order of both."""
+    groups: Dict[str, List[str]] = {}
+    for iid in item_ids:
+        item = evidence.get(iid)
+        if item is None:
+            continue
+        groups.setdefault(key_fn(item), []).append(iid)
+    return groups
+
+
+def count_distinct_keys(
+    item_ids: List[str],
+    evidence: Dict[str, EvidenceItem],
+    key_fn: RecurrenceKeyFn = default_recurrence_key,
+) -> int:
+    """Number of distinct recurrence keys among ``item_ids`` present in ``evidence``."""
+    return len(group_ids_by_key(item_ids, evidence, key_fn))
+
+
+def round_robin_by_key(
+    item_ids: List[str],
+    evidence: Dict[str, EvidenceItem],
+    limit: int,
+    key_fn: RecurrenceKeyFn = default_recurrence_key,
+) -> List[str]:
+    """
+    Pick up to ``limit`` ids spread across recurrence keys, deterministically.
+
+    Takes the first id of every key (in first-seen key order), then the second
+    of every key, and so on. Ids missing from ``evidence`` are skipped. With the
+    default key (item id) this is simply ``item_ids[:limit]``.
+    """
+    if limit <= 0:
+        return []
+    groups = list(group_ids_by_key(item_ids, evidence, key_fn).values())
+    picked: List[str] = []
+    depth = 0
+    while len(picked) < limit:
+        progressed = False
+        for group in groups:
+            if depth < len(group):
+                picked.append(group[depth])
+                progressed = True
+                if len(picked) >= limit:
+                    break
+        if not progressed:
+            break
+        depth += 1
+    return picked
+
+
+@dataclass
+class ClusterRepairs:
+    """Counts of fixes applied to raw clustering output before it is trusted."""
+
+    unknown_ids: int = 0
+    duplicate_ids: int = 0
+    cross_pattern_duplicates: int = 0
+    uncategorized_unknown: int = 0
+    uncategorized_assigned: int = 0
+    uncategorized_duplicates: int = 0
+
+    @property
+    def total(self) -> int:
+        return (
+            self.unknown_ids
+            + self.duplicate_ids
+            + self.cross_pattern_duplicates
+            + self.uncategorized_unknown
+            + self.uncategorized_assigned
+            + self.uncategorized_duplicates
+        )
+
+    def as_dict(self) -> Dict[str, int]:
+        return {
+            'unknown_ids': self.unknown_ids,
+            'duplicate_ids': self.duplicate_ids,
+            'cross_pattern_duplicates': self.cross_pattern_duplicates,
+            'uncategorized_unknown': self.uncategorized_unknown,
+            'uncategorized_assigned': self.uncategorized_assigned,
+            'uncategorized_duplicates': self.uncategorized_duplicates,
+            'total': self.total,
+        }
+
+
+def repair_cluster_assignments(
+    pattern_ids: List[List[str]],
+    uncategorized: List[str],
+    known_ids: Set[str],
+    disjoint: bool = False,
+) -> Tuple[List[List[str]], List[str], ClusterRepairs]:
+    """
+    Validate raw model cluster assignments against the ids that were submitted.
+
+    - Ids not in ``known_ids`` are dropped from patterns and ``uncategorized``.
+    - Repeats within one pattern are collapsed.
+    - With ``disjoint=True`` an id keeps only its first pattern; later patterns
+      lose it (``cross_pattern_duplicates``). With ``disjoint=False`` (default)
+      an id may legitimately appear in several patterns.
+    - ``uncategorized`` loses repeats and any id that is also assigned.
+
+    Returns the repaired pattern id lists (same order and length as the input,
+    possibly empty), the repaired ``uncategorized`` list, and the repair counts.
+    """
+    repairs = ClusterRepairs()
+    assigned: Set[str] = set()
+    repaired_patterns: List[List[str]] = []
+    for ids in pattern_ids:
+        kept: List[str] = []
+        seen: Set[str] = set()
+        for rid in ids:
+            if rid not in known_ids:
+                repairs.unknown_ids += 1
+                continue
+            if rid in seen:
+                repairs.duplicate_ids += 1
+                continue
+            if disjoint and rid in assigned:
+                repairs.cross_pattern_duplicates += 1
+                continue
+            seen.add(rid)
+            kept.append(rid)
+        assigned.update(kept)
+        repaired_patterns.append(kept)
+
+    repaired_uncat: List[str] = []
+    seen_uncat: Set[str] = set()
+    for rid in uncategorized:
+        if rid not in known_ids:
+            repairs.uncategorized_unknown += 1
+            continue
+        if rid in assigned:
+            repairs.uncategorized_assigned += 1
+            continue
+        if rid in seen_uncat:
+            repairs.uncategorized_duplicates += 1
+            continue
+        seen_uncat.add(rid)
+        repaired_uncat.append(rid)
+
+    return repaired_patterns, repaired_uncat, repairs
+
+
+def build_coverage(
+    submitted_ids: List[str],
+    assigned_ids: Set[str],
+    uncategorized_ids: List[str],
+    filtered_small_cluster_ids: Set[str],
+    ineligible: int = 0,
+    sampled_out: int = 0,
+) -> Dict[str, Any]:
+    """
+    Account for every submitted id in exactly one bucket.
+
+    ``ratio`` is model coverage: the share of *submitted* ids the model placed
+    somewhere (a pattern or ``uncategorized``). Items the caller filtered out
+    before or after the call (``ineligible``, ``sampled_out``,
+    ``filtered_small_cluster``) are reported but never counted against the model.
+    """
+    submitted = set(submitted_ids)
+    placed = assigned_ids | set(uncategorized_ids) | filtered_small_cluster_ids
+    omitted = sorted(submitted - placed)
+    n_submitted = len(submitted)
+    covered = n_submitted - len(omitted)
+    return {
+        'submitted': n_submitted,
+        'assigned': len(assigned_ids & submitted),
+        'uncategorized': len(set(uncategorized_ids) & submitted),
+        'filtered_small_cluster': len(filtered_small_cluster_ids & submitted),
+        'omitted_by_model': len(omitted),
+        'omitted_ids': omitted,
+        'ineligible': ineligible,
+        'sampled_out': sampled_out,
+        'ratio': (covered / n_submitted) if n_submitted else 1.0,
+    }
+
+
+def normalize_evidence(
+    evidence: Any,
+) -> Tuple[Dict[str, EvidenceItem], int]:
+    """
+    Turn a sequence or dict of ``EvidenceItem`` into an id-keyed dict.
+
+    A dict is validated (key must equal ``item.id``) and returned as-is.
+    In a sequence, two items with the same id must be identical: exact
+    repeats are collapsed and counted; conflicting repeats raise
+    ``ValueError`` rather than one silently overwriting the other.
+
+    Returns ``(evidence_dict, exact_duplicates_dropped)``.
+    """
+    if isinstance(evidence, dict):
+        for key, item in evidence.items():
+            if key != item.id:
+                raise ValueError(f'Dict key {key!r} does not match item.id {item.id!r}')
+        return evidence, 0
+
+    result: Dict[str, EvidenceItem] = {}
+    dropped = 0
+    for item in evidence:
+        existing = result.get(item.id)
+        if existing is None:
+            result[item.id] = item
+        elif existing == item:
+            dropped += 1
+        else:
+            raise ValueError(
+                f'Conflicting evidence items share id {item.id!r}; '
+                'give each distinct item its own id'
+            )
+    return result, dropped

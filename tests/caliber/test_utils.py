@@ -158,12 +158,12 @@ class TestValidateLearning:
         assert artifact.supporting_item_ids == ['e1']
 
     def test_invalid_counterexamples_removed(self):
-        learning = self._make_learning(counterexamples=['e1', 'bad_id'])
-        cluster_ids = {'e1', 'e2'}
+        learning = self._make_learning(counterexamples=['e3', 'bad_id'])
+        cluster_ids = {'e1', 'e2', 'e3'}
         artifact, repairs = validate_learning(learning, cluster_ids)
         assert artifact is not None
         assert repairs == 1
-        assert artifact.counterexamples == ['e1']
+        assert artifact.counterexamples == ['e3']
 
     def test_quality_gate_demotes_confidence(self):
         """confidence >= 0.7 with no recommended_actions => demoted."""

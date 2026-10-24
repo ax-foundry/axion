@@ -1,6 +1,16 @@
 import asyncio
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional, Protocol, Sequence, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Protocol,
+    Sequence,
+    Set,
+    Union,
+)
 
 from axion._core.logging import get_logger
 from axion._core.tracing import init_tracer, trace
@@ -9,12 +19,16 @@ from axion.caliber.pattern_discovery._utils import (
     MetadataConfig,
     RecurrenceKeyFn,
     aggregate_cluster_metadata,
+    build_coverage,
     check_recurrence,
+    count_distinct_keys,
     default_excerpt,
     default_recurrence_key,
     default_tag_normalizer,
     deterministic_sample,
     format_metadata_header,
+    normalize_evidence,
+    round_robin_by_key,
     validate_learning,
 )
 from axion.caliber.pattern_discovery.discovery import PatternDiscovery
@@ -22,6 +36,7 @@ from axion.caliber.pattern_discovery.handlers import (
     ClusterForDistillation,
     DistillationHandler,
     DistillationInput,
+    ExampleItem,
     LearningArtifactOutput,
     default_distillation_instruction,
 )
@@ -92,6 +107,7 @@ class EvidencePipeline:
     """Orchestrates evidence → clusters → KB-ready learnings."""
 
     MAX_LEARNINGS_PER_CLUSTER: int = 3
+    MAX_EXAMPLES_PER_CLUSTER: int = 5
     EXAMPLE_EXCERPT_CHARS: int = 200
 
     def __init__(
@@ -124,6 +140,10 @@ class EvidencePipeline:
         cluster_model_name: Optional[str] = None,
         cluster_llm=None,
         cluster_llm_provider: Optional[str] = None,
+        disjoint_clusters: bool = False,
+        clustering_excerpt_chars: Optional[int] = None,
+        min_coverage: Optional[float] = None,
+        raise_on_low_coverage: bool = False,
     ) -> None:
         self._method = method
         self._recurrence_threshold = recurrence_threshold
@@ -164,6 +184,10 @@ class EvidencePipeline:
                 excerpt_fn=excerpt_fn,
                 seed=seed,
                 tracer=self.tracer,
+                disjoint_clusters=disjoint_clusters,
+                clustering_excerpt_chars=clustering_excerpt_chars,
+                min_coverage=min_coverage,
+                raise_on_low_coverage=raise_on_low_coverage,
             )
             self._clusterer = _DefaultClusterer(discovery)
 
@@ -192,10 +216,13 @@ class EvidencePipeline:
         method = method or self._method
 
         # Normalize input
-        evidence_dict = PatternDiscovery._to_evidence_dict(evidence)
+        evidence_dict, duplicates_dropped = normalize_evidence(evidence)
+        input_count = len(evidence_dict)
 
         # Sample if too many
+        sampled_out = 0
         if len(evidence_dict) > self._max_items:
+            sampled_out = len(evidence_dict) - self._max_items
             evidence_dict = deterministic_sample(
                 evidence_dict, self._max_items, self._seed
             )
@@ -206,13 +233,22 @@ class EvidencePipeline:
         # Cluster
         clustering_result = await self._clusterer.cluster(evidence_dict, method)
 
-        # 3. Pre-filter: drop clusters below recurrence_threshold
+        # 3. Pre-filter: drop clusters below recurrence_threshold, counted in
+        # distinct recurrence keys (equals item count with the default key).
         surviving_patterns = [
             p
             for p in clustering_result.patterns
-            if len(p.record_ids) >= self._recurrence_threshold
+            if count_distinct_keys(p.record_ids, evidence_dict, self._recurrence_key_fn)
+            >= self._recurrence_threshold
         ]
         filtered_count = len(clustering_result.patterns) - len(surviving_patterns)
+        surviving_ids = {rid for p in surviving_patterns for rid in p.record_ids}
+        filtered_below_threshold = {
+            rid
+            for p in clustering_result.patterns
+            for rid in p.record_ids
+            if rid not in surviving_ids
+        }
 
         # Distill + Validate (bounded concurrency)
         all_learnings: List[LearningArtifact] = []
@@ -298,6 +334,16 @@ class EvidencePipeline:
                 sid = await self._sink.write(la, provenance)
                 sink_ids.append(sid)
 
+        coverage = self._roll_up_coverage(
+            clustering_result,
+            evidence_dict,
+            surviving_ids=surviving_ids,
+            filtered_below_threshold=len(filtered_below_threshold),
+            input_count=input_count,
+            duplicates_dropped=duplicates_dropped,
+            sampled_out=sampled_out,
+        )
+
         return PipelineResult(
             clustering_result=clustering_result,
             learnings=all_learnings,
@@ -305,7 +351,50 @@ class EvidencePipeline:
             deduplicated_count=deduplicated_count,
             validation_repairs=total_repairs,
             sink_ids=sink_ids,
+            input_count=input_count,
+            sampled_out=sampled_out,
+            duplicates_dropped=duplicates_dropped,
+            coverage=coverage,
         )
+
+    @staticmethod
+    def _roll_up_coverage(
+        clustering_result: PatternDiscoveryResult,
+        evidence: Dict[str, EvidenceItem],
+        *,
+        surviving_ids: Set[str],
+        filtered_below_threshold: int,
+        input_count: int,
+        duplicates_dropped: int,
+        sampled_out: int,
+    ) -> Dict[str, Any]:
+        """Fold pipeline-level filters into the clusterer's coverage.
+
+        Buckets stay mutually exclusive: ``assigned`` is recomputed from the
+        patterns that survived the recurrence pre-filter, and the items of the
+        patterns it dropped move to ``filtered_below_threshold``. ``ratio`` is
+        left as the clusterer reported it, since the pre-filter is not the
+        model's omission. A clusterer that reports no coverage of its own gets
+        the buckets derived from what it returned, so every documented key is
+        always present.
+        """
+        coverage = dict(clustering_result.metadata.get('coverage', {}))
+        derived = build_coverage(
+            submitted_ids=list(evidence),
+            assigned_ids={
+                rid for p in clustering_result.patterns for rid in p.record_ids
+            },
+            uncategorized_ids=list(clustering_result.uncategorized),
+            filtered_small_cluster_ids=set(),
+        )
+        for key, value in derived.items():
+            coverage.setdefault(key, value)
+        coverage['assigned'] = len(surviving_ids)
+        coverage['filtered_below_threshold'] = filtered_below_threshold
+        coverage['input_count'] = input_count
+        coverage['duplicates_dropped'] = duplicates_dropped
+        coverage['sampled_out'] = sampled_out + coverage.get('sampled_out', 0)
+        return coverage
 
     def display(self, result: PipelineResult) -> None:
         """Display a pipeline result (summary + patterns + learnings).
@@ -339,13 +428,20 @@ class EvidencePipeline:
         clustering_result: PatternDiscoveryResult,
     ) -> tuple[List[LearningArtifact], int]:
         """Returns (validated_learnings, total_repairs)."""
-        # Build ClusterForDistillation
+        # Build ClusterForDistillation. Examples are spread across recurrence keys
+        # so one prolific source cannot fill every slot, and each carries its id so
+        # the writer can cite text it actually saw.
         example_texts: List[str] = []
+        examples: List[ExampleItem] = []
         meta_cfg = self._metadata_config
-        for rid in pattern.record_ids[:5]:
-            item = evidence.get(rid)
-            if not item:
-                continue
+        example_ids = round_robin_by_key(
+            pattern.record_ids,
+            evidence,
+            self.MAX_EXAMPLES_PER_CLUSTER,
+            self._recurrence_key_fn,
+        )
+        for rid in example_ids:
+            item = evidence[rid]
             if self._excerpt_fn:
                 text = self._excerpt_fn(item)
             else:
@@ -356,6 +452,7 @@ class EvidencePipeline:
                 if header:
                     text = header + '\n' + text
             example_texts.append(text)
+            examples.append(ExampleItem(item_id=rid, text=text))
 
         metadata_summary = None
         if meta_cfg.include_in_distillation:
@@ -369,6 +466,10 @@ class EvidencePipeline:
             item_ids=pattern.record_ids,
             example_texts=example_texts,
             metadata_summary=metadata_summary,
+            examples=examples,
+            distinct_source_count=count_distinct_keys(
+                pattern.record_ids, evidence, self._recurrence_key_fn
+            ),
         )
 
         raw_learnings = await self._writer.distill(cluster_input, self._domain_context)

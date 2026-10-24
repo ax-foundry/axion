@@ -155,8 +155,8 @@ graph LR
 |-------|-------------|-----------------|
 | **Sanitize** | Optional async text cleaning | `sanitizer=` (implements `Sanitizer` protocol) |
 | **Cluster** | Groups evidence into themes | `method=`, `clusterer=` (implements `EvidenceClusterer`) |
-| **Pre-filter** | Drops clusters below `recurrence_threshold` | `recurrence_threshold=` |
-| **Distill** | LLM converts each cluster into a learning artifact | `domain_context=`, `max_concurrent_distillations=` |
+| **Pre-filter** | Drops clusters spanning fewer than `recurrence_threshold` distinct recurrence keys | `recurrence_threshold=`, `recurrence_key_fn=` |
+| **Distill** | LLM converts each cluster into a learning artifact; sees up to 5 examples spread across recurrence keys, each with its id | `domain_context=`, `max_concurrent_distillations=` |
 | **Validate** | Repairs hallucinated IDs, enforces quality gates | Automatic |
 | **Recurrence** | Ensures learnings span multiple unique sources | `recurrence_threshold=` |
 | **Tag normalize** | Lowercase, deduplicate, cap at 10 tags | Automatic |
@@ -207,7 +207,47 @@ result.filtered_count      # clusters dropped by pre-filter
 result.deduplicated_count  # learnings removed by deduper
 result.validation_repairs  # count of hallucinated-ID repairs
 result.sink_ids            # IDs returned by the sink after persistence
+result.input_count         # items handed to run(), before sampling
+result.sampled_out         # items dropped to fit max_items
+result.duplicates_dropped  # exact repeats collapsed from a sequence input
+result.coverage            # accounting: where every item ended up (below)
 ```
+
+### Coverage Accounting
+
+Every item handed to `run()` ends up in exactly one bucket, so a model that quietly drops items is distinguishable from filters you configured.
+`result.coverage` (and `PatternDiscoveryResult.metadata['coverage']` for standalone clustering) carries:
+
+| Bucket | Meaning |
+|--------|---------|
+| `sampled_out` | Dropped to fit `max_items` before clustering |
+| `ineligible` | Empty text, never submitted |
+| `assigned` | Placed in a surviving pattern |
+| `uncategorized` | The model said it fits no pattern |
+| `filtered_small_cluster` | Placed in a pattern smaller than `min_category_size` |
+| `filtered_below_threshold` | Placed in a cluster the pipeline pre-filter dropped |
+| `omitted_by_model` | Submitted, but returned in neither a pattern nor `uncategorized` (`omitted_ids` lists them) |
+| `ratio` | Model coverage: share of *submitted* items the model placed anywhere. Filters never count against it |
+
+The buckets are mutually exclusive and sum to `input_count` less `sampled_out` and `duplicates_dropped`; an item whose cluster the pipeline pre-filter dropped is counted in `filtered_below_threshold`, not `assigned`.
+Every key is present on every result, including results that never reached a model (blank-only input, too few documents) and results from a custom `clusterer` that reports no coverage of its own, in which case the buckets are derived from what it returned.
+Set `min_coverage=0.9` to log a warning when `ratio` falls below it (the result gets `coverage['below_min'] = True`); add `raise_on_low_coverage=True` to raise `LowCoverageError` instead.
+`clustering_excerpt_chars=` caps the text per item sent to the clustering call; the default sends full text.
+
+### Grouped Evidence
+
+When several items hang off one parent (chunks of a conversation, findings on a ticket), set `recurrence_key_fn` to the parent so recurrence counts parents, not items:
+
+```python
+pipeline = EvidencePipeline(
+    ...,
+    recurrence_threshold=2,
+    recurrence_key_fn=lambda item: item.source_ref or item.id,
+)
+```
+
+With a key in place the pipeline pre-filters clusters by distinct keys, spreads distillation examples round-robin across keys, and passes `distinct_source_count` to the distiller so its confidence anchors to independent sources.
+Ten items from one parent are one observation.
 
 ## Metadata Handling
 
@@ -317,9 +357,19 @@ During distillation, cluster-level metadata is aggregated into frequency distrib
 
 The pipeline automatically validates every learning artifact:
 
+### Cluster Output Repair
+
+Raw clustering output is validated before anything trusts it: ids that were never submitted are dropped, repeats within a pattern are collapsed, and `uncategorized` loses unknown ids and ids that are also assigned.
+Counts are in `PatternDiscoveryResult.metadata['cluster_repairs']`.
+Items may appear in more than one pattern by default; pass `disjoint_clusters=True` to keep only the first assignment.
+
 ### Hallucinated ID Repair
 
-If the LLM references item IDs that don't exist in the cluster, they are silently removed. If **all** IDs are invalid, the learning is dropped entirely.
+If the LLM references item IDs that don't exist in the cluster, they are silently removed. Repeated supporting ids are collapsed, and an id cannot be both support and counterexample for the same learning. If **all** supporting IDs are invalid, the learning is dropped entirely.
+
+### Input Integrity
+
+A sequence input may repeat an item only if the repeats are identical (they are collapsed and counted in `duplicates_dropped`). Two different items sharing an id raise `ValueError`.
 
 ### Confidence Demotion
 
@@ -327,7 +377,7 @@ Learnings with `confidence >= 0.7` but **no recommended actions** are demoted to
 
 ### Recurrence Checking
 
-A learning must be backed by evidence from multiple unique sources (controlled by `recurrence_threshold`). Two chunks from the same conversation count as one source — the check uses `source_ref` to deduplicate.
+A learning must be backed by evidence from multiple unique sources (controlled by `recurrence_threshold`). The source of an item is whatever `recurrence_key_fn` returns; the default is the item id, so pass a key (for example `lambda item: item.source_ref or item.id`) to make two chunks from the same conversation count as one source.
 
 ```python
 # Standalone usage

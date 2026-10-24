@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence, Set, Union
 
 from axion._core.logging import get_logger
 from axion._core.tracing import init_tracer, trace
@@ -10,8 +10,11 @@ from axion.caliber.pattern_discovery._compat import (
 from axion.caliber.pattern_discovery._utils import (
     ExcerptFn,
     MetadataConfig,
+    build_coverage,
     deterministic_sample,
     format_metadata_header,
+    normalize_evidence,
+    repair_cluster_assignments,
 )
 from axion.caliber.pattern_discovery.handlers import (
     DEFAULT_EVIDENCE_CLUSTERING_INSTRUCTION,
@@ -32,6 +35,14 @@ from axion.caliber.pattern_discovery.models import (
 )
 
 logger = get_logger(__name__)
+
+
+class LowCoverageError(RuntimeError):
+    """Raised when the model placed too few submitted items and the caller opted in."""
+
+    def __init__(self, message: str, coverage: Dict[str, Any]) -> None:
+        super().__init__(message)
+        self.coverage = coverage
 
 
 class PatternDiscovery:
@@ -91,6 +102,11 @@ class PatternDiscovery:
         excerpt_fn: Optional[ExcerptFn] = None,
         seed: Optional[int] = None,
         tracer: Optional[Any] = None,
+        # New params stay at the end so existing positional callers are unaffected.
+        disjoint_clusters: bool = False,
+        clustering_excerpt_chars: Optional[int] = None,
+        min_coverage: Optional[float] = None,
+        raise_on_low_coverage: bool = False,
     ):
         self._model_name = model_name
         self._llm = llm
@@ -114,6 +130,17 @@ class PatternDiscovery:
         self._metadata_config = metadata_config or MetadataConfig()
         self._excerpt_fn = excerpt_fn
         self._seed = seed
+        # Cluster-output integrity. disjoint_clusters=True keeps an item's first
+        # assignment only; the default lets overlapping themes share items.
+        self._disjoint_clusters = disjoint_clusters
+        # Per-note cap on the text sent to the clustering call. None = full text.
+        self._clustering_excerpt_chars = clustering_excerpt_chars
+        # Model-coverage floor (share of submitted items the model placed in a
+        # pattern or in uncategorized). None = no check; below it, warn or raise.
+        if min_coverage is not None and not 0.0 <= min_coverage <= 1.0:
+            raise ValueError('min_coverage must be between 0.0 and 1.0')
+        self._min_coverage = min_coverage
+        self._raise_on_low_coverage = raise_on_low_coverage
         self.tracer = init_tracer('base', tracer=tracer)
 
         # Lazily initialized handlers. Clustering handlers are cached per rendered
@@ -189,14 +216,8 @@ class PatternDiscovery:
     def _to_evidence_dict(
         evidence: Union[Sequence[EvidenceItem], Dict[str, EvidenceItem]],
     ) -> Dict[str, EvidenceItem]:
-        if isinstance(evidence, dict):
-            for key, item in evidence.items():
-                if key != item.id:
-                    raise ValueError(
-                        f'Dict key {key!r} does not match item.id {item.id!r}'
-                    )
-            return evidence
-        return {item.id: item for item in evidence}
+        evidence_dict, _ = normalize_evidence(evidence)
+        return evidence_dict
 
     async def _discover_internal(
         self,
@@ -224,63 +245,140 @@ class PatternDiscovery:
                 uncategorized=list(evidence.keys()),
                 total_analyzed=len(evidence),
                 method=ClusteringMethod.LLM,
-                metadata={'error': 'No items with text to cluster'},
+                metadata={
+                    'error': 'No items with text to cluster',
+                    'coverage': self._unclustered_coverage(evidence, items_with_text),
+                },
             )
 
+        ineligible = len(evidence) - len(items_with_text)
+        sampled_out = 0
         if len(items_with_text) > self._max_notes:
+            sampled_out = len(items_with_text) - self._max_notes
             items_with_text = deterministic_sample(
                 items_with_text, self._max_notes, self._seed
             )
 
         meta_cfg = self._metadata_config
+        cap = self._clustering_excerpt_chars
         notes: List[EvidenceNote] = []
         for eid, item in items_with_text.items():
             context = None
             if meta_cfg.include_in_clustering and item.metadata:
                 context = format_metadata_header(item.metadata, meta_cfg)
-            notes.append(EvidenceNote(item_id=eid, text=item.text, context=context))
+            text = item.text if cap is None else item.text[:cap]
+            notes.append(EvidenceNote(item_id=eid, text=text, context=context))
 
         input_data = EvidenceClusteringInput(items=notes)
         handler = self._get_evidence_clustering_handler(n_items=len(notes))
         output: ClusteringOutput = await handler.execute(input_data)
 
-        patterns = self._output_to_patterns(output, items_with_text)
+        patterns, uncategorized, metadata = self._output_to_patterns(
+            output, items_with_text
+        )
+        metadata['coverage'] = build_coverage(
+            submitted_ids=list(items_with_text.keys()),
+            assigned_ids={rid for p in patterns for rid in p.record_ids},
+            uncategorized_ids=uncategorized,
+            filtered_small_cluster_ids=metadata.pop('_filtered_small_cluster_ids'),
+            ineligible=ineligible,
+            sampled_out=sampled_out,
+        )
+        self._check_coverage(metadata['coverage'])
+        metadata['model'] = handler.model_name
+        metadata['provider'] = handler.llm_provider
 
         return PatternDiscoveryResult(
             patterns=patterns,
-            uncategorized=output.uncategorized,
+            uncategorized=uncategorized,
             total_analyzed=len(evidence),
             method=ClusteringMethod.LLM,
-            metadata={
-                'model': handler.model_name,
-                'provider': handler.llm_provider,
-            },
+            metadata=metadata,
         )
+
+    @staticmethod
+    def _unclustered_coverage(
+        evidence: Dict[str, EvidenceItem], items_with_text: Dict[str, EvidenceItem]
+    ) -> Dict[str, Any]:
+        """Coverage for a result that never reached a model.
+
+        Everything with text is reported as ``uncategorized`` (which is where
+        the early-return result puts it), the rest as ``ineligible``. Nothing
+        was omitted by a model, so ``ratio`` is 1.0.
+        """
+        return build_coverage(
+            submitted_ids=list(items_with_text),
+            assigned_ids=set(),
+            uncategorized_ids=list(items_with_text),
+            filtered_small_cluster_ids=set(),
+            ineligible=len(evidence) - len(items_with_text),
+        )
+
+    def _check_coverage(self, coverage: Dict[str, Any]) -> None:
+        if self._min_coverage is None:
+            return
+        ratio = coverage['ratio']
+        if ratio >= self._min_coverage:
+            return
+        coverage['below_min'] = True
+        message = (
+            f'Clustering placed {ratio:.0%} of {coverage["submitted"]} submitted '
+            f'items (min_coverage={self._min_coverage:.0%}); '
+            f'{coverage["omitted_by_model"]} returned in neither a pattern nor '
+            'uncategorized.'
+        )
+        if self._raise_on_low_coverage:
+            raise LowCoverageError(message, coverage)
+        logger.warning(message)
 
     def _output_to_patterns(
         self,
         output: ClusteringOutput,
         items: Dict[str, EvidenceItem],
-    ) -> List[DiscoveredPattern]:
-        patterns = []
-        for p in output.patterns:
-            if len(p.record_ids) >= self._min_category_size:
-                examples = []
-                for rid in p.record_ids[: self.MAX_EXAMPLES_PER_PATTERN]:
-                    item = items.get(rid)
-                    if item and item.text:
-                        examples.append(item.text[: self.EXAMPLE_PREVIEW_CHARS])
-                patterns.append(
-                    DiscoveredPattern(
-                        category=p.category,
-                        description=p.description,
-                        count=len(p.record_ids),
-                        record_ids=p.record_ids,
-                        examples=examples,
-                    )
+    ) -> tuple[List[DiscoveredPattern], List[str], Dict[str, Any]]:
+        """Validate raw model output and build patterns.
+
+        Returns ``(patterns, uncategorized, metadata)`` where metadata carries
+        ``cluster_repairs`` and a private ``_filtered_small_cluster_ids`` set the
+        caller folds into coverage accounting.
+        """
+        repaired_ids, uncategorized, repairs = repair_cluster_assignments(
+            [list(p.record_ids) for p in output.patterns],
+            list(output.uncategorized),
+            known_ids=set(items.keys()),
+            disjoint=self._disjoint_clusters,
+        )
+        if repairs.total:
+            logger.warning('Repaired clustering output: %s', repairs.as_dict())
+
+        patterns: List[DiscoveredPattern] = []
+        filtered_small: Set[str] = set()
+        for p, record_ids in zip(output.patterns, repaired_ids):
+            if len(record_ids) < self._min_category_size:
+                filtered_small.update(record_ids)
+                continue
+            examples = []
+            for rid in record_ids[: self.MAX_EXAMPLES_PER_PATTERN]:
+                item = items.get(rid)
+                if item and item.text:
+                    examples.append(item.text[: self.EXAMPLE_PREVIEW_CHARS])
+            patterns.append(
+                DiscoveredPattern(
+                    category=p.category,
+                    description=p.description,
+                    count=len(record_ids),
+                    record_ids=record_ids,
+                    examples=examples,
                 )
+            )
         patterns.sort(key=lambda p: p.count, reverse=True)
-        return patterns
+        # An id dropped from a small cluster but kept in a surviving one is assigned.
+        assigned = {rid for p in patterns for rid in p.record_ids}
+        metadata: Dict[str, Any] = {
+            'cluster_repairs': repairs.as_dict(),
+            '_filtered_small_cluster_ids': filtered_small - assigned,
+        }
+        return patterns, uncategorized, metadata
 
     def _build_umap(self, n_docs: int) -> Any:
         """Return a seeded UMAP mirroring BERTopic's defaults, clamped to ``n_docs``.
@@ -347,6 +445,7 @@ class PatternDiscovery:
                 metadata={
                     'error': f'Too few documents for BERTopic (min {self.BERTOPIC_MIN_DOCUMENTS})',
                     'reason': 'too_few_documents',
+                    'coverage': self._unclustered_coverage(evidence, items_with_text),
                 },
             )
 
@@ -379,6 +478,7 @@ class PatternDiscovery:
                 metadata={
                     'error': f'BERTopic clustering failed: {e}',
                     'reason': 'bertopic_failed',
+                    'coverage': self._unclustered_coverage(evidence, items_with_text),
                 },
             )
 
@@ -434,12 +534,20 @@ class PatternDiscovery:
 
         patterns.sort(key=lambda p: p.count, reverse=True)
 
+        coverage = build_coverage(
+            submitted_ids=record_ids,
+            assigned_ids={rid for p in patterns for rid in p.record_ids},
+            uncategorized_ids=uncategorized,
+            filtered_small_cluster_ids=set(),
+            ineligible=len(evidence) - len(record_ids),
+        )
+
         return PatternDiscoveryResult(
             patterns=patterns,
             uncategorized=uncategorized,
             total_analyzed=len(evidence),
             method=ClusteringMethod.BERTOPIC,
-            metadata={'num_topics': len(patterns)},
+            metadata={'num_topics': len(patterns), 'coverage': coverage},
         )
 
     def _format_topic_name(self, topic_words: List[tuple]) -> str:
