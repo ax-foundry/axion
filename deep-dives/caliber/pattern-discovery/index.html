@@ -5274,8 +5274,8 @@
 </tr>
 <tr>
 <td><strong>Distill</strong></td>
-<td>LLM converts each cluster into a learning artifact; sees up to 5 examples spread across recurrence keys, each with its id</td>
-<td><code>domain_context=</code>, <code>max_concurrent_distillations=</code></td>
+<td>LLM converts each cluster into a learning artifact; sees up to <code>max_examples_per_cluster</code> (default 5) examples spread across recurrence keys, each with its id</td>
+<td><code>domain_context=</code>, <code>max_examples_per_cluster=</code>, <code>max_concurrent_distillations=</code></td>
 </tr>
 <tr>
 <td><strong>Validate</strong></td>
@@ -5350,6 +5350,10 @@
 </span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="n">result</span><span class="o">.</span><span class="n">records</span>             <span class="c1"># list[LearningRecord] — same order as learnings, with</span>
 </span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>                           <span class="c1"># provenance, score, cluster, and sink outcome</span>
 </span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="n">result</span><span class="o">.</span><span class="n">failed_clusters</span>     <span class="c1"># list[FailedCluster] — clusters whose distillation raised</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="n">result</span><span class="o">.</span><span class="n">clusters_without_learnings</span>  <span class="c1"># list[ClusterWithoutLearnings] — distilled fine,</span>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>                                   <span class="c1"># produced nothing, with the candidate/drop counts</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a><span class="n">result</span><span class="o">.</span><span class="n">learnings_dropped_invalid</span>           <span class="c1"># candidates whose cited ids were all outside the cluster</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a><span class="n">result</span><span class="o">.</span><span class="n">learnings_dropped_below_recurrence</span>  <span class="c1"># candidates whose cited ids spanned too few keys</span>
 </span></code></pre></div>
 <h3 id="learning-records-and-provenance">Learning Records and Provenance<a class="headerlink" href="#learning-records-and-provenance" title="Permanent link">&para;</a></h3>
 <p>Every learning gets a <code>Provenance</code>, sink or no sink, exposed on <code>result.records</code>.
@@ -5424,6 +5428,11 @@ Both are now visible and configurable:</p>
 <td>Category, error, and item count for every cluster that failed to distill</td>
 </tr>
 <tr>
+<td><code>result.clusters_without_learnings</code></td>
+<td>always</td>
+<td>Every surviving cluster that distilled without error but produced no learning, with how many candidates the writer returned and why each was dropped</td>
+</tr>
+<tr>
 <td><code>fail_on_all_errors=True</code></td>
 <td><code>False</code></td>
 <td>Raise <code>RuntimeError</code> when every surviving cluster failed, instead of returning an empty result</td>
@@ -5435,6 +5444,9 @@ Both are now visible and configurable:</p>
 </tr>
 </tbody>
 </table>
+<p>A cluster can also distill cleanly and still yield nothing.
+Models that follow <code>domain_context</code> closely return no candidates when the context does not describe the evidence, and a writer that cites one id per learning loses every candidate to the recurrence check.
+Both show up in <code>clusters_without_learnings</code> with the candidate and drop counts, so an empty result can be traced to the stage that emptied it.</p>
 <h3 id="coverage-accounting">Coverage Accounting<a class="headerlink" href="#coverage-accounting" title="Permanent link">&para;</a></h3>
 <p>Every item handed to <code>run()</code> ends up in exactly one bucket, so a model that quietly drops items is distinguishable from filters you configured.
 <code>result.coverage</code> (and <code>PatternDiscoveryResult.metadata['coverage']</code> for standalone clustering) carries:</p>
@@ -5703,7 +5715,7 @@ Items may appear in more than one pattern by default; pass <code>disjoint_cluste
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 24, 2026 21:52:15 UTC">October 24, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 24, 2026 21:53:33 UTC">October 24, 2026</span>
   </span>
 
     
