@@ -211,7 +211,64 @@ result.input_count         # items handed to run(), before sampling
 result.sampled_out         # items dropped to fit max_items
 result.duplicates_dropped  # exact repeats collapsed from a sequence input
 result.coverage            # accounting: where every item ended up (below)
+result.records             # list[LearningRecord] — same order as learnings, with
+                           # provenance, score, cluster, and sink outcome
+result.failed_clusters     # list[FailedCluster] — clusters whose distillation raised
 ```
+
+### Learning Records and Provenance
+
+Every learning gets a `Provenance`, sink or no sink, exposed on `result.records`.
+Beyond the original fields it carries:
+
+| Field | Meaning |
+|-------|---------|
+| `distinct_keys` | Sorted unique recurrence keys among the cited items |
+| `distinct_key_count` | How many independent sources back the learning |
+| `cited_support_count` | Items the writer cited (same as `supporting_count`) |
+| `cluster_size` | Items in the cluster it was distilled from. The writer saw a sample of these, so this is cluster-level evidence, not support for this specific learning |
+
+### Ranking
+
+Learnings are ordered by LLM confidence unless you pass `score_fn(learning, provenance, supporting_items) -> float`.
+Two scorers ship: `score_by_confidence` (the default) and `score_by_distinct_keys` (independent recurrence first, confidence as tie-break; one more distinct key always outranks any confidence).
+The scorer receives the same complete `Provenance` the sink does, so it may read any field, including `source_ref`, `total_analyzed`, and `metadata`.
+A custom scorer can read anything on the items, for example a weight carried in metadata:
+
+```python
+from axion.caliber import score_by_distinct_keys
+
+pipeline = EvidencePipeline(
+    ...,
+    recurrence_key_fn=lambda item: item.source_ref or item.id,
+    score_fn=score_by_distinct_keys,
+)
+
+# or weight by metadata, summed once per distinct source
+def weighted(learning, provenance, items):
+    seen, total = set(), 0.0
+    for item in items:
+        if item.source_ref not in seen:
+            seen.add(item.source_ref)
+            total += item.metadata.get('weight', 0)
+    return total
+```
+
+With a `score_fn` the pipeline validates every candidate a cluster produced and then keeps the best-scored `max_learnings_per_cluster`, so the score drives selection as well as order.
+Without one, candidates are truncated by confidence before validation, as before.
+Ordering always happens before deduplication, so the best-scored twin survives.
+`LearningRecord.score` records what each learning was ranked by.
+
+### Failure Policy
+
+Defaults are unchanged: a cluster whose distillation raises is logged and skipped, and a sink write that raises propagates after any earlier writes.
+Both are now visible and configurable:
+
+| Parameter | Default | Effect |
+|-----------|---------|--------|
+| `result.failed_clusters` | always | Category, error, and item count for every cluster that failed to distill |
+| `fail_on_all_errors=True` | `False` | Raise `RuntimeError` when every surviving cluster failed, instead of returning an empty result |
+| `sink_on_error='continue'` | `'raise'` | Record the error on `LearningRecord.sink_error`, keep writing the rest. `sink_ids` lists successes only |
 
 ### Coverage Accounting
 

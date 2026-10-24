@@ -50,7 +50,14 @@ class EvidenceItem:
 
 @dataclass
 class Provenance:
-    """Structured provenance attached to learning artifacts for sinks."""
+    """Structured provenance attached to every learning artifact.
+
+    ``supporting_count`` counts cited items. ``distinct_key_count`` counts the
+    independent sources behind them (per ``recurrence_key_fn``); several items
+    from one source are one key. ``cluster_size`` is the whole cluster the
+    learning was distilled from, which is weaker evidence than ``cited_support_count``
+    because the writer only saw a sample of it.
+    """
 
     source_ref: Optional[str] = None
     clustering_method: Optional[str] = None
@@ -59,6 +66,10 @@ class Provenance:
     cluster_category: Optional[str] = None
     timestamp: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
+    distinct_keys: List[str] = field(default_factory=list)
+    distinct_key_count: int = 0
+    cluster_size: int = 0
+    cited_support_count: int = 0
 
 
 @dataclass
@@ -77,8 +88,39 @@ class LearningArtifact:
 
 
 @dataclass
+class LearningRecord:
+    """One learning with everything the pipeline knows about it.
+
+    ``score`` is what the pipeline ordered by (LLM confidence unless a
+    ``score_fn`` was given). ``sink_id`` is set when a sink accepted the
+    learning; ``sink_error`` when the sink raised and the pipeline was told to
+    continue.
+    """
+
+    learning: LearningArtifact
+    provenance: Provenance
+    score: float
+    cluster: Optional[DiscoveredPattern] = None
+    sink_id: Optional[str] = None
+    sink_error: Optional[str] = None
+
+
+@dataclass
+class FailedCluster:
+    """A cluster whose distillation raised."""
+
+    category: str
+    error: str
+    item_count: int = 0
+
+
+@dataclass
 class PipelineResult:
-    """Complete result from the evidence pipeline."""
+    """Complete result from the evidence pipeline.
+
+    ``learnings`` and ``sink_ids`` are the flat views; ``records`` carries the
+    same learnings in the same order with provenance, score, and sink outcome.
+    """
 
     clustering_result: PatternDiscoveryResult
     learnings: List[LearningArtifact]
@@ -94,3 +136,5 @@ class PipelineResult:
     sampled_out: int = 0
     duplicates_dropped: int = 0
     coverage: Dict[str, Any] = field(default_factory=dict)
+    records: List['LearningRecord'] = field(default_factory=list)
+    failed_clusters: List['FailedCluster'] = field(default_factory=list)

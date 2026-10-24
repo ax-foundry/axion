@@ -75,6 +75,10 @@ class JsonlSink:
                 'cluster_category': provenance.cluster_category,
                 'timestamp': provenance.timestamp,
                 'metadata': provenance.metadata,
+                'distinct_keys': provenance.distinct_keys,
+                'distinct_key_count': provenance.distinct_key_count,
+                'cluster_size': provenance.cluster_size,
+                'cited_support_count': provenance.cited_support_count,
             },
         }
         with self._path.open('a') as f:

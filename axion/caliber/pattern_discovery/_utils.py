@@ -4,7 +4,11 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
-from axion.caliber.pattern_discovery.models import EvidenceItem, LearningArtifact
+from axion.caliber.pattern_discovery.models import (
+    EvidenceItem,
+    LearningArtifact,
+    Provenance,
+)
 
 DEFAULT_DENIED_KEYS: frozenset = frozenset(
     {
@@ -488,3 +492,32 @@ def normalize_evidence(
                 'give each distinct item its own id'
             )
     return result, dropped
+
+
+ScoreFn = Callable[[LearningArtifact, Provenance, List[EvidenceItem]], float]
+"""Ranks a learning. Receives the learning, its provenance, and the evidence
+items it cites. Higher sorts first."""
+
+
+def score_by_confidence(
+    learning: LearningArtifact,
+    provenance: Provenance,
+    supporting_items: List[EvidenceItem],
+) -> float:
+    """The default ordering: the writer's own confidence."""
+    return learning.confidence
+
+
+def score_by_distinct_keys(
+    learning: LearningArtifact,
+    provenance: Provenance,
+    supporting_items: List[EvidenceItem],
+) -> float:
+    """
+    Rank by independent recurrence, confidence as tie-break.
+
+    ``distinct_key_count`` strictly dominates: one more distinct key outranks
+    any confidence, and confidence (in ``[0, 1]``) only orders learnings with
+    the same number of distinct keys.
+    """
+    return 2 * provenance.distinct_key_count + learning.confidence

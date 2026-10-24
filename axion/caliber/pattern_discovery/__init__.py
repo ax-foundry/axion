@@ -4,7 +4,11 @@ from axion.caliber.pattern_discovery._compat import (
     annotations_to_evidence,
     normalize_annotations,
 )
-from axion.caliber.pattern_discovery._utils import MetadataConfig
+from axion.caliber.pattern_discovery._utils import (
+    MetadataConfig,
+    score_by_confidence,
+    score_by_distinct_keys,
+)
 from axion.caliber.pattern_discovery.discovery import LowCoverageError, PatternDiscovery
 from axion.caliber.pattern_discovery.display import (
     display_learnings,
@@ -35,7 +39,9 @@ from axion.caliber.pattern_discovery.models import (
     ClusteringMethod,
     DiscoveredPattern,
     EvidenceItem,
+    FailedCluster,
     LearningArtifact,
+    LearningRecord,
     PatternDiscoveryResult,
     PipelineResult,
     Provenance,
@@ -62,6 +68,8 @@ __all__ = [
     'PatternDiscoveryResult',
     'EvidenceItem',
     'LearningArtifact',
+    'LearningRecord',
+    'FailedCluster',
     'PipelineResult',
     'Provenance',
     'AnnotatedItem',
@@ -105,6 +113,8 @@ __all__ = [
     'Sanitizer',
     # Config
     'MetadataConfig',
+    'score_by_confidence',
+    'score_by_distinct_keys',
     # Display
     'display_learnings',
     'display_patterns',
