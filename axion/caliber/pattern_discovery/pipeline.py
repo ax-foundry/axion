@@ -5,6 +5,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    Literal,
     Optional,
     Protocol,
     Sequence,
@@ -18,6 +19,7 @@ from axion.caliber.pattern_discovery._utils import (
     ExcerptFn,
     MetadataConfig,
     RecurrenceKeyFn,
+    ScoreFn,
     aggregate_cluster_metadata,
     build_coverage,
     check_recurrence,
@@ -29,6 +31,7 @@ from axion.caliber.pattern_discovery._utils import (
     format_metadata_header,
     normalize_evidence,
     round_robin_by_key,
+    score_by_confidence,
     validate_learning,
 )
 from axion.caliber.pattern_discovery.discovery import PatternDiscovery
@@ -44,7 +47,9 @@ from axion.caliber.pattern_discovery.models import (
     ClusteringMethod,
     DiscoveredPattern,
     EvidenceItem,
+    FailedCluster,
     LearningArtifact,
+    LearningRecord,
     PatternDiscoveryResult,
     PipelineResult,
     Provenance,
@@ -144,6 +149,9 @@ class EvidencePipeline:
         clustering_excerpt_chars: Optional[int] = None,
         min_coverage: Optional[float] = None,
         raise_on_low_coverage: bool = False,
+        score_fn: Optional[ScoreFn] = None,
+        fail_on_all_errors: bool = False,
+        sink_on_error: Literal['raise', 'continue'] = 'raise',
     ) -> None:
         self._method = method
         self._recurrence_threshold = recurrence_threshold
@@ -158,6 +166,19 @@ class EvidencePipeline:
         self._seed = seed
         self._max_concurrent = max_concurrent_distillations
         self.tracer = init_tracer('base', tracer=tracer)
+
+        # Ranking. With no score_fn, learnings are ordered by confidence and each
+        # cluster's candidates are truncated by confidence before validation,
+        # exactly as before. With one, candidates are validated first and
+        # truncated by score, so the caller's ranking also drives selection.
+        self._custom_score_fn = score_fn
+        self._score_fn: ScoreFn = score_fn or score_by_confidence
+        # Failure policy. Defaults keep today's behavior: a failed distillation is
+        # logged and skipped; a failed sink write raises mid-loop.
+        self._fail_on_all_errors = fail_on_all_errors
+        if sink_on_error not in ('raise', 'continue'):
+            raise ValueError("sink_on_error must be 'raise' or 'continue'")
+        self._sink_on_error = sink_on_error
 
         self._sanitizer: Sanitizer = sanitizer or NoopSanitizer()
         self._sink = sink
@@ -251,12 +272,8 @@ class EvidencePipeline:
         }
 
         # Distill + Validate (bounded concurrency)
-        all_learnings: List[LearningArtifact] = []
         total_repairs = 0
         semaphore = asyncio.Semaphore(self._max_concurrent)
-
-        # Track which cluster produced each learning (for provenance)
-        learning_to_cluster: Dict[int, DiscoveredPattern] = {}
 
         async def _process_cluster(
             pattern: DiscoveredPattern,
@@ -269,27 +286,50 @@ class EvidencePipeline:
         tasks = [_process_cluster(p) for p in surviving_patterns]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        for i, res in enumerate(results):
-            if isinstance(res, Exception):
+        timestamp = datetime.now(timezone.utc).isoformat()
+        records: List[LearningRecord] = []
+        failed_clusters: List[FailedCluster] = []
+        for pattern, res in zip(surviving_patterns, results):
+            if isinstance(res, BaseException):
                 logger.warning(
-                    f'Distillation failed for cluster '
-                    f'"{surviving_patterns[i].category}": {res}'
+                    f'Distillation failed for cluster "{pattern.category}": {res}'
+                )
+                failed_clusters.append(
+                    FailedCluster(
+                        category=pattern.category,
+                        error=f'{type(res).__name__}: {res}',
+                        item_count=len(pattern.record_ids),
+                    )
                 )
                 continue
             learnings, repairs = res
             total_repairs += repairs
             for la in learnings:
-                learning_to_cluster[id(la)] = surviving_patterns[i]
-            all_learnings.extend(learnings)
+                records.append(
+                    self._make_record(
+                        la, pattern, evidence_dict, clustering_result, method, timestamp
+                    )
+                )
 
-        # Merge: sort by confidence desc
-        all_learnings.sort(key=lambda la: la.confidence, reverse=True)
+        if (
+            self._fail_on_all_errors
+            and surviving_patterns
+            and len(failed_clusters) == len(surviving_patterns)
+        ):
+            raise RuntimeError(
+                f'Distillation failed for all {len(failed_clusters)} clusters; '
+                f'first error: {failed_clusters[0].error}'
+            )
+
+        # Order by score desc (confidence unless a score_fn was given). Stable, so
+        # equal scores keep distillation order.
+        records.sort(key=lambda r: r.score, reverse=True)
 
         # Tag normalize
-        for la in all_learnings:
-            la.tags = self._tag_normalizer(la.tags)
+        for rec in records:
+            rec.learning.tags = self._tag_normalizer(rec.learning.tags)
 
-        # Dedupe
+        # Dedupe (after ordering, so the best-scored twin survives)
         deduplicated_count = 0
         if self._deduper is not None:
             if hasattr(self._deduper, 'reset_per_run') and getattr(
@@ -298,40 +338,30 @@ class EvidencePipeline:
                 if hasattr(self._deduper, 'reset'):
                     self._deduper.reset()
 
-            kept: List[LearningArtifact] = []
-            for la in all_learnings:
-                if await self._deduper.is_duplicate(la):
+            kept_records: List[LearningRecord] = []
+            for rec in records:
+                if await self._deduper.is_duplicate(rec.learning):
                     deduplicated_count += 1
                 else:
-                    kept.append(la)
-            all_learnings = kept
+                    kept_records.append(rec)
+            records = kept_records
 
         # Sink
         sink_ids: List[str] = []
         if self._sink is not None:
-            timestamp = datetime.now(timezone.utc).isoformat()
-            for la in all_learnings:
-                cluster_pattern = learning_to_cluster.get(id(la))
-                # Resolve a representative source_ref from supporting items
-                source_refs = [
-                    evidence_dict[sid].source_ref
-                    for sid in la.supporting_item_ids
-                    if sid in evidence_dict and evidence_dict[sid].source_ref
-                ]
-                provenance = Provenance(
-                    source_ref=source_refs[0] if source_refs else None,
-                    clustering_method=method.value if method else None,
-                    total_analyzed=clustering_result.total_analyzed,
-                    supporting_count=len(la.supporting_item_ids),
-                    cluster_category=(
-                        cluster_pattern.category if cluster_pattern else None
-                    ),
-                    timestamp=timestamp,
-                    metadata={
-                        'all_source_refs': source_refs,
-                    },
-                )
-                sid = await self._sink.write(la, provenance)
+            for rec in records:
+                if self._sink_on_error == 'raise':
+                    sid = await self._sink.write(rec.learning, rec.provenance)
+                else:
+                    try:
+                        sid = await self._sink.write(rec.learning, rec.provenance)
+                    except Exception as e:
+                        rec.sink_error = f'{type(e).__name__}: {e}'
+                        logger.warning(
+                            f'Sink write failed for "{rec.learning.title}": {e}'
+                        )
+                        continue
+                rec.sink_id = sid
                 sink_ids.append(sid)
 
         coverage = self._roll_up_coverage(
@@ -346,7 +376,7 @@ class EvidencePipeline:
 
         return PipelineResult(
             clustering_result=clustering_result,
-            learnings=all_learnings,
+            learnings=[rec.learning for rec in records],
             filtered_count=filtered_count,
             deduplicated_count=deduplicated_count,
             validation_repairs=total_repairs,
@@ -355,6 +385,45 @@ class EvidencePipeline:
             sampled_out=sampled_out,
             duplicates_dropped=duplicates_dropped,
             coverage=coverage,
+            records=records,
+            failed_clusters=failed_clusters,
+        )
+
+    def _make_record(
+        self,
+        learning: LearningArtifact,
+        pattern: DiscoveredPattern,
+        evidence: Dict[str, EvidenceItem],
+        clustering_result: PatternDiscoveryResult,
+        method: Optional[ClusteringMethod],
+        timestamp: str,
+    ) -> LearningRecord:
+        supporting_items = [
+            evidence[sid] for sid in learning.supporting_item_ids if sid in evidence
+        ]
+        source_refs = [item.source_ref for item in supporting_items if item.source_ref]
+        distinct_keys = sorted(
+            {self._recurrence_key_fn(item) for item in supporting_items}
+        )
+        provenance = Provenance(
+            source_ref=source_refs[0] if source_refs else None,
+            clustering_method=method.value if method else None,
+            total_analyzed=clustering_result.total_analyzed,
+            supporting_count=len(learning.supporting_item_ids),
+            cluster_category=pattern.category,
+            timestamp=timestamp,
+            metadata={'all_source_refs': source_refs},
+            distinct_keys=distinct_keys,
+            distinct_key_count=len(distinct_keys),
+            cluster_size=len(pattern.record_ids),
+            cited_support_count=len(supporting_items),
+        )
+        score = self._score_fn(learning, provenance, supporting_items)
+        return LearningRecord(
+            learning=learning,
+            provenance=provenance,
+            score=float(score),
+            cluster=pattern,
         )
 
     @staticmethod
@@ -474,21 +543,12 @@ class EvidencePipeline:
 
         raw_learnings = await self._writer.distill(cluster_input, self._domain_context)
 
-        # Truncate (by confidence desc)
-        sorted_learnings = sorted(
-            raw_learnings, key=lambda learning: learning.confidence, reverse=True
-        )[: self._max_learnings_per_cluster]
-
-        # Validate per-cluster
         cluster_ids = set(pattern.record_ids)
-        validated: List[LearningArtifact] = []
-        total_repairs = 0
-        for raw in sorted_learnings:
-            artifact, repairs = validate_learning(raw, cluster_ids)
-            total_repairs += repairs
-            if artifact is None:
-                continue
 
+        def _validate(raw: Any) -> tuple[Optional[LearningArtifact], int]:
+            artifact, repairs = validate_learning(raw, cluster_ids)
+            if artifact is None:
+                return None, repairs
             # Recurrence check on validated supporting IDs
             if not check_recurrence(
                 artifact.supporting_item_ids,
@@ -496,8 +556,47 @@ class EvidencePipeline:
                 self._recurrence_threshold,
                 self._recurrence_key_fn,
             ):
+                return None, repairs
+            return artifact, repairs
+
+        total_repairs = 0
+        validated: List[LearningArtifact] = []
+
+        if self._custom_score_fn is None:
+            # Default path: truncate by confidence, then validate.
+            sorted_learnings = sorted(
+                raw_learnings, key=lambda learning: learning.confidence, reverse=True
+            )[: self._max_learnings_per_cluster]
+            for raw in sorted_learnings:
+                artifact, repairs = _validate(raw)
+                total_repairs += repairs
+                if artifact is not None:
+                    validated.append(artifact)
+            return validated, total_repairs
+
+        # Scored path: validate everything first so the score sees repaired
+        # support, then keep the best-scored candidates. Truncating by confidence
+        # first would discard a learning the caller's score prefers.
+        scored: List[tuple[float, int, LearningArtifact]] = []
+        for index, raw in enumerate(raw_learnings):
+            artifact, repairs = _validate(raw)
+            total_repairs += repairs
+            if artifact is None:
                 continue
-
-            validated.append(artifact)
-
+            supporting_items = [
+                evidence[sid] for sid in artifact.supporting_item_ids if sid in evidence
+            ]
+            distinct_keys = {self._recurrence_key_fn(item) for item in supporting_items}
+            preview = Provenance(
+                cluster_category=pattern.category,
+                supporting_count=len(artifact.supporting_item_ids),
+                distinct_keys=sorted(distinct_keys),
+                distinct_key_count=len(distinct_keys),
+                cluster_size=len(pattern.record_ids),
+                cited_support_count=len(supporting_items),
+            )
+            score = float(self._custom_score_fn(artifact, preview, supporting_items))
+            scored.append((score, index, artifact))
+        scored.sort(key=lambda t: (-t[0], t[1]))
+        validated = [a for _, _, a in scored[: self._max_learnings_per_cluster]]
         return validated, total_repairs
