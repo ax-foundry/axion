@@ -33,7 +33,7 @@ class LiteLLMDeepEval(DeepEvalBaseLLM):
         >>> from axion.integrations.models.litellm_deepeval import LiteLLMDeepEval
         >>> from deepeval.metrics import AnswerRelevancyMetric
         >>>
-        >>> llm = LiteLLMDeepEval(model='gpt-4o')
+        >>> llm = LiteLLMDeepEval(model='gpt-6-sol')
         >>> metric = AnswerRelevancyMetric(model=llm)
         >>> # After evaluation:
         >>> print(metric.model.cost_estimate)
@@ -41,14 +41,14 @@ class LiteLLMDeepEval(DeepEvalBaseLLM):
 
     def __init__(
         self,
-        model: str = 'gpt-4o',
+        model: str = 'gpt-6-sol',
         temperature: float = 0.0,
     ):
         """
         Initialize the LiteLLM DeepEval wrapper.
 
         Args:
-            model: LiteLLM-compatible model name (e.g., 'gpt-4o', 'anthropic/claude-3-5-sonnet')
+            model: LiteLLM-compatible model name (e.g., 'gpt-6-sol', 'anthropic/claude-3-5-sonnet')
             temperature: Generation temperature (default 0.0 for deterministic outputs)
         """
         self.model_name = model

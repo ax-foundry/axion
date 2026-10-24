@@ -122,8 +122,8 @@ class TestObservationsView:
         assert ov.type == 'EVENT'
 
     def test_fuzzy_access(self):
-        ov = ObservationsView(data={'modelId': 'gpt-4'})
-        assert ov.model_id == 'gpt-4'
+        ov = ObservationsView(data={'modelId': 'gpt-6-sol'})
+        assert ov.model_id == 'gpt-6-sol'
 
     def test_repr(self):
         ov = ObservationsView(name='rec', type='GENERATION')

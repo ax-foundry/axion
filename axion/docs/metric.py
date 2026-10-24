@@ -157,7 +157,7 @@ instruction: |
   Provide a score of either 0 or 1 and explain your reasoning.
 
 # Optional configuration
-model_name: "gpt-4"
+model_name: "gpt-6-sol"
 threshold: 0.7
 required_fields:
   - "actual_output"

@@ -30,7 +30,7 @@ heuristic: |
       return MetricEvaluationResult(score=1.0, explanation="...")
 
 # Optional configuration
-model_name: "gpt-4"
+model_name: "gpt-6-sol"
 threshold: 0.7
 required_fields: [...]
 optional_fields: [...]
@@ -52,7 +52,7 @@ instruction: |
 
 
 # Optional configuration
-model_name: "gpt-4"
+model_name: "gpt-6-sol"
 threshold: 0.7
 required_fields:
   - "query"

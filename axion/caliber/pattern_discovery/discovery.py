@@ -51,7 +51,7 @@ class PatternDiscovery:
         ...     'rec_1': AnnotatedItem(record_id='rec_1', score=0, notes='Missing context'),
         ...     'rec_2': AnnotatedItem(record_id='rec_2', score=0, notes='Lacks detail'),
         ... }
-        >>> discovery = PatternDiscovery(model_name='gpt-4o', llm_provider='openai')
+        >>> discovery = PatternDiscovery(model_name='gpt-6-sol', llm_provider='openai')
         >>> result = await discovery.discover(annotations)
     """
 

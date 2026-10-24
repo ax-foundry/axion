@@ -106,9 +106,9 @@ class TestClusterLLMSplit:
             llm=_FakeLLM(),
             cluster_llm=_FakeLLM(),
             model_name='gpt-5.2',
-            cluster_model_name='gpt-4.1',
+            cluster_model_name='gpt-6-sol',
         )
-        assert pipeline._clusterer._discovery._model_name == 'gpt-4.1'
+        assert pipeline._clusterer._discovery._model_name == 'gpt-6-sol'
         assert pipeline._writer._handler.model_name == 'gpt-5.2'
 
 

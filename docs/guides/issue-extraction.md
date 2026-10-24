@@ -562,7 +562,7 @@ extractor = IssueExtractor()
 issues = extractor.extract_from_evaluation(results)
 
 # Discover cross-metric patterns
-insight_extractor = InsightExtractor(model_name='gpt-4o-mini')
+insight_extractor = InsightExtractor(model_name='gpt-6-luna')
 insights = await insight_extractor.analyze(issues)
 
 for pattern in insights.patterns:

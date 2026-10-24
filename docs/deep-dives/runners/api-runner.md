@@ -89,7 +89,7 @@ Register your own API implementations to integrate any service into Axion's eval
 
         def __init__(self, config: dict, **kwargs):
             super().__init__(config, **kwargs)
-            self.model = config.get('model', 'gpt-4')
+            self.model = config.get('model', 'gpt-6-sol')
 
         @api_retry('OpenAI Chat API call')
         def execute(self, query: str, **kwargs) -> APIResponseData:
@@ -201,7 +201,7 @@ When creating custom runners, ensure your implementation:
             'api_key': 'your-api-key'
         },
         'openai_chat': {
-            'model': 'gpt-4'
+            'model': 'gpt-6-sol'
         }
     }
 
@@ -217,7 +217,7 @@ When creating custom runners, ensure your implementation:
       api_key: ${CHATBOT_API_KEY}  # Environment variable substitution
 
     openai_chat:
-      model: gpt-4
+      model: gpt-6-sol
     ```
 
     ```python

@@ -866,7 +866,7 @@ class FileTypeDispatchingNodeParser(BaseTransformComponent):
                 ".pdf": DoclingNodeParser(),
                 ".docx": GoogleDocParser(remove_urls=True),
                 ".html": HTMLNodeParser(strip_tags=False),
-                ".jpg": ImageCaptionParser(model="gpt-4-vision"),
+                ".jpg": ImageCaptionParser(model="gpt-6-sol"),
             }
         )
     """

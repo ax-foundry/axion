@@ -239,7 +239,7 @@ class MisalignmentAnalysisHandler(LLMHandler[MisalignmentInput, MisalignmentOutp
         Initialize the misalignment analysis handler.
 
         Args:
-            model_name: Name of the LLM model (e.g., 'gpt-4o', 'claude-sonnet-4-20250514')
+            model_name: Name of the LLM model (e.g., 'gpt-6-sol', 'claude-sonnet-4-20250514')
             llm: Pre-configured LLM instance
             llm_provider: LLM provider ('openai', 'anthropic')
             instruction: Custom instruction to override default
@@ -289,7 +289,7 @@ class MisalignmentAnalyzer:
         >>> criteria = "Evaluate whether the response is accurate and helpful."
         >>>
         >>> # Using model_name/provider (recommended)
-        >>> analyzer = MisalignmentAnalyzer(model_name='gpt-4o', llm_provider='openai')
+        >>> analyzer = MisalignmentAnalyzer(model_name='gpt-6-sol', llm_provider='openai')
         >>> analysis = await analyzer.analyze(results, criteria)
         >>>
         >>> print(f'Summary: {analysis.summary}')
@@ -308,7 +308,7 @@ class MisalignmentAnalyzer:
         Initialize MisalignmentAnalyzer.
 
         Args:
-            model_name: Name of the LLM model (e.g., 'gpt-4o', 'claude-sonnet-4-20250514')
+            model_name: Name of the LLM model (e.g., 'gpt-6-sol', 'claude-sonnet-4-20250514')
             llm: Pre-configured LLM instance
             llm_provider: LLM provider ('openai', 'anthropic')
             instruction: Custom instruction to override default analysis prompt

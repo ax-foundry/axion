@@ -156,7 +156,7 @@ async def fetch_data():
 ```python
 from axion.logging import logger
 
-config = {"model": "gpt-4o", "temperature": 0.7}
+config = {"model": "gpt-6-sol", "temperature": 0.7}
 logger.log_json(config, title="Model Configuration")
 ```
 

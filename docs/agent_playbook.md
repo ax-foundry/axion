@@ -397,7 +397,7 @@ statements = [
 
 **The teacher must be smarter than the student.**
 
-You cannot evaluate a GPT-4o agent using a GPT-3.5-Turbo judge. The judge must have reasoning capabilities equal to or greater than the agent being tested.
+You cannot evaluate a GPT-6 Sol agent using a GPT-6 Luna judge. The judge must have reasoning capabilities equal to or greater than the agent being tested.
 
 **Key principle:** "Cheap on generation, expensive on evaluation."
 

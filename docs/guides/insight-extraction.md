@@ -46,7 +46,7 @@ issue_extractor = IssueExtractor()
 issues = issue_extractor.extract_from_evaluation(results)
 
 # 3. Discover cross-metric patterns
-insight_extractor = InsightExtractor(model_name='gpt-4o-mini')
+insight_extractor = InsightExtractor(model_name='gpt-6-luna')
 insights = await insight_extractor.analyze(issues)
 
 # 4. Explore results
@@ -106,7 +106,7 @@ Issues with **no reasoning and no query** produce no meaningful text and are aut
 
 ```python
 insight_extractor = InsightExtractor(
-    model_name='gpt-4o-mini',       # LLM for clustering + distillation
+    model_name='gpt-6-luna',       # LLM for clustering + distillation
     method=ClusteringMethod.LLM,     # LLM, BERTOPIC, or HYBRID
     recurrence_threshold=2,          # min unique test cases per learning
     max_items=50,                    # max evidence items to process
@@ -127,7 +127,7 @@ from axion.caliber.pattern_discovery.models import ClusteringMethod
 
 # Cost-effective for large evaluations
 extractor = InsightExtractor(
-    model_name='gpt-4o-mini',
+    model_name='gpt-6-luna',
     method=ClusteringMethod.BERTOPIC,
 )
 ```
@@ -141,7 +141,7 @@ from axion.caliber.pattern_discovery import EvidencePipeline, InMemorySink
 
 sink = InMemorySink()
 pipeline = EvidencePipeline(
-    model_name='gpt-4o-mini',
+    model_name='gpt-6-luna',
     recurrence_threshold=2,
     min_category_size=2,
     domain_context='RAG system evaluation',
@@ -165,7 +165,7 @@ Any extra keyword arguments are forwarded to `EvidencePipeline`:
 
 ```python
 extractor = InsightExtractor(
-    model_name='gpt-4o-mini',
+    model_name='gpt-6-luna',
     seed=42,                          # reproducible sampling
     max_concurrent_distillations=3,   # limit parallel LLM calls
 )
@@ -253,7 +253,7 @@ async def discover_patterns():
 
     # 3. Discover cross-metric patterns
     insight_extractor = InsightExtractor(
-        model_name='gpt-4o-mini',
+        model_name='gpt-6-luna',
         recurrence_threshold=2,
     )
     insights = await insight_extractor.analyze(issues)

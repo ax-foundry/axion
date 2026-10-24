@@ -53,7 +53,7 @@ def test_evaluation_result_to_dataframe():
         evaluation_name='test-exp',
         timestamp=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
         results=[result],
-        metadata={'model': 'gpt-4'},
+        metadata={'model': 'gpt-6-sol'},
     )
 
     df = eval_result.to_dataframe(id_as_index=True, rename_columns=False)

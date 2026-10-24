@@ -108,7 +108,7 @@ EvaluationRunner.display()
         evaluation_inputs=[data_item],
         task=my_task,
         scoring_metrics=[
-            AnswerRelevancy(model_name='gpt-4o'),
+            AnswerRelevancy(model_name='gpt-6-sol'),
             Latency(threshold=1.5),
         ],
         max_concurrent=5,
@@ -156,7 +156,7 @@ EvaluationRunner.display()
     # Define evaluation metrics across frameworks
     metrics = [
         Faithfulness(llm=LiteLLMRagas()),
-        AnswerCompleteness(model_name='gpt-4'),
+        AnswerCompleteness(model_name='gpt-6-sol'),
         AnswerRelevancyMetric(model=LiteLLMDeepEval()),
         Latency(threshold=8)
     ]

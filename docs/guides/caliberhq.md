@@ -27,7 +27,7 @@ session.annotate("r2", score=0, notes="Factually incorrect")
 # 3) Run LLM evaluation + alignment metrics
 result = await session.evaluate(
     criteria="Score 1 if accurate and helpful, 0 otherwise",
-    model_name="gpt-4o",
+    model_name="gpt-6-sol",
     llm_provider="openai",
 )
 

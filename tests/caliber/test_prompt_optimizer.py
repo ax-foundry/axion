@@ -42,12 +42,12 @@ class TestOptimizedPrompt:
                 )
             ],
             expected_improvement='Should reduce false positives by 30%',
-            metadata={'model': 'gpt-4o'},
+            metadata={'model': 'gpt-6-sol'},
         )
         assert result.original_criteria == 'Score 1 if accurate.'
         assert 'factually correct' in result.optimized_criteria
         assert len(result.suggestions) == 1
-        assert result.metadata['model'] == 'gpt-4o'
+        assert result.metadata['model'] == 'gpt-6-sol'
 
 
 class TestPydanticModels:
@@ -122,18 +122,18 @@ class TestPromptOptimizer:
     def test_init_custom(self):
         """Test initialization with custom params."""
         optimizer = PromptOptimizer(
-            model_name='gpt-4o',
+            model_name='gpt-6-sol',
             llm_provider='openai',
             max_examples=20,
         )
-        assert optimizer._model_name == 'gpt-4o'
+        assert optimizer._model_name == 'gpt-6-sol'
         assert optimizer._llm_provider == 'openai'
         assert optimizer._max_examples == 20
 
     @pytest.mark.asyncio
     async def test_optimize_perfect_alignment(self):
         """Test optimization with no misalignments."""
-        optimizer = PromptOptimizer(model_name='gpt-4o')
+        optimizer = PromptOptimizer(model_name='gpt-6-sol')
 
         # All aligned results
         results = [
@@ -164,7 +164,7 @@ class TestPromptOptimizer:
 
     def test_handler_lazy_init(self):
         """Test that handler is lazily initialized."""
-        optimizer = PromptOptimizer(model_name='gpt-4o')
+        optimizer = PromptOptimizer(model_name='gpt-6-sol')
         assert optimizer._handler is None
 
         # Handler should be created on first access
@@ -177,7 +177,7 @@ class TestPromptOptimizerInputValidation:
     @pytest.mark.asyncio
     async def test_empty_results(self):
         """Test with empty results."""
-        optimizer = PromptOptimizer(model_name='gpt-4o')
+        optimizer = PromptOptimizer(model_name='gpt-6-sol')
 
         optimized = await optimizer.optimize([], 'Some criteria')
 
@@ -188,7 +188,7 @@ class TestPromptOptimizerInputValidation:
     @pytest.mark.asyncio
     async def test_only_false_positives(self):
         """Test results with only false positives returns early if no misalignment."""
-        optimizer = PromptOptimizer(model_name='gpt-4o')
+        optimizer = PromptOptimizer(model_name='gpt-6-sol')
 
         # All aligned - just testing the extract logic
         results = [

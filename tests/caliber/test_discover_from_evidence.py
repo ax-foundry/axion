@@ -13,7 +13,7 @@ class TestDiscoverFromEvidence:
     @pytest.mark.asyncio
     async def test_discover_from_evidence_no_text(self):
         """Items with no text should produce empty result."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        discovery = PatternDiscovery(model_name='gpt-6-sol')
         evidence = [
             EvidenceItem(id='e1', text=''),
             EvidenceItem(id='e2', text=''),
@@ -25,7 +25,7 @@ class TestDiscoverFromEvidence:
     @pytest.mark.asyncio
     async def test_discover_from_evidence_sequence_input(self):
         """Sequence input should be accepted and normalized."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        discovery = PatternDiscovery(model_name='gpt-6-sol')
         evidence = [
             EvidenceItem(id='e1', text=''),
             EvidenceItem(id='e2', text=''),
@@ -37,7 +37,7 @@ class TestDiscoverFromEvidence:
     @pytest.mark.asyncio
     async def test_discover_from_evidence_dict_input(self):
         """Dict input should be accepted when keys match item.id."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        discovery = PatternDiscovery(model_name='gpt-6-sol')
         evidence = {
             'e1': EvidenceItem(id='e1', text=''),
             'e2': EvidenceItem(id='e2', text=''),
@@ -48,7 +48,7 @@ class TestDiscoverFromEvidence:
     @pytest.mark.asyncio
     async def test_discover_from_evidence_dict_key_mismatch(self):
         """Dict input with mismatched keys should raise ValueError."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        discovery = PatternDiscovery(model_name='gpt-6-sol')
         evidence = {
             'wrong': EvidenceItem(id='e1', text='text'),
         }
@@ -58,7 +58,7 @@ class TestDiscoverFromEvidence:
     @pytest.mark.asyncio
     async def test_discover_from_evidence_invalid_method(self):
         """Invalid method should raise ValueError."""
-        discovery = PatternDiscovery(model_name='gpt-4o')
+        discovery = PatternDiscovery(model_name='gpt-6-sol')
         evidence = [EvidenceItem(id='e1', text='text')]
         with pytest.raises(ValueError, match='Unknown clustering method'):
             await discovery.discover_from_evidence(evidence, method='bad')

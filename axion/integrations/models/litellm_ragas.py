@@ -66,7 +66,7 @@ class LiteLLMRagas(BaseRagasLLM):
         >>> from axion.integrations.models.litellm_ragas import LiteLLMRagas
         >>> from ragas.metrics import Faithfulness
         >>>
-        >>> llm = LiteLLMRagas(model='gpt-4o')
+        >>> llm = LiteLLMRagas(model='gpt-6-sol')
         >>> metric = Faithfulness(llm=llm)
         >>> # After evaluation:
         >>> print(metric.llm.cost_estimate)
@@ -74,7 +74,7 @@ class LiteLLMRagas(BaseRagasLLM):
 
     def __init__(
         self,
-        model: str = 'gpt-4o',
+        model: str = 'gpt-6-sol',
         temperature: float = 0.0,
         run_config: Optional[RunConfig] = None,
         multiple_completion_supported: bool = False,
@@ -86,7 +86,7 @@ class LiteLLMRagas(BaseRagasLLM):
         Initialize the LiteLLM RAGAS wrapper.
 
         Args:
-            model: LiteLLM-compatible model name (e.g., 'gpt-4o', 'anthropic/claude-3-5-sonnet')
+            model: LiteLLM-compatible model name (e.g., 'gpt-6-sol', 'anthropic/claude-3-5-sonnet')
             temperature: Generation temperature (default 0.0 for deterministic outputs)
             run_config: Optional RAGAS run configuration
             multiple_completion_supported: Whether model supports multiple completions

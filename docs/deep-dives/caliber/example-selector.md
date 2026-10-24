@@ -128,7 +128,7 @@ print(f"Metadata: {result.metadata}")
     from axion.caliber import PatternDiscovery
 
     # First, discover patterns in your annotations
-    discovery = PatternDiscovery(model_name='gpt-4o')
+    discovery = PatternDiscovery(model_name='gpt-6-sol')
     patterns_result = await discovery.discover(annotated_items)
 
     # Then select examples covering those patterns

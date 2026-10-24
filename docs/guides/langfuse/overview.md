@@ -309,7 +309,7 @@ configure_tracing('noop')
 # 2. Create metrics (they will use NOOP tracers)
 config = {
     'metric': {
-        'Relevance': AnswerRelevancy(model_name='gpt-4o'),
+        'Relevance': AnswerRelevancy(model_name='gpt-6-sol'),
         'ExactStringMatch': ExactStringMatch(),
     },
     'model': {
