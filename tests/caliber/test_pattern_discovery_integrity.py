@@ -26,6 +26,16 @@ from tests.caliber.conftest import (
 )
 
 
+class _Wrap:
+    """Expose a ``PatternDiscovery`` through the ``EvidenceClusterer`` protocol."""
+
+    def __init__(self, discovery: PatternDiscovery) -> None:
+        self._discovery = discovery
+
+    async def cluster(self, evidence, method):
+        return await self._discovery.discover_from_evidence(evidence, method)
+
+
 def _discovery(output, **kwargs) -> PatternDiscovery:
     """A PatternDiscovery whose LLM clustering call is scripted."""
     d = PatternDiscovery(llm=object(), **kwargs)
@@ -303,6 +313,69 @@ class TestCoverage:
         assert result.coverage['input_count'] == 20
         assert result.coverage['sampled_out'] == 8
         assert result.coverage['omitted_by_model'] == 2
+
+    @pytest.mark.asyncio
+    async def test_pipeline_buckets_stay_exclusive_after_prefilter(self):
+        """Items of a pre-filtered cluster leave ``assigned``; ratio is untouched."""
+        evidence = make_grouped_evidence(1, 2)  # two items, one parent
+        ids = list(evidence)
+        clustering = _discovery(clustering_output([ids]))
+        pipeline = EvidencePipeline(
+            clusterer=_Wrap(clustering),
+            writer=ScriptedWriter(),
+            recurrence_threshold=2,
+            recurrence_key_fn=parent_key,
+        )
+        result = await pipeline.run(evidence)
+        cov = result.coverage
+        assert result.learnings == []
+        assert cov['input_count'] == 2
+        assert cov['assigned'] == 0
+        assert cov['filtered_below_threshold'] == 2
+        assert cov['ratio'] == 1.0
+        assert (
+            cov['assigned']
+            + cov['uncategorized']
+            + cov['filtered_small_cluster']
+            + cov['filtered_below_threshold']
+            + cov['omitted_by_model']
+            + cov['ineligible']
+            == cov['input_count']
+        )
+
+    @pytest.mark.asyncio
+    async def test_pipeline_derives_buckets_for_bare_clusterer(self):
+        """A clusterer that reports no coverage still yields every documented key."""
+        evidence = make_grouped_evidence(2, 3)
+        ids = list(evidence)
+        clusterer = ScriptedClusterer([ids[:4]], uncategorized=[ids[4]])
+        result = await EvidencePipeline(
+            clusterer=clusterer, writer=ScriptedWriter()
+        ).run(evidence)
+        cov = result.coverage
+        assert cov['submitted'] == 6
+        assert cov['assigned'] == 4
+        assert cov['uncategorized'] == 1
+        assert cov['omitted_by_model'] == 1
+        assert cov['omitted_ids'] == [ids[5]]
+        assert cov['ineligible'] == 0
+        assert cov['ratio'] == pytest.approx(5 / 6)
+
+    @pytest.mark.asyncio
+    async def test_blank_only_input_still_reports_coverage(self):
+        evidence = {'blank': EvidenceItem(id='blank', text='')}
+        d = _discovery(clustering_output([]))
+        result = await d.discover_from_evidence(evidence)
+        cov = result.metadata['coverage']
+        assert cov['submitted'] == 0
+        assert cov['ineligible'] == 1
+        assert cov['assigned'] == 0
+        assert cov['omitted_by_model'] == 0
+        assert cov['ratio'] == 1.0
+        pipeline = EvidencePipeline(clusterer=_Wrap(d), writer=ScriptedWriter())
+        presult = await pipeline.run(evidence)
+        assert presult.coverage['ineligible'] == 1
+        assert presult.coverage['ratio'] == 1.0
 
 
 # --------------------------------------------------------------------------- #

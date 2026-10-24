@@ -229,6 +229,8 @@ Every item handed to `run()` ends up in exactly one bucket, so a model that quie
 | `omitted_by_model` | Submitted, but returned in neither a pattern nor `uncategorized` (`omitted_ids` lists them) |
 | `ratio` | Model coverage: share of *submitted* items the model placed anywhere. Filters never count against it |
 
+The buckets are mutually exclusive and sum to `input_count` less `sampled_out` and `duplicates_dropped`; an item whose cluster the pipeline pre-filter dropped is counted in `filtered_below_threshold`, not `assigned`.
+Every key is present on every result, including results that never reached a model (blank-only input, too few documents) and results from a custom `clusterer` that reports no coverage of its own, in which case the buckets are derived from what it returned.
 Set `min_coverage=0.9` to log a warning when `ratio` falls below it (the result gets `coverage['below_min'] = True`); add `raise_on_low_coverage=True` to raise `LowCoverageError` instead.
 `clustering_excerpt_chars=` caps the text per item sent to the clustering call; the default sends full text.
 

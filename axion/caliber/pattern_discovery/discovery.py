@@ -245,7 +245,10 @@ class PatternDiscovery:
                 uncategorized=list(evidence.keys()),
                 total_analyzed=len(evidence),
                 method=ClusteringMethod.LLM,
-                metadata={'error': 'No items with text to cluster'},
+                metadata={
+                    'error': 'No items with text to cluster',
+                    'coverage': self._unclustered_coverage(evidence, items_with_text),
+                },
             )
 
         ineligible = len(evidence) - len(items_with_text)
@@ -291,6 +294,24 @@ class PatternDiscovery:
             total_analyzed=len(evidence),
             method=ClusteringMethod.LLM,
             metadata=metadata,
+        )
+
+    @staticmethod
+    def _unclustered_coverage(
+        evidence: Dict[str, EvidenceItem], items_with_text: Dict[str, EvidenceItem]
+    ) -> Dict[str, Any]:
+        """Coverage for a result that never reached a model.
+
+        Everything with text is reported as ``uncategorized`` (which is where
+        the early-return result puts it), the rest as ``ineligible``. Nothing
+        was omitted by a model, so ``ratio`` is 1.0.
+        """
+        return build_coverage(
+            submitted_ids=list(items_with_text),
+            assigned_ids=set(),
+            uncategorized_ids=list(items_with_text),
+            filtered_small_cluster_ids=set(),
+            ineligible=len(evidence) - len(items_with_text),
         )
 
     def _check_coverage(self, coverage: Dict[str, Any]) -> None:
@@ -424,6 +445,7 @@ class PatternDiscovery:
                 metadata={
                     'error': f'Too few documents for BERTopic (min {self.BERTOPIC_MIN_DOCUMENTS})',
                     'reason': 'too_few_documents',
+                    'coverage': self._unclustered_coverage(evidence, items_with_text),
                 },
             )
 
@@ -456,6 +478,7 @@ class PatternDiscovery:
                 metadata={
                     'error': f'BERTopic clustering failed: {e}',
                     'reason': 'bertopic_failed',
+                    'coverage': self._unclustered_coverage(evidence, items_with_text),
                 },
             )
 

@@ -1,6 +1,16 @@
 import asyncio
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional, Protocol, Sequence, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Protocol,
+    Sequence,
+    Set,
+    Union,
+)
 
 from axion._core.logging import get_logger
 from axion._core.tracing import init_tracer, trace
@@ -9,6 +19,7 @@ from axion.caliber.pattern_discovery._utils import (
     MetadataConfig,
     RecurrenceKeyFn,
     aggregate_cluster_metadata,
+    build_coverage,
     check_recurrence,
     count_distinct_keys,
     default_excerpt,
@@ -323,11 +334,15 @@ class EvidencePipeline:
                 sid = await self._sink.write(la, provenance)
                 sink_ids.append(sid)
 
-        coverage = dict(clustering_result.metadata.get('coverage', {}))
-        coverage['input_count'] = input_count
-        coverage['duplicates_dropped'] = duplicates_dropped
-        coverage['sampled_out'] = sampled_out + coverage.get('sampled_out', 0)
-        coverage['filtered_below_threshold'] = len(filtered_below_threshold)
+        coverage = self._roll_up_coverage(
+            clustering_result,
+            evidence_dict,
+            surviving_ids=surviving_ids,
+            filtered_below_threshold=len(filtered_below_threshold),
+            input_count=input_count,
+            duplicates_dropped=duplicates_dropped,
+            sampled_out=sampled_out,
+        )
 
         return PipelineResult(
             clustering_result=clustering_result,
@@ -341,6 +356,45 @@ class EvidencePipeline:
             duplicates_dropped=duplicates_dropped,
             coverage=coverage,
         )
+
+    @staticmethod
+    def _roll_up_coverage(
+        clustering_result: PatternDiscoveryResult,
+        evidence: Dict[str, EvidenceItem],
+        *,
+        surviving_ids: Set[str],
+        filtered_below_threshold: int,
+        input_count: int,
+        duplicates_dropped: int,
+        sampled_out: int,
+    ) -> Dict[str, Any]:
+        """Fold pipeline-level filters into the clusterer's coverage.
+
+        Buckets stay mutually exclusive: ``assigned`` is recomputed from the
+        patterns that survived the recurrence pre-filter, and the items of the
+        patterns it dropped move to ``filtered_below_threshold``. ``ratio`` is
+        left as the clusterer reported it, since the pre-filter is not the
+        model's omission. A clusterer that reports no coverage of its own gets
+        the buckets derived from what it returned, so every documented key is
+        always present.
+        """
+        coverage = dict(clustering_result.metadata.get('coverage', {}))
+        derived = build_coverage(
+            submitted_ids=list(evidence),
+            assigned_ids={
+                rid for p in clustering_result.patterns for rid in p.record_ids
+            },
+            uncategorized_ids=list(clustering_result.uncategorized),
+            filtered_small_cluster_ids=set(),
+        )
+        for key, value in derived.items():
+            coverage.setdefault(key, value)
+        coverage['assigned'] = len(surviving_ids)
+        coverage['filtered_below_threshold'] = filtered_below_threshold
+        coverage['input_count'] = input_count
+        coverage['duplicates_dropped'] = duplicates_dropped
+        coverage['sampled_out'] = sampled_out + coverage.get('sampled_out', 0)
+        return coverage
 
     def display(self, result: PipelineResult) -> None:
         """Display a pipeline result (summary + patterns + learnings).
