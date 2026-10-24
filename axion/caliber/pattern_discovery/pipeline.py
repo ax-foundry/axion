@@ -19,6 +19,7 @@ from axion.caliber.pattern_discovery._utils import (
     ExcerptFn,
     MetadataConfig,
     RecurrenceKeyFn,
+    SamplerFn,
     ScoreFn,
     aggregate_cluster_metadata,
     build_coverage,
@@ -152,6 +153,7 @@ class EvidencePipeline:
         score_fn: Optional[ScoreFn] = None,
         fail_on_all_errors: bool = False,
         sink_on_error: Literal['raise', 'continue'] = 'raise',
+        sampler: Optional[SamplerFn] = None,
     ) -> None:
         self._method = method
         self._recurrence_threshold = recurrence_threshold
@@ -160,6 +162,10 @@ class EvidencePipeline:
             raise ValueError('max_learnings_per_cluster must be >= 1')
         self._max_learnings_per_cluster = max_learnings_per_cluster
         self._max_items = max_items
+        # How evidence is cut down to max_items. The default is a uniform
+        # hash/seeded sample; recurrence_balanced_sampler(key_fn) keeps parents
+        # represented instead.
+        self._sampler: SamplerFn = sampler or deterministic_sample
         self._domain_context = domain_context
         self._metadata_config = metadata_config or MetadataConfig()
         self._excerpt_fn = excerpt_fn
@@ -242,11 +248,15 @@ class EvidencePipeline:
 
         # Sample if too many
         sampled_out = 0
+        keys_in_input = count_distinct_keys(
+            list(evidence_dict), evidence_dict, self._recurrence_key_fn
+        )
         if len(evidence_dict) > self._max_items:
-            sampled_out = len(evidence_dict) - self._max_items
-            evidence_dict = deterministic_sample(
-                evidence_dict, self._max_items, self._seed
-            )
+            evidence_dict = self._sampler(evidence_dict, self._max_items, self._seed)
+            sampled_out = input_count - len(evidence_dict)
+        keys_after_sampling = count_distinct_keys(
+            list(evidence_dict), evidence_dict, self._recurrence_key_fn
+        )
 
         # Sanitize
         evidence_dict = await self._sanitize(evidence_dict)
@@ -368,6 +378,8 @@ class EvidencePipeline:
             duplicates_dropped=duplicates_dropped,
             sampled_out=sampled_out,
         )
+        coverage['distinct_keys_input'] = keys_in_input
+        coverage['distinct_keys_sampled'] = keys_after_sampling
 
         return PipelineResult(
             clustering_result=clustering_result,

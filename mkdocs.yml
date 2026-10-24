@@ -80,6 +80,7 @@ nav:
       - API Runner: deep-dives/runners/api-runner.md
     - Caliber:
       - Pattern Discovery: deep-dives/caliber/pattern-discovery.md
+      - Pattern Discovery Design Notes: deep-dives/caliber/pattern-discovery-design-notes.md
       - Example Selector: deep-dives/caliber/example-selector.md
     - Synthetic:
       - Document QA Generation: deep-dives/synthetic/document-qa.md

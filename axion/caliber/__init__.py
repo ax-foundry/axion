@@ -48,6 +48,7 @@ from axion.caliber.pattern_discovery import (
     display_learnings,
     display_patterns,
     display_pipeline_result,
+    recurrence_balanced_sampler,
     score_by_confidence,
     score_by_distinct_keys,
 )
@@ -143,6 +144,7 @@ __all__ = [
     'display_learnings',
     'display_patterns',
     'display_pipeline_result',
+    'recurrence_balanced_sampler',
     'score_by_confidence',
     'score_by_distinct_keys',
     # Example Selection
