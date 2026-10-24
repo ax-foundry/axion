@@ -115,6 +115,23 @@ class FailedCluster:
 
 
 @dataclass
+class ClusterWithoutLearnings:
+    """A cluster that distilled without error but produced no learning.
+
+    ``candidates`` is how many learnings the writer returned. Zero means the
+    model found nothing to say; otherwise every candidate was dropped, and the
+    two ``dropped_*`` counts say why: no cited id belonged to the cluster, or
+    the cited ids spanned fewer recurrence keys than ``recurrence_threshold``.
+    """
+
+    category: str
+    item_count: int = 0
+    candidates: int = 0
+    dropped_invalid: int = 0
+    dropped_below_recurrence: int = 0
+
+
+@dataclass
 class PipelineResult:
     """Complete result from the evidence pipeline.
 
@@ -138,3 +155,10 @@ class PipelineResult:
     coverage: Dict[str, Any] = field(default_factory=dict)
     records: List['LearningRecord'] = field(default_factory=list)
     failed_clusters: List['FailedCluster'] = field(default_factory=list)
+    # Distillation accounting: clusters that produced nothing without raising,
+    # and the two reasons a returned candidate is discarded after validation.
+    clusters_without_learnings: List['ClusterWithoutLearnings'] = field(
+        default_factory=list
+    )
+    learnings_dropped_invalid: int = 0
+    learnings_dropped_below_recurrence: int = 0
