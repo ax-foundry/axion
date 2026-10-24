@@ -291,6 +291,29 @@ Every key is present on every result, including results that never reached a mod
 Set `min_coverage=0.9` to log a warning when `ratio` falls below it (the result gets `coverage['below_min'] = True`); add `raise_on_low_coverage=True` to raise `LowCoverageError` instead.
 `clustering_excerpt_chars=` caps the text per item sent to the clustering call; the default sends full text.
 
+### Sampling
+
+When the corpus exceeds `max_items`, the pipeline samples before clustering.
+The default `deterministic_sample` is uniform (hash order, or a seeded shuffle), which is the worst case for recurrence: it drops the second occurrence of a pattern at random, and with many items per parent it can drop whole parents.
+Pass `sampler=` to change that; `recurrence_balanced_sampler(key_fn)` keeps parents represented:
+
+```python
+from axion.caliber import recurrence_balanced_sampler
+
+key = lambda item: item.source_ref or item.id
+pipeline = EvidencePipeline(
+    ...,
+    max_items=50,
+    recurrence_key_fn=key,
+    sampler=recurrence_balanced_sampler(key),
+)
+```
+
+Its guarantees are best effort and deterministic: when distinct keys fit in the budget every key keeps at least one item and the rest of the budget is spread evenly; when they do not, the first `max_items` keys in stable order keep one item each.
+Keeping a parent does not guarantee keeping the particular item that would establish a pattern.
+`result.coverage['distinct_keys_input']` and `['distinct_keys_sampled']` report how many parents survived, whichever sampler ran.
+A custom sampler is any `(items, max_items, seed) -> items` callable that is deterministic for a given seed.
+
 ### Grouped Evidence
 
 When several items hang off one parent (chunks of a conversation, findings on a ticket), set `recurrence_key_fn` to the parent so recurrence counts parents, not items:

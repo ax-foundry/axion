@@ -521,3 +521,72 @@ def score_by_distinct_keys(
     the same number of distinct keys.
     """
     return 2 * provenance.distinct_key_count + learning.confidence
+
+
+SamplerFn = Callable[
+    [Dict[str, EvidenceItem], int, Optional[int]], Dict[str, EvidenceItem]
+]
+"""Reduces evidence to at most ``max_items``: ``(items, max_items, seed) -> items``.
+Must be deterministic for a given input and seed."""
+
+
+def _stable_order(keys: List[str], seed: Optional[int]) -> List[str]:
+    """Hash order without a seed, seeded shuffle with one. Mirrors deterministic_sample."""
+    if seed is not None:
+        ordered = list(keys)
+        random.Random(seed).shuffle(ordered)
+        return ordered
+    return sorted(keys, key=lambda k: hashlib.sha256(k.encode()).hexdigest())
+
+
+def recurrence_balanced_sampler(
+    key_fn: RecurrenceKeyFn = default_recurrence_key,
+) -> SamplerFn:
+    """
+    Build a sampler that keeps as many recurrence keys represented as it can.
+
+    Items are grouped by ``key_fn``. Keys are visited in a stable order (hash
+    order, or a seeded shuffle when ``seed`` is given) and one item per key is
+    taken per round, round after round, until ``max_items`` is reached. Within a
+    key, items are taken in the same stable order.
+
+    Guarantees, best effort and deterministic:
+
+    - When distinct keys <= ``max_items``, every key keeps at least one item.
+    - When distinct keys > ``max_items``, the first ``max_items`` keys in the
+      stable order keep one item each and the remaining keys are dropped whole.
+    - Within the budget, items are spread as evenly across keys as the counts allow.
+
+    Keeping a key does not guarantee keeping the particular item that would
+    establish a pattern; it guarantees the parent is still in the corpus.
+    The returned dict preserves the input's item order.
+    """
+
+    def sample(
+        items: Dict[str, EvidenceItem],
+        max_items: int,
+        seed: Optional[int] = None,
+    ) -> Dict[str, EvidenceItem]:
+        if len(items) <= max_items:
+            return dict(items)
+        if max_items <= 0:
+            return {}
+        groups = group_ids_by_key(list(items.keys()), items, key_fn)
+        ordered_keys = _stable_order(list(groups.keys()), seed)
+        ordered_groups = [_stable_order(groups[k], seed) for k in ordered_keys]
+        selected: Set[str] = set()
+        depth = 0
+        while len(selected) < max_items:
+            progressed = False
+            for group in ordered_groups:
+                if depth < len(group):
+                    selected.add(group[depth])
+                    progressed = True
+                    if len(selected) >= max_items:
+                        break
+            if not progressed:
+                break
+            depth += 1
+        return {k: v for k, v in items.items() if k in selected}
+
+    return sample

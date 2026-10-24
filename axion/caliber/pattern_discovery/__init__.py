@@ -6,6 +6,7 @@ from axion.caliber.pattern_discovery._compat import (
 )
 from axion.caliber.pattern_discovery._utils import (
     MetadataConfig,
+    recurrence_balanced_sampler,
     score_by_confidence,
     score_by_distinct_keys,
 )
@@ -113,6 +114,7 @@ __all__ = [
     'Sanitizer',
     # Config
     'MetadataConfig',
+    'recurrence_balanced_sampler',
     'score_by_confidence',
     'score_by_distinct_keys',
     # Display
