@@ -113,11 +113,17 @@ class TestClusterLLMSplit:
 
 
 class TestConfidenceRubric:
-    """The distillation instruction anchors confidence to evidence counts."""
+    """The distillation instruction anchors confidence to independent evidence."""
 
     def test_rubric_present(self):
-        assert '0.9+: >= 10 consistent supporting items' in (
+        assert '0.9+: >= 10 independent supporting observations' in (
             DEFAULT_DISTILLATION_INSTRUCTION
         )
-        assert '0.75-0.89: 5-9 supporting items' in DEFAULT_DISTILLATION_INSTRUCTION
+        assert '0.75-0.89: 5-9 independent observations' in (
+            DEFAULT_DISTILLATION_INSTRUCTION
+        )
         assert '< 0.6: weak or mixed support' in DEFAULT_DISTILLATION_INSTRUCTION
+
+    def test_rubric_counts_sources_not_items(self):
+        assert 'distinct_source_count' in DEFAULT_DISTILLATION_INSTRUCTION
+        assert 'one observation, not several' in DEFAULT_DISTILLATION_INSTRUCTION

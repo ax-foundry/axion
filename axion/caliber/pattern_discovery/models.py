@@ -87,3 +87,10 @@ class PipelineResult:
     validation_repairs: int = 0
     sink_ids: List[str] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
+    # Accounting: where every input item ended up. ``input_count`` is the size of
+    # the evidence handed to ``run`` before any sampling; ``coverage`` rolls the
+    # clusterer's per-item buckets up with the pipeline's own filters.
+    input_count: int = 0
+    sampled_out: int = 0
+    duplicates_dropped: int = 0
+    coverage: Dict[str, Any] = field(default_factory=dict)
