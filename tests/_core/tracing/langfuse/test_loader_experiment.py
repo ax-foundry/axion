@@ -189,10 +189,11 @@ class FakeCreateDatasetRunItemRequest:
         self.metadata = metadata
 
 
-def _install_fake_langfuse_module(fake_client: FakeLangfuseClient):
+def _install_fake_langfuse_module(fake_client: FakeLangfuseClient, monkeypatch):
     """
     LangfuseTraceLoader imports `Langfuse` from the `langfuse` package at runtime.
-    Provide a minimal stub so tests do not require the real dependency.
+    Provide a minimal stub, removed after the test, so tests do not require the
+    real dependency.
     """
     fake_module = types.ModuleType('langfuse')
 
@@ -202,12 +203,12 @@ def _install_fake_langfuse_module(fake_client: FakeLangfuseClient):
             pass
 
     fake_module.Langfuse = Langfuse
-    sys.modules['langfuse'] = fake_module
+    monkeypatch.setitem(sys.modules, 'langfuse', fake_module)
 
     # Create fake langfuse.api module with CreateDatasetRunItemRequest
     fake_api_module = types.ModuleType('langfuse.api')
     fake_api_module.CreateDatasetRunItemRequest = FakeCreateDatasetRunItemRequest
-    sys.modules['langfuse.api'] = fake_api_module
+    monkeypatch.setitem(sys.modules, 'langfuse.api', fake_api_module)
 
     # Monkeypatching approach: we will bypass loader.__init__ client creation and
     # inject our fake client directly in the test.
@@ -220,7 +221,7 @@ def test_upload_experiment_sets_input_output_and_linking_metadata(monkeypatch):
     fake_dataset = FakeDataset(dataset_items)
     fake_client = FakeLangfuseClient(dataset=fake_dataset)
 
-    _install_fake_langfuse_module(fake_client)
+    _install_fake_langfuse_module(fake_client, monkeypatch)
 
     # Instantiate loader without requiring real Langfuse initialization.
     loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
@@ -297,7 +298,7 @@ def test_upload_experiment_scores_on_runtime_traces_no_dataset_runs(monkeypatch)
     fake_dataset = FakeDataset(dataset_items)
     fake_client = FakeLangfuseClient(dataset=fake_dataset)
 
-    _install_fake_langfuse_module(fake_client)
+    _install_fake_langfuse_module(fake_client, monkeypatch)
 
     loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
     loader.max_retries = 0
@@ -362,7 +363,7 @@ def test_upload_experiment_link_to_traces_uses_low_level_api(monkeypatch):
     fake_dataset = FakeDataset(dataset_items)
     fake_client = FakeLangfuseClient(dataset=fake_dataset)
 
-    _install_fake_langfuse_module(fake_client)
+    _install_fake_langfuse_module(fake_client, monkeypatch)
 
     loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
     loader.max_retries = 0
@@ -465,7 +466,7 @@ def test_upload_experiment_link_to_traces_false_creates_new_traces(monkeypatch):
     fake_dataset = FakeDataset(dataset_items)
     fake_client = FakeLangfuseClient(dataset=fake_dataset)
 
-    _install_fake_langfuse_module(fake_client)
+    _install_fake_langfuse_module(fake_client, monkeypatch)
 
     loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
     loader.max_retries = 0
@@ -528,7 +529,7 @@ def test_upload_experiment_score_on_runtime_traces_takes_precedence(monkeypatch)
     fake_dataset = FakeDataset(dataset_items)
     fake_client = FakeLangfuseClient(dataset=fake_dataset)
 
-    _install_fake_langfuse_module(fake_client)
+    _install_fake_langfuse_module(fake_client, monkeypatch)
 
     loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
     loader.max_retries = 0

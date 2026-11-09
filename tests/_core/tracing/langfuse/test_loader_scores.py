@@ -1,13 +1,52 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from types import SimpleNamespace
+from typing import Any
 from unittest.mock import MagicMock
+
+import pytest
 
 from axion._core.tracing.collection.scores import TraceScore
 from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
+from tests._core.tracing.langfuse.fakes import make_loader, row, score
+
+TRACE_START = '2026-09-01T12:00:00Z'
+SCORED_AT = '2026-09-01T13:00:00Z'
+
+
+def _scored_loader() -> LangfuseTraceLoader:
+    rows = [
+        row('t1', 'root', TRACE_START, session_id='s1'),
+        row('t1', 'gen', '2026-09-01T12:00:01Z', parent='root', session_id='s1'),
+    ]
+    on_t1 = {'trace_id': 't1', 'session_id': 's1'}
+    scores = [
+        score('n', 'accuracy', 'NUMERIC', 0.75, SCORED_AT, **on_t1),
+        score('b', 'resolved', 'BOOLEAN', True, SCORED_AT, **on_t1),
+        score('c', 'flag', 'CATEGORICAL', 'tone', SCORED_AT, comment='why', **on_t1),
+        score('o', 'step', 'NUMERIC', 1, SCORED_AT, observation_id='gen', **on_t1),
+        score('early', 'early', 'NUMERIC', 1, '2026-09-01T10:00:00Z', **on_t1),
+        score('late', 'late', 'NUMERIC', 1, '2026-10-01T12:00:00Z', **on_t1),
+        score('too-early', 'too_early', 'NUMERIC', 1, '2026-08-30T12:00:00Z', **on_t1),
+        score('sess', 'csat', 'NUMERIC', 4, '2026-09-02T12:00:00Z', session_id='s1'),
+    ]
+    return make_loader(rows, scores, score_page_size=2)
+
+
+# (data_type, value, string_value) as TraceScore holds them.
+EXPECTED = {
+    'accuracy': ('NUMERIC', 0.75, None),
+    'resolved': ('BOOLEAN', 1.0, 'True'),
+    'flag': ('CATEGORICAL', 0.0, 'tone'),
+    'step': ('NUMERIC', 1.0, None),
+    'early': ('NUMERIC', 1.0, None),
+    'late': ('NUMERIC', 1.0, None),
+}
 
 
 def _raw_score(name, value, trace_id='trace-1', data_type='NUMERIC', string_value=None):
+    """A score as a trace payload's ``scores`` carries it."""
     return SimpleNamespace(
         name=name,
         value=value,
@@ -21,121 +60,122 @@ def _raw_score(name, value, trace_id='trace-1', data_type='NUMERIC', string_valu
     )
 
 
-def _scores_response(scores, total_pages=1, page=1):
-    return SimpleNamespace(
-        data=scores,
-        meta=SimpleNamespace(page=page, total_pages=total_pages),
-    )
-
-
-def _loader(scores_api) -> LangfuseTraceLoader:
-    loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
-    loader.client = SimpleNamespace(api=SimpleNamespace(scores=scores_api))
-    loader._client_initialized = True
-    loader.request_pacing = 0.0
-    loader._execute_with_retry = lambda fn, description: fn()
-    return loader
-
-
 # ---------------------------------------------------------------------------
 # fetch_scores_for_trace
 # ---------------------------------------------------------------------------
 
 
-def test_fetch_scores_for_trace_single_page():
-    api = MagicMock()
-    api.get_many.return_value = _scores_response(
-        [_raw_score('halluc', 1.0), _raw_score('scope', 0.8)]
-    )
-    loader = _loader(api)
-    scores = loader.fetch_scores_for_trace('trace-1')
-    assert len(scores) == 2
+def test_fetch_scores_for_trace_pages_and_keeps_the_value_shape():
+    loader = _scored_loader()
+    scores = loader.fetch_scores_for_trace('t1')
     assert all(isinstance(s, TraceScore) for s in scores)
-    assert scores[0].name == 'halluc'
-    assert scores[1].name == 'scope'
-    api.get_many.assert_called_once_with(trace_id='trace-1', page=1)
+    assert {s.name: (s.data_type, s.value, s.string_value) for s in scores} == (
+        EXPECTED
+    )
+    assert len(loader.client.api.scores_v3.calls) > 1
+    step = next(s for s in scores if s.name == 'step')
+    assert (step.trace_id, step.observation_id) == ('t1', 'gen')
+    assert next(s for s in scores if s.name == 'flag').comment == 'why'
 
 
-def test_fetch_scores_for_trace_paginates():
-    api = MagicMock()
-    api.get_many.side_effect = [
-        _scores_response([_raw_score('a', 0.9)], total_pages=2, page=1),
-        _scores_response([_raw_score('b', 0.7)], total_pages=2, page=2),
-    ]
-    loader = _loader(api)
-    scores = loader.fetch_scores_for_trace('trace-1')
-    assert len(scores) == 2
-    assert [s.name for s in scores] == ['a', 'b']
-    assert api.get_many.call_count == 2
+def test_score_window_spans_a_day_before_the_trace_to_now():
+    loader = _scored_loader()
+    names = {s.name for s in loader.fetch_scores_for_trace('t1')}
+    assert {'early', 'late'} <= names  # 2 h before the trace, 30 days after
+    assert 'too_early' not in names  # 2 days before: outside the window
+    window = loader.client.api.scores_v3.calls[0]
+    assert window['from_timestamp'] == datetime(2026, 8, 31, 12, tzinfo=UTC)
+    assert window['to_timestamp'] > datetime.now(UTC)
 
 
-def test_fetch_scores_for_trace_empty():
-    api = MagicMock()
-    api.get_many.return_value = _scores_response([])
-    loader = _loader(api)
-    scores = loader.fetch_scores_for_trace('trace-1')
-    assert scores == []
+def test_fetched_trace_carries_its_scores():
+    trace = _scored_loader().fetch_trace('t1')
+    on_payload = {
+        s.name: (s.data_type, s.value, getattr(s, 'string_value', None))
+        for s in trace.scores
+    }
+    assert on_payload == EXPECTED
 
 
-def test_fetch_scores_for_trace_error_returns_empty(caplog):
-    api = MagicMock()
-    api.get_many.side_effect = RuntimeError('network error')
-    loader = _loader(api)
-    # _execute_with_retry re-raises; the method must catch and warn
-    loader._execute_with_retry = lambda fn, description: fn()
-    scores = loader.fetch_scores_for_trace('trace-1')
-    assert scores == []
+def test_fetch_scores_for_unknown_trace_is_empty():
+    assert _scored_loader().fetch_scores_for_trace('missing') == []
+
+
+def test_fetch_scores_for_trace_error_returns_empty():
+    loader = _scored_loader()
+
+    def boom(**_: Any) -> Any:
+        raise RuntimeError('network error')
+
+    loader.client.api.scores_v3.get_many_v3 = boom
+    loader.max_retries = 0
+    assert loader.fetch_scores_for_trace('t1') == []
 
 
 def test_fetch_scores_for_trace_empty_id():
     loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
     loader._client_initialized = True
     loader.request_pacing = 0.0
-    scores = loader.fetch_scores_for_trace('')
-    assert scores == []
+    assert loader.fetch_scores_for_trace('') == []
 
 
 # ---------------------------------------------------------------------------
-# fetch_scores_for_session
+# fetch_scores_for_session / list_score_rows
 # ---------------------------------------------------------------------------
 
 
-def test_fetch_scores_for_session_groups_by_trace_id():
-    api = MagicMock()
-    api.get_many.return_value = _scores_response(
-        [
-            _raw_score('halluc', 1.0, trace_id='trace-a'),
-            _raw_score('scope', 0.5, trace_id='trace-b'),
-            _raw_score('under', 0.0, trace_id='trace-a'),
-        ]
-    )
-    loader = _loader(api)
-    result = loader.fetch_scores_for_session('sess-1')
-    assert set(result.keys()) == {'trace-a', 'trace-b'}
-    assert len(result['trace-a']) == 2
-    assert len(result['trace-b']) == 1
-    api.get_many.assert_called_once_with(session_id='sess-1', page=1)
-
-
-def test_fetch_scores_for_session_paginates():
-    api = MagicMock()
-    api.get_many.side_effect = [
-        _scores_response([_raw_score('a', 1.0, trace_id='t1')], total_pages=2, page=1),
-        _scores_response([_raw_score('b', 0.5, trace_id='t2')], total_pages=2, page=2),
-    ]
-    loader = _loader(api)
-    result = loader.fetch_scores_for_session('sess-1')
-    assert 't1' in result and 't2' in result
-    assert api.get_many.call_count == 2
+def test_fetch_scores_for_session_keys_by_trace_and_session():
+    by_trace = _scored_loader().fetch_scores_for_session('s1')
+    assert {s.name for s in by_trace['t1']} == set(EXPECTED)
+    assert [s.name for s in by_trace['']] == ['csat']
 
 
 def test_fetch_scores_for_session_error_returns_empty():
-    api = MagicMock()
-    api.get_many.side_effect = RuntimeError('timeout')
-    loader = _loader(api)
-    loader._execute_with_retry = lambda fn, description: fn()
-    result = loader.fetch_scores_for_session('sess-1')
-    assert result == {}
+    loader = _scored_loader()
+
+    def boom(**_: Any) -> Any:
+        raise RuntimeError('timeout')
+
+    loader.client.api.scores_v3.get_many_v3 = boom
+    loader.max_retries = 0
+    assert loader.fetch_scores_for_session('s1') == {}
+
+
+def test_list_score_rows_filters_by_name_and_raises_on_failure():
+    loader = _scored_loader()
+    rows = loader.list_score_rows(session_id='s1', name='csat')
+    assert [(r.name, r.value) for r in rows] == [('csat', 4.0)]
+    assert loader.list_score_rows(session_id='nope') == []
+
+    def boom(**_: Any) -> Any:
+        raise RuntimeError('500')
+
+    loader.client.api.scores_v3.get_many_v3 = boom
+    loader.max_retries = 0
+    with pytest.raises(RuntimeError):
+        loader.list_score_rows(session_id='s1')
+
+
+def test_list_score_rows_needs_exactly_one_subject():
+    loader = _scored_loader()
+    with pytest.raises(ValueError):
+        loader.list_score_rows()
+    with pytest.raises(ValueError):
+        loader.list_score_rows(session_id='s1', trace_id='t1')
+
+
+def test_session_scores_attach_through_session_from_langfuse():
+    from axion._core.tracing.collection.session import Session
+
+    session = Session.from_langfuse(
+        's1',
+        loader=_scored_loader(),
+        show_progress=False,
+        fetch_scores=True,
+        turns_only=False,
+    )
+    [trace] = list(session)
+    assert {s.name for s in trace.scores} == set(EXPECTED)
 
 
 # ---------------------------------------------------------------------------

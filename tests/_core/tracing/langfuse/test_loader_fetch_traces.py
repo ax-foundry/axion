@@ -1,117 +1,189 @@
-from datetime import datetime
-from types import SimpleNamespace
-from typing import Any, Optional
+"""Tests for LangfuseTraceLoader.fetch_traces and window listing."""
+
+from __future__ import annotations
+
+import random
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
+from tests._core.tracing.langfuse.fakes import make_loader, row
+
+START = datetime(2026, 11, 1, 10, tzinfo=UTC)
+END = datetime(2026, 11, 1, 11, tzinfo=UTC)
 
 
-class FakeObservationsApi:
-    def __init__(self, pages: dict[Optional[str], Any]):
-        self.pages = pages
-        self.calls = []
-
-    def get_many(self, **kwargs):
-        self.calls.append(kwargs)
-        return self.pages[kwargs.get('cursor')]
+def _at(minute: int, second: int = 0) -> str:
+    return (START + timedelta(minutes=minute, seconds=second)).isoformat()
 
 
-class FakeTraceApi:
-    def __init__(self, traces: dict[str, Any], summaries: Optional[list] = None):
-        self.traces = traces
-        self.summaries = summaries or []
-        self.calls = []
-        self.list_calls = []
-
-    def get(self, trace_id: str):
-        self.calls.append(trace_id)
-        return self.traces[trace_id]
-
-    def list(self, **kwargs):
-        # trace.list() is page-based; return summaries on page 1, then empty so the
-        # loader's pagination loop terminates.
-        self.list_calls.append(kwargs)
-        data = self.summaries if kwargs.get('page', 1) == 1 else []
-        return SimpleNamespace(data=data)
+def _turn(tid: str, minute: int, children: int = 0, **kw: Any) -> list[Any]:
+    rows = [row(tid, f'{tid}-root', _at(minute), **kw)]
+    rows += [
+        row(tid, f'{tid}-c{i}', _at(minute, i + 1), parent=f'{tid}-root', **kw)
+        for i in range(children)
+    ]
+    return rows
 
 
-def _response(trace_ids, cursor=None):
-    return SimpleNamespace(
-        data=[SimpleNamespace(trace_id=trace_id) for trace_id in trace_ids],
-        meta=SimpleNamespace(cursor=cursor),
-    )
+def _list(loader: LangfuseTraceLoader, max_traces: int = 100, **kw: Any) -> Any:
+    return loader.list_trace_ids(START, END, max_traces=max_traces, **kw)
 
 
-def _loader(observation_pages, traces, trace_summaries=None) -> LangfuseTraceLoader:
-    loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
-    loader.client = SimpleNamespace(
-        api=SimpleNamespace(
-            observations=FakeObservationsApi(observation_pages),
-            trace=FakeTraceApi(traces, trace_summaries),
-        )
-    )
-    loader._client_initialized = True
-    loader.request_pacing = 0.0
-    loader._execute_with_retry = lambda fn, description: fn()
-    return loader
+# --- fetch_traces -------------------------------------------------------------------
 
 
 def test_fetch_traces_name_filter_paginates_until_limit() -> None:
-    loader = _loader(
-        observation_pages={
-            None: _response(['trace-a', 'trace-b'], cursor='page-2'),
-            'page-2': _response(['trace-c', 'trace-d']),
-        },
-        traces={
-            'trace-a': SimpleNamespace(id='trace-a', name='other'),
-            'trace-b': SimpleNamespace(id='trace-b', name='other'),
-            'trace-c': SimpleNamespace(id='trace-c', name='target'),
-            'trace-d': SimpleNamespace(id='trace-d', name='target'),
-        },
+    rows = (
+        _turn('a', 1, name='other')
+        + _turn('b', 2, name='other')
+        + _turn('c', 3, name='target')
+        + _turn('d', 4, name='target')
     )
-
-    traces = loader.fetch_traces(
+    traces = make_loader(rows, page_size=2).fetch_traces(
         limit=2,
         mode='absolute',
-        from_timestamp=datetime(2026, 1, 1),
+        from_timestamp=START,
+        to_timestamp=END,
         name='target',
         show_progress=False,
     )
-
-    assert [trace.id for trace in traces] == ['trace-c', 'trace-d']
-    assert len(loader.client.api.observations.calls) == 2
-    assert loader.client.api.trace.calls == [
-        'trace-a',
-        'trace-b',
-        'trace-c',
-        'trace-d',
-    ]
+    assert sorted(t.id for t in traces) == ['c', 'd']
+    assert {t.name for t in traces} == {'target'}
 
 
-def test_fetch_traces_summary_path_uses_trace_list() -> None:
-    # The fetch_full_traces=False (summary) path must use trace.list() — which
-    # carries trace-level name/tags/metrics — instead of the observations API
-    # (which does not return trace name) or per-id trace.get().
-    loader = _loader(
-        observation_pages={None: _response(['trace-a'])},
-        traces={},
-        trace_summaries=[SimpleNamespace(id='trace-c', name='target')],
-    )
+def test_fetch_traces_by_id_skips_unknown_ids() -> None:
+    loader = make_loader(_turn('a', 1, children=2))
+    traces = loader.fetch_traces(trace_ids=['a', 'missing'], show_progress=False)
+    assert [t.id for t in traces] == ['a']
+    assert len(traces[0].observations) == 3
 
-    traces = loader.fetch_traces(
-        limit=1,
+
+def test_fetch_traces_summary_path_lists_without_per_trace_reads() -> None:
+    rows = _turn('a', 1, name='target') + _turn('b', 2, name='other')
+    rows += _turn('c', 3, name='target', children=2)
+    loader = make_loader(rows)
+    summaries = loader.fetch_traces(
+        limit=5,
         mode='absolute',
-        from_timestamp=datetime(2026, 1, 1),
+        from_timestamp=START,
+        to_timestamp=END,
         name='target',
         fetch_full_traces=False,
         show_progress=False,
     )
+    assert [(s.id, s.name) for s in summaries] == [('c', 'target'), ('a', 'target')]
+    calls = loader.client.api.observations.calls
+    assert not any(c.get('trace_id') for c in calls)
+    assert loader.client.api.scores_v3.calls == []
 
-    # Returns trace.list() summaries carrying name, not id-only stubs.
-    assert [trace.id for trace in traces] == ['trace-c']
-    assert [trace.name for trace in traces] == ['target']
-    # trace.list() was used with the name filter applied server-side.
-    assert len(loader.client.api.trace.list_calls) == 1
-    assert loader.client.api.trace.list_calls[0]['name'] == 'target'
-    # No per-id trace.get() and no observations discovery on the summary path.
-    assert loader.client.api.trace.calls == []
-    assert loader.client.api.observations.calls == []
+
+def test_summaries_are_newest_first_up_to_limit() -> None:
+    rows = _turn('a', 1) + _turn('b', 2) + _turn('c', 3)
+    summaries = make_loader(rows)._fetch_trace_summaries_via_list(
+        limit=2, from_ts=START, to_ts=END, tags=None, name=None, environment=None
+    )
+    assert [s.id for s in summaries] == ['c', 'b']
+
+
+# --- list_trace_ids -----------------------------------------------------------------
+
+
+def test_listing_is_oldest_first_with_one_summary_per_trace() -> None:
+    rows = (
+        _turn('b', 20, children=5)
+        + _turn('a', 10, children=3, tags=['x'])
+        + _turn('c', 30)
+    )
+    random.Random(1).shuffle(rows)
+    listing = _list(make_loader(rows))
+    assert [t.id for t in listing.traces] == ['a', 'b', 'c']
+    assert listing.traces[0].tags == ['x']
+    assert listing.traces[0].timestamp == START + timedelta(minutes=10)
+    assert (listing.end, listing.truncated) == (END, False)
+
+
+def test_listing_ties_break_on_id() -> None:
+    listing = _list(make_loader(_turn('z', 5) + _turn('m', 5) + _turn('a', 5)))
+    assert [t.id for t in listing.traces] == ['a', 'm', 'z']
+
+
+def test_listing_cap_drops_the_boundary_and_cuts_end() -> None:
+    rows = _turn('a', 1) + _turn('b', 2) + _turn('c', 3) + _turn('d', 3) + _turn('e', 4)
+    listing = _list(make_loader(rows), max_traces=2)
+    # The boundary is trace #2 (c, minute 3): a and b are kept; c and d, which share
+    # its timestamp, are dropped.
+    assert [t.id for t in listing.traces] == ['a', 'b']
+    assert listing.end == START + timedelta(minutes=3)
+    assert listing.truncated
+
+
+def test_listing_cannot_advance_when_one_timestamp_holds_more_than_the_cap() -> None:
+    rows = _turn('a', 1) + _turn('b', 1) + _turn('c', 1)
+    listing = _list(make_loader(rows), max_traces=2)
+    assert listing.traces == []
+    assert listing.end == START
+    assert listing.truncated
+
+
+def test_listing_drops_a_trace_whose_root_is_before_the_window() -> None:
+    early_root = row('early', 'early-root', (START - timedelta(minutes=5)).isoformat())
+    early_child = row('early', 'early-c', _at(1), parent='early-root')
+    loader = make_loader([early_root, early_child] + _turn('a', 2))
+    assert [t.id for t in _list(loader).traces] == ['a']
+
+
+def test_listing_drops_a_retried_trace_whose_first_attempt_is_before_the_window() -> (
+    None
+):
+    before = (START - timedelta(minutes=5)).isoformat()
+    retried = [
+        row('r', 'r-first', before, parent='gone', root=True),
+        row('r', 'r-retry', _at(1), parent='gone', root=True),
+    ]
+    loader = make_loader(retried + _turn('a', 2))
+    assert [t.id for t in _list(loader).traces] == ['a']
+
+
+def test_listing_filters_name_tags_and_environment() -> None:
+    rows = (
+        _turn('a', 1, name='chat', tags=['p', 'q'])
+        + _turn('b', 2, name='chat', tags=['p'])
+        + _turn('c', 3, name='other', tags=['p', 'q'])
+        + _turn('d', 4, name='chat', tags=['p', 'q'], environment='preview')
+    )
+    listing = _list(
+        make_loader(rows), name='chat', tags=['p', 'q'], environment='production'
+    )
+    assert [t.id for t in listing.traces] == ['a']
+
+
+def test_listing_halves_a_window_over_the_page_cap_and_reads_it_whole() -> None:
+    rows = [r for m in range(0, 60, 5) for r in _turn(f't{m:02d}', m, children=1)]
+    loader = make_loader(rows, page_size=4)
+    loader.list_max_pages = 3  # 12 rows a window
+    listing = _list(loader)
+    assert listing.truncated
+    assert listing.end == START + timedelta(minutes=30)
+    assert [t.id for t in listing.traces] == [f't{m:02d}' for m in range(0, 30, 5)]
+
+
+def test_newest_first_listing_reads_older_chunks_until_the_limit() -> None:
+    rows = [r for m in range(0, 60, 5) for r in _turn(f't{m:02d}', m, children=1)]
+    loader = make_loader(rows, page_size=4)
+    loader.list_max_pages = 3  # 12 rows a window: the hour needs several chunks
+    listing = _list(loader, max_traces=10, order='desc')
+    assert [t.id for t in listing.traces] == [f't{m:02d}' for m in range(55, 5, -5)]
+    assert listing.truncated
+    every = _list(loader, max_traces=50, order='desc')
+    assert len(every.traces) == 12
+    assert (every.start, every.truncated) == (START, False)
+
+
+def test_newest_first_cut_through_a_tie_starts_after_it() -> None:
+    rows = _turn('a', 1) + _turn('b', 2) + _turn('c', 2) + _turn('d', 3)
+    listing = _list(make_loader(rows), max_traces=2, order='desc')
+    assert [t.id for t in listing.traces] == ['d', 'c']
+    # b shares c's timestamp and was cut, so that instant is not claimed complete.
+    assert listing.start > START + timedelta(minutes=2)
+    assert listing.truncated

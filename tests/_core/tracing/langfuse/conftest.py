@@ -3,6 +3,8 @@ import types
 from typing import Any, Dict, List
 from unittest.mock import MagicMock
 
+import pytest
+
 _langfuse_stub = types.ModuleType('langfuse')
 
 
@@ -29,10 +31,23 @@ class _FakeLangfuse:
 
 
 _langfuse_stub.Langfuse = _FakeLangfuse
-sys.modules.setdefault('langfuse', _langfuse_stub)
+try:
+    import langfuse  # noqa: F401
+except ImportError:
+    sys.modules.setdefault('langfuse', _langfuse_stub)
 
 # Import after stub is in place
 from axion._core.tracing.langfuse.tracer import LangfuseTracer  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def _trace_update_fallback(monkeypatch):
+    """Route span trace attributes through ``update_current_trace``.
+
+    With the real SDK installed, spans use ``propagate_attributes``; the span tests
+    assert on the fake client's ``update_current_trace`` calls instead.
+    """
+    monkeypatch.setattr('axion._core.tracing.langfuse.span._PROPAGATE_AVAILABLE', False)
 
 
 def make_tracer(session_id=None, user_id=None, tags=None, **kwargs) -> LangfuseTracer:

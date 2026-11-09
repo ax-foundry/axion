@@ -27,6 +27,11 @@ Example:
 
 from axion._core.tracing.loaders.base import BaseTraceLoader, FetchedTraceData
 from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
+from axion._core.tracing.loaders.langfuse_rows import (
+    TraceListing,
+    TraceReadTruncated,
+    TraceSummary,
+)
 from axion._core.tracing.loaders.logfire import LogfireTraceLoader
 from axion._core.tracing.loaders.opik import OpikTraceLoader
 
@@ -36,6 +41,9 @@ __all__ = [
     'BaseTraceLoader',
     # Provider implementations
     'LangfuseTraceLoader',
+    'TraceListing',
+    'TraceReadTruncated',
+    'TraceSummary',
     'OpikTraceLoader',
     'LogfireTraceLoader',
 ]
