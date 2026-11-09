@@ -140,9 +140,19 @@ def _matches(r: ObservationV2, condition: dict[str, Any]) -> bool:
 
 
 class FakeObservations:
-    def __init__(self, rows: list[ObservationV2], page_size: int) -> None:
+    """
+    Serves rows a page at a time.
+
+    With ``empty_pages`` every continuation is first an empty page that still carries
+    a cursor, which the API is allowed to return.
+    """
+
+    def __init__(
+        self, rows: list[ObservationV2], page_size: int, empty_pages: bool = False
+    ) -> None:
         self.rows = rows
         self.page_size = page_size
+        self.empty_pages = empty_pages
         self.calls: list[dict[str, Any]] = []
 
     def get_many(self, **kw: Any) -> ObservationsV2Response:
@@ -155,15 +165,19 @@ class FakeObservations:
         for condition in json.loads(kw['filter']) if kw.get('filter') else []:
             rows = [r for r in rows if _matches(r, condition)]
         expand = set(filter(None, (kw.get('expand_metadata') or '').split(',')))
-        offset = int(kw.get('cursor') or 0)
+        cursor = kw.get('cursor') or '0'
+        if cursor.startswith('gap:'):
+            return ObservationsV2Response(data=[], meta={'cursor': cursor[4:]})
+        offset = int(cursor)
         size = min(kw.get('limit') or 50, self.page_size)
         page = [
             r.model_copy(update={'metadata': _cut(r.metadata, expand)})
             for r in rows[offset : offset + size]
         ]
         more = offset + size < len(rows)
+        gap = 'gap:' if self.empty_pages else ''
         return ObservationsV2Response(
-            data=page, meta={'cursor': str(offset + size) if more else None}
+            data=page, meta={'cursor': f'{gap}{offset + size}' if more else None}
         )
 
 
@@ -208,13 +222,14 @@ def make_loader(
     *,
     page_size: int = 1000,
     score_page_size: int = 100,
+    empty_pages: bool = False,
 ) -> LangfuseTraceLoader:
     loader = LangfuseTraceLoader(
         public_key='pk-test', secret_key='sk-test', host='http://fake', request_pacing=0
     )
     loader.client = SimpleNamespace(  # type: ignore[assignment]
         api=SimpleNamespace(
-            observations=FakeObservations(list(rows), page_size),
+            observations=FakeObservations(list(rows), page_size, empty_pages),
             scores_v3=FakeScores(list(scores), score_page_size),
         )
     )

@@ -180,10 +180,22 @@ def test_newest_first_listing_reads_older_chunks_until_the_limit() -> None:
     assert (every.start, every.truncated) == (START, False)
 
 
-def test_newest_first_cut_through_a_tie_starts_after_it() -> None:
+def test_newest_first_cut_through_a_tie_drops_the_tie_and_resumes_cleanly() -> None:
     rows = _turn('a', 1) + _turn('b', 2) + _turn('c', 2) + _turn('d', 3)
-    listing = _list(make_loader(rows), max_traces=2, order='desc')
-    assert [t.id for t in listing.traces] == ['d', 'c']
-    # b shares c's timestamp and was cut, so that instant is not claimed complete.
-    assert listing.start > START + timedelta(minutes=2)
+    loader = make_loader(rows)
+    listing = _list(loader, max_traces=2, order='desc')
+    # b shares c's timestamp and was cut, so c goes with it: the listing holds only
+    # traces at or after its start.
+    assert [t.id for t in listing.traces] == ['d']
+    assert listing.start == START + timedelta(minutes=2, microseconds=1)
     assert listing.truncated
+    assert all(listing.start <= t.timestamp < listing.end for t in listing.traces)
+    older = loader.list_trace_ids(START, listing.start, max_traces=10, order='desc')
+    assert [t.id for t in older.traces] == ['c', 'b', 'a']
+
+
+def test_listing_reads_through_empty_continuation_pages() -> None:
+    rows = [r for m in range(0, 60, 5) for r in _turn(f't{m:02d}', m, children=1)]
+    listing = _list(make_loader(rows, page_size=3, empty_pages=True))
+    assert len(listing.traces) == 12
+    assert not listing.truncated

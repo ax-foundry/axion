@@ -434,8 +434,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 page_seen.add(tid)
                 page_ids.append(tid)
 
-        next_cursor = response.meta.cursor
-        return page_ids, next_cursor if response.data else None
+        # An empty page can still carry a cursor; the caller stops when it is unset.
+        return page_ids, response.meta.cursor
 
     def _fetch_trace_ids_via_observations(
         self,
@@ -494,7 +494,9 @@ class LangfuseTraceLoader(BaseTraceLoader):
             data = list(response.data or [])
             rows.extend(data)
             cursor = response.meta.cursor
-            if not cursor or not data:
+            # A page can come back empty with a cursor still set; only a missing
+            # cursor ends the read.
+            if not cursor:
                 return rows
         raise TraceReadTruncated(
             f'{what} needed more than {max_pages} pages; refusing a partial read'
@@ -793,10 +795,12 @@ class LangfuseTraceLoader(BaseTraceLoader):
         traces.sort(key=lambda s: (s.timestamp, s.id), reverse=True)
         if len(traces) <= max_traces:
             return TraceListing(traces, upper, hi, upper > lo)
-        kept = traces[:max_traces]
-        # Traces tied with the first one cut may be dropped, so the window that is
-        # listed whole starts just after that timestamp.
-        start_after = traces[max_traces].timestamp + timedelta(microseconds=1)
+        # Traces tied with the first one cut go too, so the listing holds exactly
+        # the traces of [start, end) and an older window resumed from start repeats
+        # none of them.
+        cut_at = traces[max_traces].timestamp
+        kept = [s for s in traces[:max_traces] if s.timestamp > cut_at]
+        start_after = cut_at + timedelta(microseconds=1)
         logger.warning(
             f'Trace listing cut at {max_traces} traces; complete from {start_after}'
         )

@@ -182,6 +182,18 @@ def test_multi_page_reads_join() -> None:
     assert len(loader.client.api.observations.calls) == 4
 
 
+def test_empty_continuation_pages_do_not_end_a_read() -> None:
+    rows = [row('t1', 'root', '2026-11-01T10:00:00Z', session_id='s')] + [
+        row('t1', f'c{i}', f'2026-11-01T10:00:0{i}Z', parent='root', session_id='s')
+        for i in range(1, 4)
+    ]
+    loader = make_loader(rows, page_size=1, empty_pages=True)
+    trace = loader.fetch_trace('t1')
+    assert [o.id for o in trace.observations] == ['root', 'c1', 'c2', 'c3']
+    _, traces = loader.get_session_with_traces('s', show_progress=False)
+    assert [len(t.observations) for t in traces] == [4]
+
+
 def test_trace_and_session_reads_past_the_cap_raise() -> None:
     rows = [
         row('t1', f'o{i}', '2026-11-01T10:00:00Z', session_id='s') for i in range(5)
