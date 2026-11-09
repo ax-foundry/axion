@@ -194,6 +194,71 @@ def test_empty_continuation_pages_do_not_end_a_read() -> None:
     assert [len(t.observations) for t in traces] == [4]
 
 
+def test_session_traces_keep_child_rows_that_lack_the_session_id() -> None:
+    # Only the root carries the session id; its children are found by trace id.
+    rows = [
+        row('t1', 'root', '2026-11-01T10:00:00Z', session_id='s'),
+        row('t1', 'tool', '2026-11-01T10:00:01Z', parent='root').model_copy(
+            update={'type': 'TOOL'}
+        ),
+        row('other', 'x', '2026-11-01T10:00:02Z'),
+    ]
+    _, traces = make_loader(rows).get_session_with_traces('s', show_progress=False)
+    assert [(t.id, [o.id for o in t.observations]) for t in traces] == [
+        ('t1', ['root', 'tool'])
+    ]
+
+
+def test_a_trace_without_its_root_has_no_input_or_output() -> None:
+    # The root span was never recorded: only children whose parent is missing.
+    rows = [
+        row('t1', 'a', '2026-11-01T10:00:00Z', parent='gone', root=False, input='{}'),
+        row('t1', 'b', '2026-11-01T10:00:01Z', parent='gone', root=False),
+    ]
+    trace = make_loader(rows).fetch_trace('t1')
+    assert (trace.input, trace.output, trace.name) == (None, None, 'turn')
+    assert trace.observations[0].input == {}
+
+
+def test_a_root_under_a_remote_parent_keeps_the_trace_input_and_output() -> None:
+    # The root span's parent lives in the calling service, so it is neither flagged
+    # nor parentless; it carries the trace's name.
+    rows = [
+        row(
+            't1', 'root', '2026-11-01T10:00:00Z', parent='remote', root=False
+        ).model_copy(update={'name': 'turn', 'input': '{"q": "hi"}', 'output': 'done'}),
+        row('t1', 'tool', '2026-11-01T10:00:01Z', parent='root', root=False),
+    ]
+    trace = make_loader(rows).fetch_trace('t1')
+    assert (trace.input, trace.output) == ({'q': 'hi'}, 'done')
+
+
+def test_rows_without_a_trace_name_take_the_root_name() -> None:
+    # Older rows carry no trace name; the root under a remote parent names the trace,
+    # and a session read filtered by that name keeps it.
+    rows = [
+        row(
+            't1',
+            'root',
+            '2026-11-01T10:00:00Z',
+            parent='remote',
+            root=False,
+            session_id='s',
+            input='{"q": "hi"}',
+        ).model_copy(update={'name': 'workflow', 'trace_name': None}),
+        row('t1', 'step', '2026-11-01T10:00:01Z', parent='root', root=False).model_copy(
+            update={'trace_name': None}
+        ),
+    ]
+    loader = make_loader(rows)
+    trace = loader.fetch_trace('t1')
+    assert (trace.name, trace.input) == ('workflow', {'q': 'hi'})
+    _, traces = loader.get_session_with_traces(
+        's', show_progress=False, trace_name='workflow'
+    )
+    assert [t.id for t in traces] == ['t1']
+
+
 def test_trace_and_session_reads_past_the_cap_raise() -> None:
     rows = [
         row('t1', f'o{i}', '2026-11-01T10:00:00Z', session_id='s') for i in range(5)

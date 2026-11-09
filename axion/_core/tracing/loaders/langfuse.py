@@ -681,7 +681,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 TraceSummary(
                     id=trace_id,
                     timestamp=trace_start(group) or EPOCH,
-                    name=root.trace_name,
+                    name=root.trace_name or root.name,
                     session_id=root.session_id,
                     tags=sorted(root.tags or []),
                 )
@@ -1211,10 +1211,26 @@ class LangfuseTraceLoader(BaseTraceLoader):
     def _session_groups(
         self, session_id: str, fields: str
     ) -> list[tuple[str, list[Any]]]:
-        """The session's traces as ``(trace_id, rows)``, ordered by start then id."""
-        rows = self._observations(
-            f'fetch session {session_id}', fields=fields, session_id=session_id
-        )
+        """
+        The session's traces as ``(trace_id, rows)``, ordered by start then id.
+
+        The session filter finds the traces; their rows are then read by trace id,
+        since a child row need not carry the session id its root does.
+        """
+        what = f'fetch session {session_id}'
+        found = self._observations(what, fields=LIGHT_FIELDS, session_id=session_id)
+        trace_ids = list(dict.fromkeys(r.trace_id for r in found if r.trace_id))
+        rows: list[Any] = []
+        for i in range(0, len(trace_ids), 100):
+            condition = {
+                'type': 'stringOptions',
+                'column': 'traceId',
+                'operator': 'any of',
+                'value': trace_ids[i : i + 100],
+            }
+            rows += self._observations(
+                what, fields=fields, filter=json.dumps([condition])
+            )
         groups = list(group_by_trace(rows).items())
         groups.sort(key=lambda g: (trace_start(g[1]) or EPOCH, g[0]))
         return groups

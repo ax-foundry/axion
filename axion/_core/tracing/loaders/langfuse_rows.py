@@ -125,6 +125,23 @@ def pick_root(rows: Sequence[Any]) -> Any:
     return min(parentless or orphaned or list(rows), key=_start)
 
 
+def is_true_root(row: Any) -> bool:
+    """
+    Whether ``row`` is its trace's own root rather than a stand-in for a missing one.
+
+    A root is flagged, has no parent, or carries the trace's name (or the trace has
+    none). The last covers a root whose parent span lives in a calling service and so
+    was never recorded here.
+    """
+    trace_name = getattr(row, 'trace_name', None)
+    return bool(
+        getattr(row, 'is_root_observation', None)
+        or not getattr(row, 'parent_observation_id', None)
+        or not trace_name
+        or row.name == trace_name
+    )
+
+
 def trace_start(rows: Sequence[Any]) -> datetime | None:
     """When the trace began: the earliest flagged root, else the picked root's start."""
     flagged = [r for r in rows if getattr(r, 'is_root_observation', None)]
@@ -222,14 +239,21 @@ def observation_payload(row: Any) -> dict[str, Any]:
 
 
 def trace_payload(trace_id: str, rows: Sequence[Any]) -> dict[str, Any]:
-    """The trace-level fields of ``trace_id``, from its root row (no observations)."""
+    """
+    The trace-level fields of ``trace_id``, from its root row (no observations).
+
+    Input and output come only from a true root (:func:`is_true_root`): a trace whose
+    root was never recorded has no input or output, not an orphaned child's. Rows
+    written without a trace name take the root's own name, as the trace read did.
+    """
     root = pick_root(rows)
+    own = is_true_root(root)
     return {
         'id': trace_id,
         'timestamp': trace_start(rows),
-        'name': _text(root.trace_name),
-        'input': parse_io(root.input),
-        'output': parse_io(root.output),
+        'name': _text(root.trace_name) or _text(root.name),
+        'input': parse_io(root.input) if own else None,
+        'output': parse_io(root.output) if own else None,
         'sessionId': _text(root.session_id),
         'release': _text(root.release),
         'version': _text(root.version),
