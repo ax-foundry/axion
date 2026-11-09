@@ -121,6 +121,56 @@ def test_root_without_the_flag_is_the_parentless_row() -> None:
     assert trace.timestamp == datetime(2026, 11, 1, 10, tzinfo=UTC)
 
 
+def test_unset_trace_strings_are_none_and_unpriced_cost_is_zero() -> None:
+    # The observations read returns "" for an unset string and {} for unset model
+    # parameters.
+    unset = row('t1', 'root', '2026-11-01T10:00:00Z')
+    unset = unset.model_copy(
+        update={
+            'session_id': '',
+            'user_id': '',
+            'version': '',
+            'release': '',
+            'model_parameters': {},
+        }
+    )
+    trace = make_loader([unset]).fetch_trace('t1')
+    assert (trace.session_id, trace.user_id, trace.version, trace.release) == (
+        None,
+        None,
+        None,
+        None,
+    )
+    assert trace.total_cost == 0.0
+    assert trace.observations[0].model_parameters is None
+
+
+def test_unset_model_parameters_are_empty_except_on_spans_and_events() -> None:
+    rows = [
+        row('t1', 'root', '2026-11-01T10:00:00Z'),
+        row('t1', 'gen', '2026-11-01T10:00:01Z', parent='root').model_copy(
+            update={'type': 'GENERATION', 'model_parameters': {}}
+        ),
+        row('t1', 'tool', '2026-11-01T10:00:02Z', parent='root').model_copy(
+            update={'type': 'TOOL', 'model_parameters': None}
+        ),
+    ]
+    trace = make_loader(rows).fetch_trace('t1')
+    params = {o.id: o.model_parameters for o in trace.observations}
+    assert params == {'root': None, 'gen': {}, 'tool': {}}
+
+
+def test_observations_are_in_start_order_with_ties_on_id() -> None:
+    rows = [
+        row('t1', 'late', '2026-11-01T10:00:09Z', parent='root'),
+        row('t1', 'tie-b', '2026-11-01T10:00:05Z', parent='root'),
+        row('t1', 'root', '2026-11-01T10:00:00Z'),
+        row('t1', 'tie-a', '2026-11-01T10:00:05Z', parent='root'),
+    ]
+    trace = make_loader(rows).fetch_trace('t1')
+    assert [o.id for o in trace.observations] == ['root', 'tie-a', 'tie-b', 'late']
+
+
 def test_multi_page_reads_join() -> None:
     rows = [row('t1', 'root', '2026-11-01T10:00:00Z')] + [
         row('t1', f'c{i}', f'2026-11-01T10:00:{i:02d}Z', parent='root')

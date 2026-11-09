@@ -15,6 +15,8 @@ Row rules:
 - A trace's timestamp is :func:`trace_start`: the earliest flagged root (a retried
   turn leaves one per attempt), else the picked root's start.
 - Input and output come back as raw strings; :func:`parse_io` decodes them.
+- A trace's observations are in start order (:func:`chronological`); the read's own
+  row order is not stable.
 
 Metadata keeps the observations read's shape: an object-valued entry comes back as
 dotted keys (``conversation.messages`` rather than ``conversation: {messages}``) and
@@ -192,7 +194,7 @@ def observation_payload(row: Any) -> dict[str, Any]:
         'endTime': row.end_time,
         'completionStartTime': row.completion_start_time,
         'model': _text(row.model),
-        'modelParameters': row.model_parameters,
+        'modelParameters': row.model_parameters or ({} if priced else None),
         'input': parse_io(row.input),
         'output': parse_io(row.output),
         'version': _text(row.version),
@@ -225,18 +227,23 @@ def trace_payload(trace_id: str, rows: Sequence[Any]) -> dict[str, Any]:
     return {
         'id': trace_id,
         'timestamp': trace_start(rows),
-        'name': root.trace_name,
+        'name': _text(root.trace_name),
         'input': parse_io(root.input),
         'output': parse_io(root.output),
-        'sessionId': root.session_id,
-        'release': root.release,
-        'version': root.version,
-        'userId': root.user_id,
+        'sessionId': _text(root.session_id),
+        'release': _text(root.release),
+        'version': _text(root.version),
+        'userId': _text(root.user_id),
         'metadata': root.metadata,
         'tags': sorted(root.tags or []),
         'public': bool(root.public),
         'environment': root.environment or 'default',
     }
+
+
+def chronological(rows: Iterable[Any]) -> list[Any]:
+    """Rows by start time, ties broken on id, so observation order is stable."""
+    return sorted(rows, key=lambda r: (r.start_time is None, r.start_time or 0, r.id))
 
 
 def full_trace_payload(
@@ -249,8 +256,8 @@ def full_trace_payload(
     payload.update(
         htmlPath=f'/project/{root.project_id}/traces/{trace_id}',
         latency=root.latency,
-        totalCost=sum(costs) if costs else None,
-        observations=[observation_payload(r) for r in rows],
+        totalCost=float(sum(costs)),
+        observations=[observation_payload(r) for r in chronological(rows)],
         scores=[
             trace_score_payload(s, trace_id)
             for s in scores
