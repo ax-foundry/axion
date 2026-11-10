@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../../assets/ax-icon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -5084,7 +5084,7 @@
 <td><code>link_to_traces</code></td>
 <td><code>bool</code></td>
 <td><code>False</code></td>
-<td>Link experiment runs to existing traces instead of creating new ones</td>
+<td>Also score the existing runtime traces, and record their ids on each experiment item</td>
 </tr>
 </tbody>
 </table>
@@ -5114,9 +5114,9 @@
 </tr>
 <tr>
 <td><code>link_to_traces=True</code></td>
-<td><img alt="✅" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" title=":white_check_mark:" /> linked</td>
-<td><img alt="✅" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" title=":white_check_mark:" /></td>
-<td>Experiment UI linked to original evaluation traces</td>
+<td><img alt="✅" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/2705.svg" title=":white_check_mark:" /> new traces</td>
+<td>Runtime ids in item metadata</td>
+<td>Experiment UI, plus scores on the original evaluation traces</td>
 </tr>
 </tbody>
 </table>
@@ -5125,16 +5125,17 @@
 <ul>
 <li><strong>Default</strong>: Use when you don't have existing traces and want a self-contained experiment</li>
 <li><strong>score_on_runtime_traces</strong>: Use when you only care about scores on existing traces, not the experiment UI</li>
-<li><strong>link_to_traces</strong>: Use when you ran evaluations with tracing enabled and want experiment runs to link back to those original traces</li>
+<li><strong>link_to_traces</strong>: Use when you ran evaluations with tracing enabled and want the scores on those original traces as well as in the experiment</li>
 </ul>
 </div>
 <h4 id="default-mode">Default Mode<a class="headerlink" href="#default-mode" title="Permanent link">&para;</a></h4>
-<p>Creates new traces for each dataset item run:</p>
+<p>Creates a new trace for each dataset item.
+The trace's root span carries Langfuse's experiment attributes, which link it to the dataset item and the experiment, and the scores go on that root observation:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">publish_as_experiment</span><span class="p">(</span>
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>    <span class="n">dataset_name</span><span class="o">=</span><span class="s1">'my-dataset'</span><span class="p">,</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">run_name</span><span class="o">=</span><span class="s1">'experiment-v1'</span><span class="p">,</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="p">)</span>
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># Creates: dataset items + new "Dataset run" traces + scores</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="c1"># Creates: dataset items + one experiment trace per item + scores</span>
 </span></code></pre></div>
 <h4 id="score-on-runtime-traces">Score on Runtime Traces<a class="headerlink" href="#score-on-runtime-traces" title="Permanent link">&para;</a></h4>
 <p>Attaches scores directly to existing traces without creating experiment runs:</p>
@@ -5153,23 +5154,24 @@
 <li>Your <code>DatasetItem</code> objects have <code>trace_id</code> set from prior tracing</li>
 </ul>
 <h4 id="link-to-traces">Link to Traces<a class="headerlink" href="#link-to-traces" title="Permanent link">&para;</a></h4>
-<p>Creates experiment runs that link to your existing evaluation traces:</p>
+<p>Writes the experiment as in default mode, and also scores your existing evaluation traces:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">publish_as_experiment</span><span class="p">(</span>
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">dataset_name</span><span class="o">=</span><span class="s1">'my-dataset'</span><span class="p">,</span>
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="n">run_name</span><span class="o">=</span><span class="s1">'experiment-v1'</span><span class="p">,</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="n">link_to_traces</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="p">)</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># Creates: dataset items + experiment runs linked to existing traces + scores</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="c1"># Creates: dataset items + one experiment trace per item + scores on both</span>
 </span></code></pre></div>
 <p>This is useful when:</p>
 <ul>
 <li>You ran <code>evaluation_runner</code> with Langfuse tracing enabled</li>
-<li>You want experiment runs in the Langfuse UI to link back to those original traces</li>
-<li>You need both the experiment comparison view AND visibility into the original trace details</li>
+<li>You want the scores on those original traces as well as in the experiment comparison view</li>
 </ul>
+<p>Langfuse cannot make an existing trace an experiment item, so each item is still its own new trace.
+The runtime <code>trace_id</code> and <code>observation_id</code> are recorded in the item's experiment metadata.</p>
 <div class="admonition note">
-<p class="admonition-title">Fallback behavior</p>
-<p>When <code>link_to_traces=True</code> but a <code>DatasetItem</code> doesn't have a <code>trace_id</code>, that item falls back to default mode (creates a new trace).</p>
+<p class="admonition-title">Items without a trace</p>
+<p>When a <code>DatasetItem</code> doesn't have a <code>trace_id</code>, only its experiment trace is scored.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Precedence</p>
@@ -5184,8 +5186,10 @@
 </span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="c1">#     'runs_created': 50,</span>
 </span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="c1">#     'scores_uploaded': 100,</span>
 </span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="c1">#     'scores_skipped': 0,</span>
-</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="c1">#     'errors': [],</span>
-</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="c1"># }</span>
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="c1">#     'experiment_id': '4bd95d58e6b8012b',</span>
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a><span class="c1">#     'run_url': 'https://cloud.langfuse.com/project/&lt;project&gt;/datasets/&lt;dataset&gt;/runs/4bd95d58e6b8012b',</span>
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="c1">#     'errors': [],</span>
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a><span class="c1"># }</span>
 </span></code></pre></div>
 <h3 id="behavior-with-existing-names">Behavior with Existing Names<a class="headerlink" href="#behavior-with-existing-names" title="Permanent link">&para;</a></h3>
 <p>Understanding how the method handles existing datasets and runs:</p>
@@ -5207,7 +5211,7 @@
 </tr>
 <tr>
 <td><strong>Run name already exists</strong></td>
-<td>Creates a new run under the same name (distinguished by timestamp)</td>
+<td>Adds to the same experiment: its id is derived from the project, the dataset and the run name</td>
 </tr>
 </tbody>
 </table>
@@ -5325,7 +5329,7 @@
 <td><code>publish_to_observability()</code></td>
 </tr>
 <tr>
-<td>Experiment UI + link to evaluation traces</td>
+<td>Experiment UI + scores on evaluation traces</td>
 <td><code>publish_as_experiment(link_to_traces=True)</code></td>
 </tr>
 <tr>
@@ -5342,7 +5346,7 @@
 </span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="n">result</span><span class="o">.</span><span class="n">publish_as_experiment</span><span class="p">()</span>  <span class="c1"># Creates everything from scratch</span>
 </span><span id="__span-15-6"><a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
 </span><span id="__span-15-7"><a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="c1"># For experiments linked to evaluation traces:</span>
-</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="n">result</span><span class="o">.</span><span class="n">publish_as_experiment</span><span class="p">(</span><span class="n">link_to_traces</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Links runs to existing traces</span>
+</span><span id="__span-15-8"><a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="n">result</span><span class="o">.</span><span class="n">publish_as_experiment</span><span class="p">(</span><span class="n">link_to_traces</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Also scores the existing traces</span>
 </span><span id="__span-15-9"><a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>
 </span><span id="__span-15-10"><a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="c1"># For scores only (no experiment runs):</span>
 </span><span id="__span-15-11"><a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="n">result</span><span class="o">.</span><span class="n">publish_as_experiment</span><span class="p">(</span><span class="n">score_on_runtime_traces</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Scores only</span>
@@ -5428,7 +5432,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="October 24, 2026 21:44:23 UTC">October 24, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="November 10, 2026 04:05:14 UTC">November 10, 2026</span>
   </span>
 
     
@@ -5535,7 +5539,7 @@
     
     
 
-      <script src="../../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
 <script>

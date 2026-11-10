@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/ax-icon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
     
     
       
@@ -5617,11 +5617,10 @@ Takes precedence over link_to_traces if both are True.</p>
 )
           –
           <div class="doc-md-description">
-            <p>If True, link experiment runs to existing traces via the
-low-level API instead of creating new "Dataset run" traces. This allows
-experiment runs to appear linked to the original evaluation traces in
-Langfuse UI. Falls back to creating new traces if trace_id is not available.
-Ignored if score_on_runtime_traces is True.</p>
+            <p>If True, also attach each item's scores to its existing
+runtime trace. Each experiment item is still written as its own trace,
+with the runtime trace id in its experiment metadata. Ignored if
+score_on_runtime_traces is True.</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
@@ -6097,7 +6096,7 @@ If False, the metric will raise an error if required inputs are missing.</p>
     
     
 
-      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a5f9d56c.min.js"></script>
       
     
 <script>
