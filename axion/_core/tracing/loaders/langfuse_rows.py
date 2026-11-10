@@ -19,8 +19,8 @@ Row rules:
   row order is not stable.
 
 Metadata keeps the observations read's shape: an object-valued entry comes back as
-dotted keys (``conversation.messages`` rather than ``conversation: {messages}``) and
-trace-level keys repeat on child rows. Flat and nested writers return the same rows,
+dotted keys (``conversation.messages`` rather than ``conversation: {messages}``), and
+trace-level keys may repeat on child rows. Flat and nested writers return the same rows,
 so the nested shape cannot be rebuilt exactly.
 
 The read cuts every top-level metadata value to 200 characters with no marker, so a
@@ -122,10 +122,16 @@ def pick_root(rows: Sequence[Any]) -> Any:
     The row flagged ``is_root_observation`` wins, the latest start when a retry left
     several; failing that, a row with no parent; failing that, a row whose parent is
     not among ``rows``. When no row qualifies, the earliest stands in.
+
+    Among flagged rows, one with no parent beats one under a remote parent. A trace
+    written both as a trace record and as a span whose parent lives in a calling
+    service has two flagged rows: the trace record (``t-<trace id>``, no parent)
+    holds the trace's metadata and tags, and the span holds only its own.
     """
     flagged = [r for r in rows if getattr(r, 'is_root_observation', None)]
     if flagged:
-        return max(flagged, key=_start)
+        own = [r for r in flagged if not getattr(r, 'parent_observation_id', None)]
+        return max(own or flagged, key=_start)
     parentless = [r for r in rows if not getattr(r, 'parent_observation_id', None)]
     known = {getattr(r, 'id', None) for r in rows}
     orphaned = [
