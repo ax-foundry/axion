@@ -1,155 +1,166 @@
-"""Tests for LangfuseTraceLoader.get_session_with_traces enrichment behavior."""
+"""Tests for LangfuseTraceLoader session reads."""
 
-from types import SimpleNamespace
-from unittest.mock import MagicMock
+from __future__ import annotations
 
-from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
+import random
+from datetime import UTC, datetime
+from typing import Any
 
+import pytest
 
-def _loader() -> LangfuseTraceLoader:
-    # Skip __init__ — we patch the network-touching methods directly.
-    return LangfuseTraceLoader.__new__(LangfuseTraceLoader)
-
-
-def _session_with_stubs(*trace_ids):
-    stubs = [
-        SimpleNamespace(id=tid, input=f'in-{tid}', output=f'out-{tid}')
-        for tid in trace_ids
-    ]
-    return SimpleNamespace(id='sess-1', traces=stubs)
+from axion._core.tracing.collection.session import Session
+from tests._core.tracing.langfuse.fakes import make_loader, row
 
 
-def _session_with_named_stubs(*named):
-    """*named* is a sequence of ``(trace_id, name)`` pairs."""
-    stubs = [
-        SimpleNamespace(id=tid, name=name, input=f'in-{tid}', output=f'out-{tid}')
-        for tid, name in named
-    ]
-    return SimpleNamespace(id='sess-1', traces=stubs)
+def _session_rows() -> list[Any]:
+    rows = []
+    for minute in (30, 10, 20):
+        tid = f'turn{minute}'
+        rows += [
+            row(
+                tid,
+                f'{tid}-root',
+                f'2026-11-01T10:{minute}:00Z',
+                session_id='s1',
+                name='chat-turn',
+                input=f'"in-{tid}"',
+            ),
+            row(
+                tid,
+                f'{tid}-gen',
+                f'2026-11-01T10:{minute}:01Z',
+                parent=f'{tid}-root',
+                session_id='s1',
+            ),
+        ]
+    rows.append(
+        row(
+            'other',
+            'other-root',
+            '2026-11-01T10:05:00Z',
+            session_id='s1',
+            name='pipeline',
+        )
+    )
+    random.Random(7).shuffle(rows)
+    return rows
+
+
+def _flaky(loader: Any, bad_id: str) -> None:
+    build = loader._build_trace
+
+    def flaky(trace_id: str, rows: Any, scores: Any) -> Any:
+        if trace_id == bad_id:
+            raise ValueError('bad row')
+        return build(trace_id, rows, scores)
+
+    loader._build_trace = flaky
 
 
 class TestEnrich:
-    def test_enrich_true_fetches_full_traces(self):
-        loader = _loader()
-        loader.fetch_session = MagicMock(return_value=_session_with_stubs('a', 'b'))
-        loader.fetch_trace = MagicMock(
-            side_effect=lambda tid: SimpleNamespace(id=tid, full=True)
-        )
+    def test_enrich_true_rebuilds_full_traces_in_start_order(self):
+        loader = make_loader(_session_rows())
+        session, traces = loader.get_session_with_traces('s1', show_progress=False)
+        order = ['other', 'turn10', 'turn20', 'turn30']
+        assert session.id == 's1'
+        assert [t.id for t in traces] == order
+        assert [len(t.observations) for t in traces] == [1, 2, 2, 2]
+        assert [t.id for t in session.traces] == order
 
+    def test_enrich_false_returns_stubs_and_reads_no_scores(self):
+        loader = make_loader(_session_rows())
         session, traces = loader.get_session_with_traces(
-            'sess-1', show_progress=False, enrich=True
+            's1', show_progress=False, enrich=False
         )
-        assert session.id == 'sess-1'
-        assert loader.fetch_trace.call_count == 2
-        assert all(getattr(t, 'full', False) for t in traces)
-
-    def test_enrich_false_skips_fetch_trace_and_returns_stubs(self):
-        loader = _loader()
-        session_obj = _session_with_stubs('a', 'b')
-        loader.fetch_session = MagicMock(return_value=session_obj)
-        loader.fetch_trace = MagicMock()
-
-        session, traces = loader.get_session_with_traces(
-            'sess-1', show_progress=False, enrich=False
-        )
-        assert session is session_obj
-        loader.fetch_trace.assert_not_called()
-        assert [t.id for t in traces] == ['a', 'b']
+        assert session.id == 's1'
+        assert [t.id for t in traces] == ['other', 'turn10', 'turn20', 'turn30']
+        assert not hasattr(traces[0], 'observations')
         # Stub-level I/O is present so a conversation can still be built.
-        assert traces[0].input == 'in-a'
+        assert traces[1].input == 'in-turn10'
+        assert loader.client.api.scores_v3.calls == []
 
-    def test_missing_session_returns_none(self):
-        loader = _loader()
-        loader.fetch_session = MagicMock(return_value=None)
-        loader.fetch_trace = MagicMock()
+    def test_unknown_session_returns_none(self):
+        loader = make_loader(_session_rows())
+        result = loader.get_session_with_traces('nope', show_progress=False)
+        assert result == (None, [])
 
-        session, traces = loader.get_session_with_traces(
-            'nope', show_progress=False, enrich=False
+    def test_failed_read_returns_none(self):
+        loader = make_loader(_session_rows())
+
+        def boom(**_: Any) -> Any:
+            raise RuntimeError('400 bad request')
+
+        loader.client.api.observations.get_many = boom
+        result = loader.get_session_with_traces('s1', show_progress=False)
+        assert result == (None, [])
+
+    def test_unknown_session_gives_an_empty_identifiable_session(self):
+        session = Session.from_langfuse(
+            'nope', loader=make_loader(_session_rows()), show_progress=False
         )
-        assert session is None
-        assert traces == []
-        loader.fetch_trace.assert_not_called()
+        assert session.id == 'nope'
+        assert len(session) == 0
 
-    def test_empty_session_returns_no_traces(self):
-        loader = _loader()
-        loader.fetch_session = MagicMock(
-            return_value=SimpleNamespace(id='sess-1', traces=[])
+    @pytest.mark.parametrize('retain', [True, False])
+    def test_a_trace_that_wont_rebuild_does_not_take_the_session_down(self, retain):
+        loader = make_loader(_session_rows())
+        _flaky(loader, 'turn20')
+        _, traces = loader.get_session_with_traces(
+            's1', show_progress=False, retain_stub_on_failure=retain
         )
-        loader.fetch_trace = MagicMock()
+        ids = [t.id for t in traces]
+        if retain:
+            assert ids == ['other', 'turn10', 'turn20', 'turn30']
+            assert not hasattr(traces[2], 'observations')
+        else:
+            assert ids == ['other', 'turn10', 'turn30']
 
-        session, traces = loader.get_session_with_traces(
-            'sess-1', show_progress=False, enrich=False
-        )
-        assert session.id == 'sess-1'
-        assert traces == []
+    def test_get_session_traces_drops_traces_that_wont_rebuild(self):
+        loader = make_loader(_session_rows())
+        _flaky(loader, 'turn20')
+        traces = loader.get_session_traces('s1', show_progress=False)
+        assert [t.id for t in traces] == ['other', 'turn10', 'turn30']
 
 
 class TestTraceFilter:
-    def test_trace_name_only_fetches_matching(self):
-        loader = _loader()
-        loader.fetch_session = MagicMock(
-            return_value=_session_with_named_stubs(
-                ('a', 'chat-turn'), ('b', 'pipeline'), ('c', 'chat-turn')
-            )
-        )
-        loader.fetch_trace = MagicMock(
-            side_effect=lambda tid: SimpleNamespace(id=tid, full=True)
-        )
-
+    def test_trace_name_keeps_matching_traces_and_reads_only_their_scores(self):
+        loader = make_loader(_session_rows())
         _, traces = loader.get_session_with_traces(
-            'sess-1', show_progress=False, trace_name='chat-turn'
+            's1', show_progress=False, trace_name='chat-turn'
         )
-        # Only the two 'chat-turn' stubs are enriched; 'pipeline' is never fetched.
-        assert loader.fetch_trace.call_count == 2
-        assert sorted(c.args[0] for c in loader.fetch_trace.call_args_list) == [
-            'a',
-            'c',
-        ]
-        assert {t.id for t in traces} == {'a', 'c'}
+        assert [t.id for t in traces] == ['turn10', 'turn20', 'turn30']
+        scored = [c['trace_id'] for c in loader.client.api.scores_v3.calls]
+        assert scored == ['turn10', 'turn20', 'turn30']
 
     def test_trace_name_with_enrich_false_filters_stubs(self):
-        loader = _loader()
-        loader.fetch_session = MagicMock(
-            return_value=_session_with_named_stubs(
-                ('a', 'chat-turn'), ('b', 'pipeline')
-            )
-        )
-        loader.fetch_trace = MagicMock()
-
+        loader = make_loader(_session_rows())
         _, traces = loader.get_session_with_traces(
-            'sess-1', show_progress=False, enrich=False, trace_name='chat-turn'
+            's1', show_progress=False, enrich=False, trace_name='pipeline'
         )
-        loader.fetch_trace.assert_not_called()
-        assert [t.id for t in traces] == ['a']
+        assert [t.id for t in traces] == ['other']
 
     def test_trace_predicate_filters(self):
-        loader = _loader()
-        loader.fetch_session = MagicMock(
-            return_value=_session_with_named_stubs(
-                ('a', 'chat-turn'), ('b', 'pipeline'), ('c', 'chat-turn-v2')
-            )
-        )
-        loader.fetch_trace = MagicMock(
-            side_effect=lambda tid: SimpleNamespace(id=tid, full=True)
-        )
-
+        loader = make_loader(_session_rows())
         _, traces = loader.get_session_with_traces(
-            'sess-1',
+            's1',
             show_progress=False,
-            trace_predicate=lambda s: s.name.startswith('chat'),
+            trace_predicate=lambda s: s.id.endswith('0') and s.id != 'turn20',
         )
-        assert {t.id for t in traces} == {'a', 'c'}
+        assert [t.id for t in traces] == ['turn10', 'turn30']
 
-    def test_no_match_returns_empty(self):
-        loader = _loader()
-        loader.fetch_session = MagicMock(
-            return_value=_session_with_named_stubs(('a', 'pipeline'))
-        )
-        loader.fetch_trace = MagicMock()
-
+    def test_no_match_returns_the_session_and_no_traces(self):
+        loader = make_loader(_session_rows())
         session, traces = loader.get_session_with_traces(
-            'sess-1', show_progress=False, trace_name='chat-turn'
+            's1', show_progress=False, trace_name='missing'
         )
-        assert session.id == 'sess-1'
+        assert session.id == 's1'
         assert traces == []
-        loader.fetch_trace.assert_not_called()
+
+
+def test_fetch_session_is_a_session_with_traces():
+    loader = make_loader(_session_rows())
+    session = loader.fetch_session('s1')
+    assert session.id == 's1'
+    assert session.created_at == datetime(2026, 11, 1, 10, 5, tzinfo=UTC)
+    assert len(session.traces) == 4
+    assert loader.fetch_session('nope') is None

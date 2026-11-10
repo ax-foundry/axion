@@ -5,13 +5,18 @@ This module provides functionality to:
 1. Fetch traces from Langfuse
 2. Convert them to Axion Dataset format
 3. Push evaluation scores back to Langfuse traces
+
+Traces, sessions and scores are read through Langfuse's observations and scores
+reads and rebuilt into the SDK's trace and session objects; the rules for that
+live in :mod:`axion._core.tracing.loaders.langfuse_rows`.
 """
 
 import json
 import os
 import random
 import time
-from datetime import datetime, timedelta
+from collections.abc import Sequence
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Literal, Optional, TypeVar
 
 import numpy as np
@@ -19,19 +24,46 @@ from pydantic import BaseModel
 from tqdm import tqdm
 
 from axion._core.logging import get_logger
+from axion._core.tracing.collection.scores import TraceScore
 from axion._core.tracing.loaders.base import BaseTraceLoader
+from axion._core.tracing.loaders.langfuse_rows import (
+    ALL_TIME,
+    CLOCK_SLACK,
+    EPOCH,
+    FULL_FIELDS,
+    LIGHT_FIELDS,
+    OBSERVATIONS_PAGE_LIMIT,
+    SCORE_FIELDS,
+    SCORE_LOOKBACK,
+    SCORES_PAGE_LIMIT,
+    TraceListing,
+    TraceReadTruncated,
+    TraceSummary,
+    full_trace_payload,
+    group_by_trace,
+    pick_root,
+    possibly_cut,
+    score_from_v3,
+    trace_payload,
+    trace_start,
+    utc,
+)
 from axion.metrics.schema import DEFAULT_EXPLANATION
 
 T = TypeVar('T')
 
 if TYPE_CHECKING:
-    from axion._core.tracing.collection.scores import TraceScore
     from axion.dataset import Dataset, DatasetItem
     from axion.schema import EvaluationResult
 
 logger = get_logger(__name__)
 
-__all__ = ['LangfuseTraceLoader']
+__all__ = [
+    'LangfuseTraceLoader',
+    'TraceListing',
+    'TraceReadTruncated',
+    'TraceSummary',
+]
 
 
 class LangfuseTraceLoader(BaseTraceLoader):
@@ -69,6 +101,14 @@ class LangfuseTraceLoader(BaseTraceLoader):
         '504',
         'rate limit',
     )
+
+    # Pages one trace, session or score read may take before it refuses a partial
+    # result.
+    max_pages = 100
+    # Pages one window of a listing may take before the window is halved.
+    list_max_pages = 20
+    # A listing window is never halved below this.
+    min_list_window = timedelta(seconds=1)
 
     def __init__(
         self,
@@ -394,8 +434,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 page_seen.add(tid)
                 page_ids.append(tid)
 
-        next_cursor = response.meta.cursor
-        return page_ids, next_cursor if response.data else None
+        # An empty page can still carry a cursor; the caller stops when it is unset.
+        return page_ids, response.meta.cursor
 
     def _fetch_trace_ids_via_observations(
         self,
@@ -409,8 +449,7 @@ class LangfuseTraceLoader(BaseTraceLoader):
         Collect unique trace IDs via the v2 observations endpoint.
 
         Paginates with cursor until `limit` unique trace IDs are collected
-        or the API has no more results. Uses the high-performance observations
-        API instead of the legacy trace.list() endpoint.
+        or the API has no more results.
         """
         seen_ids: List[str] = []
         seen_set: set = set()
@@ -440,57 +479,364 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
         return seen_ids[:limit]
 
+    # -- paging ----------------------------------------------------------------
+
+    def _page(
+        self, call: Callable[[str | None], Any], what: str, max_pages: int
+    ) -> list[Any]:
+        """Every page of a cursor read, or :class:`TraceReadTruncated` past ``max_pages``."""
+        rows: list[Any] = []
+        cursor: str | None = None
+        for _ in range(max_pages):
+            response = self._execute_with_retry(
+                lambda c=cursor: call(c), description=what
+            )
+            data = list(response.data or [])
+            rows.extend(data)
+            cursor = response.meta.cursor
+            # A page can come back empty with a cursor still set; only a missing
+            # cursor ends the read.
+            if not cursor:
+                return rows
+        raise TraceReadTruncated(
+            f'{what} needed more than {max_pages} pages; refusing a partial read'
+        )
+
+    def _observations(
+        self,
+        what: str,
+        *,
+        fields: str = FULL_FIELDS,
+        max_pages: int | None = None,
+        **filters: Any,
+    ) -> list[Any]:
+        """Observation rows matching ``filters``, with any cut metadata read whole."""
+        now = datetime.now(UTC)
+        window = {
+            'from_start_time': now - ALL_TIME,
+            'to_start_time': now + CLOCK_SLACK,
+            **filters,
+        }
+
+        def read(extra: dict[str, Any]) -> list[Any]:
+            return self._page(
+                lambda cursor: self.client.api.observations.get_many(
+                    limit=OBSERVATIONS_PAGE_LIMIT, cursor=cursor, **window, **extra
+                ),
+                what,
+                max_pages or self.max_pages,
+            )
+
+        rows = read({'fields': fields})
+        cut = sorted(
+            {
+                key
+                for r in rows
+                if isinstance(r.metadata, dict)
+                for key, value in r.metadata.items()
+                if possibly_cut(value)
+            }
+        )
+        if not cut:
+            return rows
+        full = {
+            r.id: r.metadata
+            for r in read({'fields': 'core,metadata', 'expand_metadata': ','.join(cut)})
+        }
+        return [
+            r.model_copy(update={'metadata': full[r.id]}) if r.id in full else r
+            for r in rows
+        ]
+
+    def _score_rows(self, since: datetime, what: str, **filters: Any) -> list[Any]:
+        """Score rows matching ``filters``, from a day before ``since`` to now."""
+        to = datetime.now(UTC) + CLOCK_SLACK
+        return self._page(
+            lambda cursor: self.client.api.scores_v3.get_many_v3(
+                fields=SCORE_FIELDS,
+                limit=SCORES_PAGE_LIMIT,
+                cursor=cursor,
+                from_timestamp=utc(since) - SCORE_LOOKBACK,
+                to_timestamp=to,
+                **filters,
+            ),
+            what,
+            self.max_pages,
+        )
+
+    def _pace(self, pace: bool) -> None:
+        if pace and self.request_pacing > 0:
+            time.sleep(self.request_pacing)
+
+    # -- window listing --------------------------------------------------------
+
+    def _window_rows(
+        self,
+        start: datetime,
+        end: datetime,
+        name: str | None,
+        tags: list[str] | None,
+        environment: str | None,
+    ) -> list[Any]:
+        conditions: list[dict[str, Any]] = [
+            {
+                'type': 'datetime',
+                'column': 'startTime',
+                'operator': '>=',
+                'value': start.isoformat(),
+            },
+            {
+                'type': 'datetime',
+                'column': 'startTime',
+                'operator': '<',
+                'value': end.isoformat(),
+            },
+        ]
+        if name:
+            conditions.append(
+                {
+                    'type': 'string',
+                    'column': 'traceName',
+                    'operator': '=',
+                    'value': name,
+                }
+            )
+        if tags:
+            conditions.append(
+                {
+                    'type': 'arrayOptions',
+                    'column': 'tags',
+                    'operator': 'all of',
+                    'value': tags,
+                }
+            )
+        if environment:
+            conditions.append(
+                {
+                    'type': 'stringOptions',
+                    'column': 'environment',
+                    'operator': 'any of',
+                    'value': [environment],
+                }
+            )
+        return self._page(
+            lambda cursor: self.client.api.observations.get_many(
+                fields=LIGHT_FIELDS,
+                limit=OBSERVATIONS_PAGE_LIMIT,
+                cursor=cursor,
+                from_start_time=start,
+                to_start_time=end,
+                filter=json.dumps(conditions),
+            ),
+            f'list traces {start.isoformat()}..{end.isoformat()}',
+            self.list_max_pages,
+        )
+
+    def _rows_before(self, trace_ids: list[str], start: datetime) -> list[Any]:
+        """
+        The rows of ``trace_ids`` that start before ``start``, 100 ids a read.
+
+        A trace straddling the window's start (an earlier root, or a retry's earlier
+        flagged root) has rows there; its timestamp needs them.
+        """
+        rows: list[Any] = []
+        for i in range(0, len(trace_ids), 100):
+            batch = trace_ids[i : i + 100]
+            conditions = [
+                {
+                    'type': 'stringOptions',
+                    'column': 'traceId',
+                    'operator': 'any of',
+                    'value': batch,
+                },
+                {
+                    'type': 'datetime',
+                    'column': 'startTime',
+                    'operator': '<',
+                    'value': start.isoformat(),
+                },
+            ]
+            rows += self._page(
+                lambda cursor, c=conditions: self.client.api.observations.get_many(
+                    fields=LIGHT_FIELDS,
+                    limit=OBSERVATIONS_PAGE_LIMIT,
+                    cursor=cursor,
+                    from_start_time=start - ALL_TIME,
+                    to_start_time=start,
+                    filter=json.dumps(c),
+                ),
+                f'read rows before {start.isoformat()}',
+                self.max_pages,
+            )
+        return rows
+
+    def _summaries(self, rows: list[Any], start: datetime) -> list[TraceSummary]:
+        in_window = group_by_trace(rows)
+        earlier = group_by_trace(self._rows_before(list(in_window), start))
+        summaries = []
+        for trace_id, group in in_window.items():
+            group = earlier.get(trace_id, []) + group
+            root = pick_root(group)
+            summaries.append(
+                TraceSummary(
+                    id=trace_id,
+                    timestamp=trace_start(group) or EPOCH,
+                    name=root.trace_name or root.name,
+                    session_id=root.session_id,
+                    tags=sorted(root.tags or []),
+                )
+            )
+        return summaries
+
+    def list_trace_ids(
+        self,
+        start: datetime,
+        end: datetime,
+        *,
+        name: str | None = None,
+        tags: list[str] | None = None,
+        environment: str | None = None,
+        max_traces: int,
+        order: Literal['asc', 'desc'] = 'asc',
+    ) -> TraceListing:
+        """
+        List the traces whose trace timestamp falls in ``[start, end)``.
+
+        A window whose rows need more than ``list_max_pages`` pages is halved (keeping
+        its older half for ``asc``, its newer half for ``desc``) until it is read whole.
+
+        ``asc`` (oldest first): with more than ``max_traces``, the boundary is the
+        timestamp of trace ``max_traces``; traces before it are kept, every trace at
+        it is dropped, and ``end`` is cut back to it, so the next call can resume
+        from ``end`` without skipping or repeating a trace. When one timestamp holds
+        more traces than the cap, nothing is returned and ``end`` is ``start``.
+
+        ``desc`` (newest first) reads newer chunks first, moving back until it holds
+        more than ``max_traces`` or reaches ``start``, keeps the newest ``max_traces``
+        and sets ``start`` just after the first trace it cut.
+
+        Args:
+            start: Window start (inclusive). A naive value is read as UTC.
+            end: Window end (exclusive). A naive value is read as UTC.
+            name: Keep only traces with this name.
+            tags: Keep only traces carrying all of these tags.
+            environment: Keep only traces in this Langfuse environment.
+            max_traces: Most traces to return.
+            order: ``'asc'`` (oldest first) or ``'desc'`` (newest first).
+
+        Returns:
+            A :class:`TraceListing` whose ``start``/``end`` bound the window it lists
+            completely and whose ``truncated`` says whether that is narrower than asked.
+        """
+        lo, hi = utc(start), utc(end)
+        if order == 'desc':
+            return self._list_newest(lo, hi, name, tags, environment, max_traces)
+
+        rows, lo, hi = self._read_window(lo, hi, name, tags, environment, 'asc')
+        shrunk = hi < utc(end)
+        traces = [s for s in self._summaries(rows, lo) if lo <= s.timestamp < hi]
+        traces.sort(key=lambda s: (s.timestamp, s.id))
+        if len(traces) <= max_traces:
+            return TraceListing(traces, lo, hi, shrunk)
+
+        boundary = traces[max_traces].timestamp
+        kept = [s for s in traces if s.timestamp < boundary]
+        if not kept:
+            logger.warning(f'Listing cannot advance: {boundary} holds over the cap')
+            return TraceListing([], lo, lo, True)
+        logger.warning(
+            f'Trace listing truncated at {max_traces} traces; window end cut to {boundary}'
+        )
+        return TraceListing(kept, lo, boundary, True)
+
+    def _read_window(
+        self,
+        lo: datetime,
+        hi: datetime,
+        name: str | None,
+        tags: list[str] | None,
+        environment: str | None,
+        keep: Literal['asc', 'desc'],
+    ) -> tuple[list[Any], datetime, datetime]:
+        """Rows of ``[lo, hi)``, halving it (keeping the older or newer half) to fit."""
+        while True:
+            try:
+                return self._window_rows(lo, hi, name, tags, environment), lo, hi
+            except TraceReadTruncated:
+                if hi - lo <= self.min_list_window:
+                    raise
+                half = (hi - lo) / 2
+                lo, hi = (lo, lo + half) if keep == 'asc' else (hi - half, hi)
+                logger.warning(
+                    f'Trace listing over its page cap; window narrowed to {lo}..{hi}'
+                )
+
+    def _list_newest(
+        self,
+        lo: datetime,
+        hi: datetime,
+        name: str | None,
+        tags: list[str] | None,
+        environment: str | None,
+        max_traces: int,
+    ) -> TraceListing:
+        traces: list[TraceSummary] = []
+        upper = hi
+        while upper > lo and len(traces) < max_traces:
+            rows, chunk_lo, _ = self._read_window(
+                lo, upper, name, tags, environment, 'desc'
+            )
+            traces += [
+                s
+                for s in self._summaries(rows, chunk_lo)
+                if chunk_lo <= s.timestamp < upper
+            ]
+            upper = chunk_lo
+        traces.sort(key=lambda s: (s.timestamp, s.id), reverse=True)
+        if len(traces) <= max_traces:
+            return TraceListing(traces, upper, hi, upper > lo)
+        # Traces tied with the first one cut go too, so the listing holds exactly
+        # the traces of [start, end) and an older window resumed from start repeats
+        # none of them.
+        cut_at = traces[max_traces].timestamp
+        kept = [s for s in traces[:max_traces] if s.timestamp > cut_at]
+        start_after = cut_at + timedelta(microseconds=1)
+        logger.warning(
+            f'Trace listing cut at {max_traces} traces; complete from {start_after}'
+        )
+        return TraceListing(kept, start_after, hi, True)
+
     def _fetch_trace_summaries_via_list(
         self,
         limit: int,
         from_ts: datetime,
-        to_ts: Optional[datetime],
-        tags: Optional[List[str]],
-        name: Optional[str],
-        environment: Optional[str],
-    ) -> List[Any]:
+        to_ts: datetime | None,
+        tags: list[str] | None,
+        name: str | None,
+        environment: str | None,
+    ) -> list[TraceSummary]:
         """
-        Fetch lightweight trace summaries via trace.list().
+        The newest ``limit`` trace summaries of the window.
 
-        Used for the fetch_full_traces=False path so summaries carry trace-level
-        name/tags/timestamp/metrics in a single batched call, without N per-trace
-        fetches. The observations API used for full-trace discovery does not return
-        trace name, so it cannot serve this path. trace.list() filters name/tags
-        server-side and orders by timestamp (most recent first).
-
-        Returns a list of raw Langfuse trace summary objects (TraceWithDetails).
+        Serves the ``fetch_full_traces=False`` path of :meth:`fetch_traces`. A summary
+        carries id, timestamp, name, session id and tags; no IO or metrics.
         """
-        collected: List[Any] = []
-        page = 1
-
-        while len(collected) < limit:
-            page_size = min(100, limit - len(collected))
-            response = self._execute_with_retry(
-                lambda p=page, n=page_size: self.client.api.trace.list(
-                    page=p,
-                    limit=n,
-                    name=name,
-                    from_timestamp=from_ts,
-                    to_timestamp=to_ts,
-                    tags=tags or None,
-                    environment=environment,
-                    order_by='timestamp.desc',
-                    # core=id/name/tags/timestamp/session, metrics=cost/latency,
-                    # io=input/output for previews.
-                    fields='core,metrics,io',
-                ),
-                description='list trace summaries',
+        listing = self.list_trace_ids(
+            from_ts,
+            to_ts or datetime.now(UTC) + CLOCK_SLACK,
+            name=name,
+            tags=tags,
+            environment=environment,
+            max_traces=limit,
+            order='desc',
+        )
+        if listing.truncated:
+            logger.warning(
+                f'Trace summaries hit limit {limit}; nothing older than '
+                f'{listing.start} listed'
             )
-
-            data = list(getattr(response, 'data', []) or [])
-            if not data:
-                break
-
-            collected.extend(data)
-            page += 1
-
-        logger.info(f'Successfully loaded {len(collected[:limit])} trace summaries')
-        return collected[:limit]
+        logger.info(f'Successfully loaded {len(listing.traces)} trace summaries')
+        return list(listing.traces)
 
     def fetch_traces(
         self,
@@ -511,8 +857,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
         """
         Fetch raw traces from Langfuse.
 
-        Uses the v2 observations endpoint to discover trace IDs (avoiding the
-        legacy trace.list() endpoint), then fetches full traces by ID.
+        Uses the observations endpoint to discover trace IDs, then fetches full
+        traces by ID.
 
         Note on time window: the discovery step filters by *observation* start
         time, not by the parent trace timestamp. This is generally equivalent
@@ -527,21 +873,22 @@ class LangfuseTraceLoader(BaseTraceLoader):
             to_timestamp: End timestamp for absolute mode (datetime or ISO string).
             tags: Filter by trace tags (AND semantics — all tags must be present).
             name: Filter by trace name. With fetch_full_traces=False it is applied
-                server-side via trace.list(). With fetch_full_traces=True it is
+                server-side. With fetch_full_traces=True it is
                 applied as a post-filter on fetched traces, paginating through
                 candidates until enough matches are found.
             environment: Filter by Langfuse environment (e.g. 'production').
             trace_ids: Fetch these specific IDs directly, bypassing discovery.
             fetch_full_traces: If True (default), return full trace objects via
                 observations discovery + per-id fetch. If False, return lightweight
-                trace summaries (name/tags/timestamp/metrics) via trace.list().
+                :class:`TraceSummary` objects (id/timestamp/name/session/tags), the
+                newest ``limit`` of the window.
             show_progress: Show a tqdm progress bar while fetching full traces.
-            **deprecated_kwargs: Formerly passed to trace.list(). No longer used;
-                passing any value emits a deprecation warning.
+            **deprecated_kwargs: Formerly passed to the trace list endpoint. No
+                longer used; passing any value emits a deprecation warning.
 
         Returns:
-            List of raw Langfuse trace objects (full traces, or trace.list
-            summaries when fetch_full_traces=False).
+            List of raw Langfuse trace objects (full traces), or
+            :class:`TraceSummary` objects when fetch_full_traces=False.
         """
         if deprecated_kwargs:
             import warnings
@@ -549,7 +896,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
             warnings.warn(
                 f'fetch_traces() received unexpected keyword arguments '
                 f'{list(deprecated_kwargs.keys())}. These were formerly passed to '
-                f'trace.list() which has been replaced by the v2 observations API. '
+                f'the trace list endpoint, which has been replaced by the '
+                f'observations API. '
                 f'Unknown kwargs are ignored. Remove them to silence this warning.',
                 DeprecationWarning,
                 stacklevel=2,
@@ -623,11 +971,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
         )
         logger.info(f'Fetching up to {limit} traces from Langfuse ({window_suffix})...')
 
-        # Summary path: trace.list() returns trace-level name/tags/metrics in one
-        # batched call and filters name/tags server-side. (The observations API
-        # used for full-trace discovery does not return trace name, so it cannot
-        # serve this path.) The full-trace path below keeps using observations
-        # discovery + per-id fetch.
+        # Summary path: one windowed observations read with trace context, filtered
+        # on trace name/tags server-side; no per-trace fetch.
         if not fetch_full_traces:
             return self._fetch_trace_summaries_via_list(
                 limit=limit,
@@ -685,16 +1030,45 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
         return _fetch_full_traces(trace_id_list)
 
+    def _build_trace(
+        self, trace_id: str, rows: Sequence[Any], scores: Sequence[Any]
+    ) -> Any:
+        from langfuse.api import TraceWithFullDetails
+        from langfuse.api.core.pydantic_utilities import parse_obj_as
+
+        return parse_obj_as(
+            TraceWithFullDetails, full_trace_payload(trace_id, rows, scores)
+        )
+
+    def _trace_scores(self, trace_id: str, rows: Sequence[Any]) -> list[Any]:
+        """Score rows of one trace; a failed read logs and gives none (the trace stays)."""
+        try:
+            return self._score_rows(
+                trace_start(rows) or datetime.now(UTC) - ALL_TIME,
+                f'fetch scores for trace {trace_id}',
+                trace_id=trace_id,
+            )
+        except TraceReadTruncated:
+            raise
+        except Exception as e:
+            logger.warning(f'Scores for trace {trace_id} could not be read: {e}')
+            return []
+
     def fetch_trace(self, trace_id: str, pace: bool = True) -> Optional[Any]:
         """
-        Fetch a single trace by trace_id.
+        Fetch a single trace by trace_id, rebuilt from its observation rows.
 
         Args:
             trace_id: Langfuse trace ID to fetch
             pace: Whether to apply request pacing delay after fetch
 
         Returns:
-            The full Langfuse trace object, or None if not found/failed.
+            The full Langfuse trace object (``TraceWithFullDetails``, with its
+            observations and scores), or None if not found/failed.
+
+        Raises:
+            TraceReadTruncated: The trace needs more than ``max_pages`` pages;
+                a partial trace is never returned.
         """
         if not self._client_initialized:
             logger.error('Langfuse client not initialized')
@@ -705,80 +1079,101 @@ class LangfuseTraceLoader(BaseTraceLoader):
             return None
 
         try:
-            trace = self._execute_with_retry(
-                lambda: self.client.api.trace.get(trace_id),
-                description=f'fetch trace {trace_id}',
+            rows = self._observations(f'fetch trace {trace_id}', trace_id=trace_id)
+            if not rows:
+                logger.warning(f'Trace {trace_id} not found')
+                return None
+            trace = self._build_trace(
+                trace_id, rows, self._trace_scores(trace_id, rows)
             )
-
-            if pace and self.request_pacing > 0:
-                time.sleep(self.request_pacing)
-
-            return trace
+        except TraceReadTruncated:
+            raise
         except Exception as e:
             logger.warning(f'Failed to fetch trace {trace_id}: {e}')
             return None
+
+        self._pace(pace)
+        return trace
+
+    def list_score_rows(
+        self,
+        *,
+        session_id: Optional[str] = None,
+        trace_id: Optional[str] = None,
+        name: Optional[str] = None,
+    ) -> 'list[TraceScore]':
+        """
+        Scores of a session or a trace, optionally only those named ``name``.
+
+        The read's window runs from a day before the earliest trace start of the
+        session or trace to now. An unknown session or trace has no scores. Unlike
+        :meth:`fetch_scores_for_session` and :meth:`fetch_scores_for_trace`, errors
+        propagate, so a caller can tell "the read failed" from "no scores".
+
+        Args:
+            session_id: Langfuse session ID (exactly one of this and ``trace_id``).
+            trace_id: Langfuse trace ID.
+            name: Keep only scores with this name.
+
+        Returns:
+            List of :class:`TraceScore` objects.
+        """
+        if bool(session_id) == bool(trace_id):
+            raise ValueError(
+                'list_score_rows needs exactly one of session_id, trace_id'
+            )
+        what = f'session {session_id}' if session_id else f'trace {trace_id}'
+        filters: dict[str, Any] = (
+            {'session_id': session_id} if session_id else {'trace_id': trace_id}
+        )
+        rows = self._observations(f'read {what}', fields='core,basic', **filters)
+        starts = [trace_start(group) for group in group_by_trace(rows).values()]
+        known = [s for s in starts if s is not None]
+        if not known:
+            return []
+        if name:
+            filters['name'] = name
+        raws = self._score_rows(min(known), f'fetch scores for {what}', **filters)
+        return [score_from_v3(raw) for raw in raws]
 
     def fetch_scores_for_session(
         self, session_id: str, pace: bool = True
     ) -> 'dict[str, list[TraceScore]]':
         """
-        Fetch a session's Langfuse eval scores in one paginated call.
+        Fetch a session's Langfuse eval scores, keyed by trace.
 
-        The API filters on a score's own ``sessionId``, which is unset on a score
-        written against a trace, so the result covers session-level scores only;
-        per-trace scores come off the trace payload instead.
-
-        Returns a dict keyed by ``trace_id`` so callers can attach scores to each
-        ``Trace`` without issuing a per-trace request.  On any error the warning is
-        logged and an empty dict is returned (fail-soft — a missing scores fetch
-        must never drop the item from the pipeline).
+        Covers scores written against the session's traces and observations, and
+        session-level scores (keyed by ``''``). Returns a dict keyed by
+        ``trace_id`` so callers can attach scores to each ``Trace`` without
+        issuing a per-trace request. On any error the warning is logged and an
+        empty dict is returned (fail-soft — a missing scores fetch must never drop
+        the item from the pipeline).
 
         Args:
             session_id: Langfuse session ID.
-            pace: Whether to apply request pacing after the final page.
+            pace: Whether to apply request pacing after the read.
 
         Returns:
             ``{trace_id: [TraceScore, ...]}`` — empty dict on failure or no scores.
         """
-        from axion._core.tracing.collection.scores import TraceScore
-
-        if not self._client_initialized:
-            logger.warning(
-                f'fetch_scores_for_session: client not initialised (session={session_id})'
-            )
+        if not self._client_initialized or not session_id:
+            logger.warning(f'fetch_scores_for_session skipped (session={session_id!r})')
             return {}
 
-        if not session_id:
-            logger.warning('fetch_scores_for_session called with empty session_id')
-            return {}
-
-        result: dict[str, list[TraceScore]] = {}
-        page = 1
         try:
-            while True:
-                response = self._execute_with_retry(
-                    lambda p=page: self.client.api.scores.get_many(
-                        session_id=session_id, page=p
-                    ),
-                    description=f'fetch scores for session {session_id} page {page}',
-                )
-                for raw in response.data:
-                    score = TraceScore.from_langfuse(raw)
-                    tid = score.trace_id or ''
-                    result.setdefault(tid, []).append(score)
-
-                if page >= response.meta.total_pages:
-                    break
-                page += 1
-                if pace and self.request_pacing > 0:
-                    time.sleep(self.request_pacing)
-
+            scores = self.list_score_rows(session_id=session_id)
+        except TraceReadTruncated:
+            raise
         except Exception as e:
             logger.warning(
                 f'fetch_scores_for_session failed for session {session_id}: {e}'
             )
             return {}
 
+        self._pace(pace)
+        result: dict[str, list[TraceScore]] = {}
+        for score in scores:
+            result.setdefault(score.trace_id or '', []).append(score)
         return result
 
     def fetch_scores_for_trace(
@@ -788,52 +1183,86 @@ class LangfuseTraceLoader(BaseTraceLoader):
         Fetch Langfuse eval scores for a single trace.
 
         Prefer :meth:`fetch_scores_for_session` when processing a whole session
-        to avoid N per-trace requests.  On any error the warning is logged and an
+        to avoid N per-trace requests. On any error the warning is logged and an
         empty list is returned.
 
         Args:
             trace_id: Langfuse trace ID.
-            pace: Whether to apply request pacing after the final page.
+            pace: Whether to apply request pacing after the read.
 
         Returns:
             List of :class:`TraceScore` objects; empty list on failure or no scores.
         """
-        from axion._core.tracing.collection.scores import TraceScore
-
-        if not self._client_initialized:
-            logger.warning(
-                f'fetch_scores_for_trace: client not initialised (trace={trace_id})'
-            )
+        if not self._client_initialized or not trace_id:
+            logger.warning(f'fetch_scores_for_trace skipped (trace={trace_id!r})')
             return []
 
-        if not trace_id:
-            logger.warning('fetch_scores_for_trace called with empty trace_id')
-            return []
-
-        scores: list[TraceScore] = []
-        page = 1
         try:
-            while True:
-                response = self._execute_with_retry(
-                    lambda p=page: self.client.api.scores.get_many(
-                        trace_id=trace_id, page=p
-                    ),
-                    description=f'fetch scores for trace {trace_id} page {page}',
-                )
-                for raw in response.data:
-                    scores.append(TraceScore.from_langfuse(raw))
-
-                if page >= response.meta.total_pages:
-                    break
-                page += 1
-                if pace and self.request_pacing > 0:
-                    time.sleep(self.request_pacing)
-
+            scores = self.list_score_rows(trace_id=trace_id)
+        except TraceReadTruncated:
+            raise
         except Exception as e:
             logger.warning(f'fetch_scores_for_trace failed for trace {trace_id}: {e}')
             return []
 
+        self._pace(pace)
         return scores
+
+    def _session_groups(
+        self, session_id: str, fields: str
+    ) -> list[tuple[str, list[Any]]]:
+        """
+        The session's traces as ``(trace_id, rows)``, ordered by start then id.
+
+        The session filter finds the traces; their rows are then read by trace id,
+        since a child row need not carry the session id its root does.
+        """
+        what = f'fetch session {session_id}'
+        found = self._observations(what, fields=LIGHT_FIELDS, session_id=session_id)
+        trace_ids = list(dict.fromkeys(r.trace_id for r in found if r.trace_id))
+        rows: list[Any] = []
+        for i in range(0, len(trace_ids), 100):
+            condition = {
+                'type': 'stringOptions',
+                'column': 'traceId',
+                'operator': 'any of',
+                'value': trace_ids[i : i + 100],
+            }
+            rows += self._observations(
+                what, fields=fields, filter=json.dumps([condition])
+            )
+        groups = list(group_by_trace(rows).items())
+        groups.sort(key=lambda g: (trace_start(g[1]) or EPOCH, g[0]))
+        return groups
+
+    @staticmethod
+    def _session_payload(
+        session_id: str, groups: Sequence[tuple[str, list[Any]]]
+    ) -> Any:
+        from langfuse.api import SessionWithTraces, Trace
+        from langfuse.api.core.pydantic_utilities import parse_obj_as
+
+        stubs = []
+        for tid, rows in groups:
+            stub = trace_payload(tid, rows)
+            try:
+                parse_obj_as(Trace, stub)
+            except Exception as e:
+                # One trace that won't rebuild must not take the session down.
+                logger.warning(f'Dropping trace {tid} from session {session_id}: {e}')
+                continue
+            stubs.append(stub)
+        first = pick_root(groups[0][1])
+        return parse_obj_as(
+            SessionWithTraces,
+            {
+                'id': session_id,
+                'createdAt': min(trace_start(rows) or EPOCH for _, rows in groups),
+                'projectId': first.project_id or '',
+                'environment': first.environment or 'default',
+                'traces': stubs,
+            },
+        )
 
     def fetch_session(self, session_id: str, pace: bool = True) -> Optional[Any]:
         """
@@ -844,7 +1273,12 @@ class LangfuseTraceLoader(BaseTraceLoader):
             pace: Whether to apply request pacing delay after fetch
 
         Returns:
-            The Langfuse session object (contains traces list), or None if not found/failed.
+            The Langfuse session object (``SessionWithTraces``; its traces carry
+            trace-level fields, not observations, in start order), or None if not
+            found/failed.
+
+        Raises:
+            TraceReadTruncated: The session needs more than ``max_pages`` pages.
         """
         if not self._client_initialized:
             logger.error('Langfuse client not initialized')
@@ -855,18 +1289,15 @@ class LangfuseTraceLoader(BaseTraceLoader):
             return None
 
         try:
-            session = self._execute_with_retry(
-                lambda: self.client.api.sessions.get(session_id),
-                description=f'fetch session {session_id}',
-            )
-
-            if pace and self.request_pacing > 0:
-                time.sleep(self.request_pacing)
-
-            return session
+            groups = self._session_groups(session_id, FULL_FIELDS)
+        except TraceReadTruncated:
+            raise
         except Exception as e:
             logger.warning(f'Failed to fetch session {session_id}: {e}')
             return None
+
+        self._pace(pace)
+        return self._session_payload(session_id, groups) if groups else None
 
     def get_session_traces(
         self,
@@ -876,9 +1307,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
         """
         Fetch all full trace data for a session.
 
-        Retrieves the session by ID, then fetches full trace details
-        for every trace in the session. Traces whose full fetch fails are
-        dropped (see :meth:`get_session_with_traces` to retain stubs instead).
+        Traces that fail to rebuild are dropped (see
+        :meth:`get_session_with_traces` to retain stubs instead).
 
         Args:
             session_id: Langfuse session ID
@@ -904,77 +1334,82 @@ class LangfuseTraceLoader(BaseTraceLoader):
         """
         Fetch a session along with trace details for each of its traces.
 
-        Retrieves the session by ID (preserving session-level metadata) and,
-        when ``enrich`` is True, fetches full trace details for every trace.
+        The session's observation rows are read once and grouped by trace; the
+        traces come back in start order.
 
         Args:
             session_id: Langfuse session ID
-            show_progress: Whether to show a progress bar while fetching traces
-            retain_stub_on_failure: When a full ``fetch_trace`` fails, keep the
-                session's stub trace instead of dropping it. Stubs still carry
-                trace-level input/output (so a conversation turn is preserved),
-                only observation-level detail is missing. Defaults to ``True``.
-            enrich: When ``True`` (default), fetch full trace details (with
-                observations) via one ``fetch_trace`` per trace. When ``False``,
-                skip enrichment and return the session's stub traces directly
-                (a single API call). Stubs carry trace-level input/output, so the
-                conversation is still reconstructable, but observation-level data
-                (``by_type``/``tools``/``find_all``) will be empty.
-            trace_name: When given, keep only stub traces whose ``name`` equals
-                this value **before** enrichment, so non-matching traces are never
-                fetched (saves one API call per skipped trace).
-            trace_predicate: When given, keep only stub traces for which this
-                ``(stub) -> bool`` returns ``True``, applied before enrichment.
-                Combined with ``trace_name`` (both must pass). Lets callers filter
-                on any stub attribute without fetching the full trace.
+            show_progress: Whether to show a progress bar while reading each
+                trace's scores
+            retain_stub_on_failure: When a full trace fails to rebuild, keep its
+                stub trace instead of dropping it. Stubs still carry trace-level
+                input/output (so a conversation turn is preserved), only
+                observation-level detail is missing. Defaults to ``True``.
+            enrich: When ``True`` (default), return full traces with their
+                observations and scores (one score read per trace). When
+                ``False``, return the stub traces: trace-level input/output only,
+                so ``by_type``/``tools``/``find_all`` will be empty.
+            trace_name: When given, keep only traces whose ``name`` equals this
+                value, decided on the stubs before any score is read.
+            trace_predicate: When given, keep only traces for which this
+                ``(stub) -> bool`` returns ``True``, decided on the stubs.
+                Combined with ``trace_name`` (both must pass).
 
         Returns:
             A ``(session, traces)`` tuple. ``session`` is the raw Langfuse
-            session object (or ``None`` if it could not be fetched), and
-            ``traces`` is the list of full (or, when not enriching / on failure,
-            stub) trace objects.
+            session object (or ``None`` if it is unknown or could not be read),
+            and ``traces`` is the list of full (or, when not enriching / on
+            failure, stub) trace objects.
+
+        Raises:
+            TraceReadTruncated: The session needs more than ``max_pages`` pages.
         """
-        session = self.fetch_session(session_id)
-        if session is None:
+        if not self._client_initialized:
+            logger.error('Langfuse client not initialized')
             return None, []
 
-        stubs = getattr(session, 'traces', None)
-        if not stubs:
-            logger.info(f'Session {session_id} has no traces')
-            return session, []
+        if not session_id:
+            logger.warning('get_session_with_traces called with empty session_id')
+            return None, []
 
-        stubs = self._filter_stub_traces(stubs, trace_name, trace_predicate)
+        try:
+            groups = self._session_groups(session_id, FULL_FIELDS)
+        except TraceReadTruncated:
+            raise
+        except Exception as e:
+            logger.warning(f'Failed to fetch session {session_id}: {e}')
+            return None, []
+
+        if not groups:
+            return None, []
+
+        session = self._session_payload(session_id, groups)
+        stubs = self._filter_stub_traces(session.traces, trace_name, trace_predicate)
         if not stubs:
             logger.info(f'No traces in session {session_id} matched the trace filter.')
             return session, []
 
         if not enrich:
-            logger.info(
-                f'Skipping enrichment for session {session_id}; '
-                f'using {len(stubs)} stub traces (trace-level I/O only).'
-            )
             return session, list(stubs)
 
-        stub_by_id = {t.id: t for t in stubs if getattr(t, 'id', None)}
-        trace_ids = list(stub_by_id.keys())
-        logger.info(
-            f'Fetching {len(trace_ids)} full traces for session {session_id}...'
-        )
+        stub_by_id = {s.id: s for s in stubs}
+        kept = [(tid, rows) for tid, rows in groups if tid in stub_by_id]
+        trace_iter: Any = kept
+        if show_progress:
+            trace_iter = tqdm(kept, desc='Fetching session traces', unit='trace')
 
         results = []
-        trace_iter = trace_ids
-        if show_progress:
-            trace_iter = tqdm(trace_iter, desc='Fetching session traces', unit='trace')
-
-        for tid in trace_iter:
-            trace = self.fetch_trace(tid)
-            if trace is not None:
-                results.append(trace)
-            elif retain_stub_on_failure:
-                logger.warning(
-                    f'Full fetch failed for trace {tid}; retaining session stub.'
+        for tid, rows in trace_iter:
+            try:
+                results.append(
+                    self._build_trace(tid, rows, self._trace_scores(tid, rows))
                 )
-                results.append(stub_by_id[tid])
+            except TraceReadTruncated:
+                raise
+            except Exception as e:
+                logger.warning(f'Trace {tid} would not rebuild: {e}')
+                if retain_stub_on_failure:
+                    results.append(stub_by_id[tid])
 
         logger.info(
             f'Successfully loaded {len(results)} traces for session {session_id}'

@@ -68,9 +68,9 @@ eval = ["deepeval>=3.1.0", "ragas>=0.4.2"]
 synthetic = ["pydantic-graph>=1.41.0"]
 # Tracing providers (optional)
 logfire = ["logfire>=2.0.0"]
-langfuse = ["langfuse>=3.0.0"]
+langfuse = ["langfuse>=4.15.2,<5"]
 opik = ["opik>=1.0.0"]
-tracing = ["logfire>=2.0.0", "langfuse>=3.0.0", "opik>=1.0.0"]
+tracing = ["logfire>=2.0.0", "langfuse>=4.15.2,<5", "opik>=1.0.0"]
 # Visualization (optional)
 plotting = ["matplotlib", "seaborn"]
 # Search integrations (optional)
