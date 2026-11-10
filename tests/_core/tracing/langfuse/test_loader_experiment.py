@@ -417,6 +417,36 @@ def test_a_failed_item_write_is_recorded_and_the_rest_continue(make_loader):
     assert len(stats['errors']) == 1 and 'item-1' in stats['errors'][0]
 
 
+def test_an_upload_that_writes_no_item_returns_no_experiment(make_loader):
+    empty = FakeLangfuseClient(FakeDataset([]))
+    stats = make_loader(empty).upload_experiment(
+        evaluation_result=FakeEvaluationResult(results=[]),
+        dataset_name='ds',
+        run_name='r',
+        flush=False,
+    )
+    assert stats['runs_created'] == 0
+    assert stats['experiment_id'] is None and stats['run_url'] is None
+
+    failing = FakeLangfuseClient(FakeDataset([FakeDatasetItem('item-1')]))
+
+    @contextmanager
+    def start(**kwargs):
+        raise RuntimeError('exporter down')
+        yield
+
+    failing.start_as_current_observation = start
+    stats = make_loader(failing).upload_experiment(
+        evaluation_result=FakeEvaluationResult(results=[_result('item-1', 1.0)]),
+        dataset_name='ds',
+        run_name='r',
+        flush=False,
+    )
+    assert stats['runs_created'] == 0
+    assert stats['experiment_id'] is None and stats['run_url'] is None
+    assert len(stats['errors']) == 1
+
+
 def test_scores_on_runtime_traces_write_no_experiment(make_loader):
     client = FakeLangfuseClient(FakeDataset([FakeDatasetItem('item-1')]))
     result = _result('item-1', 0.5, trace_id='trace-1', observation_id='obs-1')

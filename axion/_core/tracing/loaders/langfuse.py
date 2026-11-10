@@ -1691,7 +1691,8 @@ class LangfuseTraceLoader(BaseTraceLoader):
                 - experiment_id: The experiment (and dataset run) id, or None
                   when no experiment was written
                 - run_url: Link to the experiment run in Langfuse, or None when
-                  the project or dataset id could not be read
+                  no experiment was written or the project or dataset id could
+                  not be read
                 - scores_skipped: Number of scores skipped (None/NaN values)
                 - errors: List of error messages encountered
 
@@ -1980,10 +1981,6 @@ class LangfuseTraceLoader(BaseTraceLoader):
             )
             logger.warning(error_msg)
             stats['errors'].append(error_msg)
-        stats['experiment_id'] = experiment_id
-        stats['run_url'] = self._experiment_run_url(
-            project_id, dataset_id, experiment_id
-        )
 
         experiment_metadata: Dict[str, Any] = {
             'axion_run_id': evaluation_result.run_id,
@@ -2060,6 +2057,14 @@ class LangfuseTraceLoader(BaseTraceLoader):
 
             if self.request_pacing > 0:
                 time.sleep(self.request_pacing)
+
+        # The experiment exists only once an item trace is written, so an upload
+        # that wrote none returns no id and no link.
+        if stats['runs_created']:
+            stats['experiment_id'] = experiment_id
+            stats['run_url'] = self._experiment_run_url(
+                project_id, dataset_id, experiment_id
+            )
 
         # Flush client
         if flush:
