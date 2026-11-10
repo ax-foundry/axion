@@ -111,6 +111,34 @@ def test_root_is_the_latest_flagged_row_and_timestamp_the_earliest() -> None:
     assert trace.timestamp == datetime(2026, 11, 1, 10, tzinfo=UTC)
 
 
+def test_the_trace_record_beats_a_later_span_under_a_remote_parent() -> None:
+    # A turn written as a trace record and as a span whose parent is in the calling
+    # service has two flagged roots; the trace's metadata and tags are on the record.
+    rows = [
+        row('t1', 'tool', '2026-11-01T10:00:02Z', parent='span'),
+        row(
+            't1',
+            'span',
+            '2026-11-01T10:00:01Z',
+            parent='remote',
+            root=True,
+            metadata={'span.only': 'x'},
+        ),
+        row(
+            't1',
+            't-t1',
+            '2026-11-01T10:00:00Z',
+            root=True,
+            tags=['headless'],
+            metadata={'agent.terminal_state': 'needs_info'},
+        ),
+    ]
+    trace = make_loader(rows).fetch_trace('t1')
+    assert trace.metadata == {'agent.terminal_state': 'needs_info'}
+    assert trace.tags == ['headless']
+    assert trace.timestamp == datetime(2026, 11, 1, 10, tzinfo=UTC)
+
+
 def test_root_without_the_flag_is_the_parentless_row() -> None:
     rows = [
         row('t1', 'child', '2026-11-01T10:00:01Z', parent='root', root=False),
