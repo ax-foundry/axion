@@ -196,7 +196,7 @@ result.publish_to_observability()
 result.publish_as_experiment(
     dataset_name='agent-experiments',
     run_name='config-v2',
-    link_to_traces=True,  # Links experiment runs to original traces
+    link_to_traces=True,  # Also scores the original traces
 )
 ```
 

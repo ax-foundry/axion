@@ -102,6 +102,15 @@ def utc(moment: datetime) -> datetime:
     )
 
 
+def caller_utc(moment: datetime) -> datetime:
+    """A caller's datetime as aware UTC; a naive value is read as local time.
+
+    The SDK sends a naive datetime in the runtime's local timezone, so a window
+    built from ``datetime.now()`` means the same instants here as it does there.
+    """
+    return moment.astimezone(UTC)
+
+
 def _start(row: Any) -> datetime:
     value = getattr(row, 'start_time', None)
     return utc(value) if isinstance(value, datetime) else EPOCH

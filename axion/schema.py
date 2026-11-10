@@ -995,11 +995,10 @@ class EvaluationResult:
             score_on_runtime_traces: If True, skip creating per-item \"Dataset run\" traces and
                 instead attach scores to existing runtime traces via `trace_id`/`observation_id`.
                 Takes precedence over link_to_traces if both are True.
-            link_to_traces: If True, link experiment runs to existing traces via the
-                low-level API instead of creating new \"Dataset run\" traces. This allows
-                experiment runs to appear linked to the original evaluation traces in
-                Langfuse UI. Falls back to creating new traces if trace_id is not available.
-                Ignored if score_on_runtime_traces is True.
+            link_to_traces: If True, also attach each item's scores to its existing
+                runtime trace. Each experiment item is still written as its own trace,
+                with the runtime trace id in its experiment metadata. Ignored if
+                score_on_runtime_traces is True.
             metric_names: Optional list of metric names to upload. If provided,
                 only scores whose metric name matches are uploaded.
 

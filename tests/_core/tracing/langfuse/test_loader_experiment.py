@@ -1,9 +1,21 @@
+import inspect
 import sys
 import types
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
+import pytest
+from opentelemetry import trace as otel_trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
+    InMemorySpanExporter,
+)
+from opentelemetry.trace import format_span_id, format_trace_id
+
+from axion._core.tracing.loaders import langfuse as loader_module
+from axion._core.tracing.loaders import langfuse_experiments as experiments
 from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
 
 
@@ -41,127 +53,68 @@ class FakeEvaluationResult:
 
 
 class FakeRootSpan:
-    """Stands in for both the v3 dataset_item.run() span and the v4
-    `start_as_current_observation` span — same surface, just different
-    method names. Tests use either depending on which path they exercise.
-    """
+    """The Langfuse span wrapper around a real OTel span."""
 
-    def __init__(self, trace_id: Optional[str] = None):
-        self.update_trace_calls: List[Dict[str, Any]] = []
+    def __init__(self, otel_span: Any):
+        context = otel_span.get_span_context()
+        self.trace_id = format_trace_id(context.trace_id)
+        self.id = format_span_id(context.span_id)
         self.set_trace_io_calls: List[Dict[str, Any]] = []
-        self.score_trace_calls: List[Dict[str, Any]] = []
-        self.trace_id = trace_id or 'fake-trace-id'
-
-    def update_trace(self, **kwargs):
-        self.update_trace_calls.append(kwargs)
 
     def set_trace_io(self, **kwargs):
-        # v4 SDK equivalent of v3's update_trace(input=..., output=...).
         self.set_trace_io_calls.append(kwargs)
-
-    def score_trace(self, **kwargs):
-        self.score_trace_calls.append(kwargs)
 
 
 class FakeDatasetItem:
-    def __init__(self, item_id: str):
+    def __init__(self, item_id: str, expected_output: Any = None):
         self.id = item_id
-        self.last_run_name = None
-        self.last_run_metadata = None
-        self.root_span = FakeRootSpan()
-
-    @contextmanager
-    def run(self, run_name: str, run_metadata: Optional[Dict[str, Any]] = None):
-        self.last_run_name = run_name
-        self.last_run_metadata = run_metadata
-        yield self.root_span
+        self.expected_output = expected_output
 
 
 class FakeDataset:
-    def __init__(self, items: List[FakeDatasetItem]):
+    def __init__(self, items: List[FakeDatasetItem], dataset_id: str = 'ds-id'):
+        self.id = dataset_id
         self.items = items
 
 
-class FakeDatasetRunItems:
-    def __init__(self):
-        self.created_run_items: List[Dict[str, Any]] = []
-
-    def create(self, request=None, **kwargs):
-        # Langfuse SDK v4 dropped the request-object signature and calls
-        # `create(run_name=..., dataset_item_id=..., trace_id=..., metadata=...)`
-        # directly. We accept either form so old (request=req) and new
-        # (kwargs) callsites both work; tests don't have to care which one
-        # axion is using internally.
-        if request is not None:
-            payload = {
-                'run_name': getattr(request, 'run_name', None)
-                or getattr(request, 'runName', None),
-                'dataset_item_id': getattr(request, 'dataset_item_id', None)
-                or getattr(request, 'datasetItemId', None),
-                'trace_id': getattr(request, 'trace_id', None)
-                or getattr(request, 'traceId', None),
-                'observation_id': getattr(request, 'observation_id', None)
-                or getattr(request, 'observationId', None),
-                'metadata': getattr(request, 'metadata', None),
-            }
-        else:
-            payload = {
-                'run_name': kwargs.get('run_name'),
-                'dataset_item_id': kwargs.get('dataset_item_id'),
-                'trace_id': kwargs.get('trace_id'),
-                'observation_id': kwargs.get('observation_id'),
-                'metadata': kwargs.get('metadata'),
-            }
-        self.created_run_items.append(payload)
-
-
 class FakeApi:
-    def __init__(self):
-        self.dataset_run_items = FakeDatasetRunItems()
+    """Has no dataset-run endpoints; touching one fails the item."""
 
 
 class FakeLangfuseClient:
-    def __init__(self, dataset: FakeDataset):
+    def __init__(self, dataset: FakeDataset, project_id: Any = 'proj-1'):
         self._dataset = dataset
+        self._project_id = project_id
+        self._base_url = 'https://langfuse.example/'
         self.created_items: List[Dict[str, Any]] = []
-        self.created_datasets: List[str] = []
         self.created_scores: List[Dict[str, Any]] = []
         self.started_observations: List[Dict[str, Any]] = []
-        self.flush_calls = 0
         self.api = FakeApi()
-        self._next_trace_seq = 0
+        self.exporter = InMemorySpanExporter()
+        provider = TracerProvider()
+        provider.add_span_processor(SimpleSpanProcessor(self.exporter))
+        self.tracer = provider.get_tracer('fake-langfuse')
+
+    def _get_project_id(self):
+        if isinstance(self._project_id, Exception):
+            raise self._project_id
+        return self._project_id
 
     def create_dataset(self, name: str):
-        self.created_datasets.append(name)
+        pass
 
     @contextmanager
     def start_as_current_observation(self, **kwargs):
-        self._next_trace_seq += 1
-        trace_id = f'fake-trace-{self._next_trace_seq}'
-        span = FakeRootSpan(trace_id=trace_id)
-        self.started_observations.append({**kwargs, 'trace_id': trace_id, 'span': span})
-        yield span
+        with self.tracer.start_as_current_span(kwargs['name']) as otel_span:
+            span = FakeRootSpan(otel_span)
+            self.started_observations.append({**kwargs, 'span': span})
+            yield span
 
-    def create_dataset_item(
-        self,
-        dataset_name: str,
-        id: str,
-        input=None,
-        expected_output=None,
-        metadata=None,
-    ):
-        self.created_items.append(
-            {
-                'dataset_name': dataset_name,
-                'id': id,
-                'input': input,
-                'expected_output': expected_output,
-                'metadata': metadata,
-            }
-        )
+    def create_dataset_item(self, dataset_name: str, id: str, **kwargs):
+        self.created_items.append({'dataset_name': dataset_name, 'id': id, **kwargs})
 
     def flush(self):
-        self.flush_calls += 1
+        pass
 
     def get_dataset(self, name: str):
         return self._dataset
@@ -169,92 +122,93 @@ class FakeLangfuseClient:
     def create_score(self, **kwargs):
         self.created_scores.append(kwargs)
 
-
-class FakeCreateDatasetRunItemRequest:
-    """Fake request object mimicking langfuse.api.types.CreateDatasetRunItemRequest"""
-
-    def __init__(
-        self,
-        runName=None,
-        datasetItemId=None,
-        traceId=None,
-        observationId=None,
-        metadata=None,
-        **kwargs,
-    ):
-        self.runName = runName
-        self.datasetItemId = datasetItemId
-        self.traceId = traceId
-        self.observationId = observationId
-        self.metadata = metadata
+    def spans(self) -> Dict[str, Any]:
+        return {s.name: s for s in self.exporter.get_finished_spans()}
 
 
-def _install_fake_langfuse_module(fake_client: FakeLangfuseClient, monkeypatch):
-    """
-    LangfuseTraceLoader imports `Langfuse` from the `langfuse` package at runtime.
-    Provide a minimal stub, removed after the test, so tests do not require the
-    real dependency.
-    """
+@pytest.fixture
+def make_loader(monkeypatch):
+    """A loader around a fake client; the `langfuse` stub is removed after the test."""
     fake_module = types.ModuleType('langfuse')
-
-    class Langfuse:  # noqa: N801 (matches external class name)
-        def __init__(self, **kwargs):
-            # Loader stores this instance as `self.client`
-            pass
-
-    fake_module.Langfuse = Langfuse
+    fake_module.Langfuse = object
     monkeypatch.setitem(sys.modules, 'langfuse', fake_module)
 
-    # Create fake langfuse.api module with CreateDatasetRunItemRequest
-    fake_api_module = types.ModuleType('langfuse.api')
-    fake_api_module.CreateDatasetRunItemRequest = FakeCreateDatasetRunItemRequest
-    monkeypatch.setitem(sys.modules, 'langfuse.api', fake_api_module)
+    def make(fake_client: FakeLangfuseClient) -> LangfuseTraceLoader:
+        loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
+        loader.max_retries = 0
+        loader.base_delay = 0.0
+        loader.max_delay = 0.0
+        loader.request_pacing = 0.0
+        loader.default_tags = []
+        loader.client = fake_client
+        loader._client_initialized = True
+        return loader
 
-    # Monkeypatching approach: we will bypass loader.__init__ client creation and
-    # inject our fake client directly in the test.
-    return fake_module
+    return make
 
 
-def test_upload_experiment_sets_input_output_and_linking_metadata(monkeypatch):
-    # Dataset run will iterate over dataset.items; keep it aligned with evaluation results.
-    dataset_items = [FakeDatasetItem('item-1'), FakeDatasetItem('item-2')]
-    fake_dataset = FakeDataset(dataset_items)
-    fake_client = FakeLangfuseClient(dataset=fake_dataset)
+def _result(item_id: str, score: float, **case: Any) -> FakeTestResult:
+    return FakeTestResult(
+        test_case=FakeDatasetItemInput(
+            id=item_id,
+            query=f'q-{item_id}',
+            actual_output=f'a-{item_id}',
+            expected_output=f'e-{item_id}',
+            **case,
+        ),
+        score_results=[FakeMetricScore(name='m1', score=score)],
+    )
 
-    _install_fake_langfuse_module(fake_client, monkeypatch)
 
-    # Instantiate loader without requiring real Langfuse initialization.
-    loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
-    loader.max_retries = 0
-    loader.base_delay = 0.0
-    loader.max_delay = 0.0
-    loader.request_pacing = 0.0
-    loader.default_tags = []
-    loader.client = fake_client
-    loader._client_initialized = True
+def test_experiment_id_matches_the_langfuse_derivation():
+    # Vectors computed with langfuse 5.2.0's Langfuse._create_experiment_id.
+    assert (
+        experiments.experiment_id_for('proj-1', 'ds-id', 'experiment-v6')
+        == 'c1e4eb221c0ed610'
+    )
+    assert (
+        experiments.experiment_id_for('cl8x2p0v20000', 'cmab1dataset', 'échec run · 1')
+        == 'bd16edea99266164'
+    )
+    assert experiments.experiment_id_for(None, 'ds-id', 'r') is None
+    assert experiments.experiment_id_for('proj-1', None, 'r') is None
 
+
+def test_attribute_names_match_the_sdk():
+    attributes = pytest.importorskip('langfuse._client.attributes')
+    sdk = attributes.LangfuseOtelSpanAttributes
+    for name in (
+        'EXPERIMENT_ID',
+        'EXPERIMENT_NAME',
+        'EXPERIMENT_METADATA',
+        'EXPERIMENT_DATASET_ID',
+        'EXPERIMENT_ITEM_ID',
+        'EXPERIMENT_ITEM_EXPECTED_OUTPUT',
+        'EXPERIMENT_ITEM_METADATA',
+        'EXPERIMENT_ITEM_ROOT_OBSERVATION_ID',
+    ):
+        assert getattr(experiments, name) == getattr(sdk, name), name
+
+
+def test_the_loader_calls_no_dataset_run_endpoint():
+    source = inspect.getsource(loader_module)
+    for removed in ('dataset_run_items', 'get_dataset_run', 'DatasetRunItem'):
+        assert removed not in source, removed
+
+
+def test_each_item_is_a_root_span_carrying_the_experiment_attributes(make_loader):
+    dataset = FakeDataset(
+        [
+            FakeDatasetItem('item-1', expected_output={'answer': 'curated'}),
+            FakeDatasetItem('item-2'),
+        ]
+    )
+    client = FakeLangfuseClient(dataset)
+    loader = make_loader(client)
     eval_result = FakeEvaluationResult(
         results=[
-            FakeTestResult(
-                test_case=FakeDatasetItemInput(
-                    id='item-1',
-                    query='q1',
-                    actual_output='a1',
-                    expected_output='e1',
-                    trace_id='trace-1',
-                    observation_id='obs-1',
-                ),
-                score_results=[FakeMetricScore(name='m1', score=0.5)],
-            ),
-            FakeTestResult(
-                test_case=FakeDatasetItemInput(
-                    id='item-2',
-                    query='q2',
-                    actual_output='a2',
-                    expected_output='e2',
-                ),
-                score_results=[FakeMetricScore(name='m1', score=0.7)],
-            ),
+            _result('item-1', 0.5, trace_id='trace-1', observation_id='obs-1'),
+            _result('item-2', 0.7),
         ],
         run_id='run-abcdef01',
     )
@@ -263,323 +217,270 @@ def test_upload_experiment_sets_input_output_and_linking_metadata(monkeypatch):
         evaluation_result=eval_result,
         dataset_name='ds',
         run_name='experiment-v6',
+        run_metadata={'branch': 'main', 'attempt': 2},
         flush=False,
         tags=['production'],
     )
 
-    assert stats['dataset_name'] == 'ds'
-    assert stats['run_name'] == 'experiment-v6'
+    assert stats['errors'] == []
     assert stats['runs_created'] == 2
-
-    # Default mode now opens one span per item via start_as_current_observation
-    # and stamps input/output via set_trace_io (v4 SDK shape).
-    assert len(fake_client.started_observations) == 2
-    for obs in fake_client.started_observations:
-        span = obs['span']
-        assert span.set_trace_io_calls, 'expected set_trace_io to be called'
-        call = span.set_trace_io_calls[0]
-        assert 'input' in call
-        assert 'output' in call
-
-    # Each item should have produced a low-level dataset_run_items.create call
-    # linking the freshly-created trace to the run.
-    run_items = fake_client.api.dataset_run_items.created_run_items
-    assert len(run_items) == 2
-    run_items_by_id = {ri['dataset_item_id']: ri for ri in run_items}
-    assert run_items_by_id['item-1']['run_name'] == 'experiment-v6'
-    # Per-item metadata should include the original linking identifiers when present
-    assert run_items_by_id['item-1']['metadata']['trace_id'] == 'trace-1'
-    assert run_items_by_id['item-1']['metadata']['observation_id'] == 'obs-1'
-    assert 'trace_id' not in run_items_by_id['item-2']['metadata']
-
-
-def test_upload_experiment_scores_on_runtime_traces_no_dataset_runs(monkeypatch):
-    dataset_items = [FakeDatasetItem('item-1')]
-    fake_dataset = FakeDataset(dataset_items)
-    fake_client = FakeLangfuseClient(dataset=fake_dataset)
-
-    _install_fake_langfuse_module(fake_client, monkeypatch)
-
-    loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
-    loader.max_retries = 0
-    loader.base_delay = 0.0
-    loader.max_delay = 0.0
-    loader.request_pacing = 0.0
-    loader.default_tags = []
-    loader.client = fake_client
-    loader._client_initialized = True
-
-    eval_result = FakeEvaluationResult(
-        results=[
-            FakeTestResult(
-                test_case=FakeDatasetItemInput(
-                    id='item-1',
-                    query='q1',
-                    actual_output='a1',
-                    expected_output='e1',
-                    trace_id='trace-1',
-                    observation_id='obs-1',
-                ),
-                score_results=[
-                    FakeMetricScore(
-                        name='m1',
-                        score=0.5,
-                        metadata={
-                            'trace_id': 'metric-trace-1',
-                            'observation_id': 'metric-obs-1',
-                        },
-                    )
-                ],
-            ),
-        ],
-        run_id='run-abcdef01',
+    assert stats['scores_uploaded'] == 2
+    assert stats['experiment_id'] == 'c1e4eb221c0ed610'
+    assert stats['run_url'] == (
+        'https://langfuse.example/project/proj-1/datasets/ds-id/runs/c1e4eb221c0ed610'
     )
 
-    stats = loader.upload_experiment(
-        evaluation_result=eval_result,
+    spans = client.spans()
+    first = spans['dataset-run:experiment-v6:item-1']
+    second = spans['dataset-run:experiment-v6:item-2']
+    assert first.parent is None and second.parent is None
+    assert first.context.trace_id != second.context.trace_id
+
+    attrs = dict(first.attributes)
+    assert attrs == {
+        'langfuse.experiment.id': 'c1e4eb221c0ed610',
+        'langfuse.experiment.name': 'experiment-v6',
+        'langfuse.experiment.dataset.id': 'ds-id',
+        'langfuse.experiment.item.id': 'item-1',
+        'langfuse.experiment.item.root_observation_id': format_span_id(
+            first.context.span_id
+        ),
+        # The dataset's stored expected output wins over the local one.
+        'langfuse.experiment.item.expected_output': '{"answer": "curated"}',
+        'langfuse.experiment.metadata.axion_run_id': 'run-abcdef01',
+        'langfuse.experiment.metadata.branch': 'main',
+        'langfuse.experiment.metadata.attempt': '2',
+        'langfuse.experiment.metadata.tags': '["production"]',
+        'langfuse.experiment.item.metadata.trace_id': 'trace-1',
+        'langfuse.experiment.item.metadata.observation_id': 'obs-1',
+    }
+    second_attrs = dict(second.attributes)
+    assert second_attrs['langfuse.experiment.item.expected_output'] == (
+        '{"expected_output": "e-item-2"}'
+    )
+    assert not any('item.metadata' in key for key in second_attrs)
+
+    for observation in client.started_observations:
+        assert observation['span'].set_trace_io_calls
+
+    # Scores go on each item's root observation.
+    scores = {s['value']: s for s in client.created_scores}
+    assert scores[0.5]['trace_id'] == format_trace_id(first.context.trace_id)
+    assert scores[0.5]['observation_id'] == format_span_id(first.context.span_id)
+    assert scores[0.7]['observation_id'] == format_span_id(second.context.span_id)
+
+
+def test_uploads_under_one_run_name_share_an_experiment(make_loader):
+    def upload(run_name: str) -> Dict[str, Any]:
+        client = FakeLangfuseClient(FakeDataset([FakeDatasetItem('item-1')]))
+        return make_loader(client).upload_experiment(
+            evaluation_result=FakeEvaluationResult(results=[_result('item-1', 1.0)]),
+            dataset_name='ds',
+            run_name=run_name,
+            flush=False,
+        )
+
+    assert upload('nightly')['experiment_id'] == upload('nightly')['experiment_id']
+    assert upload('nightly')['experiment_id'] != upload('weekly')['experiment_id']
+
+
+def test_items_are_trace_roots_even_inside_a_caller_span(make_loader):
+    client = FakeLangfuseClient(FakeDataset([FakeDatasetItem('item-1')]))
+    loader = make_loader(client)
+
+    with client.tracer.start_as_current_span('caller'):
+        loader.upload_experiment(
+            evaluation_result=FakeEvaluationResult(results=[_result('item-1', 1.0)]),
+            dataset_name='ds',
+            run_name='r',
+            flush=False,
+        )
+        # The caller's span is current again afterwards.
+        assert otel_trace.get_current_span().name == 'caller'
+
+    assert client.spans()['dataset-run:r:item-1'].parent is None
+
+
+def test_without_a_project_id_the_experiment_gets_a_random_id(make_loader):
+    client = FakeLangfuseClient(
+        FakeDataset([FakeDatasetItem('item-1')]),
+        project_id=RuntimeError('403'),
+    )
+    stats = make_loader(client).upload_experiment(
+        evaluation_result=FakeEvaluationResult(results=[_result('item-1', 1.0)]),
+        dataset_name='ds',
+        run_name='r',
+        flush=False,
+    )
+
+    assert len(stats['experiment_id']) == 16
+    assert stats['run_url'] is None
+    assert stats['runs_created'] == 1
+    assert stats['scores_uploaded'] == 1
+    assert len(stats['errors']) == 1 and 'random id' in stats['errors'][0]
+    span = client.spans()['dataset-run:r:item-1']
+    assert span.attributes['langfuse.experiment.id'] == stats['experiment_id']
+
+
+def test_link_to_traces_also_scores_the_runtime_trace(make_loader):
+    client = FakeLangfuseClient(
+        FakeDataset([FakeDatasetItem('item-1'), FakeDatasetItem('item-2')])
+    )
+    stats = make_loader(client).upload_experiment(
+        evaluation_result=FakeEvaluationResult(
+            results=[
+                _result('item-1', 0.5, trace_id='trace-1', observation_id='obs-1'),
+                # No runtime trace: only the experiment item is scored.
+                _result('item-2', 0.7),
+            ]
+        ),
+        dataset_name='ds',
+        run_name='experiment-v7',
+        flush=False,
+        link_to_traces=True,
+    )
+
+    assert stats['errors'] == []
+    assert stats['runs_created'] == 2
+    assert stats['scores_uploaded'] == 3
+
+    spans = client.spans()
+    first = spans['dataset-run:experiment-v7:item-1']
+    second = spans['dataset-run:experiment-v7:item-2']
+    targets = sorted(
+        (s['value'], s['trace_id'], s.get('observation_id'))
+        for s in client.created_scores
+    )
+    assert targets == sorted(
+        [
+            (
+                0.5,
+                format_trace_id(first.context.trace_id),
+                format_span_id(first.context.span_id),
+            ),
+            (0.5, 'trace-1', 'obs-1'),
+            (
+                0.7,
+                format_trace_id(second.context.trace_id),
+                format_span_id(second.context.span_id),
+            ),
+        ]
+    )
+    assert first.attributes['langfuse.experiment.item.metadata.trace_id'] == 'trace-1'
+
+
+def test_filtered_and_missing_scores_are_skipped_once(make_loader):
+    client = FakeLangfuseClient(FakeDataset([FakeDatasetItem('item-1')]))
+    result = _result('item-1', 0.5, trace_id='trace-1')
+    result.score_results += [
+        FakeMetricScore(name='m2', score=0.9),
+        FakeMetricScore(name='m1', score=float('nan')),
+    ]
+    stats = make_loader(client).upload_experiment(
+        evaluation_result=FakeEvaluationResult(results=[result]),
+        dataset_name='ds',
+        run_name='r',
+        flush=False,
+        link_to_traces=True,
+        metric_names=['m1'],
+    )
+
+    assert stats['scores_uploaded'] == 2
+    assert stats['scores_skipped'] == 2
+
+
+def test_a_failed_item_write_is_recorded_and_the_rest_continue(make_loader):
+    client = FakeLangfuseClient(
+        FakeDataset([FakeDatasetItem('item-1'), FakeDatasetItem('item-2')])
+    )
+    real_start = client.start_as_current_observation
+
+    @contextmanager
+    def start(**kwargs):
+        if kwargs['name'].endswith('item-1'):
+            raise RuntimeError('exporter down')
+        with real_start(**kwargs) as span:
+            yield span
+
+    client.start_as_current_observation = start
+    stats = make_loader(client).upload_experiment(
+        evaluation_result=FakeEvaluationResult(
+            results=[_result('item-1', 0.5), _result('item-2', 0.7)]
+        ),
+        dataset_name='ds',
+        run_name='r',
+        flush=False,
+    )
+
+    assert stats['runs_created'] == 1
+    assert [s['value'] for s in client.created_scores] == [0.7]
+    assert len(stats['errors']) == 1 and 'item-1' in stats['errors'][0]
+
+
+def test_an_upload_that_writes_no_item_returns_no_experiment(make_loader):
+    empty = FakeLangfuseClient(FakeDataset([]))
+    stats = make_loader(empty).upload_experiment(
+        evaluation_result=FakeEvaluationResult(results=[]),
+        dataset_name='ds',
+        run_name='r',
+        flush=False,
+    )
+    assert stats['runs_created'] == 0
+    assert stats['experiment_id'] is None and stats['run_url'] is None
+
+    failing = FakeLangfuseClient(FakeDataset([FakeDatasetItem('item-1')]))
+
+    @contextmanager
+    def start(**kwargs):
+        raise RuntimeError('exporter down')
+        yield
+
+    failing.start_as_current_observation = start
+    stats = make_loader(failing).upload_experiment(
+        evaluation_result=FakeEvaluationResult(results=[_result('item-1', 1.0)]),
+        dataset_name='ds',
+        run_name='r',
+        flush=False,
+    )
+    assert stats['runs_created'] == 0
+    assert stats['experiment_id'] is None and stats['run_url'] is None
+    assert len(stats['errors']) == 1
+
+
+def test_scores_on_runtime_traces_write_no_experiment(make_loader):
+    client = FakeLangfuseClient(FakeDataset([FakeDatasetItem('item-1')]))
+    result = _result('item-1', 0.5, trace_id='trace-1', observation_id='obs-1')
+    result.score_results = [
+        FakeMetricScore(
+            name='m1',
+            score=0.5,
+            metadata={
+                'trace_id': 'metric-trace-1',
+                'observation_id': 'metric-obs-1',
+            },
+        )
+    ]
+
+    stats = make_loader(client).upload_experiment(
+        evaluation_result=FakeEvaluationResult(results=[result], run_id='run-abcdef01'),
         dataset_name='ds',
         run_name='experiment-v6',
         flush=False,
         tags=['production'],
         score_on_runtime_traces=True,
+        # Takes precedence over link_to_traces.
+        link_to_traces=True,
     )
 
     assert stats['runs_created'] == 0
     assert stats['scores_uploaded'] == 1
-    assert dataset_items[0].last_run_name is None, 'should not create dataset runs'
+    assert stats['experiment_id'] is None
+    assert client.started_observations == []
 
-    assert len(fake_client.created_scores) == 1
-    score = fake_client.created_scores[0]
-    # Per-metric IDs should win over test-case IDs
+    assert len(client.created_scores) == 1
+    score = client.created_scores[0]
+    # Per-metric IDs win over test-case IDs.
     assert score['trace_id'] == 'metric-trace-1'
     assert score['observation_id'] == 'metric-obs-1'
     assert score['metadata']['dataset_name'] == 'ds'
     assert score['metadata']['run_name'] == 'experiment-v6'
-
-
-def test_upload_experiment_link_to_traces_uses_low_level_api(monkeypatch):
-    """Test that link_to_traces=True uses client.api.dataset_run_items.create() to link runs to existing traces."""
-    dataset_items = [FakeDatasetItem('item-1'), FakeDatasetItem('item-2')]
-    fake_dataset = FakeDataset(dataset_items)
-    fake_client = FakeLangfuseClient(dataset=fake_dataset)
-
-    _install_fake_langfuse_module(fake_client, monkeypatch)
-
-    loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
-    loader.max_retries = 0
-    loader.base_delay = 0.0
-    loader.max_delay = 0.0
-    loader.request_pacing = 0.0
-    loader.default_tags = []
-    loader.client = fake_client
-    loader._client_initialized = True
-
-    eval_result = FakeEvaluationResult(
-        results=[
-            FakeTestResult(
-                test_case=FakeDatasetItemInput(
-                    id='item-1',
-                    query='q1',
-                    actual_output='a1',
-                    expected_output='e1',
-                    trace_id='trace-1',
-                    observation_id='obs-1',
-                ),
-                score_results=[FakeMetricScore(name='m1', score=0.5)],
-            ),
-            # item-2 has no trace_id, should fall back to creating new trace
-            FakeTestResult(
-                test_case=FakeDatasetItemInput(
-                    id='item-2',
-                    query='q2',
-                    actual_output='a2',
-                    expected_output='e2',
-                ),
-                score_results=[FakeMetricScore(name='m2', score=0.7)],
-            ),
-        ],
-        run_id='run-abcdef01',
-    )
-
-    stats = loader.upload_experiment(
-        evaluation_result=eval_result,
-        dataset_name='ds',
-        run_name='experiment-v7',
-        flush=False,
-        tags=['production'],
-        link_to_traces=True,
-    )
-
-    assert stats['dataset_name'] == 'ds'
-    assert stats['run_name'] == 'experiment-v7'
-    assert stats['runs_created'] == 2
-    assert stats['scores_uploaded'] == 2
-
-    # Both paths now create dataset_run_items via the low-level API. The
-    # difference is what trace_id each call carries:
-    #   - item-1 (link_to_traces hit): the test_case.trace_id ("trace-1")
-    #   - item-2 (no trace_id, fallback): a freshly-minted trace from
-    #     start_as_current_observation
-    run_items = fake_client.api.dataset_run_items.created_run_items
-    assert len(run_items) == 2
-    by_id = {ri['dataset_item_id']: ri for ri in run_items}
-    assert by_id['item-1']['run_name'] == 'experiment-v7'
-    assert by_id['item-1']['trace_id'] == 'trace-1'
-    assert by_id['item-1']['observation_id'] == 'obs-1'
-
-    # item-2 fell back to creating a new trace; its run-item must point at
-    # that new trace, not be None.
-    assert by_id['item-2']['trace_id'] and by_id['item-2']['trace_id'] != 'trace-1'
-
-    # Scores: item-1's m1 attaches to the existing trace; item-2's m2 attaches
-    # to the freshly-created trace. Both go through create_score now.
-    score_by_name = {s['name']: s for s in fake_client.created_scores}
-    assert score_by_name['m1']['trace_id'] == 'trace-1'
-    assert score_by_name['m1']['observation_id'] == 'obs-1'
-    assert score_by_name['m1']['value'] == 0.5
-    assert score_by_name['m2']['trace_id'] == by_id['item-2']['trace_id']
-    assert score_by_name['m2']['value'] == 0.7
-
-    # item-1 hit the link_to_traces branch — must NOT have opened a span.
-    started_for_item_1 = [
-        o for o in fake_client.started_observations if 'item-1' in (o.get('name') or '')
-    ]
-    assert started_for_item_1 == [], (
-        'link_to_traces=True path should not open a new observation for item-1'
-    )
-
-    # item-2 fell back — must have opened exactly one observation.
-    started_for_item_2 = [
-        o for o in fake_client.started_observations if 'item-2' in (o.get('name') or '')
-    ]
-    assert len(started_for_item_2) == 1
-
-
-def test_upload_experiment_link_to_traces_false_creates_new_traces(monkeypatch):
-    """
-    `link_to_traces=False` (default): create a fresh trace per item via the
-    v4 `start_as_current_observation` span and link it to the run via the
-    low-level API. Even when the test_case has a trace_id, the default path
-    ignores it and mints a new one — that's the whole point of `False`.
-    """
-    dataset_items = [FakeDatasetItem('item-1')]
-    fake_dataset = FakeDataset(dataset_items)
-    fake_client = FakeLangfuseClient(dataset=fake_dataset)
-
-    _install_fake_langfuse_module(fake_client, monkeypatch)
-
-    loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
-    loader.max_retries = 0
-    loader.base_delay = 0.0
-    loader.max_delay = 0.0
-    loader.request_pacing = 0.0
-    loader.default_tags = []
-    loader.client = fake_client
-    loader._client_initialized = True
-
-    eval_result = FakeEvaluationResult(
-        results=[
-            FakeTestResult(
-                test_case=FakeDatasetItemInput(
-                    id='item-1',
-                    query='q1',
-                    actual_output='a1',
-                    expected_output='e1',
-                    trace_id='trace-1',  # Even with trace_id, should NOT use low-level API
-                    observation_id='obs-1',
-                ),
-                score_results=[FakeMetricScore(name='m1', score=0.5)],
-            ),
-        ],
-        run_id='run-abcdef01',
-    )
-
-    stats = loader.upload_experiment(
-        evaluation_result=eval_result,
-        dataset_name='ds',
-        run_name='experiment-v8',
-        flush=False,
-        link_to_traces=False,  # Explicitly false (default behavior)
-    )
-
-    assert stats['runs_created'] == 1
-    assert stats['scores_uploaded'] == 1
-
-    # New trace was minted via start_as_current_observation, *not* reused from
-    # the test_case's existing trace_id.
-    assert len(fake_client.started_observations) == 1
-    new_trace_id = fake_client.started_observations[0]['trace_id']
-    assert new_trace_id != 'trace-1'
-
-    # Low-level API was used to link the new trace to the dataset run.
-    run_items = fake_client.api.dataset_run_items.created_run_items
-    assert len(run_items) == 1
-    assert run_items[0]['dataset_item_id'] == 'item-1'
-    assert run_items[0]['run_name'] == 'experiment-v8'
-    assert run_items[0]['trace_id'] == new_trace_id
-
-    # Score was attached to the new trace, not the old one.
-    assert len(fake_client.created_scores) == 1
-    assert fake_client.created_scores[0]['trace_id'] == new_trace_id
-
-
-def test_upload_experiment_score_on_runtime_traces_takes_precedence(monkeypatch):
-    """Test that score_on_runtime_traces takes precedence over link_to_traces when both are True."""
-    dataset_items = [FakeDatasetItem('item-1')]
-    fake_dataset = FakeDataset(dataset_items)
-    fake_client = FakeLangfuseClient(dataset=fake_dataset)
-
-    _install_fake_langfuse_module(fake_client, monkeypatch)
-
-    loader = LangfuseTraceLoader.__new__(LangfuseTraceLoader)
-    loader.max_retries = 0
-    loader.base_delay = 0.0
-    loader.max_delay = 0.0
-    loader.request_pacing = 0.0
-    loader.default_tags = []
-    loader.client = fake_client
-    loader._client_initialized = True
-
-    eval_result = FakeEvaluationResult(
-        results=[
-            FakeTestResult(
-                test_case=FakeDatasetItemInput(
-                    id='item-1',
-                    query='q1',
-                    actual_output='a1',
-                    expected_output='e1',
-                    trace_id='trace-1',
-                    observation_id='obs-1',
-                ),
-                score_results=[FakeMetricScore(name='m1', score=0.5)],
-            ),
-        ],
-        run_id='run-abcdef01',
-    )
-
-    stats = loader.upload_experiment(
-        evaluation_result=eval_result,
-        dataset_name='ds',
-        run_name='experiment-v9',
-        flush=False,
-        score_on_runtime_traces=True,  # Takes precedence
-        link_to_traces=True,  # Should be ignored
-    )
-
-    # score_on_runtime_traces behavior: no runs created, scores on existing traces
-    assert stats['runs_created'] == 0, (
-        'score_on_runtime_traces should prevent run creation'
-    )
-    assert stats['scores_uploaded'] == 1
-
-    # Should NOT have used low-level API (link_to_traces is ignored)
-    assert len(fake_client.api.dataset_run_items.created_run_items) == 0
-
-    # Should NOT have used dataset_item.run() context manager
-    assert dataset_items[0].last_run_name is None
-
-    # Scores should be created directly via create_score (score_on_runtime_traces mode)
-    assert len(fake_client.created_scores) == 1
-    score = fake_client.created_scores[0]
-    assert score['trace_id'] == 'trace-1'
-    assert 'metadata' in score  # score_on_runtime_traces adds metadata

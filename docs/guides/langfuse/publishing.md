@@ -159,7 +159,7 @@ graph TD
 | `flush` | `bool` | `True` | Flush client after uploading |
 | `tags` | `list[str]` | `None` | Tags to attach to scores |
 | `score_on_runtime_traces` | `bool` | `False` | Skip creating runs, just add scores to existing traces |
-| `link_to_traces` | `bool` | `False` | Link experiment runs to existing traces instead of creating new ones |
+| `link_to_traces` | `bool` | `False` | Also score the existing runtime traces, and record their ids on each experiment item |
 
 ### Experiment Modes
 
@@ -169,23 +169,24 @@ graph TD
 |------|-------------|-----------------|----------|
 | **Default** (both `False`) | :white_check_mark: new traces | :x: | Standard experiment - creates fresh traces for each run |
 | `score_on_runtime_traces=True` | :x: | N/A (scores only) | Just add scores to existing traces without creating experiment runs |
-| `link_to_traces=True` | :white_check_mark: linked | :white_check_mark: | Experiment UI linked to original evaluation traces |
+| `link_to_traces=True` | :white_check_mark: new traces | Runtime ids in item metadata | Experiment UI, plus scores on the original evaluation traces |
 
 !!! tip "When to use each mode"
     - **Default**: Use when you don't have existing traces and want a self-contained experiment
     - **score_on_runtime_traces**: Use when you only care about scores on existing traces, not the experiment UI
-    - **link_to_traces**: Use when you ran evaluations with tracing enabled and want experiment runs to link back to those original traces
+    - **link_to_traces**: Use when you ran evaluations with tracing enabled and want the scores on those original traces as well as in the experiment
 
 #### Default Mode
 
-Creates new traces for each dataset item run:
+Creates a new trace for each dataset item.
+The trace's root span carries Langfuse's experiment attributes, which link it to the dataset item and the experiment, and the scores go on that root observation:
 
 ```python
 stats = result.publish_as_experiment(
     dataset_name='my-dataset',
     run_name='experiment-v1',
 )
-# Creates: dataset items + new "Dataset run" traces + scores
+# Creates: dataset items + one experiment trace per item + scores
 ```
 
 #### Score on Runtime Traces
@@ -210,7 +211,7 @@ This is useful when:
 
 #### Link to Traces
 
-Creates experiment runs that link to your existing evaluation traces:
+Writes the experiment as in default mode, and also scores your existing evaluation traces:
 
 ```python
 stats = result.publish_as_experiment(
@@ -218,17 +219,19 @@ stats = result.publish_as_experiment(
     run_name='experiment-v1',
     link_to_traces=True,
 )
-# Creates: dataset items + experiment runs linked to existing traces + scores
+# Creates: dataset items + one experiment trace per item + scores on both
 ```
 
 This is useful when:
 
 - You ran `evaluation_runner` with Langfuse tracing enabled
-- You want experiment runs in the Langfuse UI to link back to those original traces
-- You need both the experiment comparison view AND visibility into the original trace details
+- You want the scores on those original traces as well as in the experiment comparison view
 
-!!! note "Fallback behavior"
-    When `link_to_traces=True` but a `DatasetItem` doesn't have a `trace_id`, that item falls back to default mode (creates a new trace).
+Langfuse cannot make an existing trace an experiment item, so each item is still its own new trace.
+The runtime `trace_id` and `observation_id` are recorded in the item's experiment metadata.
+
+!!! note "Items without a trace"
+    When a `DatasetItem` doesn't have a `trace_id`, only its experiment trace is scored.
 
 !!! warning "Precedence"
     If both `score_on_runtime_traces=True` and `link_to_traces=True` are set, `score_on_runtime_traces` takes precedence.
@@ -244,6 +247,8 @@ stats = result.publish_as_experiment(...)
 #     'runs_created': 50,
 #     'scores_uploaded': 100,
 #     'scores_skipped': 0,
+#     'experiment_id': '4bd95d58e6b8012b',
+#     'run_url': 'https://cloud.langfuse.com/project/<project>/datasets/<dataset>/runs/4bd95d58e6b8012b',
 #     'errors': [],
 # }
 ```
@@ -256,7 +261,7 @@ Understanding how the method handles existing datasets and runs:
 |----------|----------|
 | **Dataset already exists** | `create_dataset()` upserts - retrieves existing, no error |
 | **Item ID already exists** | Caught as "already exists" error, item is reused |
-| **Run name already exists** | Creates a new run under the same name (distinguished by timestamp) |
+| **Run name already exists** | Adds to the same experiment: its id is derived from the project, the dataset and the run name |
 
 ### Key Design Decisions
 
@@ -328,7 +333,7 @@ Understanding how the method handles existing datasets and runs:
 | Comparing model versions | `publish_as_experiment()` |
 | Creating baseline datasets | `publish_as_experiment()` |
 | Continuous monitoring | `publish_to_observability()` |
-| Experiment UI + link to evaluation traces | `publish_as_experiment(link_to_traces=True)` |
+| Experiment UI + scores on evaluation traces | `publish_as_experiment(link_to_traces=True)` |
 | Scores on traces + no experiment runs | `publish_as_experiment(score_on_runtime_traces=True)` |
 
 ### Quick Reference
@@ -341,7 +346,7 @@ result.publish_to_observability()  # Attaches scores to existing traces
 result.publish_as_experiment()  # Creates everything from scratch
 
 # For experiments linked to evaluation traces:
-result.publish_as_experiment(link_to_traces=True)  # Links runs to existing traces
+result.publish_as_experiment(link_to_traces=True)  # Also scores the existing traces
 
 # For scores only (no experiment runs):
 result.publish_as_experiment(score_on_runtime_traces=True)  # Scores only

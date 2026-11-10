@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import random
+import time
 from datetime import UTC, datetime, timedelta
 from typing import Any
+
+import pytest
 
 from axion._core.tracing.loaders.langfuse import LangfuseTraceLoader
 from tests._core.tracing.langfuse.fakes import make_loader, row
@@ -101,6 +104,28 @@ def test_listing_is_oldest_first_with_one_summary_per_trace() -> None:
     assert listing.traces[0].tags == ['x']
     assert listing.traces[0].timestamp == START + timedelta(minutes=10)
     assert (listing.end, listing.truncated) == (END, False)
+
+
+@pytest.fixture
+def los_angeles(monkeypatch: pytest.MonkeyPatch) -> Any:
+    monkeypatch.setenv('TZ', 'America/Los_Angeles')
+    time.tzset()
+    yield
+    monkeypatch.undo()
+    time.tzset()
+
+
+def test_listing_reads_a_naive_window_as_local_time(los_angeles: Any) -> None:
+    """A naive bound means local time, as the SDK sends one; not UTC."""
+    local_start = START.astimezone().replace(tzinfo=None)
+    local_end = END.astimezone().replace(tzinfo=None)
+    assert local_start.hour != START.hour  # the test runs off UTC
+
+    rows = _turn('a', 10) + _turn('late', 70)  # 'late' is past END
+    listing = make_loader(rows).list_trace_ids(local_start, local_end, max_traces=10)
+
+    assert [t.id for t in listing.traces] == ['a']
+    assert (listing.start, listing.end) == (START, END)
 
 
 def test_listing_ties_break_on_id() -> None:
