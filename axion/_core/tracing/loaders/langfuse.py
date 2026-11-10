@@ -45,6 +45,7 @@ from axion._core.tracing.loaders.langfuse_rows import (
     TraceListing,
     TraceReadTruncated,
     TraceSummary,
+    caller_utc,
     full_trace_payload,
     group_by_trace,
     pick_root,
@@ -722,8 +723,9 @@ class LangfuseTraceLoader(BaseTraceLoader):
         and sets ``start`` just after the first trace it cut.
 
         Args:
-            start: Window start (inclusive). A naive value is read as UTC.
-            end: Window end (exclusive). A naive value is read as UTC.
+            start: Window start (inclusive). A naive value is read as local
+                time, as the SDK sends it.
+            end: Window end (exclusive). A naive value is read as local time.
             name: Keep only traces with this name.
             tags: Keep only traces carrying all of these tags.
             environment: Keep only traces in this Langfuse environment.
@@ -734,12 +736,12 @@ class LangfuseTraceLoader(BaseTraceLoader):
             A :class:`TraceListing` whose ``start``/``end`` bound the window it lists
             completely and whose ``truncated`` says whether that is narrower than asked.
         """
-        lo, hi = utc(start), utc(end)
+        lo, hi = caller_utc(start), caller_utc(end)
         if order == 'desc':
             return self._list_newest(lo, hi, name, tags, environment, max_traces)
 
         rows, lo, hi = self._read_window(lo, hi, name, tags, environment, 'asc')
-        shrunk = hi < utc(end)
+        shrunk = hi < caller_utc(end)
         traces = [s for s in self._summaries(rows, lo) if lo <= s.timestamp < hi]
         traces.sort(key=lambda s: (s.timestamp, s.id))
         if len(traces) <= max_traces:
